@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+</head>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh; background: var(--color-canvas);">
+
+  <div style="text-align: center;">
+    <div class="nav-brand-icon" style="width: 56px; height: 56px; margin: 0 auto var(--spacing-md); font-size: 1.5rem;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    <h2 class="typography-heading-4">BarangayOS.</h2>
+    <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">Initializing persistent database engine...</p>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const session = await authService.getCurrentSession();
+        if (session) {
+          window.location.replace('dashboard.html');
+          return;
+        }
+
+        const hasAdmin = await authService.hasAdminAccount();
+        if (!hasAdmin) {
+          window.location.replace('login.html');
+        } else {
+          window.location.replace('login.html');
+        }
+      } catch (e) {
+        console.error('Initialization error:', e);
+        window.location.replace('login.html');
+      }
+    });
+  </script>
+</body>
+</html>

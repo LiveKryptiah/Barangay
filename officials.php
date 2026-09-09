@@ -1,0 +1,1547 @@
+<?php
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/auth.php';
+require_auth('login.php');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Officials &amp; Staff Directory &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .page-hero {
+      padding: var(--spacing-xs) 0 var(--spacing-sm);
+    }
+
+    .stats-ladder {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    @media (max-width: 1024px) {
+      .stats-ladder {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats-ladder {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: 6px 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      min-width: 250px;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-faint);
+      pointer-events: none;
+    }
+
+    .search-input-wrap input {
+      height: 38px;
+      padding-left: 38px;
+      font-size: 0.8125rem;
+      border-radius: var(--rounded-full);
+    }
+
+    .filter-select {
+      height: 38px;
+      padding: 0 12px;
+      font-size: 0.8125rem;
+      border-radius: var(--rounded-full);
+      background-color: var(--color-field);
+      border: 1px solid transparent;
+      color: var(--color-ink);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* View Switcher Pill */
+    .view-switcher {
+      display: inline-flex;
+      background-color: var(--color-canvas-soft);
+      border-radius: var(--rounded-full);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .view-btn {
+      height: 30px;
+      padding: 0 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--rounded-full);
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .view-btn.active {
+      background-color: var(--color-canvas);
+      color: var(--color-ink);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Hierarchy Cards Layout */
+    .hierarchy-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--spacing-md);
+      margin-bottom: var(--spacing-xs);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--color-hairline-soft);
+    }
+
+    .captain-spotlight-card {
+      background: linear-gradient(135deg, var(--color-canvas) 0%, var(--color-canvas-soft) 100%);
+      border: 1.5px solid var(--color-primary);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .captain-spotlight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--color-primary);
+    }
+
+    .officials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    @media (max-width: 1024px) {
+      .officials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .officials-grid {
+        grid-template-columns: 1fr;
+      }
+      .captain-spotlight-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .official-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .official-card:hover {
+      border-color: var(--color-ink);
+    }
+
+    .official-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 30%;
+      background-color: var(--color-canvas-soft);
+      color: var(--color-ink);
+      font-weight: 700;
+      font-size: 0.9375rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-hairline);
+      flex-shrink: 0;
+    }
+
+    .official-avatar.captain {
+      background-color: var(--color-primary);
+      color: #ffffff;
+      border-color: var(--color-primary);
+    }
+
+    .committee-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--rounded-full);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      background-color: var(--color-canvas-soft);
+      color: var(--color-ink);
+      border: 1px solid var(--color-hairline-soft);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Modal Form Grids */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    @media (max-width: 640px) {
+      .form-grid-2, .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dossier-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .dossier-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 10px 14px;
+      background-color: var(--color-canvas-soft);
+      border-radius: var(--rounded-sm);
+    }
+
+    .dossier-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+    }
+
+    .dossier-val {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-ink);
+    }
+
+    /* Printable Official Directory Sheet */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .app-shell, .app-sidebar, .app-topbar, .mobile-nav-bar, .page-hero,
+      .stats-ladder, .filter-toolbar, .view-switcher, .toast-container,
+      dialog, .no-print {
+        display: none !important;
+      }
+      #printable-directory-sheet {
+        display: block !important;
+        margin: 0;
+        padding: 20px;
+        width: 100%;
+      }
+    }
+
+    #printable-directory-sheet {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <!-- Main Content Workspace -->
+    <div class="app-main">
+      <div id="mobile-header-mount"></div>
+      <div id="app-topbar-mount"></div>
+
+      <main class="app-content">
+        <!-- Page Hero Section -->
+        <section class="page-hero">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+                <h1 class="typography-heading-2">Barangay Officials &amp; Staff.</h1>
+                <span class="badge-neutral" id="officials-count-badge">0 Personnel</span>
+              </div>
+              <p class="typography-body-lg">
+                Official governance hierarchy, legislative committees, and appointive civil service roster.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+              <button class="button-outline" id="btn-print-roster" title="Print Official Directory" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 6 2 18 2 18 9"/>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                  <rect width="12" height="8" x="6" y="14"/>
+                </svg>
+                <span>Print Directory</span>
+              </button>
+              <button class="button-primary" id="btn-open-add-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Add Official</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Personnel Telemetry Ladder -->
+        <section>
+          <div class="stats-ladder">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL PERSONNEL</span>
+                <span class="badge-neutral">Database Live</span>
+              </div>
+              <div class="stat-number" id="stat-total-officials">0</div>
+              <div class="typography-caption" id="stat-sub-total">0 registered in directory</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">ELECTIVE COUNCIL</span>
+                <span class="badge-blue">Sangguniang Brgy</span>
+              </div>
+              <div class="stat-number" id="stat-total-elective">0</div>
+              <div class="typography-caption" id="stat-sub-elective">Captain &amp; Kagawads</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">APPOINTED STAFF</span>
+                <span class="badge-purple">Civil Service</span>
+              </div>
+              <div class="stat-number" id="stat-total-appointive">0</div>
+              <div class="typography-caption" id="stat-sub-appointive">Secretary, Treas, Tanods</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">ACTIVE SIGNATORY</span>
+                <span class="badge-emerald">Clearances</span>
+              </div>
+              <div class="stat-number" id="stat-signatory-name" style="font-size: 1.125rem; font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-top: 6px;">None Assigned</div>
+              <div class="typography-caption" id="stat-sub-signatory">Authorized for clearances</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dual View & Filter Toolbar -->
+        <section>
+          <div class="filter-toolbar">
+            <div class="filter-group">
+              <!-- Search Input -->
+              <div class="search-input-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="search-input" class="text-input" placeholder="Search by name, position, committee..." autocomplete="off">
+              </div>
+
+              <!-- Category Filter -->
+              <select id="filter-category" class="filter-select">
+                <option value="ALL">All Categories</option>
+                <option value="elective">Elective Council</option>
+                <option value="appointive">Appointed Staff</option>
+              </select>
+
+              <!-- Committee Filter -->
+              <select id="filter-committee" class="filter-select">
+                <option value="ALL">All Committees</option>
+                <option value="Peace & Order">Peace &amp; Order</option>
+                <option value="Appropriations & Finance">Appropriations &amp; Finance</option>
+                <option value="Health & Sanitation">Health &amp; Sanitation</option>
+                <option value="Infrastructure & Public Works">Infrastructure &amp; Public Works</option>
+                <option value="Education & Culture">Education &amp; Culture</option>
+                <option value="Youth & Sports">Youth &amp; Sports</option>
+                <option value="Environmental Protection">Environmental Protection</option>
+                <option value="Laws, Rules & Ethics">Laws, Rules &amp; Ethics</option>
+                <option value="Agriculture & Livelihood">Agriculture &amp; Livelihood</option>
+              </select>
+
+              <!-- Status Filter -->
+              <select id="filter-status" class="filter-select">
+                <option value="ALL">All Status</option>
+                <option value="active">Active</option>
+                <option value="on_leave">On Leave</option>
+                <option value="inactive">Inactive / Concluded</option>
+              </select>
+            </div>
+
+            <!-- View Switcher -->
+            <div class="view-switcher">
+              <button id="view-btn-hierarchy" class="view-btn active" title="Organizational Hierarchy View">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="6" height="6" x="9" y="3" rx="1"/>
+                  <path d="M12 9v4"/>
+                  <path d="M5 13h14"/>
+                  <rect width="6" height="6" x="2" y="15" rx="1"/>
+                  <rect width="6" height="6" x="16" y="15" rx="1"/>
+                </svg>
+                <span>Hierarchy</span>
+              </button>
+              <button id="view-btn-table" class="view-btn" title="Roster Data Table View">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 3h18v18H3z"/>
+                  <path d="M3 9h18"/>
+                  <path d="M3 15h18"/>
+                  <path d="M9 3v18"/>
+                </svg>
+                <span>Table</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Roster Content Container -->
+        <section id="roster-view-container">
+          <!-- Populated dynamically: Hierarchy View OR Table View OR Empty State -->
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal 1: Add / Edit Official Modal -->
+  <dialog id="official-modal" class="modal-dialog" style="width: 90%; max-width: 680px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-md);">
+      <div>
+        <h3 class="typography-heading-4" id="modal-title">Record Barangay Official.</h3>
+        <p class="typography-caption" id="modal-subtitle">Add elected leader or appointive staff member to the official roster.</p>
+      </div>
+      <button class="button-pill-soft" id="btn-close-modal" style="height: 30px; padding: 0 10px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+
+    <form id="official-form">
+      <input type="hidden" id="official-id">
+
+      <!-- Full Legal Name -->
+      <div class="form-group" style="margin-bottom: var(--spacing-sm);">
+        <label class="form-label" for="official-name">Full Legal Name <span style="color: var(--color-primary); font-weight: 700;">*</span></label>
+        <input type="text" id="official-name" class="text-input" placeholder="e.g. Hon. Juan M. Dela Cruz" required>
+      </div>
+
+      <!-- Position & Category -->
+      <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="official-position">Position / Designation <span style="color: var(--color-primary); font-weight: 700;">*</span></label>
+          <select id="official-position" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+            <optgroup label="Elective Council">
+              <option value="Punong Barangay">Punong Barangay (Barangay Captain)</option>
+              <option value="Barangay Kagawad">Sangguniang Barangay Member (Kagawad)</option>
+              <option value="SK Chairperson">SK Chairperson</option>
+              <option value="SK Kagawad">Sangguniang Kabataan Member</option>
+            </optgroup>
+            <optgroup label="Appointive Officers &amp; Staff">
+              <option value="Barangay Secretary">Barangay Secretary</option>
+              <option value="Barangay Treasurer">Barangay Treasurer</option>
+              <option value="Chief Tanod">Chief Tanod (Executive Officer)</option>
+              <option value="Barangay Tanod">Barangay Tanod (Peacekeeper)</option>
+              <option value="Barangay Health Worker">Barangay Health Worker (BHW)</option>
+              <option value="Barangay Nutrition Scholar">Barangay Nutrition Scholar (BNS)</option>
+              <option value="Day Care Worker">Day Care Worker</option>
+              <option value="Lupon Member">Lupon Tagapamayapa Member</option>
+              <option value="Administrative Aide">Administrative Aide / Clerk</option>
+              <option value="Other Staff">Other Staff Personnel</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="official-category">Personnel Category</label>
+          <select id="official-category" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+            <option value="elective">Elective Council</option>
+            <option value="appointive">Appointed Staff</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Committee Assignments (Primary & Secondary) -->
+      <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="official-committee">Primary Committee Assignment</label>
+          <select id="official-committee" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;">
+            <option value="None / Not Applicable">None / Not Applicable</option>
+            <option value="Peace & Order & Public Safety">Committee on Peace &amp; Order &amp; Public Safety</option>
+            <option value="Appropriations & Finance">Committee on Appropriations &amp; Finance</option>
+            <option value="Health & Sanitation">Committee on Health &amp; Sanitation</option>
+            <option value="Infrastructure & Public Works">Committee on Infrastructure &amp; Public Works</option>
+            <option value="Education & Culture">Committee on Education &amp; Culture</option>
+            <option value="Youth & Sports Development">Committee on Youth &amp; Sports Development</option>
+            <option value="Environmental Protection & Cleanliness">Committee on Environmental Protection</option>
+            <option value="Laws, Rules & Ethics">Committee on Laws, Rules &amp; Ethics</option>
+            <option value="Agriculture & Livelihood">Committee on Agriculture &amp; Livelihood</option>
+            <option value="Women, Family & Children">Committee on Women, Family &amp; Children</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="official-secondary-committee">Secondary Committee / Vice Chair</label>
+          <input type="text" id="official-secondary-committee" class="text-input" placeholder="e.g. Vice Chair - Health &amp; Sanitation">
+        </div>
+      </div>
+
+      <!-- Term Dates & Status -->
+      <div class="form-grid-3" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="official-term-start">Term Start</label>
+          <input type="date" id="official-term-start" class="text-input" style="height: 42px;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="official-term-end">Term End</label>
+          <input type="date" id="official-term-end" class="text-input" style="height: 42px;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="official-status">Roster Status</label>
+          <select id="official-status" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;">
+            <option value="active">Active Service</option>
+            <option value="on_leave">On Leave</option>
+            <option value="inactive">Inactive / Concluded</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Contact Info & Office Hours -->
+      <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="official-phone">Contact Number</label>
+          <input type="tel" id="official-phone" class="text-input" placeholder="09XXXXXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="official-email">Official Email</label>
+          <input type="email" id="official-email" class="text-input" placeholder="official@barangay.gov.ph">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="official-hours">Office Hours / Availability</label>
+        <input type="text" id="official-hours" class="text-input" placeholder="e.g. Monday &ndash; Friday, 8:00 AM &ndash; 5:00 PM">
+      </div>
+
+      <!-- Signatory & Hierarchy Order Option -->
+      <div style="background: var(--color-canvas-soft); padding: 12px 16px; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-md); display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-sm);">
+        <div>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8125rem; font-weight: 600; color: var(--color-ink);">
+            <input type="checkbox" id="official-is-signatory" style="accent-color: var(--color-primary); width: 16px; height: 16px;">
+            <span>Designate as Official Document Signatory</span>
+          </label>
+          <p class="typography-caption" style="margin-top: 2px; margin-left: 24px;">
+            Automatically prints this official's name on Clearances, Certifications, and Summons.
+          </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label class="typography-label" for="official-order" style="white-space: nowrap; font-size: 0.6875rem;">Rank Order:</label>
+          <input type="number" id="official-order" class="text-input" value="1" min="1" max="99" style="width: 58px; height: 34px; text-align: center; border-radius: var(--rounded-sm);">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+        <button type="button" class="button-pill-soft" id="btn-cancel-modal" style="height: 38px; padding: 0 16px;">Cancel</button>
+        <button type="submit" class="button-primary" id="btn-save-official" style="height: 38px; padding: 0 20px;">Save Official</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal 2: Official Dossier Drawer / View Modal -->
+  <dialog id="official-dossier-modal" class="modal-dialog" style="width: 90%; max-width: 580px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-md);">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+        <div id="dossier-avatar" class="official-avatar captain" style="width: 52px; height: 52px; font-size: 1.125rem;">
+          PB
+        </div>
+        <div>
+          <h3 class="typography-heading-4" id="dossier-name" style="margin-bottom: 2px;">Hon. Official Name</h3>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="badge-blue" id="dossier-position-badge">Punong Barangay</span>
+            <span class="badge-emerald" id="dossier-status-badge">Active</span>
+            <span class="badge-amber" id="dossier-signatory-badge" style="display: none;">Signatory</span>
+          </div>
+        </div>
+      </div>
+      <button class="button-pill-soft" onclick="document.getElementById('official-dossier-modal').close();" style="height: 30px; padding: 0 10px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+
+    <div class="dossier-grid">
+      <div class="dossier-item">
+        <span class="dossier-label">Primary Committee</span>
+        <span class="dossier-val" id="dossier-committee">&mdash;</span>
+      </div>
+
+      <div class="dossier-item">
+        <span class="dossier-label">Secondary Committee</span>
+        <span class="dossier-val" id="dossier-secondary-committee">&mdash;</span>
+      </div>
+
+      <div class="dossier-item">
+        <span class="dossier-label">Term of Office</span>
+        <span class="dossier-val" id="dossier-term">&mdash;</span>
+      </div>
+
+      <div class="dossier-item">
+        <span class="dossier-label">Office Hours</span>
+        <span class="dossier-val" id="dossier-hours">&mdash;</span>
+      </div>
+
+      <div class="dossier-item">
+        <span class="dossier-label">Contact Number</span>
+        <span class="dossier-val" id="dossier-phone">&mdash;</span>
+      </div>
+
+      <div class="dossier-item">
+        <span class="dossier-label">Official Email</span>
+        <span class="dossier-val" id="dossier-email">&mdash;</span>
+      </div>
+    </div>
+
+    <!-- Management Controls -->
+    <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-sm); border-top: 1px solid var(--color-hairline-soft); display: flex; justify-content: space-between; align-items: center;">
+      <button class="table-action-btn danger" id="btn-dossier-delete" style="height: 34px; padding: 0 14px;">
+        Delete Official
+      </button>
+      <div style="display: flex; gap: var(--spacing-xs);">
+        <button class="button-outline" id="btn-dossier-signatory" style="height: 34px; padding: 0 14px; font-size: 0.75rem;">
+          Set as Signatory
+        </button>
+        <button class="button-primary" id="btn-dossier-edit" style="height: 34px; padding: 0 16px; font-size: 0.75rem;">
+          Edit Details
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal 3: Delete Confirmation Modal -->
+  <dialog id="delete-confirm-modal" class="modal-dialog" style="width: 90%; max-width: 440px;">
+    <h4 class="typography-heading-4" style="color: #ef4444; margin-bottom: var(--spacing-xs);">Remove Official?</h4>
+    <p class="typography-body-sm" id="delete-confirm-msg" style="color: var(--color-text-muted); margin-bottom: var(--spacing-md);">
+      Are you sure you want to remove this official from the directory? This action will be recorded in the security audit trail.
+    </p>
+    <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+      <button class="button-pill-soft" onclick="document.getElementById('delete-confirm-modal').close();" style="height: 34px; padding: 0 14px;">Cancel</button>
+      <button class="button-primary" id="btn-confirm-delete-action" style="height: 34px; padding: 0 16px; background-color: #ef4444; border-color: #ef4444;">Confirm Delete</button>
+    </div>
+  </dialog>
+
+  <!-- Printable Official Directory Letterhead -->
+  <div id="printable-directory-sheet">
+    <div style="text-align: center; border-bottom: 2px solid #111; padding-bottom: 12px; margin-bottom: 18px;">
+      <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #555;">Republic of the Philippines</div>
+      <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #555;" id="print-jurisdiction">Province of Metropolitan Manila &bull; City of San Isidro</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #111; letter-spacing: 0.02em; margin: 4px 0;" id="print-brgy-name">BARANGAY SAN ISIDRO</div>
+      <div style="font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #0066ff;">OFFICE OF THE SANGGUNIANG BARANGAY</div>
+      <div style="font-size: 0.8rem; font-weight: 600; color: #333; margin-top: 4px;">OFFICIAL ROSTER OF ELECTIVE LEADERS &amp; APPOINTED CIVIL STAFF</div>
+    </div>
+
+    <div style="margin-bottom: 16px; font-size: 0.75rem; color: #666; display: flex; justify-content: space-between;">
+      <span>Document Classification: Official Public Roster</span>
+      <span id="print-date-stamp">Date: &mdash;</span>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.825rem;">
+      <thead>
+        <tr style="border-bottom: 1.5px solid #111; text-align: left; background: #f3f3f3;">
+          <th style="padding: 8px 10px; font-weight: 700;">OFFICIAL NAME</th>
+          <th style="padding: 8px 10px; font-weight: 700;">POSITION / TITLE</th>
+          <th style="padding: 8px 10px; font-weight: 700;">COMMITTEE ASSIGNMENT</th>
+          <th style="padding: 8px 10px; font-weight: 700;">TERM PERIOD</th>
+          <th style="padding: 8px 10px; font-weight: 700;">CONTACT</th>
+        </tr>
+      </thead>
+      <tbody id="print-roster-tbody">
+        <!-- Injected dynamically on print -->
+      </tbody>
+    </table>
+
+    <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
+      <div style="text-align: center; width: 220px;">
+        <div style="border-bottom: 1px solid #111; height: 35px;"></div>
+        <div style="padding-top: 4px; font-weight: 700; font-size: 0.85rem;" id="print-captain-signature">HON. PUNONG BARANGAY</div>
+        <div style="font-size: 0.75rem; color: #555;">Punong Barangay / Council Presiding Officer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/sidebar.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Guard route: require authentication
+      const authData = await authService.requireAuth('login.php');
+      if (!authData) return;
+      const { user: currentAuthUser } = authData;
+
+      // 2. Mount persistent sidebar
+      await AppSidebar.render('officials');
+
+      // 3. State variables
+      let allOfficials = [];
+      let currentView = 'hierarchy'; // 'hierarchy' | 'table'
+      let activeOfficialForDossier = null;
+      let officialToDelete = null;
+
+      // DOM Elements
+      const rosterContainer = document.getElementById('roster-view-container');
+      const searchInput = document.getElementById('search-input');
+      const filterCategory = document.getElementById('filter-category');
+      const filterCommittee = document.getElementById('filter-committee');
+      const filterStatus = document.getElementById('filter-status');
+      const viewBtnHierarchy = document.getElementById('view-btn-hierarchy');
+      const viewBtnTable = document.getElementById('view-btn-table');
+
+      // Modals
+      const officialModal = document.getElementById('official-modal');
+      const dossierModal = document.getElementById('official-dossier-modal');
+      const deleteModal = document.getElementById('delete-confirm-modal');
+      const officialForm = document.getElementById('official-form');
+
+      // Position Order Mapping Helper
+      function getDefaultOrder(position) {
+        switch (position) {
+          case 'Punong Barangay': return 1;
+          case 'Barangay Kagawad': return 2;
+          case 'SK Chairperson': return 9;
+          case 'SK Kagawad': return 10;
+          case 'Barangay Secretary': return 11;
+          case 'Barangay Treasurer': return 12;
+          case 'Chief Tanod': return 13;
+          case 'Barangay Tanod': return 14;
+          case 'Barangay Health Worker': return 15;
+          case 'Barangay Nutrition Scholar': return 16;
+          case 'Day Care Worker': return 17;
+          case 'Lupon Member': return 18;
+          case 'Administrative Aide': return 19;
+          default: return 20;
+        }
+      }
+
+      // Auto update order and category when position changes
+      const positionSelect = document.getElementById('official-position');
+      const categorySelect = document.getElementById('official-category');
+      const orderInput = document.getElementById('official-order');
+      const committeeSelect = document.getElementById('official-committee');
+
+      positionSelect.addEventListener('change', () => {
+        const pos = positionSelect.value;
+        orderInput.value = getDefaultOrder(pos);
+        if (['Punong Barangay', 'Barangay Kagawad', 'SK Chairperson', 'SK Kagawad'].includes(pos)) {
+          categorySelect.value = 'elective';
+        } else {
+          categorySelect.value = 'appointive';
+        }
+
+        // Punong Barangay defaults to signatory
+        if (pos === 'Punong Barangay') {
+          document.getElementById('official-is-signatory').checked = true;
+          committeeSelect.value = 'Laws, Rules & Ethics';
+        }
+      });
+
+      // 4. Fetch and Refresh Officials Data
+      async function loadOfficials() {
+        try {
+          const records = await window.barangayDB.getAll('officials');
+          // Sort by order ascending, then by name
+          records.sort((a, b) => {
+            const ordA = a.order || 50;
+            const ordB = b.order || 50;
+            if (ordA !== ordB) return ordA - ordB;
+            return (a.fullName || '').localeCompare(b.fullName || '');
+          });
+
+          allOfficials = records;
+          updateTelemetry();
+          renderRoster();
+        } catch (err) {
+          console.error('Error fetching officials:', err);
+          showToast('Failed to load officials directory', 'error');
+        }
+      }
+
+      // 5. Update Telemetry Ladder
+      function updateTelemetry() {
+        const total = allOfficials.length;
+        const elective = allOfficials.filter(o => o.category === 'elective').length;
+        const appointive = allOfficials.filter(o => o.category === 'appointive').length;
+        const signatory = allOfficials.find(o => o.isSignatory && o.status === 'active') ||
+                          allOfficials.find(o => o.position === 'Punong Barangay' && o.status === 'active');
+
+        document.getElementById('stat-total-officials').textContent = total;
+        document.getElementById('stat-sub-total').textContent = `${total} registered in directory`;
+        document.getElementById('officials-count-badge').textContent = `${total} Personnel`;
+
+        document.getElementById('stat-total-elective').textContent = elective;
+        document.getElementById('stat-sub-elective').textContent = `${elective} elective leaders`;
+
+        document.getElementById('stat-total-appointive').textContent = appointive;
+        document.getElementById('stat-sub-appointive').textContent = `${appointive} appointed staff`;
+
+        if (signatory) {
+          document.getElementById('stat-signatory-name').textContent = signatory.fullName;
+          document.getElementById('stat-sub-signatory').textContent = signatory.position;
+        } else {
+          document.getElementById('stat-signatory-name').textContent = 'None Assigned';
+          document.getElementById('stat-sub-signatory').textContent = 'Clearances will use admin';
+        }
+      }
+
+      // 6. Filter Predicate Helper
+      function getFilteredOfficials() {
+        const q = searchInput.value.toLowerCase().trim();
+        const cat = filterCategory.value;
+        const com = filterCommittee.value;
+        const stat = filterStatus.value;
+
+        return allOfficials.filter(o => {
+          // Category filter
+          if (cat !== 'ALL' && o.category !== cat) return false;
+
+          // Status filter
+          if (stat !== 'ALL' && o.status !== stat) return false;
+
+          // Committee filter
+          if (com !== 'ALL') {
+            const hasPrimary = o.committee && o.committee.toLowerCase().includes(com.toLowerCase());
+            const hasSecondary = o.secondaryCommittee && o.secondaryCommittee.toLowerCase().includes(com.toLowerCase());
+            if (!hasPrimary && !hasSecondary) return false;
+          }
+
+          // Search query
+          if (q) {
+            const matchName = (o.fullName || '').toLowerCase().includes(q);
+            const matchPos = (o.position || '').toLowerCase().includes(q);
+            const matchCom = (o.committee || '').toLowerCase().includes(q);
+            const matchPhone = (o.contactNumber || '').toLowerCase().includes(q);
+            const matchEmail = (o.email || '').toLowerCase().includes(q);
+            if (!matchName && !matchPos && !matchCom && !matchPhone && !matchEmail) return false;
+          }
+
+          return true;
+        });
+      }
+
+      // 7. Render Roster (Hierarchy vs Table View)
+      function renderRoster() {
+        const filtered = getFilteredOfficials();
+
+        // Check if database is completely empty
+        if (allOfficials.length === 0) {
+          rosterContainer.innerHTML = `
+            <div class="empty-state-card" style="margin-top: var(--spacing-md); padding: var(--spacing-xl) var(--spacing-lg);">
+              <div class="nav-brand-icon" style="width: 52px; height: 52px; border-radius: 30%; font-size: 1.5rem;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="6"/>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                </svg>
+              </div>
+              <h3 class="typography-heading-4 mt-sm">Zero Barangay Officials Recorded Yet.</h3>
+              <p class="typography-body-sm mt-xs" style="max-width: 440px;">
+                The database is clean and unseeded. Register the Punong Barangay, Sangguniang Barangay Kagawads, and appointive officers to build the official government directory.
+              </p>
+              <button class="button-primary mt-md" onclick="openAddModal();">
+                + Register First Official
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        // Check if filter returned zero
+        if (filtered.length === 0) {
+          rosterContainer.innerHTML = `
+            <div class="empty-state-card" style="margin-top: var(--spacing-md); padding: var(--spacing-lg);">
+              <p class="typography-body-sm" style="color: var(--color-text-muted);">
+                No officials match your current search and filter criteria.
+              </p>
+              <button class="button-pill-soft mt-sm" onclick="clearFilters();">
+                Reset Filters
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        if (currentView === 'hierarchy') {
+          renderHierarchyView(filtered);
+        } else {
+          renderTableView(filtered);
+        }
+      }
+
+      // 8. Render Hierarchy Cards View
+      function renderHierarchyView(records) {
+        // Group records
+        const captain = records.find(r => r.position === 'Punong Barangay');
+        const kagawads = records.filter(r => r.position === 'Barangay Kagawad');
+        const skChair = records.find(r => r.position === 'SK Chairperson');
+        const skMembers = records.filter(r => r.position === 'SK Kagawad');
+        const keyOfficers = records.filter(r => ['Barangay Secretary', 'Barangay Treasurer', 'Chief Tanod'].includes(r.position));
+        const otherStaff = records.filter(r => 
+          r !== captain && 
+          !kagawads.includes(r) && 
+          r !== skChair && 
+          !skMembers.includes(r) && 
+          !keyOfficers.includes(r)
+        );
+
+        let html = '';
+
+        // Section A: Punong Barangay Spotlight
+        if (captain) {
+          const initials = captain.fullName.replace(/Hon\.\s*/i, '').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+          html += `
+            <div class="hierarchy-section-title">
+              <span class="typography-label" style="color: var(--color-text-muted);">EXECUTIVE LEADERSHIP</span>
+              <span class="badge-blue">Head of Government</span>
+            </div>
+            <div class="captain-spotlight-card">
+              <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <div class="official-avatar captain" style="width: 58px; height: 58px; font-size: 1.25rem;">
+                  ${initials}
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <h3 class="typography-heading-4" style="margin: 0;">${captain.fullName}</h3>
+                    <span class="badge-popular">Punong Barangay</span>
+                    ${captain.isSignatory ? '<span class="badge-emerald">Official Signatory</span>' : ''}
+                    <span class="badge-${captain.status === 'active' ? 'emerald' : 'amber'}">${captain.status.toUpperCase()}</span>
+                  </div>
+                  <p class="typography-body-sm" style="color: var(--color-text-muted); margin-top: 4px;">
+                    Presiding Officer, Sangguniang Barangay &bull; ${captain.committee || 'Executive Administration'}
+                  </p>
+                  <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-top: 6px; font-size: 0.75rem; color: var(--color-text-faint); flex-wrap: wrap;">
+                    <span><strong>Term:</strong> ${formatTerm(captain.termStart, captain.termEnd)}</span>
+                    ${captain.contactNumber ? `<span><strong>Contact:</strong> ${captain.contactNumber}</span>` : ''}
+                    ${captain.officeHours ? `<span><strong>Hours:</strong> ${captain.officeHours}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: var(--spacing-xs); align-self: center; flex-shrink: 0;">
+                <button class="table-action-btn" onclick="openDossier(${captain.id});">
+                  View Profile &rarr;
+                </button>
+                <button class="table-action-btn" onclick="openEditModal(${captain.id});">
+                  Edit
+                </button>
+              </div>
+            </div>
+          `;
+        }
+
+        // Section B: Sangguniang Barangay Kagawads
+        if (kagawads.length > 0) {
+          html += `
+            <div class="hierarchy-section-title">
+              <span class="typography-label" style="color: var(--color-text-muted);">SANGGUNIANG BARANGAY MEMBERS (KAGAWADS)</span>
+              <span class="badge-neutral">${kagawads.length} Kagawads</span>
+            </div>
+            <div class="officials-grid">
+              ${kagawads.map(k => renderOfficialCard(k)).join('')}
+            </div>
+          `;
+        }
+
+        // Section C: Sangguniang Kabataan (SK)
+        if (skChair || skMembers.length > 0) {
+          html += `
+            <div class="hierarchy-section-title">
+              <span class="typography-label" style="color: var(--color-text-muted);">SANGGUNIANG KABATAAN (YOUTH COUNCIL)</span>
+              <span class="badge-purple">Youth Governance</span>
+            </div>
+            <div class="officials-grid">
+              ${skChair ? renderOfficialCard(skChair, 'SK Chairperson') : ''}
+              ${skMembers.map(m => renderOfficialCard(m)).join('')}
+            </div>
+          `;
+        }
+
+        // Section D: Key Appointed Officers
+        if (keyOfficers.length > 0) {
+          html += `
+            <div class="hierarchy-section-title">
+              <span class="typography-label" style="color: var(--color-text-muted);">APPOINTED EXECUTIVE OFFICERS</span>
+              <span class="badge-neutral">Secretariat &amp; Treasury</span>
+            </div>
+            <div class="officials-grid">
+              ${keyOfficers.map(o => renderOfficialCard(o)).join('')}
+            </div>
+          `;
+        }
+
+        // Section E: Civil Service & Community Staff
+        if (otherStaff.length > 0) {
+          html += `
+            <div class="hierarchy-section-title">
+              <span class="typography-label" style="color: var(--color-text-muted);">CIVIL SERVICE &amp; COMMUNITY STAFF</span>
+              <span class="badge-neutral">${otherStaff.length} Personnel</span>
+            </div>
+            <div class="officials-grid">
+              ${otherStaff.map(s => renderOfficialCard(s)).join('')}
+            </div>
+          `;
+        }
+
+        rosterContainer.innerHTML = html;
+      }
+
+      // Helper to render individual official card
+      function renderOfficialCard(official, badgeOverride) {
+        const initials = official.fullName.replace(/Hon\.\s*/i, '').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        return `
+          <div class="official-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div class="official-avatar">
+                  ${initials}
+                </div>
+                <div style="display: flex; gap: 4px; align-items: center;">
+                  ${official.isSignatory ? '<span class="badge-emerald" style="padding: 1px 6px; font-size: 0.625rem;">Signatory</span>' : ''}
+                  <span class="badge-${official.status === 'active' ? 'emerald' : 'amber'}" style="padding: 1px 6px; font-size: 0.625rem;">
+                    ${official.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              <h4 class="typography-heading-4" style="font-size: 0.9375rem; line-height: 1.2; margin-bottom: 2px;">
+                ${official.fullName}
+              </h4>
+              <div class="typography-caption" style="font-weight: 600; color: var(--color-primary); margin-bottom: 8px;">
+                ${badgeOverride || official.position}
+              </div>
+
+              ${official.committee && official.committee !== 'None / Not Applicable' ? `
+                <div style="margin-bottom: 8px;">
+                  <span class="committee-tag" title="${official.committee}">
+                    ${official.committee}
+                  </span>
+                </div>
+              ` : ''}
+
+              <div style="font-size: 0.71875rem; color: var(--color-text-muted); display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px;">
+                <span><strong>Term:</strong> ${formatTerm(official.termStart, official.termEnd)}</span>
+                ${official.contactNumber ? `<span><strong>Phone:</strong> ${official.contactNumber}</span>` : ''}
+                ${official.officeHours ? `<span><strong>Hours:</strong> ${official.officeHours}</span>` : ''}
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid var(--color-hairline-soft);">
+              <button class="table-action-btn" onclick="openDossier(${official.id});">
+                Profile
+              </button>
+              <div style="display: flex; gap: 4px;">
+                <button class="table-action-btn" onclick="openEditModal(${official.id});" title="Edit Official">
+                  Edit
+                </button>
+                <button class="table-action-btn danger" onclick="confirmDeleteOfficial(${official.id});" title="Delete Official">
+                  &times;
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 9. Render Table View
+      function renderTableView(records) {
+        let rows = records.map(o => {
+          const initials = o.fullName.replace(/Hon\.\s*/i, '').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+          const categoryBadge = o.category === 'elective' ? 'badge-blue' : 'badge-purple';
+          const statusBadge = o.status === 'active' ? 'badge-emerald' : 'badge-amber';
+
+          return `
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div class="official-avatar ${o.position === 'Punong Barangay' ? 'captain' : ''}" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                    ${initials}
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; color: var(--color-ink);">${o.fullName}</div>
+                    <div style="font-size: 0.6875rem; color: var(--color-text-muted);">${o.email || o.contactNumber || 'No contact specified'}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="font-weight: 600;">${o.position}</div>
+                <div style="font-size: 0.6875rem; color: var(--color-text-faint);">Rank: ${o.order || '20'}</div>
+              </td>
+              <td>
+                <span class="${categoryBadge}">${o.category === 'elective' ? 'Elective' : 'Appointed'}</span>
+              </td>
+              <td>
+                <div style="font-size: 0.78125rem; font-weight: 500; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  ${o.committee && o.committee !== 'None / Not Applicable' ? o.committee : '<span style="color: var(--color-text-faint);">&mdash;</span>'}
+                </div>
+                ${o.secondaryCommittee ? `<div style="font-size: 0.6875rem; color: var(--color-text-muted);">${o.secondaryCommittee}</div>` : ''}
+              </td>
+              <td>
+                <div style="font-size: 0.75rem;">${formatTerm(o.termStart, o.termEnd)}</div>
+              </td>
+              <td>
+                ${o.isSignatory 
+                  ? '<span class="badge-emerald" style="padding: 1px 8px;">Active Signatory</span>' 
+                  : '<span style="color: var(--color-text-faint); font-size: 0.75rem;">&mdash;</span>'}
+              </td>
+              <td>
+                <span class="${statusBadge}">${o.status.toUpperCase()}</span>
+              </td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 4px;">
+                  <button class="table-action-btn" onclick="openDossier(${o.id});" title="View Dossier">
+                    View
+                  </button>
+                  <button class="table-action-btn" onclick="openEditModal(${o.id});" title="Edit Official">
+                    Edit
+                  </button>
+                  <button class="table-action-btn danger" onclick="confirmDeleteOfficial(${o.id});" title="Delete">
+                    &times;
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        rosterContainer.innerHTML = `
+          <div class="data-table-container mt-sm">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Official Name</th>
+                    <th>Position / Designation</th>
+                    <th>Category</th>
+                    <th>Committee Assignment</th>
+                    <th>Term Period</th>
+                    <th>Signatory</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // 10. Format Term Helper
+      function formatTerm(start, end) {
+        if (!start && !end) return '2023 &ndash; 2026';
+        const s = start ? new Date(start).getFullYear() : '2023';
+        const e = end ? new Date(end).getFullYear() : '2026';
+        return `${s} &ndash; ${e}`;
+      }
+
+      // 11. View Switcher Event Handlers
+      viewBtnHierarchy.addEventListener('click', () => {
+        currentView = 'hierarchy';
+        viewBtnHierarchy.classList.add('active');
+        viewBtnTable.classList.remove('active');
+        renderRoster();
+      });
+
+      viewBtnTable.addEventListener('click', () => {
+        currentView = 'table';
+        viewBtnTable.classList.add('active');
+        viewBtnHierarchy.classList.remove('active');
+        renderRoster();
+      });
+
+      // Filter change listeners
+      searchInput.addEventListener('input', renderRoster);
+      filterCategory.addEventListener('change', renderRoster);
+      filterCommittee.addEventListener('change', renderRoster);
+      filterStatus.addEventListener('change', renderRoster);
+
+      window.clearFilters = () => {
+        searchInput.value = '';
+        filterCategory.value = 'ALL';
+        filterCommittee.value = 'ALL';
+        filterStatus.value = 'ALL';
+        renderRoster();
+      };
+
+      // 12. Modal Open / Close Logic
+      window.openAddModal = () => {
+        document.getElementById('modal-title').textContent = 'Record Barangay Official.';
+        document.getElementById('modal-subtitle').textContent = 'Add elected leader or appointive staff member to the official roster.';
+        officialForm.reset();
+        document.getElementById('official-id').value = '';
+        document.getElementById('official-term-start').value = '2023-11-04';
+        document.getElementById('official-term-end').value = '2026-11-04';
+        document.getElementById('official-order').value = '1';
+        document.getElementById('official-position').dispatchEvent(new Event('change'));
+        officialModal.showModal();
+      };
+
+      document.getElementById('btn-open-add-modal').addEventListener('click', openAddModal);
+      document.getElementById('btn-close-modal').addEventListener('click', () => officialModal.close());
+      document.getElementById('btn-cancel-modal').addEventListener('click', () => officialModal.close());
+
+      window.openEditModal = (id) => {
+        const official = allOfficials.find(o => o.id === Number(id));
+        if (!official) return;
+
+        document.getElementById('modal-title').textContent = 'Edit Official Details.';
+        document.getElementById('modal-subtitle').textContent = `Updating records for ${official.fullName}.`;
+        document.getElementById('official-id').value = official.id;
+        document.getElementById('official-name').value = official.fullName || '';
+        document.getElementById('official-position').value = official.position || 'Barangay Kagawad';
+        document.getElementById('official-category').value = official.category || 'elective';
+        document.getElementById('official-committee').value = official.committee || 'None / Not Applicable';
+        document.getElementById('official-secondary-committee').value = official.secondaryCommittee || '';
+        document.getElementById('official-term-start').value = official.termStart || '2023-11-04';
+        document.getElementById('official-term-end').value = official.termEnd || '2026-11-04';
+        document.getElementById('official-status').value = official.status || 'active';
+        document.getElementById('official-phone').value = official.contactNumber || '';
+        document.getElementById('official-email').value = official.email || '';
+        document.getElementById('official-hours').value = official.officeHours || '';
+        document.getElementById('official-is-signatory').checked = !!official.isSignatory;
+        document.getElementById('official-order').value = official.order || getDefaultOrder(official.position);
+
+        if (dossierModal.open) dossierModal.close();
+        officialModal.showModal();
+      };
+
+      // 13. Save / Update Official Form Submission
+      officialForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const officialId = document.getElementById('official-id').value;
+        const fullName = document.getElementById('official-name').value.trim();
+        const position = document.getElementById('official-position').value;
+        const category = document.getElementById('official-category').value;
+        const committee = document.getElementById('official-committee').value;
+        const secondaryCommittee = document.getElementById('official-secondary-committee').value.trim();
+        const termStart = document.getElementById('official-term-start').value;
+        const termEnd = document.getElementById('official-term-end').value;
+        const status = document.getElementById('official-status').value;
+        const contactNumber = document.getElementById('official-phone').value.trim();
+        const email = document.getElementById('official-email').value.trim();
+        const officeHours = document.getElementById('official-hours').value.trim();
+        const isSignatory = document.getElementById('official-is-signatory').checked;
+        const order = parseInt(document.getElementById('official-order').value, 10) || getDefaultOrder(position);
+
+        if (!fullName) {
+          showToast('Please enter the official legal name', 'error');
+          return;
+        }
+
+        try {
+          // If this official is designated as signatory, reset other officials' signatory flag
+          if (isSignatory) {
+            for (const off of allOfficials) {
+              if (off.id !== Number(officialId) && off.isSignatory) {
+                off.isSignatory = false;
+                await window.barangayDB.put('officials', off);
+              }
+            }
+          }
+
+          const officialData = {
+            fullName,
+            position,
+            category,
+            committee,
+            secondaryCommittee,
+            termStart,
+            termEnd,
+            status,
+            contactNumber,
+            email,
+            officeHours,
+            isSignatory,
+            order,
+            updatedAt: new Date().toISOString()
+          };
+
+          if (officialId) {
+            // Edit existing
+            officialData.id = Number(officialId);
+            await window.barangayDB.put('officials', officialData);
+
+            await window.authService.logAuditTrail(
+              currentAuthUser.id,
+              'OFFICIAL_UPDATED',
+              `Updated records for ${fullName} (${position})`
+            );
+
+            showToast(`Updated official: ${fullName}`);
+          } else {
+            // Add new
+            officialData.createdAt = new Date().toISOString();
+            await window.barangayDB.add('officials', officialData);
+
+            await window.authService.logAuditTrail(
+              currentAuthUser.id,
+              'OFFICIAL_REGISTERED',
+              `Registered official ${fullName} as ${position}`
+            );
+
+            showToast(`Official registered: ${fullName}`);
+          }
+
+          officialModal.close();
+          await loadOfficials();
+        } catch (err) {
+          console.error('Failed to save official:', err);
+          showToast('Database error saving official', 'error');
+        }
+      });
+
+      // 14. Open Official Dossier Profile
+      window.openDossier = (id) => {
+        const official = allOfficials.find(o => o.id === Number(id));
+        if (!official) return;
+
+        activeOfficialForDossier = official;
+        const initials = official.fullName.replace(/Hon\.\s*/i, '').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+
+        document.getElementById('dossier-avatar').textContent = initials;
+        if (official.position === 'Punong Barangay') {
+          document.getElementById('dossier-avatar').className = 'official-avatar captain';
+        } else {
+          document.getElementById('dossier-avatar').className = 'official-avatar';
+        }
+
+        document.getElementById('dossier-name').textContent = official.fullName;
+        document.getElementById('dossier-position-badge').textContent = official.position;
+        document.getElementById('dossier-status-badge').textContent = official.status.toUpperCase();
+        document.getElementById('dossier-status-badge').className = `badge-${official.status === 'active' ? 'emerald' : 'amber'}`;
+
+        const sigBadge = document.getElementById('dossier-signatory-badge');
+        if (official.isSignatory) {
+          sigBadge.style.display = 'inline-flex';
+        } else {
+          sigBadge.style.display = 'none';
+        }
+
+        document.getElementById('dossier-committee').textContent = official.committee || 'None / Not Applicable';
+        document.getElementById('dossier-secondary-committee').textContent = official.secondaryCommittee || 'None';
+        document.getElementById('dossier-term').innerHTML = formatTerm(official.termStart, official.termEnd);
+        document.getElementById('dossier-hours').textContent = official.officeHours || 'Not specified';
+        document.getElementById('dossier-phone').textContent = official.contactNumber || 'Not specified';
+        document.getElementById('dossier-email').textContent = official.email || 'Not specified';
+
+        // Dossier action bindings
+        const btnDossierSignatory = document.getElementById('btn-dossier-signatory');
+        btnDossierSignatory.textContent = official.isSignatory ? 'Remove Signatory' : 'Set as Signatory';
+        btnDossierSignatory.onclick = async () => {
+          await toggleSignatory(official.id);
+          openDossier(official.id);
+        };
+
+        document.getElementById('btn-dossier-edit').onclick = () => {
+          openEditModal(official.id);
+        };
+
+        document.getElementById('btn-dossier-delete').onclick = () => {
+          confirmDeleteOfficial(official.id);
+        };
+
+        dossierModal.showModal();
+      };
+
+      // 15. Toggle Signatory
+      async function toggleSignatory(id) {
+        const official = allOfficials.find(o => o.id === Number(id));
+        if (!official) return;
+
+        try {
+          const newStatus = !official.isSignatory;
+          // If making signatory, remove other signatories
+          if (newStatus) {
+            for (const off of allOfficials) {
+              if (off.isSignatory) {
+                off.isSignatory = false;
+                await window.barangayDB.put('officials', off);
+              }
+            }
+          }
+
+          official.isSignatory = newStatus;
+          await window.barangayDB.put('officials', official);
+
+          await window.authService.logAuditTrail(
+            currentAuthUser.id,
+            'OFFICIAL_SIGNATORY_SET',
+            `${newStatus ? 'Assigned' : 'Removed'} ${official.fullName} as official certificate signatory`
+          );
+
+          showToast(newStatus ? `${official.fullName} designated as active signatory` : 'Signatory assignment removed');
+          await loadOfficials();
+        } catch (err) {
+          console.error('Error toggling signatory:', err);
+          showToast('Failed to update signatory status', 'error');
+        }
+      }
+
+      // 16. Delete Official Handling
+      window.confirmDeleteOfficial = (id) => {
+        const official = allOfficials.find(o => o.id === Number(id));
+        if (!official) return;
+
+        officialToDelete = official;
+        document.getElementById('delete-confirm-msg').innerHTML = `
+          Are you sure you want to remove <strong>${official.fullName}</strong> (${official.position}) from the directory? This action cannot be undone.
+        `;
+        deleteModal.showModal();
+      };
+
+      document.getElementById('btn-confirm-delete-action').addEventListener('click', async () => {
+        if (!officialToDelete) return;
+
+        try {
+          await window.barangayDB.delete('officials', officialToDelete.id);
+
+          await window.authService.logAuditTrail(
+            currentAuthUser.id,
+            'OFFICIAL_DELETED',
+            `Removed official ${officialToDelete.fullName} (${officialToDelete.position}) from directory`
+          );
+
+          showToast(`Official ${officialToDelete.fullName} removed`);
+          deleteModal.close();
+          if (dossierModal.open) dossierModal.close();
+          officialToDelete = null;
+          await loadOfficials();
+        } catch (err) {
+          console.error('Failed to delete official:', err);
+          showToast('Failed to remove official', 'error');
+        }
+      });
+
+      // 17. Print Official Directory Letterhead
+      document.getElementById('btn-print-roster').addEventListener('click', async () => {
+        if (allOfficials.length === 0) {
+          showToast('No officials registered to print', 'warning');
+          return;
+        }
+
+        try {
+          const idSetting = await window.barangayDB.get('settings', 'identity');
+          if (idSetting && idSetting.value) {
+            const v = idSetting.value;
+            if (v.barangayName) {
+              const h = document.getElementById('print-brgy-name');
+              if (h) h.textContent = v.barangayName.toUpperCase();
+            }
+            if (v.province && v.municipalityCity) {
+              const j = document.getElementById('print-jurisdiction');
+              if (j) j.textContent = `${v.province} • ${v.municipalityCity}`;
+            }
+          }
+        } catch (e) {}
+
+        const dateStamp = new Date().toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+        document.getElementById('print-date-stamp').textContent = `Date Generated: ${dateStamp}`;
+
+        const captain = allOfficials.find(o => o.position === 'Punong Barangay');
+        if (captain) {
+          document.getElementById('print-captain-signature').textContent = captain.fullName.toUpperCase();
+        } else {
+          document.getElementById('print-captain-signature').textContent = 'HON. PUNONG BARANGAY';
+        }
+
+        const tbody = document.getElementById('print-roster-tbody');
+        tbody.innerHTML = allOfficials.map(o => `
+          <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 7px 10px; font-weight: 600;">${o.fullName}</td>
+            <td style="padding: 7px 10px;">${o.position}</td>
+            <td style="padding: 7px 10px;">${o.committee || 'None'}</td>
+            <td style="padding: 7px 10px;">${formatTerm(o.termStart, o.termEnd)}</td>
+            <td style="padding: 7px 10px;">${o.contactNumber || o.email || 'Barangay Hall'}</td>
+          </tr>
+        `).join('');
+
+        window.print();
+      });
+
+      // 18. Initial Load
+      await loadOfficials();
+    });
+  </script>
+</body>
+</html>

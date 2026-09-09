@@ -1,0 +1,1556 @@
+<?php
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/auth.php';
+require_auth('login.php');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clearances & Certifications &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .page-hero {
+      padding: var(--spacing-xs) 0 var(--spacing-sm);
+    }
+
+    .stats-ladder {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    @media (max-width: 1024px) {
+      .stats-ladder {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats-ladder {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: 6px 12px;
+    }
+
+    @media (max-width: 768px) {
+      .filter-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+        gap: var(--spacing-xs);
+      }
+      .filter-toolbar .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+      }
+      .filter-toolbar .search-input-wrap {
+        width: 100%;
+        min-width: 0;
+      }
+      .filter-toolbar .filter-select {
+        width: 100%;
+      }
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      min-width: 260px;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-faint);
+      pointer-events: none;
+    }
+
+    .search-input-wrap input {
+      height: 38px;
+      padding-left: 38px;
+      font-size: 0.8125rem;
+      border-radius: var(--rounded-full);
+    }
+
+    .filter-select {
+      height: 38px;
+      padding: 0 12px;
+      font-size: 0.8125rem;
+      border-radius: var(--rounded-full);
+      background-color: var(--color-field);
+      border: 1px solid transparent;
+      color: var(--color-ink);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select:focus {
+      border-color: var(--color-primary);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    @media (max-width: 640px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cert-type-pill-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .cert-type-pill-selector {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .cert-type-btn {
+      padding: 10px 8px;
+      text-align: center;
+      background-color: var(--color-canvas-soft);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--rounded-sm);
+      color: var(--color-ink);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cert-type-btn:hover {
+      border-color: var(--color-primary);
+    }
+
+    .cert-type-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-on-primary);
+      border-color: var(--color-primary);
+    }
+
+    .cert-type-btn.active svg {
+      stroke: var(--color-on-primary);
+    }
+
+    /* Print Preview Styles */
+    #printable-certificate {
+      background: #ffffff;
+      color: #111111;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.08);
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.5;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .cert-header {
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #111111;
+      padding-bottom: 16px;
+      position: relative;
+    }
+
+    .cert-logo {
+      width: 70px;
+      height: 70px;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .cert-title {
+      font-size: 1.625rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 20px 0 16px;
+      text-align: center;
+      font-family: var(--font-family), sans-serif;
+    }
+
+    .cert-body {
+      font-size: 1.05rem;
+      text-align: justify;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    .cert-body p {
+      margin-bottom: 16px;
+      text-indent: 40px;
+    }
+
+    .cert-signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding-top: 20px;
+    }
+
+    .cert-footer-meta {
+      margin-top: 30px;
+      border-top: 1px dashed #999;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: #444;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #print-modal, #print-modal * {
+        visibility: visible !important;
+      }
+      #print-modal {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        display: block !important;
+      }
+      .modal-dialog::backdrop {
+        display: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      #printable-certificate {
+        box-shadow: none !important;
+        padding: 20mm !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <!-- Main Content Workspace -->
+    <div class="app-main">
+      <div id="mobile-header-mount"></div>
+      <div id="app-topbar-mount"></div>
+
+      <main class="app-content">
+        <!-- Page Hero Section -->
+        <section class="page-hero">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+                <h1 class="typography-heading-2">Clearances & Certifications.</h1>
+                <span class="badge-neutral" id="cert-count-badge">0 Issued</span>
+              </div>
+              <p class="typography-body-lg">
+                Official document generation, digital tracking control codes, and instant print issuance.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+              <button class="button-primary" id="btn-open-issue-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Issue Document</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Document Telemetry Ladder -->
+        <section>
+          <div class="stats-ladder">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL ISSUED</span>
+                <span class="badge-neutral">Database Live</span>
+              </div>
+              <div class="stat-number" id="stat-total-certs">0</div>
+              <div class="typography-caption" id="stat-sub-total">0 tracking codes verified</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">BARANGAY CLEARANCES</span>
+                <span class="badge-blue">Clearance</span>
+              </div>
+              <div class="stat-number" id="stat-total-clearances">0</div>
+              <div class="typography-caption" id="stat-sub-clearances">Employment & legal</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">INDIGENCY & RESIDENCY</span>
+                <span class="badge-amber">Welfare / Civil</span>
+              </div>
+              <div class="stat-number" id="stat-total-welfare">0</div>
+              <div class="typography-caption" id="stat-sub-welfare">Social aid & certification</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">REVENUE COLLECTED</span>
+                <span class="badge-emerald">Barangay Funds</span>
+              </div>
+              <div class="stat-number" id="stat-total-revenue">&#8369;0.00</div>
+              <div class="typography-caption" id="stat-sub-revenue">Official receipts logged</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filter & Search Toolbar -->
+        <section>
+          <div class="filter-toolbar">
+            <div class="filter-group">
+              <div class="search-input-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="search-certs" class="text-input" placeholder="Search tracking code, recipient, or purpose..." autocomplete="off">
+              </div>
+
+              <!-- Document Type Filter -->
+              <select id="filter-cert-type" class="filter-select">
+                <option value="">All Document Types</option>
+                <option value="Barangay Clearance">Barangay Clearance</option>
+                <option value="Certificate of Indigency">Certificate of Indigency</option>
+                <option value="Certificate of Residency">Certificate of Residency</option>
+                <option value="Business Clearance">Business Clearance</option>
+              </select>
+
+              <!-- Status Filter -->
+              <select id="filter-cert-status" class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="Issued">Issued</option>
+                <option value="Pending Review">Pending Online Requests</option>
+                <option value="Revoked">Revoked</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <button id="btn-clear-cert-filters" class="button-pill-soft" style="height: 34px; padding: 0 12px; font-size: 0.75rem; display: none;">
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Certificates Data Table Section -->
+        <section class="mb-section">
+          <!-- Populated Table Container -->
+          <div id="table-container" class="data-table-container" style="display: none;">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tracking Code</th>
+                    <th>Recipient</th>
+                    <th>Document Type</th>
+                    <th>Purpose</th>
+                    <th>Fee & OR Number</th>
+                    <th>Date Issued</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="cert-table-body">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Empty State (No records in DB) -->
+          <div id="empty-state" class="empty-state-card" style="padding: var(--spacing-section) var(--spacing-xl);">
+            <div class="nav-brand-icon" style="width: 56px; height: 56px; font-size: 1.5rem;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="typography-heading-3">No Certificates Issued Yet.</h3>
+              <p class="typography-body mt-xs" style="color: var(--color-text-muted); max-width: 460px;">
+                This database is clean with zero dummy records. Issue official documents for community residents with unique cryptographic control codes.
+              </p>
+            </div>
+            <button class="button-primary mt-sm" onclick="document.getElementById('btn-open-issue-modal').click();">
+              + Issue First Document
+            </button>
+          </div>
+
+          <!-- Filter Match Empty State -->
+          <div id="filter-empty-state" class="empty-state-card" style="display: none; padding: var(--spacing-xl);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted);">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <h4 class="typography-heading-4">No Matching Certificates.</h4>
+            <p class="typography-body-sm" style="color: var(--color-text-muted);">
+              No records match your active search terms or filter selections.
+            </p>
+            <button class="button-pill-soft" onclick="resetCertFilters();">Clear All Filters</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Document Issuance Modal -->
+  <dialog id="issue-modal" class="modal-dialog" style="max-width: 720px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div>
+        <h3 class="typography-heading-4" id="issue-modal-title">Issue Official Barangay Document.</h3>
+        <p class="typography-caption">Generate cryptographic tracking number and official certificate.</p>
+      </div>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('issue-modal').close();" style="height: 30px; padding: 0 10px;">
+        Cancel
+      </button>
+    </div>
+
+    <form id="issue-form" novalidate>
+      <!-- Step 1: Document Type Selection -->
+      <div style="margin-bottom: var(--spacing-md);">
+        <label class="form-label">1. Select Document Type</label>
+        <div class="cert-type-pill-selector">
+          <button type="button" class="cert-type-btn active" data-type="Barangay Clearance" data-fee="50.00" data-prefix="BC">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Barangay Clearance</span>
+          </button>
+          <button type="button" class="cert-type-btn" data-type="Certificate of Indigency" data-fee="0.00" data-prefix="CI">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span>Indigency Certificate</span>
+          </button>
+          <button type="button" class="cert-type-btn" data-type="Certificate of Residency" data-fee="30.00" data-prefix="CR">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>Residency Certificate</span>
+          </button>
+          <button type="button" class="cert-type-btn" data-type="Business Clearance" data-fee="150.00" data-prefix="BP">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <span>Business Permit</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Select Resident from Database -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <label class="form-label" for="select-resident">2. Recipient Resident <span style="color: var(--color-primary);">*</span></label>
+        
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: 4px;">
+          <select id="select-resident" class="text-input" style="height: 42px; padding: 0 12px; flex: 1;" required>
+            <option value="">-- Choose Registered Resident from Database --</option>
+          </select>
+          <a href="residents.php" target="_blank" class="button-outline" style="height: 42px; padding: 0 14px; font-size: 0.75rem; flex-shrink: 0;" title="Open Residents Directory to register new resident">
+            + New Resident
+          </a>
+        </div>
+
+        <div id="resident-info-card" style="display: none; margin-top: var(--spacing-xs); padding: 8px 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.75rem;">
+          <span style="font-weight: 600;" id="recip-card-name">-</span> &bull; 
+          <span id="recip-card-age">-</span> &bull; 
+          <span id="recip-card-address">-</span>
+          <div id="recip-indigent-tip" style="display: none; margin-top: 4px; color: #059669; font-weight: 500;">
+            &#10003; Resident is profiled as Indigent / 4Ps. Fee automatically waived.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Purpose & Official Details -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">3. Document Purpose & Financials</span>
+
+        <div class="form-grid-2 mt-xs">
+          <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+            <label class="form-label" for="cert-purpose">Specific Purpose <span style="color: var(--color-primary);">*</span></label>
+            <select id="cert-purpose-select" class="text-input" style="height: 42px; padding: 0 12px;">
+              <option value="Local Employment Application">Local Employment Application</option>
+              <option value="Overseas Work (POEA / OFW Requirement)">Overseas Work (POEA / OFW Requirement)</option>
+              <option value="Police Clearance / NBI Clearance Application">Police Clearance / NBI Clearance Application</option>
+              <option value="Postal ID / Government ID Application">Postal ID / Government ID Application</option>
+              <option value="Bank Account Opening / Financial Transaction">Bank Account Opening / Financial Transaction</option>
+              <option value="Scholarship / School Enrollment Requirement">Scholarship / School Enrollment Requirement</option>
+              <option value="Medical / Hospital Financial Assistance">Medical / Hospital Financial Assistance</option>
+              <option value="DSWD / Social Welfare Assistance">DSWD / Social Welfare Assistance</option>
+              <option value="Custom">-- Enter Custom Purpose --</option>
+            </select>
+            <input type="text" id="cert-purpose-custom" class="text-input mt-xs" style="height: 38px; display: none;" placeholder="Type custom purpose...">
+          </div>
+
+          <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+            <label class="form-label" for="cert-signatory">Signatory Official</label>
+            <input type="text" id="cert-signatory" class="text-input" style="height: 42px;" value="Hon. Punong Barangay">
+          </div>
+        </div>
+
+        <div id="business-fields" style="display: none; margin-top: var(--spacing-xs);">
+          <div class="form-grid-2">
+            <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+              <label class="form-label" for="cert-biz-name">Business Enterprise Name</label>
+              <input type="text" id="cert-biz-name" class="text-input" style="height: 42px;" placeholder="e.g. Santos Sari-Sari Store">
+            </div>
+            <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+              <label class="form-label" for="cert-biz-nature">Nature of Business</label>
+              <input type="text" id="cert-biz-nature" class="text-input" style="height: 42px;" placeholder="e.g. Retail / Food Services">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2 mt-xs">
+          <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+            <label class="form-label" for="cert-fee">Issuance Fee (PHP)</label>
+            <input type="number" step="0.01" id="cert-fee" class="text-input" style="height: 42px;" value="50.00">
+          </div>
+
+          <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+            <label class="form-label" for="cert-or">Official Receipt (OR) #</label>
+            <input type="text" id="cert-or" class="text-input" style="height: 42px;" placeholder="e.g. OR-2026-9041">
+          </div>
+        </div>
+
+        <!-- Citizen SMS Alert Toggle -->
+        <div style="margin-top: var(--spacing-xs); padding: 10px 14px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 600; font-size: 0.8125rem;">Notify Resident via SMS</div>
+            <div class="typography-caption" style="font-size: 0.6875rem;">Send instant clearance ready-for-pickup SMS alert.</div>
+          </div>
+          <label style="position: relative; display: inline-block; width: 40px; height: 22px;">
+            <input type="checkbox" id="cert-notify-sms" checked style="opacity: 0; width: 0; height: 0;">
+            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #141414; border-radius: 22px; transition: .2s;"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
+        <button type="button" class="button-outline" onclick="document.getElementById('issue-modal').close();" style="height: 42px; padding: 0 20px;">
+          Cancel
+        </button>
+        <button type="submit" class="button-primary" id="btn-submit-issue" style="height: 42px; padding: 0 24px;">
+          Generate & Save Certificate
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Official Document Print Preview Modal -->
+  <dialog id="print-modal" class="modal-dialog" style="max-width: 860px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+        <span class="badge-blue" id="modal-tracking-pill">BC-2026-00001</span>
+        <span class="typography-caption">Official Document Ready for Issuance</span>
+      </div>
+      <div style="display: flex; gap: var(--spacing-xs);">
+        <button type="button" class="button-outline" onclick="sendPrintModalSms();" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;" title="Send SMS pickup reminder">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Send SMS Alert</span>
+        </button>
+        <button type="button" class="button-outline" onclick="document.getElementById('print-modal').close();" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
+          Close
+        </button>
+        <button type="button" class="button-primary" onclick="window.print();" style="height: 36px; padding: 0 18px; font-size: 0.8125rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect width="12" height="8" x="6" y="14"/>
+          </svg>
+          <span>Print Document (Ctrl+P)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- The Exact Printable Paper Template -->
+    <div id="printable-certificate">
+      <div class="cert-header">
+        <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #555;">Republic of the Philippines</div>
+        <div style="font-size: 0.95rem; font-weight: 700; text-transform: uppercase;" id="print-jurisdiction">Province of Metropolitan Manila &bull; City of San Isidro</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #111; letter-spacing: 0.02em; margin: 4px 0;" id="print-brgy-name">BARANGAY SAN ISIDRO</div>
+        <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #0066ff;">OFFICE OF THE PUNONG BARANGAY</div>
+      </div>
+
+      <div class="cert-title" id="cert-doc-title">BARANGAY CLEARANCE</div>
+
+      <div class="cert-body">
+        <p style="font-weight: 700; margin-bottom: 24px;">TO WHOM IT MAY CONCERN:</p>
+        
+        <p id="cert-doc-intro">
+          This is to certify that <strong id="print-recipient-name">JUAN DELA CRUZ</strong>, of legal age, <span id="print-recipient-civil">Single</span>, Filipino, is a bonafide resident of <span id="print-recipient-address">Purok 4, Barangay San Isidro</span>, whose signature and right thumbmark appear below.
+        </p>
+
+        <p id="cert-doc-statement">
+          Based on the records on file in this office, the aforementioned individual is a person of good moral character, a peace-loving citizen, and has <strong>NO RECORD OF CRIMINAL OFFENSE</strong> or pending adverse complaints before the Lupong Tagapamayapa of this Barangay.
+        </p>
+
+        <p id="cert-doc-purpose-clause">
+          This certification is issued upon the request of the interested party for the purpose of: <strong id="print-purpose">Local Employment Application</strong> and for whatever legal purpose it may serve.
+        </p>
+
+        <p>
+          Given and issued this <span id="print-day">4th</span> day of <span id="print-month-year">September, 2026</span> at the Barangay Hall, Barangay San Isidro.
+        </p>
+      </div>
+
+      <!-- Signature Blocks -->
+      <div class="cert-signatures">
+        <div style="text-align: center; width: 200px;">
+          <div style="width: 140px; height: 75px; border: 1px dashed #777; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: #777; text-transform: uppercase;">
+            Right Thumbmark
+          </div>
+          <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: 700; font-size: 0.85rem;" id="print-thumb-name">
+            JUAN DELA CRUZ
+          </div>
+          <div style="font-size: 0.75rem; color: #555;">Specimen Signature / Conforme</div>
+        </div>
+
+        <div style="text-align: center; width: 240px;">
+          <div style="height: 60px;"></div>
+          <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: 800; font-size: 0.95rem;" id="print-signatory-name">
+            HON. PUNONG BARANGAY
+          </div>
+          <div style="font-size: 0.75rem; color: #333; font-weight: 600;">Punong Barangay</div>
+          <div style="font-size: 0.7rem; color: #777;">Officer-in-Charge</div>
+        </div>
+      </div>
+
+      <!-- Official Security Footer Details with Dynamic Scannable QR Code -->
+      <div class="cert-footer-meta" style="align-items: center; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div id="print-cert-qr" style="width: 68px; height: 68px; background: #ffffff; border: 1px solid #ccc; padding: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
+          <div style="font-size: 0.6875rem; line-height: 1.35; color: #444;">
+            <strong style="display: block; color: #111; font-size: 0.75rem; text-transform: uppercase;">Scan to Verify</strong>
+            Scan to confirm authenticity or browse to <span id="print-verify-link" style="color: #0066ff;">verify.php</span>
+          </div>
+        </div>
+        <div>
+          <div>Control #: <strong id="print-ctrl-num">BC-2026-00001</strong></div>
+          <div>O.R. No.: <span id="print-or-num">OR-892110</span></div>
+          <div>Fee Paid: <span id="print-fee">₱50.00</span></div>
+        </div>
+        <div style="text-align: right;">
+          <div>Issued By: <span id="print-issued-by">Admin</span></div>
+          <div>Official Seal of the Barangay</div>
+          <div style="font-size: 0.65rem; color: #888;">Valid for 6 months from issue date</div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Revoke / Delete Confirmation Modal -->
+  <dialog id="revoke-modal" class="modal-dialog" style="max-width: 440px; width: 90%; text-align: center;">
+    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-sm);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+    </div>
+    <h3 class="typography-heading-4">Revoke Certificate?</h3>
+    <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+      Are you sure you want to revoke tracking code <strong id="revoke-code-label" style="color: var(--color-ink);"></strong>? This invalidates the document in the security registry.
+    </p>
+    <div style="display: flex; justify-content: center; gap: var(--spacing-sm); margin-top: var(--spacing-lg);">
+      <button type="button" class="button-outline" onclick="document.getElementById('revoke-modal').close();" style="height: 38px; padding: 0 18px;">
+        Cancel
+      </button>
+      <button type="button" class="button-primary" id="btn-confirm-revoke" style="background-color: #ef4444; height: 38px; padding: 0 18px;">
+        Confirm Revocation
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/lib/qrcode.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/sidebar.js"></script>
+
+  <script>
+    let allCertificates = [];
+    let allResidentsMap = new Map();
+    let currentAuthUser = null;
+    let selectedCertType = 'Barangay Clearance';
+    let selectedPrefix = 'BC';
+    let selectedDefaultFee = 50.00;
+    let activeCertForAction = null;
+    let pendingApprovalCert = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Render App Shell Sidebar & Topbar immediately
+      try {
+        await AppSidebar.render('certificates');
+      } catch (err) {
+        console.error('Sidebar mount error:', err);
+      }
+
+      if (window.barangayAuth) {
+        currentAuthUser = window.barangayAuth.getUser();
+      }
+
+      // 2. Populate Signatory Default (Check Officials store first)
+      let defaultSignatory = (currentAuthUser && currentAuthUser.fullName) || 'Hon. Punong Barangay';
+      try {
+        const officials = await window.barangayDB.getAll('officials');
+        const activeSignatory = officials.find(o => o.isSignatory && o.status === 'active') ||
+                                officials.find(o => o.position === 'Punong Barangay' && o.status === 'active');
+        if (activeSignatory) {
+          defaultSignatory = activeSignatory.fullName;
+        }
+      } catch (e) {
+        console.warn('Could not load official signatory:', e);
+      }
+      document.getElementById('cert-signatory').value = defaultSignatory;
+
+      // 3b. Load Barangay Identity & Fee Schedules from Settings
+      try {
+        const idSetting = await window.barangayDB.get('settings', 'identity');
+        if (idSetting && idSetting.value) {
+          const v = idSetting.value;
+          if (v.barangayName) {
+            const h = document.getElementById('print-brgy-name');
+            if (h) h.textContent = v.barangayName.toUpperCase();
+          }
+          if (v.province && v.municipalityCity) {
+            const j = document.getElementById('print-jurisdiction');
+            if (j) j.textContent = `${v.province.toUpperCase()} • ${v.municipalityCity.toUpperCase()}`;
+          }
+        }
+        const feeSetting = await window.barangayDB.get('settings', 'fees');
+        if (feeSetting && feeSetting.value) {
+          window.customFees = feeSetting.value;
+        }
+      } catch (err) {
+        console.warn('Could not load custom settings in certificates:', err);
+      }
+
+      // 4. Load residents for the dropdown
+      await loadResidentsDropdown();
+
+      // 5. Check URL parameters (e.g. ?residentId=1&name=Juan)
+      checkUrlParameters();
+
+      // 6. Bind UI Event Listeners
+      bindEventListeners();
+
+      // 7. Refresh certificates list
+      await refreshCertificatesList();
+    });
+
+    // Load residents into the select input
+    async function loadResidentsDropdown() {
+      try {
+        const residents = await window.barangayDB.getAll('residents');
+        const select = document.getElementById('select-resident');
+        select.innerHTML = '<option value="">-- Choose Registered Resident from Database --</option>';
+
+        residents.sort((a, b) => (a.lastName || '').localeCompare(b.lastName || ''));
+
+        residents.forEach(r => {
+          allResidentsMap.set(r.id, r);
+          const fullName = [r.lastName, r.firstName, r.middleName].filter(Boolean).join(', ');
+          const opt = document.createElement('option');
+          opt.value = r.id;
+          opt.textContent = `${fullName} (${r.purok || 'Unassigned'})`;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Error loading residents:', e);
+      }
+    }
+
+    // Check query parameters to auto-open modal with selected resident
+    function checkUrlParameters() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const residentId = urlParams.get('residentId');
+      if (residentId) {
+        openIssueModal(parseInt(residentId, 10));
+      }
+    }
+
+    // Query and render certificates list
+    async function refreshCertificatesList() {
+      try {
+        allCertificates = await window.barangayDB.getAll('certificates');
+        allCertificates.sort((a, b) => new Date(b.issuedAt || 0) - new Date(a.issuedAt || 0));
+
+        updateTelemetry(allCertificates);
+        applyCertFiltersAndRender();
+      } catch (e) {
+        console.error('Failed to load certificates:', e);
+        Toast.error('Could not load certificates database.');
+      }
+    }
+
+    // Update real-time telemetry counters
+    function updateTelemetry(certs) {
+      const total = certs.length;
+      const clearances = certs.filter(c => c.type === 'Barangay Clearance').length;
+      const welfare = certs.filter(c => c.type === 'Certificate of Indigency' || c.type === 'Certificate of Residency').length;
+      
+      const totalRevenue = certs
+        .filter(c => c.status !== 'Revoked')
+        .reduce((sum, c) => sum + (parseFloat(c.amountPaid) || 0), 0);
+
+      document.getElementById('cert-count-badge').textContent = `${total} ${total === 1 ? 'Issued' : 'Issued'}`;
+      document.getElementById('stat-total-certs').textContent = total;
+      document.getElementById('stat-sub-total').textContent = `${total} digital codes registered`;
+
+      document.getElementById('stat-total-clearances').textContent = clearances;
+      document.getElementById('stat-sub-clearances').textContent = `${clearances} employment clearances`;
+
+      document.getElementById('stat-total-welfare').textContent = welfare;
+      document.getElementById('stat-sub-welfare').textContent = `${welfare} indigency & residency`;
+
+      document.getElementById('stat-total-revenue').textContent = `₱${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('stat-sub-revenue').textContent = `From ${certs.filter(c => parseFloat(c.amountPaid) > 0).length} paid issuances`;
+    }
+
+    // Filter and display table rows
+    function applyCertFiltersAndRender() {
+      const searchTerm = (document.getElementById('search-certs').value || '').toLowerCase().trim();
+      const typeFilter = document.getElementById('filter-cert-type').value;
+      const statusFilter = document.getElementById('filter-cert-status').value;
+
+      const hasActiveFilters = searchTerm || typeFilter || statusFilter;
+      document.getElementById('btn-clear-cert-filters').style.display = hasActiveFilters ? 'inline-flex' : 'none';
+
+      const filtered = allCertificates.filter(cert => {
+        if (searchTerm) {
+          const code = (cert.trackingCode || '').toLowerCase();
+          const recip = (cert.recipientName || '').toLowerCase();
+          const purpose = (cert.purpose || '').toLowerCase();
+          const orNum = (cert.orNumber || '').toLowerCase();
+          const match = code.includes(searchTerm) || recip.includes(searchTerm) || purpose.includes(searchTerm) || orNum.includes(searchTerm);
+          if (!match) return false;
+        }
+
+        if (typeFilter && cert.type !== typeFilter) {
+          return false;
+        }
+
+        if (statusFilter && cert.status !== statusFilter) {
+          return false;
+        }
+
+        return true;
+      });
+
+      renderTable(filtered, allCertificates.length);
+    }
+
+    // Render Table or Appropriate Empty State
+    function renderTable(certs, totalInDB) {
+      const tableContainer = document.getElementById('table-container');
+      const emptyState = document.getElementById('empty-state');
+      const filterEmptyState = document.getElementById('filter-empty-state');
+      const tbody = document.getElementById('cert-table-body');
+
+      if (totalInDB === 0) {
+        tableContainer.style.display = 'none';
+        emptyState.style.display = 'flex';
+        filterEmptyState.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      if (certs.length === 0) {
+        tableContainer.style.display = 'none';
+        filterEmptyState.style.display = 'flex';
+        return;
+      }
+
+      filterEmptyState.style.display = 'none';
+      tableContainer.style.display = 'block';
+
+      tbody.innerHTML = certs.map(c => {
+        const isRevoked = c.status === 'Revoked';
+        const isPending = c.status === 'Pending Review';
+        const feeFormatted = isPending 
+          ? '<span style="color: #f59e0b; font-weight: 600;">Pending Payment</span>' 
+          : (parseFloat(c.amountPaid) > 0 ? `₱${parseFloat(c.amountPaid).toFixed(2)}` : 'Free (Indigent)');
+        const dateStr = c.issuedAt 
+          ? new Date(c.issuedAt).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }) 
+          : (c.requestedAt ? `${new Date(c.requestedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} (Online)` : '—');
+        
+        let typeBadge = '<span class="badge-blue">Clearance</span>';
+        if (c.type === 'Certificate of Indigency') typeBadge = '<span class="badge-amber">Indigency</span>';
+        else if (c.type === 'Certificate of Residency') typeBadge = '<span class="badge-emerald">Residency</span>';
+        else if (c.type === 'Business Clearance') typeBadge = '<span class="badge-purple">Business</span>';
+
+        let statusText = '<span style="color: #10b981;">&#10003; Valid</span>';
+        if (isRevoked) statusText = '<span style="color: #ef4444; font-weight: 600;">REVOKED</span>';
+        else if (isPending) statusText = '<span style="color: #f59e0b; font-weight: 600;">PENDING ONLINE</span>';
+
+        return `
+          <tr style="${isRevoked ? 'opacity: 0.6; text-decoration: line-through;' : ''}">
+            <td>
+              <div style="font-family: monospace; font-weight: 700; color: var(--color-primary); font-size: 0.8125rem;">
+                ${c.trackingCode}
+              </div>
+              <div class="typography-caption" style="text-decoration: none;">
+                ${statusText}
+              </div>
+            </td>
+            <td>
+              <div style="font-weight: 600; font-size: 0.875rem;">${c.recipientName}</div>
+              <div class="typography-caption" style="text-decoration: none;">${c.purok || 'Resident'}</div>
+            </td>
+            <td>
+              ${typeBadge}
+              <div class="typography-caption" style="margin-top: 2px; text-decoration: none;">${c.type}</div>
+            </td>
+            <td>
+              <div style="font-size: 0.8125rem; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${c.purpose}">
+                ${c.purpose}
+              </div>
+            </td>
+            <td>
+              <div style="font-weight: 600; font-size: 0.8125rem;">${feeFormatted}</div>
+              <div class="typography-caption" style="text-decoration: none;">${c.orNumber && c.orNumber !== 'PENDING-PAYMENT' ? `OR: ${c.orNumber}` : (isPending ? 'To Collect' : 'No OR')}</div>
+            </td>
+            <td>
+              <div style="font-size: 0.8125rem;">${dateStr}</div>
+              <div class="typography-caption" style="text-decoration: none;">By: ${c.issuedBy || (isPending ? 'Citizen Online' : 'Official')}</div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; text-decoration: none;">
+                ${isPending ? `
+                  <button class="table-action-btn" onclick="openApproveModal(${c.id})" style="border-color: var(--color-primary); color: var(--color-primary);" title="Review and approve online application">
+                    Review &amp; Issue
+                  </button>
+                  <button class="table-action-btn danger" onclick="openRevokeModal(${c.id})" title="Reject application">
+                    Reject
+                  </button>
+                ` : `
+                  <button class="table-action-btn" onclick="quickNotifyCert(${c.id})" title="Send SMS pickup reminder">
+                    SMS
+                  </button>
+                  <button class="table-action-btn" onclick="openPrintModal(${c.id})" title="Print or view official document">
+                    Print / View
+                  </button>
+                  ${!isRevoked ? `
+                    <button class="table-action-btn danger" onclick="openRevokeModal(${c.id})" title="Revoke document">
+                      Revoke
+                    </button>
+                  ` : ''}
+                `}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Reset Filters
+    window.resetCertFilters = function() {
+      document.getElementById('search-certs').value = '';
+      document.getElementById('filter-cert-type').value = '';
+      document.getElementById('filter-cert-status').value = '';
+      applyCertFiltersAndRender();
+    };
+
+    // Open Document Issuance Modal
+    window.openIssueModal = function(preselectedResidentId = null) {
+      pendingApprovalCert = null;
+      document.getElementById('issue-modal-title').textContent = 'Issue Official Barangay Document.';
+      document.getElementById('btn-submit-issue').textContent = 'Generate & Save Certificate';
+
+      const tempOpt = document.getElementById('temp-online-applicant-opt');
+      if (tempOpt) tempOpt.remove();
+
+      document.getElementById('issue-form').reset();
+      
+      // Default type: Barangay Clearance
+      setDocumentType('Barangay Clearance', '50.00', 'BC');
+
+      if (preselectedResidentId) {
+        document.getElementById('select-resident').value = preselectedResidentId;
+        handleResidentSelection(preselectedResidentId);
+      } else {
+        document.getElementById('resident-info-card').style.display = 'none';
+      }
+
+      // Generate random sample OR Number
+      const randomOr = 'OR-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('cert-or').value = randomOr;
+
+      document.getElementById('issue-modal').showModal();
+    };
+
+    // Open Online Application Approval Modal
+    window.openApproveModal = async function(id) {
+      try {
+        const cert = await window.barangayDB.get('certificates', id);
+        if (!cert) {
+          Toast.error('Online application record not found.');
+          return;
+        }
+
+        pendingApprovalCert = cert;
+        document.getElementById('issue-form').reset();
+
+        // Match document type
+        let fee = '50.00';
+        let prefix = 'BC';
+        if (cert.type === 'Certificate of Indigency') { fee = '0.00'; prefix = 'CI'; }
+        else if (cert.type === 'Certificate of Residency') { fee = '30.00'; prefix = 'CR'; }
+        else if (cert.type === 'Business Clearance') { fee = '150.00'; prefix = 'BP'; }
+
+        if (window.customFees) {
+          if (cert.type === 'Barangay Clearance' && window.customFees.barangayClearance !== undefined) fee = Number(window.customFees.barangayClearance).toFixed(2);
+          else if (cert.type === 'Certificate of Indigency' && window.customFees.certificateIndigency !== undefined) fee = Number(window.customFees.certificateIndigency).toFixed(2);
+          else if (cert.type === 'Certificate of Residency' && window.customFees.certificateResidency !== undefined) fee = Number(window.customFees.certificateResidency).toFixed(2);
+          else if (cert.type === 'Business Clearance' && window.customFees.businessPermit !== undefined) fee = Number(window.customFees.businessPermit).toFixed(2);
+        }
+
+        setDocumentType(cert.type, fee, prefix);
+
+        // Check if resident exists in database
+        let matchedResId = cert.residentId;
+        if (!matchedResId && cert.recipientName) {
+          const found = Array.from(allResidentsMap.values()).find(r => {
+            const full = [r.firstName, r.middleName, r.lastName, r.suffix].filter(Boolean).join(' ').toLowerCase();
+            return full === cert.recipientName.toLowerCase();
+          });
+          if (found) matchedResId = found.id;
+        }
+
+        const selectRes = document.getElementById('select-resident');
+        if (matchedResId && allResidentsMap.has(matchedResId)) {
+          selectRes.value = matchedResId;
+          handleResidentSelection(matchedResId);
+        } else {
+          let opt = document.getElementById('temp-online-applicant-opt');
+          if (!opt) {
+            opt = document.createElement('option');
+            opt.id = 'temp-online-applicant-opt';
+            selectRes.appendChild(opt);
+          }
+          opt.value = 'online_applicant';
+          opt.textContent = `[Online Applicant] ${cert.recipientName} (${cert.purok || ''})`;
+          selectRes.value = 'online_applicant';
+
+          const card = document.getElementById('resident-info-card');
+          card.style.display = 'block';
+          document.getElementById('recip-card-name').textContent = cert.recipientName;
+          document.getElementById('recip-card-age').textContent = `Mobile: ${cert.contactPhone || 'N/A'}`;
+          document.getElementById('recip-card-address').textContent = `${cert.address || ''}, ${cert.purok || ''}`;
+          document.getElementById('recip-indigent-tip').style.display = (cert.type === 'Certificate of Indigency') ? 'block' : 'none';
+        }
+
+        // Pre-fill purpose
+        const purposeSelect = document.getElementById('cert-purpose-select');
+        const customPurpose = document.getElementById('cert-purpose-custom');
+        let matchedPurpose = false;
+        for (let opt of purposeSelect.options) {
+          if (opt.value === cert.purpose) {
+            purposeSelect.value = cert.purpose;
+            customPurpose.style.display = 'none';
+            matchedPurpose = true;
+            break;
+          }
+        }
+        if (!matchedPurpose) {
+          purposeSelect.value = 'Custom';
+          customPurpose.style.display = 'block';
+          customPurpose.value = cert.purpose || '';
+        }
+
+        // Pre-fill business fields if any
+        if (cert.type === 'Business Clearance') {
+          if (cert.businessName) document.getElementById('cert-biz-name').value = cert.businessName;
+          if (cert.businessNature) document.getElementById('cert-biz-nature').value = cert.businessNature;
+        }
+
+        // Generate sample OR Number
+        const randomOr = 'OR-' + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('cert-or').value = (cert.orNumber && cert.orNumber !== 'PENDING-PAYMENT') ? cert.orNumber : randomOr;
+
+        // Customise modal UI for approval
+        document.getElementById('issue-modal-title').textContent = `Review & Issue: ${cert.trackingCode}`;
+        document.getElementById('btn-submit-issue').textContent = 'Approve & Release Clearance';
+
+        document.getElementById('issue-modal').showModal();
+      } catch (err) {
+        console.error('Failed to open approval modal:', err);
+        Toast.error('Could not prepare approval modal.');
+      }
+    };
+
+    // Set Document Type Handler
+    function setDocumentType(typeName, fee, prefix) {
+      selectedCertType = typeName;
+      selectedPrefix = prefix;
+      selectedDefaultFee = parseFloat(fee);
+
+      document.querySelectorAll('.cert-type-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-type') === typeName);
+      });
+
+      // Show/hide business fields
+      document.getElementById('business-fields').style.display = typeName === 'Business Clearance' ? 'block' : 'none';
+
+      // Check if selected resident is indigent
+      const resId = parseInt(document.getElementById('select-resident').value, 10);
+      const res = allResidentsMap.get(resId);
+      if (res && (res.isIndigent || res.isFourPs || typeName === 'Certificate of Indigency')) {
+        document.getElementById('cert-fee').value = '0.00';
+      } else {
+        document.getElementById('cert-fee').value = fee;
+      }
+    }
+
+    // Handle Resident Select Change
+    function handleResidentSelection(residentId) {
+      const res = allResidentsMap.get(parseInt(residentId, 10));
+      const card = document.getElementById('resident-info-card');
+      const indigentTip = document.getElementById('recip-indigent-tip');
+
+      if (!res) {
+        card.style.display = 'none';
+        return;
+      }
+
+      card.style.display = 'block';
+      const fullName = [res.firstName, res.middleName, res.lastName, res.suffix].filter(Boolean).join(' ');
+      document.getElementById('recip-card-name').textContent = fullName;
+      document.getElementById('recip-card-age').textContent = `${res.age || '—'} yrs &bull; ${res.civilStatus || 'Single'}`;
+      document.getElementById('recip-card-address').textContent = `${res.address || ''}, ${res.purok || ''}`;
+
+      if (res.isIndigent || res.isFourPs) {
+        indigentTip.style.display = 'block';
+        if (selectedCertType === 'Certificate of Indigency') {
+          document.getElementById('cert-fee').value = '0.00';
+        }
+      } else {
+        indigentTip.style.display = 'none';
+      }
+    }
+
+    // Open Official Document Print Preview Modal
+    window.openPrintModal = async function(id) {
+      try {
+        const cert = await window.barangayDB.get('certificates', id);
+        if (!cert) return;
+
+        activeCertForAction = cert;
+
+        // Populate paper view
+        document.getElementById('modal-tracking-pill').textContent = cert.trackingCode;
+        document.getElementById('cert-doc-title').textContent = cert.type.toUpperCase();
+        document.getElementById('print-recipient-name').textContent = cert.recipientName.toUpperCase();
+        document.getElementById('print-thumb-name').textContent = cert.recipientName.toUpperCase();
+        document.getElementById('print-recipient-civil').textContent = cert.recipientCivilStatus || 'Single';
+        document.getElementById('print-recipient-address').textContent = `${cert.address ? cert.address + ', ' : ''}${cert.purok || 'Barangay San Isidro'}`;
+        document.getElementById('print-purpose').textContent = cert.purpose;
+        document.getElementById('print-signatory-name').textContent = (cert.signatoryName || 'HON. PUNONG BARANGAY').toUpperCase();
+
+        document.getElementById('print-ctrl-num').textContent = cert.trackingCode;
+        document.getElementById('print-or-num').textContent = cert.orNumber || 'N/A';
+        document.getElementById('print-fee').textContent = parseFloat(cert.amountPaid) > 0 ? `₱${parseFloat(cert.amountPaid).toFixed(2)}` : 'FREE';
+        document.getElementById('print-issued-by').textContent = cert.issuedBy || 'Official';
+
+        // Date formatting
+        const date = new Date(cert.issuedAt || Date.now());
+        const day = date.getDate();
+        const suffix = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th';
+        document.getElementById('print-day').textContent = `${day}${suffix}`;
+        document.getElementById('print-month-year').textContent = date.toLocaleDateString([], { month: 'long', year: 'numeric' });
+
+        // Customize body text based on cert type
+        if (cert.type === 'Certificate of Indigency') {
+          document.getElementById('cert-doc-statement').innerHTML = `
+            This is to further certify that the aforementioned resident and their household belong to the <strong>INDIGENT / LOW-INCOME FAMILIES</strong> of this barangay, having no stable source of regular income and in need of assistance.
+          `;
+        } else if (cert.type === 'Certificate of Residency') {
+          document.getElementById('cert-doc-statement').innerHTML = `
+            Records of this office confirm that the subject individual has been residing within the jurisdiction of this Barangay for more than six (6) months and is recognized as a legitimate and active community resident.
+          `;
+        } else if (cert.type === 'Business Clearance') {
+          document.getElementById('cert-doc-statement').innerHTML = `
+            This clearance certifies that the business enterprise <strong style="text-decoration: underline;">${cert.businessName || 'Business Establishment'}</strong> located at ${cert.address || 'Barangay San Isidro'}, has complied with all community peace, safety, and sanitation requirements of this Barangay.
+          `;
+        } else {
+          document.getElementById('cert-doc-statement').innerHTML = `
+            Based on the records on file in this office, the aforementioned individual is a person of good moral character, a peace-loving citizen, and has <strong>NO RECORD OF CRIMINAL OFFENSE</strong> or pending adverse complaints before the Lupong Tagapamayapa of this Barangay.
+          `;
+        // Render Live Scannable QR Code Badge
+        const qrContainer = document.getElementById('print-cert-qr');
+        if (qrContainer && window.QRCode) {
+          const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
+          const verifyUrl = `${window.location.origin}/verify${ext}?code=${encodeURIComponent(cert.trackingCode)}`;
+          QRCode.render(qrContainer, verifyUrl, { size: 68, margin: 1 });
+          const linkEl = document.getElementById('print-verify-link');
+          if (linkEl) linkEl.textContent = `verify${ext}?code=${cert.trackingCode}`;
+        }
+
+        document.getElementById('print-modal').showModal();
+      } catch (e) {
+        console.error(e);
+        Toast.error('Could not open document preview.');
+      }
+    };
+
+    // Open Revoke Confirmation Modal
+    window.openRevokeModal = async function(id) {
+      const cert = await window.barangayDB.get('certificates', id);
+      if (!cert) return;
+
+      activeCertForAction = cert;
+      document.getElementById('revoke-code-label').textContent = `${cert.trackingCode} (${cert.recipientName})`;
+      document.getElementById('revoke-modal').showModal();
+    };
+
+    // Confirm Revocation
+    async function confirmRevoke() {
+      if (!activeCertForAction) return;
+      const cert = activeCertForAction;
+
+      try {
+        cert.status = 'Revoked';
+        cert.revokedAt = new Date().toISOString();
+        cert.revokedBy = (currentAuthUser && (currentAuthUser.fullName || currentAuthUser.username)) || 'Hon. Punong Barangay';
+
+        await window.barangayDB.put('certificates', cert);
+
+        if (window.authService) {
+          await window.authService.logAudit('CERTIFICATE_REVOKED', `Revoked ${cert.type} with tracking code ${cert.trackingCode} for ${cert.recipientName}`);
+        }
+
+        document.getElementById('revoke-modal').close();
+        Toast.success(`Certificate ${cert.trackingCode} revoked.`);
+        await refreshCertificatesList();
+      } catch (e) {
+        console.error(e);
+        Toast.error('Failed to revoke certificate.');
+      }
+    }
+
+    // Bind Event Listeners
+    function bindEventListeners() {
+      document.getElementById('btn-open-issue-modal').addEventListener('click', () => openIssueModal());
+      document.getElementById('btn-confirm-revoke').addEventListener('click', confirmRevoke);
+
+      // Search & Filters
+      document.getElementById('search-certs').addEventListener('input', applyCertFiltersAndRender);
+      document.getElementById('filter-cert-type').addEventListener('change', applyCertFiltersAndRender);
+      document.getElementById('filter-cert-status').addEventListener('change', applyCertFiltersAndRender);
+
+      // Document Type Buttons Click
+      document.querySelectorAll('.cert-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const typeName = btn.getAttribute('data-type');
+          let fee = btn.getAttribute('data-fee');
+          if (window.customFees) {
+            if (typeName === 'Barangay Clearance' && window.customFees.barangayClearance !== undefined) fee = Number(window.customFees.barangayClearance).toFixed(2);
+            else if (typeName === 'Certificate of Indigency' && window.customFees.certificateIndigency !== undefined) fee = Number(window.customFees.certificateIndigency).toFixed(2);
+            else if (typeName === 'Certificate of Residency' && window.customFees.certificateResidency !== undefined) fee = Number(window.customFees.certificateResidency).toFixed(2);
+            else if (typeName === 'Business Clearance' && window.customFees.businessPermit !== undefined) fee = Number(window.customFees.businessPermit).toFixed(2);
+          }
+          setDocumentType(
+            typeName,
+            fee,
+            btn.getAttribute('data-prefix')
+          );
+        });
+      });
+
+      // Resident Select Change
+      document.getElementById('select-resident').addEventListener('change', (e) => {
+        handleResidentSelection(e.target.value);
+      });
+
+      // Purpose Select Change
+      document.getElementById('cert-purpose-select').addEventListener('change', (e) => {
+        const customInput = document.getElementById('cert-purpose-custom');
+        customInput.style.display = e.target.value === 'Custom' ? 'block' : 'none';
+      });
+
+      // Handle Issue Form Submit
+      document.getElementById('issue-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const residentIdVal = document.getElementById('select-resident').value;
+        if (!residentIdVal) {
+          Toast.error('Please select a recipient resident or online applicant.');
+          return;
+        }
+
+        let resident = null;
+        let fullName = '';
+        let recipientCivil = 'Single';
+        let recipientAge = 0;
+        let purok = 'Barangay San Isidro';
+        let address = '';
+
+        if (residentIdVal === 'online_applicant' && pendingApprovalCert) {
+          fullName = pendingApprovalCert.recipientName;
+          purok = pendingApprovalCert.purok || 'Barangay San Isidro';
+          address = pendingApprovalCert.address || '';
+        } else {
+          resident = allResidentsMap.get(parseInt(residentIdVal, 10));
+          if (!resident) {
+            Toast.error('Selected resident could not be found.');
+            return;
+          }
+          fullName = [resident.firstName, resident.middleName, resident.lastName, resident.suffix].filter(Boolean).join(' ');
+          recipientCivil = resident.civilStatus || 'Single';
+          recipientAge = resident.age || 0;
+          purok = resident.purok || 'Barangay San Isidro';
+          address = resident.address || '';
+        }
+
+        const purposeSelect = document.getElementById('cert-purpose-select').value;
+        const purpose = purposeSelect === 'Custom' 
+          ? (document.getElementById('cert-purpose-custom').value.trim() || 'General Official Purpose')
+          : purposeSelect;
+
+        const feeVal = parseFloat(document.getElementById('cert-fee').value) || 0;
+        const orVal = document.getElementById('cert-or').value.trim() || 'N/A';
+        const signatoryVal = document.getElementById('cert-signatory').value.trim() || 'Hon. Punong Barangay';
+        const bizName = document.getElementById('cert-biz-name').value.trim();
+        const bizNature = document.getElementById('cert-biz-nature').value.trim();
+
+        // Check if approving an online application
+        if (pendingApprovalCert) {
+          const updatedCert = {
+            ...pendingApprovalCert,
+            type: selectedCertType,
+            residentId: resident ? resident.id : (pendingApprovalCert.residentId || null),
+            recipientName: fullName,
+            recipientCivilStatus: recipientCivil,
+            recipientAge: recipientAge,
+            purok: purok,
+            address: address,
+            purpose: purpose,
+            businessName: bizName,
+            businessNature: bizNature,
+            amountPaid: feeVal,
+            orNumber: orVal,
+            signatoryName: signatoryVal,
+            issuedBy: (currentAuthUser && (currentAuthUser.fullName || currentAuthUser.username)) || 'Hon. Punong Barangay',
+            status: 'Issued',
+            issuedAt: new Date().toISOString()
+          };
+
+          try {
+            await window.barangayDB.put('certificates', updatedCert);
+
+            if (window.authService) {
+              await window.authService.logAudit(
+                'CERTIFICATE_APPROVED',
+                `Approved and issued online clearance request ${updatedCert.trackingCode} for ${fullName} [Fee: ₱${feeVal}]`
+              );
+            }
+
+            document.getElementById('issue-modal').close();
+            const issuedId = updatedCert.id;
+            pendingApprovalCert = null;
+
+            Toast.success(`Application ${updatedCert.trackingCode} approved & issued!`);
+            await refreshCertificatesList();
+            openPrintModal(issuedId);
+          } catch (err) {
+            console.error('Error approving certificate:', err);
+            Toast.error('Failed to approve certificate.');
+          }
+          return;
+        }
+
+        // Otherwise: Generate unique tracking code for new walk-in issuance
+        const year = new Date().getFullYear();
+        const existingCount = allCertificates.length + 1;
+        const sequence = String(existingCount).padStart(5, '0');
+        const trackingCode = `${selectedPrefix}-${year}-${sequence}`;
+
+        const certificateData = {
+          trackingCode: trackingCode,
+          type: selectedCertType,
+          residentId: resident ? resident.id : null,
+          recipientName: fullName,
+          recipientCivilStatus: recipientCivil,
+          recipientAge: recipientAge,
+          purok: purok,
+          address: address,
+          purpose: purpose,
+          businessName: bizName,
+          businessNature: bizNature,
+          amountPaid: feeVal,
+          orNumber: orVal,
+          signatoryName: signatoryVal,
+          issuedBy: (currentAuthUser && (currentAuthUser.fullName || currentAuthUser.username)) || 'Hon. Punong Barangay',
+          status: 'Issued',
+          issuedAt: new Date().toISOString()
+        };
+
+        try {
+          const newId = await window.barangayDB.add('certificates', certificateData);
+
+          if (window.authService) {
+            await window.authService.logAudit(
+              'CERTIFICATE_ISSUED',
+              `Issued ${selectedCertType} (${trackingCode}) for ${fullName} [Fee: ₱${certificateData.amountPaid}]`
+            );
+          }
+
+          document.getElementById('issue-modal').close();
+          Toast.success(`Certificate ${trackingCode} issued successfully.`);
+
+          // Automated SMS Notification Trigger
+          const notifySmsCheck = document.getElementById('cert-notify-sms');
+          if (!notifySmsCheck || notifySmsCheck.checked) {
+            const phone = (resident && (resident.phone || resident.contactNo)) || '';
+            if (phone) {
+              try {
+                await window.barangayDB.add('notifications', {
+                  dispatchCode: `SMS-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+                  recipientId: resident ? resident.id : null,
+                  recipientName: fullName,
+                  recipientContact: phone,
+                  channel: 'SMS',
+                  category: 'Clearance',
+                  message: `Magandang araw ${fullName}, handa na po ang inyong ${selectedCertType} sa Barangay Hall. Tracking Ref: ${trackingCode}. Dalhin ang valid ID para sa pag-claim.`,
+                  status: 'Delivered',
+                  gatewayRef: 'SMP-' + Math.random().toString(16).substr(2, 6),
+                  costCredits: 1,
+                  createdAt: new Date().toISOString()
+                });
+                Toast.info(`SMS pickup notice dispatched to ${phone}.`);
+              } catch (err) {
+                console.warn('Auto SMS dispatch note:', err);
+              }
+            }
+          }
+
+          await refreshCertificatesList();
+
+          // Immediately prompt print preview
+          openPrintModal(newId);
+        } catch (err) {
+          console.error('Error saving certificate:', err);
+          Toast.error('Could not save certificate record.');
+        }
+      });
+    }
+
+    // Quick SMS Notification from Table
+    window.quickNotifyCert = async function(id) {
+      try {
+        const cert = await window.barangayDB.get('certificates', id);
+        if (!cert) return;
+        const res = allResidentsMap.get(cert.residentId);
+        const phone = (res && (res.phone || res.contactNo)) || cert.contactPhone || '0917-555-0192';
+
+        if (!confirm(`Send SMS pickup reminder to ${cert.recipientName} (${phone}) for ${cert.trackingCode}?`)) return;
+
+        await window.barangayDB.add('notifications', {
+          dispatchCode: `SMS-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+          recipientId: cert.residentId || null,
+          recipientName: cert.recipientName,
+          recipientContact: phone,
+          channel: 'SMS',
+          category: 'Clearance',
+          message: `Magandang araw ${cert.recipientName}, paalala po mula sa Barangay Hall: Handa na ang inyong ${cert.type} (Tracking Ref: ${cert.trackingCode}). Mangyaring i-claim sa office hours.`,
+          status: 'Delivered',
+          gatewayRef: 'SMP-' + Math.random().toString(16).substr(2, 6),
+          costCredits: 1,
+          createdAt: new Date().toISOString()
+        });
+
+        Toast.success(`SMS Pickup notification sent to ${cert.recipientName}!`);
+      } catch (e) {
+        console.error('Failed to quick notify:', e);
+        Toast.error('Could not send notification.');
+      }
+    };
+
+    // Send SMS from Print Preview Modal
+    window.sendPrintModalSms = async function() {
+      if (!activeCertForAction) {
+        Toast.error('No active document loaded in preview.');
+        return;
+      }
+      const cert = activeCertForAction;
+      const res = allResidentsMap.get(cert.residentId);
+      const phone = (res && (res.phone || res.contactNo)) || cert.contactPhone || '0917-555-0192';
+
+      if (!confirm(`Dispatch cellular SMS pickup reminder to ${cert.recipientName} (${phone})?`)) return;
+
+      try {
+        await window.barangayDB.add('notifications', {
+          dispatchCode: `SMS-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+          recipientId: cert.residentId || null,
+          recipientName: cert.recipientName,
+          recipientContact: phone,
+          channel: 'SMS',
+          category: 'Clearance',
+          message: `Magandang araw ${cert.recipientName}, opisyal na pabatid: Ang inyong ${cert.type} (${cert.trackingCode}) ay handa na para sa release sa Barangay Hall.`,
+          status: 'Delivered',
+          gatewayRef: 'SMP-' + Math.random().toString(16).substr(2, 6),
+          costCredits: 1,
+          createdAt: new Date().toISOString()
+        });
+        Toast.success(`SMS dispatched successfully to ${phone}!`);
+      } catch (e) {
+        console.error('Print modal SMS error:', e);
+        Toast.error('Failed to dispatch SMS.');
+      }
+    };
+  </script>
+</body>
+</html>

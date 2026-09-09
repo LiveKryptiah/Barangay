@@ -1,0 +1,1795 @@
+<?php
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/auth.php';
+require_auth('login.php');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incident Dispatch &amp; Tanod Patrol &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .page-hero {
+      padding: var(--spacing-xs) 0 var(--spacing-sm);
+    }
+
+    .stats-ladder {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    @media (max-width: 1024px) {
+      .stats-ladder {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats-ladder {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: 6px 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      min-width: 240px;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-faint);
+      pointer-events: none;
+    }
+
+    .search-input-wrap input {
+      height: 38px;
+      padding-left: 38px;
+      font-size: 0.8125rem;
+      border-radius: var(--rounded-full);
+    }
+
+    .filter-select {
+      height: 38px;
+      padding: 0 12px;
+      font-size: 0.8125rem;
+      border-radius: var(--rounded-full);
+      background-color: var(--color-field);
+      border: 1px solid transparent;
+      color: var(--color-ink);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select:focus {
+      border-color: var(--color-primary);
+    }
+
+    .view-toggle-wrap {
+      display: inline-flex;
+      background-color: var(--color-field);
+      padding: 3px;
+      border-radius: var(--rounded-full);
+      gap: 2px;
+    }
+
+    .view-toggle-btn {
+      height: 32px;
+      padding: 0 14px;
+      border: none;
+      background: transparent;
+      border-radius: var(--rounded-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .view-toggle-btn.active {
+      background-color: var(--color-canvas);
+      color: var(--color-ink);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Incident Dispatch Cards Grid */
+    .incidents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: var(--spacing-sm);
+    }
+
+    .incident-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+      position: relative;
+    }
+
+    .incident-card.priority-critical {
+      border-left: 4px solid #ef4444;
+    }
+
+    .incident-card.priority-high {
+      border-left: 4px solid #f97316;
+    }
+
+    .incident-card.priority-moderate {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .incident-card.priority-routine {
+      border-left: 4px solid #10b981;
+    }
+
+    .incident-card:hover {
+      border-color: var(--color-primary);
+    }
+
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .incident-category-lockup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .category-icon-bubble {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background-color: var(--color-canvas-soft);
+      color: var(--color-primary);
+      border: 1px solid var(--color-hairline);
+    }
+
+    .incident-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--color-ink);
+      line-height: 1.25;
+    }
+
+    .incident-subtitle {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .incident-details-box {
+      background-color: var(--color-canvas-soft);
+      border-radius: var(--rounded-sm);
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      margin: 10px 0;
+      line-height: 1.4;
+      color: var(--color-ink);
+    }
+
+    .incident-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 0.75rem;
+      margin-bottom: 12px;
+    }
+
+    .incident-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--color-hairline-soft);
+      padding-top: 12px;
+      margin-top: 6px;
+    }
+
+    /* Modal Form Styles */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-sm);
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-sm);
+    }
+
+    @media (max-width: 640px) {
+      .form-grid-2, .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Timeline in Dossier */
+    .timeline-container {
+      position: relative;
+      padding-left: 24px;
+      margin: 16px 0;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background-color: var(--color-hairline);
+    }
+
+    .timeline-step {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .timeline-step::before {
+      content: '';
+      position: absolute;
+      left: -24px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: var(--color-canvas);
+      border: 2px solid var(--color-primary);
+    }
+
+    .timeline-step.completed::before {
+      background-color: var(--color-primary);
+    }
+
+    /* Printable Template */
+    #printable-spot-report {
+      display: none;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-modal, #printable-spot-report, #printable-spot-report * {
+        visibility: visible;
+      }
+      #print-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        background: #fff;
+      }
+      #printable-spot-report {
+        display: block !important;
+        padding: 24px;
+        color: #000;
+        font-family: 'Inter', sans-serif;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <!-- Main Content Workspace -->
+    <div class="app-main">
+      <div id="mobile-header-mount"></div>
+      <div id="app-topbar-mount"></div>
+
+      <main class="app-content">
+        <!-- Page Hero Section -->
+        <section class="page-hero">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+                <h1 class="typography-heading-2">Emergency Dispatch &amp; Tanod Patrol.</h1>
+                <span class="badge-rose" id="active-dispatches-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-weight: 700;">
+                  0 Active Dispatches
+                </span>
+              </div>
+              <p class="typography-body-lg">
+                Real-time incident intake, Tanod responder dispatch, response time telemetry, and minor curfew enforcement.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+              <button class="button-outline" id="btn-export-csv" title="Export incident log to CSV" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Export CSV</span>
+              </button>
+              <button class="button-primary" id="btn-open-incident-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem; background-color: #ef4444;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                <span>+ Log Emergency Incident</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Operations Telemetry Ladder -->
+        <section>
+          <div class="stats-ladder">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL INCIDENTS</span>
+                <span class="badge-neutral">Database</span>
+              </div>
+              <div class="stat-number" id="stat-total-incidents">0</div>
+              <div class="typography-caption" id="stat-sub-incidents">0 emergency calls recorded</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: #ef4444;">ACTIVE DISPATCHES</span>
+                <span class="badge-rose" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">On-Scene</span>
+              </div>
+              <div class="stat-number" id="stat-active-dispatches" style="color: #ef4444;">0</div>
+              <div class="typography-caption" id="stat-sub-dispatches">Units currently responding</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">AVG RESPONSE TIME</span>
+                <span class="badge-blue">Telemetry</span>
+              </div>
+              <div class="stat-number" id="stat-avg-response">0m</div>
+              <div class="typography-caption" id="stat-sub-response">Call to on-scene arrival</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">CURFEW VIOLATIONS</span>
+                <span class="badge-amber">Ordinance</span>
+              </div>
+              <div class="stat-number" id="stat-total-curfew">0</div>
+              <div class="typography-caption" id="stat-sub-curfew">Minors turned over to guardians</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Operations Toolbar -->
+        <div class="filter-toolbar">
+          <div class="filter-group">
+            <div class="search-input-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="search-incidents" class="text-input" placeholder="Search by Code #, Location, Reporter...">
+            </div>
+
+            <select id="filter-category" class="filter-select">
+              <option value="">All Incident Categories</option>
+              <option value="Medical Emergency">Medical Emergency / Ambulance</option>
+              <option value="Fire Incident">Fire Incident / Smoke</option>
+              <option value="Vehicular Accident">Vehicular Accident / Collision</option>
+              <option value="Public Disturbance">Public Disturbance / Noise</option>
+              <option value="Physical Altercation">Physical Altercation / Scuffle</option>
+              <option value="Curfew Violation">Curfew Violation (Minor)</option>
+              <option value="Suspicious Activity">Suspicious Activity / Prowler</option>
+              <option value="Utility / Weather Hazard">Utility / Weather Hazard</option>
+            </select>
+
+            <select id="filter-priority" class="filter-select">
+              <option value="">All Priorities</option>
+              <option value="Critical (Code Red)">Critical (Code Red)</option>
+              <option value="High (Code Orange)">High (Code Orange)</option>
+              <option value="Moderate (Code Yellow)">Moderate (Code Yellow)</option>
+              <option value="Routine (Code Green)">Routine (Code Green)</option>
+            </select>
+
+            <select id="filter-status" class="filter-select">
+              <option value="">All Statuses</option>
+              <option value="Active / Dispatched">Active / Dispatched</option>
+              <option value="On-Scene / Responding">On-Scene / Responding</option>
+              <option value="Resolved / Closed">Resolved / Closed</option>
+              <option value="Referred to Agency">Referred to Agency (PNP/BFP)</option>
+            </select>
+
+            <select id="filter-purok" class="filter-select">
+              <option value="">All Puroks</option>
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+              <option value="Purok 4">Purok 4</option>
+              <option value="Purok 5">Purok 5</option>
+              <option value="Purok 6">Purok 6</option>
+              <option value="Purok 7">Purok 7</option>
+            </select>
+
+            <button type="button" class="button-pill-soft" id="btn-clear-filters" style="display: none; height: 38px; padding: 0 12px; font-size: 0.75rem;">
+              Clear Filters
+            </button>
+          </div>
+
+          <div class="view-toggle-wrap">
+            <button type="button" class="view-toggle-btn active" id="btn-view-dispatch" onclick="switchIncidentView('dispatch')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>Live Dispatch Feed</span>
+            </button>
+            <button type="button" class="view-toggle-btn" id="btn-view-curfew" onclick="switchIncidentView('curfew')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>Tanod Patrol &amp; Curfew Log</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEW 1: LIVE DISPATCH FEED (GRID) -->
+        <div id="view-dispatch-container">
+          <div class="incidents-grid" id="incidents-grid-mount"></div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="empty-state-card" style="display: none; padding: 48px 16px; text-align: center; background-color: var(--color-canvas); border: 1px dashed var(--color-hairline); border-radius: var(--rounded-md); margin-top: var(--spacing-sm);">
+            <div class="nav-brand-icon" style="width: 52px; height: 52px; border-radius: 50%; font-size: 1.5rem; margin: 0 auto var(--spacing-sm); background-color: var(--color-canvas-soft); color: var(--color-text-muted);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <h4 class="typography-heading-4">No Incidents Logged.</h4>
+            <p class="typography-body-sm" style="color: var(--color-text-muted); max-width: 440px; margin: 4px auto var(--spacing-md);">
+              All quiet in the community. Log emergency calls or Tanod dispatches to monitor response times and generate spot reports.
+            </p>
+            <button class="button-primary" onclick="openIncidentModal();" style="height: 38px; padding: 0 18px; font-size: 0.8125rem; background-color: #ef4444;">
+              + Log Emergency Call
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEW 2: TANOD PATROL & CURFEW LOG (TABLE) -->
+        <div id="view-curfew-container" style="display: none;">
+          <div style="background-color: var(--color-canvas); border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-md); padding: var(--spacing-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+              <div>
+                <h3 class="typography-heading-4">Tanod Ronda Patrol &amp; Curfew Log.</h3>
+                <p class="typography-caption" style="color: var(--color-text-muted);">
+                  Ordinance enforcement for unaccompanied minors (10:00 PM &ndash; 5:00 AM) and nocturnal patrol logs.
+                </p>
+              </div>
+              <button class="button-primary" onclick="openCurfewModal();" style="height: 36px; padding: 0 16px; font-size: 0.75rem;">
+                + Log Curfew Citation
+              </button>
+            </div>
+
+            <div class="member-table-wrap">
+              <table class="data-table" style="font-size: 0.8125rem;">
+                <thead>
+                  <tr>
+                    <th>Reference / Time</th>
+                    <th>Minor Resident</th>
+                    <th>Age</th>
+                    <th>Guardian / Contact</th>
+                    <th>Apprehension Location</th>
+                    <th>Responding Tanods</th>
+                    <th>Action Taken / Status</th>
+                  </tr>
+                </thead>
+                <tbody id="curfew-table-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL 1: EMERGENCY INCIDENT INTAKE -->
+  <dialog id="incident-modal" class="modal-dialog" style="max-width: 760px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+        <span class="badge-rose" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-weight: 700;">EMERGENCY INTAKE</span>
+        <h3 class="typography-heading-4">Log Community Incident.</h3>
+      </div>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('incident-modal').close();" style="height: 30px; padding: 0 10px;">
+        Cancel
+      </button>
+    </div>
+
+    <form id="incident-form" novalidate>
+      <!-- Step 1: Incident Classification & Priority -->
+      <div style="margin-bottom: var(--spacing-md);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          1. Classification &amp; Severity Level
+        </span>
+
+        <div class="form-grid-3 mt-xs">
+          <div class="form-group">
+            <label class="form-label" for="inc-control-no">Incident Tracking # <span style="color: var(--color-primary);">*</span></label>
+            <input type="text" id="inc-control-no" class="text-input" style="font-family: monospace; font-weight: 700;" readonly required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inc-category">Incident Category <span style="color: var(--color-primary);">*</span></label>
+            <select id="inc-category" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+              <option value="Medical Emergency">Medical Emergency / Ambulance</option>
+              <option value="Fire Incident">Fire Incident / Smoke</option>
+              <option value="Vehicular Accident">Vehicular Accident / Collision</option>
+              <option value="Public Disturbance">Public Disturbance / Noise</option>
+              <option value="Physical Altercation">Physical Altercation / Scuffle</option>
+              <option value="Curfew Violation">Curfew Violation (Minor)</option>
+              <option value="Suspicious Activity">Suspicious Activity / Prowler</option>
+              <option value="Utility / Weather Hazard">Utility / Weather Hazard</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inc-priority">Priority Severity <span style="color: var(--color-primary);">*</span></label>
+            <select id="inc-priority" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+              <option value="Critical (Code Red)">Critical (Code Red - Immediate)</option>
+              <option value="High (Code Orange)">High (Code Orange)</option>
+              <option value="Moderate (Code Yellow)">Moderate (Code Yellow)</option>
+              <option value="Routine (Code Green)">Routine (Code Green)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Location & Reporter Details -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          2. Incident Location &amp; Caller Information
+        </span>
+
+        <div class="form-grid-3 mt-xs">
+          <div class="form-group">
+            <label class="form-label" for="inc-purok">Purok / Zone <span style="color: var(--color-primary);">*</span></label>
+            <select id="inc-purok" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+              <option value="Purok 4">Purok 4</option>
+              <option value="Purok 5">Purok 5</option>
+              <option value="Purok 6">Purok 6</option>
+              <option value="Purok 7">Purok 7</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inc-address">Street / Specific Landmark <span style="color: var(--color-primary);">*</span></label>
+            <input type="text" id="inc-address" class="text-input" placeholder="e.g. Near Basketball Court, Rizal St." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inc-reporter-phone">Reporter Contact Number</label>
+            <input type="tel" id="inc-reporter-phone" class="text-input" placeholder="09XXXXXXXXX">
+          </div>
+        </div>
+
+        <div class="form-group mt-xs">
+          <label class="form-label" for="inc-reporter-name">Caller / Reporter Name</label>
+          <input type="text" id="inc-reporter-name" class="text-input" placeholder="e.g. Concerned Citizen / Juan Dela Cruz">
+        </div>
+      </div>
+
+      <!-- Step 3: Responder Dispatch Assignment -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          3. Responder Dispatch Assignment
+        </span>
+
+        <div class="form-grid-2 mt-xs">
+          <div class="form-group">
+            <label class="form-label" for="inc-lead-responder">Lead Responding Officer / Tanod <span style="color: var(--color-primary);">*</span></label>
+            <select id="inc-lead-responder" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+              <option value="Barangay Tanod Duty Desk">Barangay Tanod Duty Desk</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inc-unit">Dispatched Unit / Vehicle</label>
+            <select id="inc-unit" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;">
+              <option value="Barangay Patrol Mobile 1">Barangay Patrol Mobile 1 (Van)</option>
+              <option value="Barangay Motorcycle Unit 2">Barangay Motorcycle Unit 2</option>
+              <option value="Tanod Quick Response Team">Tanod Quick Response Team (On Foot)</option>
+              <option value="Barangay Ambulance / Rescue">Barangay Ambulance / Rescue Unit</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mt-xs">
+          <label class="form-label" for="inc-narrative">Initial Situation Report / Incident Narrative <span style="color: var(--color-primary);">*</span></label>
+          <textarea id="inc-narrative" class="text-input" rows="3" style="border-radius: var(--rounded-sm); padding: 10px; resize: vertical;" placeholder="Describe initial call details, symptoms, disturbance nature, or hazards observed..." required></textarea>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
+        <button type="button" class="button-outline" onclick="document.getElementById('incident-modal').close();" style="height: 42px; padding: 0 20px;">
+          Cancel
+        </button>
+        <button type="submit" class="button-primary" id="btn-save-incident" style="height: 42px; padding: 0 24px; background-color: #ef4444;">
+          Dispatch Responder Unit
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 2: QUICK STATUS TRANSITION -->
+  <dialog id="status-modal" class="modal-dialog" style="max-width: 520px; width: 90%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div>
+        <h3 class="typography-heading-4">Update Dispatch Status.</h3>
+        <p class="typography-caption" id="status-modal-code">INC-2026-00001</p>
+      </div>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('status-modal').close();" style="height: 30px; padding: 0 10px;">
+        Cancel
+      </button>
+    </div>
+
+    <form id="status-form">
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label">Select New Operational Status</label>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+          <label style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); cursor: pointer;">
+            <input type="radio" name="new-status" value="On-Scene / Responding" checked style="accent-color: var(--color-primary);">
+            <div>
+              <strong style="font-size: 0.875rem; color: #f97316;">On-Scene / Responding</strong>
+              <div class="typography-caption">Unit has arrived at the location (records response minutes).</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); cursor: pointer;">
+            <input type="radio" name="new-status" value="Resolved / Closed" style="accent-color: var(--color-primary);">
+            <div>
+              <strong style="font-size: 0.875rem; color: #10b981;">Resolved / Closed</strong>
+              <div class="typography-caption">Situation safely handled, calmed, or pacified.</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); cursor: pointer;">
+            <input type="radio" name="new-status" value="Referred to Agency" style="accent-color: var(--color-primary);">
+            <div>
+              <strong style="font-size: 0.875rem; color: #8b5cf6;">Referred to External Agency</strong>
+              <div class="typography-caption">Endorsed to PNP, BFP Fire Station, or City Hospital.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group" id="referral-agency-wrap" style="display: none; margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="referral-agency">Referred Government Agency</label>
+        <select id="referral-agency" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 40px;">
+          <option value="PNP Police Sub-Station">Philippine National Police (PNP) Sub-Station</option>
+          <option value="BFP Fire Station">Bureau of Fire Protection (BFP)</option>
+          <option value="City General Hospital / EMS">City General Hospital / EMS Ambulance</option>
+          <option value="City Social Welfare (CSWD)">City Social Welfare &amp; Development (CSWD)</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="status-notes">Action Taken / Resolution Summary</label>
+        <textarea id="status-notes" class="text-input" rows="3" style="border-radius: var(--rounded-sm); padding: 8px; resize: vertical;" placeholder="Describe what the responding officers found, first aid administered, or final actions taken..."></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+        <button type="button" class="button-outline" onclick="document.getElementById('status-modal').close();">
+          Cancel
+        </button>
+        <button type="submit" class="button-primary">
+          Confirm Status Update
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 3: LOG CURFEW CITATION -->
+  <dialog id="curfew-modal" class="modal-dialog" style="max-width: 600px; width: 90%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div>
+        <h3 class="typography-heading-4">Log Curfew Violation (Minor).</h3>
+        <p class="typography-caption">Curfew sweep ordinance apprehension and guardian endorsement.</p>
+      </div>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('curfew-modal').close();" style="height: 30px; padding: 0 10px;">
+        Cancel
+      </button>
+    </div>
+
+    <form id="curfew-form">
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label" for="curfew-minor-name">Minor's Full Name <span style="color: var(--color-primary);">*</span></label>
+          <input type="text" id="curfew-minor-name" class="text-input" placeholder="e.g. John Doe" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="curfew-minor-age">Age (Years) <span style="color: var(--color-primary);">*</span></label>
+          <input type="number" id="curfew-minor-age" class="text-input" placeholder="e.g. 15" min="1" max="17" required>
+        </div>
+      </div>
+
+      <div class="form-grid-2 mt-xs">
+        <div class="form-group">
+          <label class="form-label" for="curfew-purok">Apprehension Purok <span style="color: var(--color-primary);">*</span></label>
+          <select id="curfew-purok" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+            <option value="Purok 1">Purok 1</option>
+            <option value="Purok 2">Purok 2</option>
+            <option value="Purok 3">Purok 3</option>
+            <option value="Purok 4">Purok 4</option>
+            <option value="Purok 5">Purok 5</option>
+            <option value="Purok 6">Purok 6</option>
+            <option value="Purok 7">Purok 7</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="curfew-location">Street / Place Observed</label>
+          <input type="text" id="curfew-location" class="text-input" placeholder="e.g. Near Internet Cafe / Plaza" required>
+        </div>
+      </div>
+
+      <div class="form-grid-2 mt-xs">
+        <div class="form-group">
+          <label class="form-label" for="curfew-parent">Parent / Guardian Name</label>
+          <input type="text" id="curfew-parent" class="text-input" placeholder="e.g. Maria Doe (Mother)">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="curfew-parent-phone">Parent Contact Number</label>
+          <input type="tel" id="curfew-parent-phone" class="text-input" placeholder="09XXXXXXXXX">
+        </div>
+      </div>
+
+      <div class="form-group mt-xs">
+        <label class="form-label" for="curfew-disposition">Action Taken / Disposition</label>
+        <select id="curfew-disposition" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;">
+          <option value="Turned over to Parent / Guardian (First Warning)">Turned over to Parent / Guardian (First Warning)</option>
+          <option value="Written Undertaking Signed by Guardian">Written Undertaking Signed by Guardian</option>
+          <option value="Community Service Counseling Assigned">Community Service &amp; Counseling Assigned</option>
+          <option value="Referred to BCPC / CSWD Social Worker">Referred to Barangay Children Council (BCPC / CSWD)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); margin-top: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <button type="button" class="button-outline" onclick="document.getElementById('curfew-modal').close();">
+          Cancel
+        </button>
+        <button type="submit" class="button-primary">
+          Log Curfew Record
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 4: INCIDENT DOSSIER & TIMELINE -->
+  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 720px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+        <span class="badge-rose" id="dossier-code">INC-2026-00001</span>
+        <span class="typography-heading-4" id="dossier-cat-title">Medical Emergency</span>
+      </div>
+      <div style="display: flex; gap: var(--spacing-xs);">
+        <button type="button" class="button-primary" id="btn-dossier-print" style="height: 34px; padding: 0 14px; font-size: 0.75rem;">
+          Print Spot Report
+        </button>
+        <button type="button" class="button-pill-soft" onclick="document.getElementById('dossier-modal').close();" style="height: 34px; padding: 0 12px; font-size: 0.75rem;">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Telemetry Cards -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
+        <div class="typography-caption" style="color: var(--color-text-muted);">PRIORITY SEVERITY</div>
+        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-priority">-</div>
+      </div>
+      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
+        <div class="typography-caption" style="color: var(--color-text-muted);">RESPONSE TIME</div>
+        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px; color: var(--color-primary);" id="dossier-elapsed">-</div>
+      </div>
+      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
+        <div class="typography-caption" style="color: var(--color-text-muted);">CURRENT STATUS</div>
+        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-status">-</div>
+      </div>
+    </div>
+
+    <!-- Timeline Progress -->
+    <div>
+      <span class="typography-label" style="color: var(--color-primary);">INCIDENT OPERATIONAL TIMELINE</span>
+      <div class="timeline-container" id="dossier-timeline-mount"></div>
+    </div>
+
+    <!-- Narrative & Details -->
+    <div style="margin-top: var(--spacing-sm); padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
+      <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 4px;">OFFICIAL NARRATIVE &amp; OBSERVATIONS:</div>
+      <p style="font-size: 0.8125rem; line-height: 1.5;" id="dossier-narrative">-</p>
+    </div>
+
+    <!-- Action Taken Box -->
+    <div style="margin-top: var(--spacing-xs); padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);" id="dossier-action-box">
+      <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 4px;">ACTIONS TAKEN / RESOLUTION SUMMARY:</div>
+      <p style="font-size: 0.8125rem; line-height: 1.5;" id="dossier-action-text">-</p>
+    </div>
+  </dialog>
+
+  <!-- MODAL 5: PRINTABLE BARANGAY INCIDENT SPOT REPORT (BISR) -->
+  <dialog id="print-modal" class="modal-dialog" style="max-width: 860px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+        <span class="badge-rose" id="print-pill-code">INC-2026-00001</span>
+        <span class="typography-caption">Official Barangay Incident Spot Report</span>
+      </div>
+      <div style="display: flex; gap: var(--spacing-xs);">
+        <button type="button" class="button-outline" onclick="document.getElementById('print-modal').close();" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
+          Close
+        </button>
+        <button type="button" class="button-primary" onclick="window.print();" style="height: 36px; padding: 0 18px; font-size: 0.8125rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect width="12" height="8" x="6" y="14"/>
+          </svg>
+          <span>Print Spot Report (Ctrl+P)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Official Printable Paper Sheet -->
+    <div id="printable-spot-report">
+      <div class="cert-header" style="text-align: center; margin-bottom: 24px; border-bottom: 2px solid #000; padding-bottom: 12px;">
+        <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #555;">Republic of the Philippines</div>
+        <div style="font-size: 0.95rem; font-weight: 700; text-transform: uppercase;" id="print-jurisdiction">Province of Metropolitan Manila &bull; City of San Isidro</div>
+        <div style="font-size: 1.25rem; font-weight: 800; color: #111; letter-spacing: 0.02em; margin: 4px 0;" id="print-brgy-name">BARANGAY SAN ISIDRO</div>
+        <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #ef4444;">OFFICE OF THE BARANGAY PEACE AND ORDER COUNCIL</div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">BARANGAY INCIDENT SPOT REPORT (BISR)</div>
+        <div style="font-size: 0.85rem; color: #555; margin-top: 2px;">STANDARD FIRST-RESPONDER DISPATCH &amp; PATROL LOG</div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem; margin-bottom: 20px;">
+        <tbody>
+          <tr>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; width: 25%; background-color: #f5f5f5;">BISR Control #:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-family: monospace; font-weight: 800;" id="print-report-code">INC-2026-00001</td>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; width: 25%; background-color: #f5f5f5;">Date / Time Reported:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" id="print-report-time">-</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Incident Classification:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700;" id="print-report-category">-</td>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Priority Severity:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" id="print-report-priority">-</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Exact Location:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" colspan="3" id="print-report-location">-</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Complainant / Reporter:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" id="print-report-reporter">-</td>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Contact Phone:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" id="print-report-phone">-</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Lead Responding Tanod:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" id="print-report-responder">-</td>
+            <td style="padding: 6px 10px; border: 1px solid #333; font-weight: 700; background-color: #f5f5f5;">Dispatched Unit:</td>
+            <td style="padding: 6px 10px; border: 1px solid #333;" id="print-report-unit">-</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Narrative Section -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; text-transform: uppercase;">I. FACTS / NARRATIVE OF THE INCIDENT:</div>
+        <div style="border: 1px solid #333; padding: 12px; min-height: 100px; font-size: 0.8125rem; line-height: 1.6;" id="print-report-narrative">
+          -
+        </div>
+      </div>
+
+      <!-- Action Taken Section -->
+      <div style="margin-bottom: 30px;">
+        <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; text-transform: uppercase;">II. POLICE / TANOD ACTIONS TAKEN &amp; DISPOSITION:</div>
+        <div style="border: 1px solid #333; padding: 12px; min-height: 80px; font-size: 0.8125rem; line-height: 1.6;" id="print-report-action">
+          -
+        </div>
+      </div>
+
+      <!-- Dual Signatory Blocks -->
+      <div style="display: flex; justify-content: space-between; margin-top: 40px; padding: 0 20px;">
+        <div style="text-align: center; width: 220px;">
+          <div style="height: 50px;"></div>
+          <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: 700; font-size: 0.875rem;" id="print-officer-name">
+            OFFICER-ON-DUTY / TANOD
+          </div>
+          <div style="font-size: 0.75rem; color: #555;">Investigating Officer / Tanod Desk</div>
+        </div>
+
+        <div style="text-align: center; width: 240px;">
+          <div style="height: 50px;"></div>
+          <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: 800; font-size: 0.9375rem;" id="print-punong-name">
+            HON. PUNONG BARANGAY
+          </div>
+          <div style="font-size: 0.75rem; color: #333; font-weight: 600;">Punong Barangay / BPOC Chairman</div>
+        </div>
+      </div>
+      <!-- Incident Spot Report QR Verification Footer -->
+      <div style="margin-top: 32px; border-top: 1px dashed #999; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; font-family: monospace; color: #444;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div id="print-incident-qr" style="width: 60px; height: 60px; background: #ffffff; border: 1px solid #ccc; padding: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
+          <div style="font-size: 0.6875rem; line-height: 1.35; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #555;">
+            <strong style="display: block; color: #111; font-size: 0.75rem; text-transform: uppercase;">Official BISR Verification</strong>
+            Scan QR badge to verify spot report &bull; <span id="print-incident-verify-url" style="color: #0066ff;">verify.php</span>
+          </div>
+        </div>
+        <div style="text-align: right; font-size: 0.7rem; color: #666; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <div style="font-weight: 700; color: #111;">BARANGAY PEACE &amp; ORDER COUNCIL</div>
+          <div>Official Emergency Incident Dispatch Docket</div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL 6: DELETE CONFIRMATION -->
+  <dialog id="delete-modal" class="modal-dialog" style="max-width: 420px; width: 90%; text-align: center;">
+    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-sm);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </svg>
+    </div>
+    <h3 class="typography-heading-4">Delete Incident Record?</h3>
+    <p class="typography-body-sm" style="color: var(--color-text-muted); margin: 6px 0 var(--spacing-md);">
+      Are you sure you want to remove incident log <strong id="delete-inc-no">INC-2026-00001</strong>? This action will be recorded in the security audit log.
+    </p>
+    <div style="display: flex; justify-content: center; gap: var(--spacing-xs);">
+      <button type="button" class="button-outline" onclick="document.getElementById('delete-modal').close();" style="height: 38px; padding: 0 16px;">
+        Cancel
+      </button>
+      <button type="button" class="button-primary" id="btn-confirm-delete" style="background-color: #ef4444; height: 38px; padding: 0 18px;">
+        Confirm Delete
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/lib/qrcode.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/sidebar.js"></script>
+
+  <script>
+    let allIncidents = [];
+    let currentAuthUser = null;
+    let activeIncidentForAction = null;
+    let allTanods = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Guard route: require authenticated official session
+      const auth = await authService.requireAuth('login.php');
+      if (!auth) return;
+      currentAuthUser = auth.user;
+
+      // 2. Render App Shell Sidebar & Topbar
+      await AppSidebar.render('incidents');
+
+      // 3. Load Settings for Letterhead
+      await loadBarangayMeta();
+
+      // 4. Load Tanods and Responders from Officials Store
+      await loadTanodResponders();
+
+      // 5. Query Incidents from DB
+      await refreshIncidentsList();
+
+      // 6. Bind UI Event Listeners
+      bindEventListeners();
+
+      // 7. Auto refresh elapsed response times every 60 seconds
+      setInterval(() => {
+        renderFilteredIncidents();
+      }, 60000);
+    });
+
+    // Load Identity & Officials Signatory
+    async function loadBarangayMeta() {
+      try {
+        const idSetting = await window.barangayDB.get('settings', 'identity');
+        if (idSetting && idSetting.value) {
+          const v = idSetting.value;
+          if (v.barangayName) {
+            document.getElementById('print-brgy-name').textContent = v.barangayName.toUpperCase();
+          }
+          if (v.province && v.municipalityCity) {
+            document.getElementById('print-jurisdiction').textContent = `${v.province.toUpperCase()} • ${v.municipalityCity.toUpperCase()}`;
+          }
+        }
+
+        const officials = await window.barangayDB.getAll('officials');
+        const activeSignatory = officials.find(o => o.isSignatory && o.status === 'active') ||
+                                officials.find(o => o.position === 'Punong Barangay' && o.status === 'active');
+        if (activeSignatory) {
+          document.getElementById('print-punong-name').textContent = activeSignatory.fullName.toUpperCase();
+        }
+      } catch (err) {
+        console.warn('Could not load barangay meta:', err);
+      }
+    }
+
+    // Load Tanod Responders from Officials store
+    async function loadTanodResponders() {
+      try {
+        const officials = await window.barangayDB.getAll('officials');
+        const select = document.getElementById('inc-lead-responder');
+        select.innerHTML = '<option value="Barangay Tanod Duty Desk">Barangay Tanod Duty Desk</option>';
+
+        allTanods = officials.filter(o => 
+          (o.position || '').toLowerCase().includes('tanod') || 
+          (o.committee || '').toLowerCase().includes('peace') ||
+          (o.position || '').toLowerCase().includes('peace')
+        );
+
+        if (allTanods.length === 0) {
+          // If no specific tanods, list all active staff
+          officials.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = `${o.fullName} (${o.position})`;
+            opt.textContent = `${o.fullName} (${o.position})`;
+            select.appendChild(opt);
+          });
+        } else {
+          allTanods.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = `${o.fullName} (${o.position})`;
+            opt.textContent = `${o.fullName} (${o.position})`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error('Error loading tanod responders:', err);
+      }
+    }
+
+    // Refresh Incidents List
+    async function refreshIncidentsList() {
+      try {
+        allIncidents = await window.barangayDB.getAll('incidents');
+        allIncidents.sort((a, b) => new Date(b.reportedAt || b.createdAt || 0) - new Date(a.reportedAt || a.createdAt || 0));
+
+        updateTelemetry(allIncidents);
+        renderFilteredIncidents();
+        renderCurfewTable();
+      } catch (err) {
+        console.error('Failed to load incidents:', err);
+        Toast.error('Could not load incident database.');
+      }
+    }
+
+    // Update Telemetry Counters
+    function updateTelemetry(incidents) {
+      const total = incidents.length;
+      const activeCount = incidents.filter(i => i.status === 'Active / Dispatched' || i.status === 'On-Scene / Responding').length;
+      const curfewCount = incidents.filter(i => i.type === 'Curfew Violation').length;
+
+      // Calculate average response time
+      let totalMinutes = 0;
+      let countedResolved = 0;
+      incidents.forEach(i => {
+        if (i.responseMinutes && i.responseMinutes > 0) {
+          totalMinutes += i.responseMinutes;
+          countedResolved++;
+        }
+      });
+
+      const avgMinutes = countedResolved > 0 ? Math.round(totalMinutes / countedResolved) : 0;
+
+      document.getElementById('stat-total-incidents').textContent = total;
+      document.getElementById('stat-sub-incidents').textContent = `${total} emergency calls recorded`;
+
+      document.getElementById('stat-active-dispatches').textContent = activeCount;
+      document.getElementById('stat-sub-dispatches').textContent = `${activeCount} units currently responding`;
+      document.getElementById('active-dispatches-badge').textContent = `${activeCount} Active Dispatches`;
+
+      document.getElementById('stat-avg-response').textContent = `${avgMinutes}m`;
+      document.getElementById('stat-sub-response').textContent = countedResolved > 0 ? `Based on ${countedResolved} dispatches` : 'Awaiting response data';
+
+      document.getElementById('stat-total-curfew').textContent = curfewCount;
+      document.getElementById('stat-sub-curfew').textContent = `${curfewCount} minor curfew sweeps logged`;
+    }
+
+    // Render Filtered Incidents Grid
+    function renderFilteredIncidents() {
+      const search = (document.getElementById('search-incidents').value || '').toLowerCase().trim();
+      const cat = document.getElementById('filter-category').value;
+      const priority = document.getElementById('filter-priority').value;
+      const status = document.getElementById('filter-status').value;
+      const purok = document.getElementById('filter-purok').value;
+
+      const hasActive = search || cat || priority || status || purok;
+      document.getElementById('btn-clear-filters').style.display = hasActive ? 'inline-flex' : 'none';
+
+      const filtered = allIncidents.filter(i => {
+        if (search) {
+          const code = (i.incidentNo || '').toLowerCase();
+          const loc = (i.address || '').toLowerCase();
+          const rep = (i.reporterName || '').toLowerCase();
+          const tanod = (i.leadResponder || '').toLowerCase();
+          if (!code.includes(search) && !loc.includes(search) && !rep.includes(search) && !tanod.includes(search)) return false;
+        }
+        if (cat && i.type !== cat) return false;
+        if (priority && i.priority !== priority) return false;
+        if (status && i.status !== status) return false;
+        if (purok && i.purok !== purok) return false;
+        return true;
+      });
+
+      const container = document.getElementById('incidents-grid-mount');
+      const emptyState = document.getElementById('empty-state');
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      container.innerHTML = filtered.map(i => {
+        let priorityClass = 'priority-routine';
+        let priorityBadge = '<span class="badge-emerald" style="font-size: 0.625rem;">Routine</span>';
+        if ((i.priority || '').includes('Critical')) {
+          priorityClass = 'priority-critical';
+          priorityBadge = '<span class="badge-rose" style="font-size: 0.625rem; font-weight: 700;">CRITICAL (RED)</span>';
+        } else if ((i.priority || '').includes('High')) {
+          priorityClass = 'priority-high';
+          priorityBadge = '<span class="badge-amber" style="font-size: 0.625rem; font-weight: 700;">HIGH (ORANGE)</span>';
+        } else if ((i.priority || '').includes('Moderate')) {
+          priorityClass = 'priority-moderate';
+          priorityBadge = '<span class="badge-amber" style="font-size: 0.625rem;">MODERATE</span>';
+        }
+
+        let statusBadge = '<span class="badge-rose" style="font-size: 0.625rem;">Dispatched</span>';
+        if (i.status === 'On-Scene / Responding') {
+          statusBadge = '<span class="badge-amber" style="font-size: 0.625rem;">On-Scene</span>';
+        } else if (i.status === 'Resolved / Closed') {
+          statusBadge = '<span class="badge-emerald" style="font-size: 0.625rem;">Resolved</span>';
+        } else if (i.status === 'Referred to Agency') {
+          statusBadge = '<span class="badge-purple" style="font-size: 0.625rem;">Referred</span>';
+        }
+
+        // Calculate elapsed minutes
+        const reportedTime = new Date(i.reportedAt || i.createdAt || Date.now());
+        const elapsedMins = Math.max(1, Math.round((Date.now() - reportedTime.getTime()) / 60000));
+        const elapsedText = i.status === 'Resolved / Closed' 
+          ? `Closed in ${i.responseMinutes || elapsedMins}m`
+          : `${elapsedMins}m elapsed`;
+
+        return `
+          <div class="incident-card ${priorityClass}">
+            <div>
+              <div class="card-top-row">
+                <span class="badge-neutral" style="font-family: monospace; font-weight: 700; font-size: 0.75rem;">${i.incidentNo}</span>
+                <div style="display: flex; gap: 4px;">
+                  ${priorityBadge}
+                  ${statusBadge}
+                </div>
+              </div>
+
+              <div class="incident-category-lockup">
+                <div class="category-icon-bubble">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="incident-title">${i.type}</div>
+                  <div class="incident-subtitle">${i.purok} &bull; ${i.address}</div>
+                </div>
+              </div>
+
+              <div class="incident-details-box">
+                ${i.narrative}
+              </div>
+
+              <div class="incident-meta-grid">
+                <div>
+                  <span class="typography-caption" style="color: var(--color-text-muted);">CALLER:</span>
+                  <div style="font-weight: 600; color: var(--color-ink);">${i.reporterName || 'Anonymous'}</div>
+                </div>
+                <div>
+                  <span class="typography-caption" style="color: var(--color-text-muted);">DISPATCHED:</span>
+                  <div style="font-weight: 600; color: var(--color-ink);">${i.dispatchedUnit || 'Tanod Unit'}</div>
+                </div>
+                <div>
+                  <span class="typography-caption" style="color: var(--color-text-muted);">LEAD OFFICER:</span>
+                  <div style="font-weight: 600; color: var(--color-ink);">${i.leadResponder || 'Duty Desk'}</div>
+                </div>
+                <div>
+                  <span class="typography-caption" style="color: var(--color-text-muted);">TIMER:</span>
+                  <div style="font-weight: 700; color: var(--color-primary);">${elapsedText}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Action Buttons -->
+            <div class="incident-actions-row">
+              <button class="button-outline" onclick="openStatusModal(${i.id})" style="height: 32px; padding: 0 12px; font-size: 0.75rem;">
+                <span>Update Status &rarr;</span>
+              </button>
+
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <button class="table-action-btn" onclick="openDossierModal(${i.id})" title="View Timeline & Dossier">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </button>
+                <button class="table-action-btn" onclick="openPrintModal(${i.id})" title="Print Spot Report">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"/>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <rect width="12" height="8" x="6" y="14"/>
+                  </svg>
+                </button>
+                <button class="table-action-btn danger" onclick="openDeleteModal(${i.id})" title="Delete Incident Log">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Curfew Table
+    function renderCurfewTable() {
+      const tbody = document.getElementById('curfew-table-tbody');
+      const curfews = allIncidents.filter(i => i.type === 'Curfew Violation');
+
+      if (curfews.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--color-text-muted); padding: 24px;">
+              No curfew violations logged. Community curfew compliance active.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = curfews.map(c => {
+        const timeStr = new Date(c.reportedAt || c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const dateStr = new Date(c.reportedAt || c.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+        return `
+          <tr>
+            <td>
+              <strong style="font-family: monospace; color: var(--color-primary);">${c.incidentNo}</strong>
+              <div class="typography-caption">${dateStr} &bull; ${timeStr}</div>
+            </td>
+            <td style="font-weight: 700;">${c.minorName || c.reporterName || 'Minor Resident'}</td>
+            <td>${c.minorAge || '—'} yrs</td>
+            <td>
+              <div>${c.parentName || 'N/A'}</div>
+              <div class="typography-caption">${c.parentPhone || 'No Phone'}</div>
+            </td>
+            <td>${c.purok} &bull; ${c.address}</td>
+            <td>${c.leadResponder || 'Duty Patrol'}</td>
+            <td>
+              <span class="badge-amber" style="font-size: 0.6875rem;">${c.resolutionNotes || 'Turned over to guardian'}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Switch between Dispatch Feed and Curfew Log
+    window.switchIncidentView = function(view) {
+      const isDispatch = view === 'dispatch';
+      document.getElementById('view-dispatch-container').style.display = isDispatch ? 'block' : 'none';
+      document.getElementById('view-curfew-container').style.display = isDispatch ? 'none' : 'block';
+
+      document.getElementById('btn-view-dispatch').classList.toggle('active', isDispatch);
+      document.getElementById('btn-view-curfew').classList.toggle('active', !isDispatch);
+    };
+
+    // Open Incident Modal
+    window.openIncidentModal = function() {
+      document.getElementById('incident-form').reset();
+      const year = new Date().getFullYear();
+      const sequence = String(allIncidents.length + 1).padStart(5, '0');
+      document.getElementById('inc-control-no').value = `INC-${year}-${sequence}`;
+      document.getElementById('incident-modal').showModal();
+    };
+
+    // Open Curfew Modal
+    window.openCurfewModal = function() {
+      document.getElementById('curfew-form').reset();
+      document.getElementById('curfew-modal').showModal();
+    };
+
+    // Open Status Transition Modal
+    window.openStatusModal = function(id) {
+      const inc = allIncidents.find(i => i.id === id);
+      if (!inc) return;
+
+      activeIncidentForAction = inc;
+      document.getElementById('status-modal-code').textContent = `${inc.incidentNo} (${inc.type} • ${inc.purok})`;
+      document.getElementById('status-notes').value = inc.resolutionNotes || '';
+
+      // Radio matching
+      const radios = document.querySelectorAll('input[name="new-status"]');
+      radios.forEach(r => {
+        r.checked = r.value === inc.status;
+      });
+
+      const agencyWrap = document.getElementById('referral-agency-wrap');
+      agencyWrap.style.display = inc.status === 'Referred to Agency' ? 'block' : 'none';
+
+      document.getElementById('status-modal').showModal();
+    };
+
+    // Open Dossier Modal
+    window.openDossierModal = function(id) {
+      const inc = allIncidents.find(i => i.id === id);
+      if (!inc) return;
+
+      activeIncidentForAction = inc;
+
+      document.getElementById('dossier-code').textContent = inc.incidentNo;
+      document.getElementById('dossier-cat-title').textContent = inc.type;
+      document.getElementById('dossier-priority').textContent = inc.priority;
+      document.getElementById('dossier-status').textContent = inc.status;
+      document.getElementById('dossier-narrative').textContent = inc.narrative;
+
+      const elapsed = inc.responseMinutes ? `${inc.responseMinutes} mins` : 'Active';
+      document.getElementById('dossier-elapsed').textContent = elapsed;
+
+      const actionBox = document.getElementById('dossier-action-box');
+      if (inc.resolutionNotes) {
+        actionBox.style.display = 'block';
+        document.getElementById('dossier-action-text').textContent = inc.resolutionNotes;
+      } else {
+        actionBox.style.display = 'none';
+      }
+
+      // Timeline Rendering
+      const timelineMount = document.getElementById('dossier-timeline-mount');
+      const reportedAt = new Date(inc.reportedAt || inc.createdAt);
+      const isArrived = inc.arrivedAt || inc.status === 'On-Scene / Responding' || inc.status === 'Resolved / Closed';
+      const isClosed = inc.resolvedAt || inc.status === 'Resolved / Closed' || inc.status === 'Referred to Agency';
+
+      timelineMount.innerHTML = `
+        <div class="timeline-step completed">
+          <div style="font-weight: 700; font-size: 0.8125rem;">Call Received &amp; Logged</div>
+          <div class="typography-caption">${reportedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} &bull; Caller: ${inc.reporterName || 'Concerned Citizen'} (${inc.reporterPhone || 'N/A'})</div>
+        </div>
+
+        <div class="timeline-step completed">
+          <div style="font-weight: 700; font-size: 0.8125rem;">Tanod Unit Dispatched</div>
+          <div class="typography-caption">Lead: ${inc.leadResponder} &bull; Unit: ${inc.dispatchedUnit || 'Mobile 1'}</div>
+        </div>
+
+        <div class="timeline-step ${isArrived ? 'completed' : ''}">
+          <div style="font-weight: 700; font-size: 0.8125rem;">On-Scene Arrival</div>
+          <div class="typography-caption">${inc.arrivedAt ? new Date(inc.arrivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (isArrived ? 'On-Scene confirmed' : 'Responding en route')}</div>
+        </div>
+
+        <div class="timeline-step ${isClosed ? 'completed' : ''}">
+          <div style="font-weight: 700; font-size: 0.8125rem;">Resolution / External Referral</div>
+          <div class="typography-caption">${inc.resolvedAt ? new Date(inc.resolvedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (isClosed ? inc.status : 'Pending resolution')}</div>
+        </div>
+      `;
+
+      document.getElementById('dossier-modal').showModal();
+    };
+
+    // Open Print Modal
+    window.openPrintModal = function(id) {
+      const inc = allIncidents.find(i => i.id === id) || activeIncidentForAction;
+      if (!inc) return;
+
+      activeIncidentForAction = inc;
+
+      document.getElementById('print-pill-code').textContent = inc.incidentNo;
+      document.getElementById('print-report-code').textContent = inc.incidentNo;
+      document.getElementById('print-report-category').textContent = inc.type.toUpperCase();
+      document.getElementById('print-report-priority').textContent = inc.priority.toUpperCase();
+      document.getElementById('print-report-location').textContent = `${inc.address}, ${inc.purok}, Barangay San Isidro`;
+      document.getElementById('print-report-reporter').textContent = (inc.reporterName || inc.minorName || 'ANONYMOUS').toUpperCase();
+      document.getElementById('print-report-phone').textContent = inc.reporterPhone || inc.parentPhone || 'N/A';
+      document.getElementById('print-report-responder').textContent = (inc.leadResponder || 'TANOD ON-DUTY').toUpperCase();
+      document.getElementById('print-report-unit').textContent = inc.dispatchedUnit || 'PATROL DESK';
+
+      const reportedDate = new Date(inc.reportedAt || inc.createdAt);
+      document.getElementById('print-report-time').textContent = `${reportedDate.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' })} at ${reportedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+      document.getElementById('print-report-narrative').textContent = inc.narrative || 'No additional narrative provided.';
+      document.getElementById('print-report-action').textContent = inc.resolutionNotes || (inc.status === 'Active / Dispatched' ? 'Tanod unit dispatched and currently investigating the scene.' : 'Handled according to standard operating procedures.');
+
+      document.getElementById('print-officer-name').textContent = (inc.leadResponder || 'OFFICER-ON-DUTY').toUpperCase();
+
+      // Render Live Scannable Spot Report QR Code Badge
+      const qrContainer = document.getElementById('print-incident-qr');
+      if (qrContainer && window.QRCode) {
+        const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
+        const verifyUrl = `${window.location.origin}/verify${ext}?code=${encodeURIComponent(inc.incidentNo)}`;
+        QRCode.render(qrContainer, verifyUrl, { size: 60, margin: 1 });
+        const urlEl = document.getElementById('print-incident-verify-url');
+        if (urlEl) urlEl.textContent = `verify${ext}?code=${inc.incidentNo}`;
+      }
+
+      document.getElementById('print-modal').showModal();
+    };
+
+    // Open Delete Modal
+    window.openDeleteModal = function(id) {
+      const inc = allIncidents.find(i => i.id === id);
+      if (!inc) return;
+
+      activeIncidentForAction = inc;
+      document.getElementById('delete-inc-no').textContent = `${inc.incidentNo} (${inc.type})`;
+      document.getElementById('delete-modal').showModal();
+    };
+
+    // Confirm Delete
+    async function confirmDelete() {
+      if (!activeIncidentForAction) return;
+      const inc = activeIncidentForAction;
+
+      try {
+        await window.barangayDB.delete('incidents', inc.id);
+
+        if (window.authService) {
+          await window.authService.logAudit(
+            'INCIDENT_DELETED',
+            `Deleted incident log ${inc.incidentNo} (${inc.type} in ${inc.purok})`
+          );
+        }
+
+        document.getElementById('delete-modal').close();
+        Toast.success(`Incident ${inc.incidentNo} removed.`);
+        await refreshIncidentsList();
+      } catch (err) {
+        console.error('Error deleting incident:', err);
+        Toast.error('Failed to delete incident record.');
+      }
+    }
+
+    // Export Incident Log to CSV
+    function exportIncidentsCSV() {
+      if (allIncidents.length === 0) {
+        Toast.warning('No incidents available to export.');
+        return;
+      }
+
+      const headers = [
+        'Incident No',
+        'Category',
+        'Priority',
+        'Status',
+        'Purok',
+        'Address',
+        'Reporter Name',
+        'Reporter Phone',
+        'Lead Responder',
+        'Dispatched Unit',
+        'Response Minutes',
+        'Narrative',
+        'Resolution Notes',
+        'Reported At'
+      ];
+
+      const rows = allIncidents.map(i => [
+        `"${i.incidentNo}"`,
+        `"${i.type}"`,
+        `"${i.priority}"`,
+        `"${i.status}"`,
+        `"${i.purok}"`,
+        `"${(i.address || '').replace(/"/g, '""')}"`,
+        `"${(i.reporterName || i.minorName || '').replace(/"/g, '""')}"`,
+        `"${i.reporterPhone || i.parentPhone || ''}"`,
+        `"${i.leadResponder || ''}"`,
+        `"${i.dispatchedUnit || ''}"`,
+        i.responseMinutes || 0,
+        `"${(i.narrative || '').replace(/"/g, '""')}"`,
+        `"${(i.resolutionNotes || '').replace(/"/g, '""')}"`,
+        `"${i.reportedAt || i.createdAt || ''}"`
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Barangay_Incidents_Log_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      Toast.success('Incident ledger CSV exported successfully!');
+    }
+
+    // Bind Event Listeners
+    function bindEventListeners() {
+      document.getElementById('btn-open-incident-modal').addEventListener('click', openIncidentModal);
+      document.getElementById('btn-export-csv').addEventListener('click', exportIncidentsCSV);
+      document.getElementById('btn-confirm-delete').addEventListener('click', confirmDelete);
+
+      // Dossier Print button
+      document.getElementById('btn-dossier-print').addEventListener('click', () => {
+        document.getElementById('dossier-modal').close();
+        if (activeIncidentForAction) {
+          openPrintModal(activeIncidentForAction.id);
+        }
+      });
+
+      // Filter events
+      document.getElementById('search-incidents').addEventListener('input', renderFilteredIncidents);
+      document.getElementById('filter-category').addEventListener('change', renderFilteredIncidents);
+      document.getElementById('filter-priority').addEventListener('change', renderFilteredIncidents);
+      document.getElementById('filter-status').addEventListener('change', renderFilteredIncidents);
+      document.getElementById('filter-purok').addEventListener('change', renderFilteredIncidents);
+
+      document.getElementById('btn-clear-filters').addEventListener('click', () => {
+        document.getElementById('search-incidents').value = '';
+        document.getElementById('filter-category').value = '';
+        document.getElementById('filter-priority').value = '';
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-purok').value = '';
+        renderFilteredIncidents();
+      });
+
+      // Status radio toggling
+      document.querySelectorAll('input[name="new-status"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          document.getElementById('referral-agency-wrap').style.display = e.target.value === 'Referred to Agency' ? 'block' : 'none';
+        });
+      });
+
+      // Incident Intake Form Submit
+      document.getElementById('incident-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const controlNo = document.getElementById('inc-control-no').value.trim();
+        const category = document.getElementById('inc-category').value;
+        const priority = document.getElementById('inc-priority').value;
+        const purok = document.getElementById('inc-purok').value;
+        const address = document.getElementById('inc-address').value.trim();
+        const phone = document.getElementById('inc-reporter-phone').value.trim();
+        const reporter = document.getElementById('inc-reporter-name').value.trim();
+        const lead = document.getElementById('inc-lead-responder').value;
+        const unit = document.getElementById('inc-unit').value;
+        const narrative = document.getElementById('inc-narrative').value.trim();
+
+        if (!controlNo || !address || !narrative) {
+          Toast.error('Please fill in all required fields.');
+          return;
+        }
+
+        const now = new Date();
+        const incidentData = {
+          incidentNo: controlNo,
+          type: category,
+          priority: priority,
+          status: 'Active / Dispatched',
+          purok: purok,
+          address: address,
+          reporterName: reporter || 'Anonymous Caller',
+          reporterPhone: phone,
+          leadResponder: lead,
+          dispatchedUnit: unit,
+          narrative: narrative,
+          reportedAt: now.toISOString(),
+          createdAt: now.toISOString(),
+          responseMinutes: 0
+        };
+
+        try {
+          await window.barangayDB.add('incidents', incidentData);
+
+          if (window.authService) {
+            await window.authService.logAudit(
+              'INCIDENT_LOGGED',
+              `Logged ${priority} ${category} (${controlNo}) in ${purok} - Responders: ${lead}`
+            );
+          }
+
+          document.getElementById('incident-modal').close();
+          Toast.success(`Emergency call ${controlNo} dispatched!`);
+
+          // Automated Incident SMS Dispatch to Caller
+          if (phone) {
+            try {
+              await window.barangayDB.add('notifications', {
+                dispatchCode: `SMS-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+                recipientName: reporter || 'Concerned Caller',
+                recipientContact: phone,
+                channel: 'SMS',
+                category: 'Incident',
+                message: `PABATID: Ang inyong emergency call ukol sa ${category} sa ${address}, ${purok} ay natanggap na. Rumesponde na po ang Tanod Quick Response Team (${lead}). Reference: ${controlNo}.`,
+                status: 'Delivered',
+                gatewayRef: 'SMP-' + Math.random().toString(16).substr(2, 6),
+                costCredits: 1,
+                createdAt: new Date().toISOString()
+              });
+              Toast.info(`En-route SMS dispatched to caller at ${phone}.`);
+            } catch (err) {
+              console.warn('Incident SMS note:', err);
+            }
+          }
+
+          await refreshIncidentsList();
+        } catch (err) {
+          console.error('Failed to log incident:', err);
+          Toast.error('Could not save incident log.');
+        }
+      });
+
+      // Status Transition Form Submit
+      document.getElementById('status-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!activeIncidentForAction) return;
+
+        const inc = activeIncidentForAction;
+        const selectedStatus = document.querySelector('input[name="new-status"]:checked').value;
+        const notes = document.getElementById('status-notes').value.trim();
+        const referralAgency = document.getElementById('referral-agency').value;
+
+        const now = new Date();
+        inc.status = selectedStatus;
+        inc.resolutionNotes = notes;
+
+        if (selectedStatus === 'On-Scene / Responding' && !inc.arrivedAt) {
+          inc.arrivedAt = now.toISOString();
+          const start = new Date(inc.reportedAt || inc.createdAt);
+          inc.responseMinutes = Math.max(1, Math.round((now.getTime() - start.getTime()) / 60000));
+        } else if (selectedStatus === 'Resolved / Closed') {
+          inc.resolvedAt = now.toISOString();
+          if (!inc.arrivedAt) {
+            inc.arrivedAt = now.toISOString();
+            const start = new Date(inc.reportedAt || inc.createdAt);
+            inc.responseMinutes = Math.max(1, Math.round((now.getTime() - start.getTime()) / 60000));
+          }
+        } else if (selectedStatus === 'Referred to Agency') {
+          inc.referredAgency = referralAgency;
+          inc.resolvedAt = now.toISOString();
+        }
+
+        try {
+          await window.barangayDB.put('incidents', inc);
+
+          if (window.authService) {
+            await window.authService.logAudit(
+              'INCIDENT_STATUS_UPDATED',
+              `Updated ${inc.incidentNo} status to ${selectedStatus}`
+            );
+          }
+
+          document.getElementById('status-modal').close();
+          Toast.success(`Status updated for ${inc.incidentNo}`);
+          await refreshIncidentsList();
+        } catch (err) {
+          console.error('Failed to update status:', err);
+          Toast.error('Could not update status.');
+        }
+      });
+
+      // Curfew Intake Form Submit
+      document.getElementById('curfew-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const minorName = document.getElementById('curfew-minor-name').value.trim();
+        const age = parseInt(document.getElementById('curfew-minor-age').value, 10);
+        const purok = document.getElementById('curfew-purok').value;
+        const location = document.getElementById('curfew-location').value.trim();
+        const parent = document.getElementById('curfew-parent').value.trim();
+        const phone = document.getElementById('curfew-parent-phone').value.trim();
+        const disposition = document.getElementById('curfew-disposition').value;
+
+        if (!minorName || !age || !location) {
+          Toast.error('Please enter all required curfew citation fields.');
+          return;
+        }
+
+        const year = new Date().getFullYear();
+        const sequence = String(allIncidents.length + 1).padStart(5, '0');
+        const controlNo = `CRF-${year}-${sequence}`;
+
+        const curfewRecord = {
+          incidentNo: controlNo,
+          type: 'Curfew Violation',
+          priority: 'Moderate (Code Yellow)',
+          status: 'Resolved / Closed',
+          purok: purok,
+          address: location,
+          minorName: minorName,
+          minorAge: age,
+          parentName: parent,
+          parentPhone: phone,
+          leadResponder: 'Barangay Tanod Night Ronda',
+          dispatchedUnit: 'Ronda Patrol Unit',
+          narrative: `Minor apprehended outside during curfew hours at ${location}. Parent/guardian: ${parent || 'To be contacted'}.`,
+          resolutionNotes: disposition,
+          reportedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          resolvedAt: new Date().toISOString(),
+          responseMinutes: 5
+        };
+
+        try {
+          await window.barangayDB.add('incidents', curfewRecord);
+
+          if (window.authService) {
+            await window.authService.logAudit(
+              'CURFEW_CITATION_LOGGED',
+              `Logged minor curfew violation ${controlNo} for ${minorName} (${age}yo) in ${purok}`
+            );
+          }
+
+          document.getElementById('curfew-modal').close();
+          Toast.success(`Curfew citation ${controlNo} logged successfully.`);
+          await refreshIncidentsList();
+          switchIncidentView('curfew');
+        } catch (err) {
+          console.error('Failed to log curfew citation:', err);
+          Toast.error('Could not save curfew record.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

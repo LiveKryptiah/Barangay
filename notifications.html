@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMS &amp; Notification Dispatch Center &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .page-hero {
+      padding: var(--spacing-xs) 0 var(--spacing-sm);
+    }
+
+    .stats-ladder {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    @media (max-width: 1024px) {
+      .stats-ladder {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats-ladder {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Main Tab Navigation */
+    .notif-tab-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      border-bottom: 1px solid var(--color-hairline-soft);
+      margin-bottom: var(--spacing-md);
+      overflow-x: auto;
+    }
+
+    .notif-tab-btn {
+      padding: 10px 18px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .notif-tab-btn:hover {
+      color: var(--color-ink);
+    }
+
+    .notif-tab-btn.active {
+      color: var(--color-ink);
+      border-bottom-color: var(--color-ink);
+    }
+
+    /* Studio Layout: Form & Phone Preview */
+    .dispatch-studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: var(--spacing-lg);
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .dispatch-studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Composer Card */
+    .composer-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+    }
+
+    /* Merge Tag Chips */
+    .merge-tag-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+
+    .merge-tag-btn {
+      padding: 3px 10px;
+      border-radius: var(--rounded-full);
+      background-color: var(--color-canvas-soft);
+      border: 1px solid var(--color-hairline-soft);
+      font-size: 0.6875rem;
+      font-family: monospace;
+      color: var(--color-ink);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .merge-tag-btn:hover {
+      border-color: var(--color-ink);
+      background-color: var(--color-canvas);
+    }
+
+    /* Smartphone Mockup Preview */
+    .phone-mockup-wrap {
+      background: #ffffff;
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: sticky;
+      top: 80px;
+    }
+
+    .phone-frame {
+      width: 320px;
+      height: 560px;
+      background: #ffffff;
+      border: 8px solid #141414;
+      border-radius: 40px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 18px;
+      background: #141414;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .phone-status-bar {
+      height: 38px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: #141414;
+      background: #ffffff;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      z-index: 5;
+    }
+
+    .phone-header {
+      padding: 10px 14px;
+      background: #fafafa;
+      border-bottom: 1px solid #eeeeee;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .phone-sender-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #141414;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .phone-screen-body {
+      flex: 1;
+      padding: 16px 14px;
+      background: #f4f4f5;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sms-bubble-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 88%;
+    }
+
+    .sms-bubble {
+      background: #ffffff;
+      color: #141414;
+      padding: 12px 14px;
+      border-radius: 16px 16px 16px 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      font-size: 0.8125rem;
+      line-height: 1.45;
+      word-break: break-word;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .sms-meta-tag {
+      font-size: 0.625rem;
+      color: #71717a;
+      margin-top: 4px;
+      padding-left: 4px;
+    }
+
+    .phone-input-bar {
+      padding: 8px 12px;
+      background: #ffffff;
+      border-top: 1px solid #eeeeee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .phone-fake-input {
+      flex: 1;
+      height: 32px;
+      background: #f4f4f5;
+      border-radius: 16px;
+      padding: 0 12px;
+      font-size: 0.6875rem;
+      color: #a1a1aa;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Logs Table Toolbar */
+    .notif-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    /* Segmented Radio Group */
+    .segmented-group {
+      display: inline-flex;
+      background: var(--color-canvas-soft);
+      border-radius: var(--rounded-full);
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .segmented-btn {
+      padding: 6px 14px;
+      border-radius: var(--rounded-full);
+      border: none;
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .segmented-btn.active {
+      background: var(--color-canvas);
+      color: var(--color-ink);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Toggle Switch */
+    .toggle-switch-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #e4e4e7;
+      transition: .2s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--color-ink);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <!-- Main Content Workspace -->
+    <div class="app-main">
+      <div id="mobile-header-mount"></div>
+      <div id="app-topbar-mount"></div>
+
+      <main class="app-content">
+        <!-- Page Hero Section -->
+        <section class="page-hero">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+                <h1 class="typography-heading-2">SMS &amp; Notification Dispatch Center.</h1>
+                <span class="badge-neutral" id="gateway-status-pill" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+                  Carrier Gateway Live
+                </span>
+              </div>
+              <p class="typography-body-lg">
+                Automated resident notifications for certificate pick-ups, Lupon summons, emergency alerts, and community disaster broadcasts.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+              <button class="button-outline" onclick="openTestPingModal();" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                <span>Test Gateway Ping</span>
+              </button>
+              <button class="button-primary" onclick="switchToTab('compose');" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Compose Message</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Executive Telemetry Ladder -->
+        <section>
+          <div class="stats-ladder">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">DISPATCHES TODAY</span>
+                <span class="badge-neutral" id="badge-period">Live 24h</span>
+              </div>
+              <div class="stat-number" id="stat-total-today">0</div>
+              <div class="typography-caption" id="stat-total-all">0 messages all-time</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">DELIVERY SUCCESS SLA</span>
+                <span class="badge-neutral" style="color: #10b981;">99.4%</span>
+              </div>
+              <div class="stat-number" id="stat-delivery-rate">99.4%</div>
+              <div class="typography-caption" id="stat-delivered-count">0 successfully delivered</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">CARRIER SMS CREDITS</span>
+                <span class="badge-neutral">Simulated</span>
+              </div>
+              <div class="stat-number" id="stat-credits-balance">2,450</div>
+              <div class="typography-caption" id="stat-sender-id">Sender: BRGY-OFFICE</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="typography-label" style="color: var(--color-text-muted);">AUTOMATED TRIGGERS</span>
+                <span class="badge-neutral" style="color: #0284c7;">Active</span>
+              </div>
+              <div class="stat-number" id="stat-active-triggers">3 / 3</div>
+              <div class="typography-caption">Clearance, Blotter, Emergency</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="notif-tab-nav">
+          <button class="notif-tab-btn active" id="tab-btn-compose" onclick="switchToTab('compose');">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Compose &amp; Dispatch Studio</span>
+          </button>
+          <button class="notif-tab-btn" id="tab-btn-logs" onclick="switchToTab('logs');">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span>Dispatch Audit Logs</span>
+          </button>
+          <button class="notif-tab-btn" id="tab-btn-templates" onclick="switchToTab('templates');">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"/>
+              <path d="M3 9h18"/>
+              <path d="M9 21V9"/>
+            </svg>
+            <span>Templates &amp; Auto-Triggers</span>
+          </button>
+          <button class="notif-tab-btn" id="tab-btn-gateway" onclick="switchToTab('gateway');">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            <span>Gateway &amp; Carrier Settings</span>
+          </button>
+        </nav>
+
+        <!-- TAB 1: COMPOSE & DISPATCH STUDIO -->
+        <section id="tab-content-compose" style="display: block;">
+          <div class="dispatch-studio-grid">
+            <!-- Left: Message Composition Form -->
+            <div class="composer-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+                <div>
+                  <h3 class="typography-heading-4">Dispatch Composer.</h3>
+                  <p class="typography-caption">Direct cellular SMS and official e-government notifications.</p>
+                </div>
+                <!-- Audience Scope Radio -->
+                <div class="segmented-group">
+                  <button type="button" class="segmented-btn active" id="btn-mode-single" onclick="setComposeMode('single');">
+                    Single Resident
+                  </button>
+                  <button type="button" class="segmented-btn" id="btn-mode-bulk" onclick="setComposeMode('bulk');">
+                    Bulk Broadcast
+                  </button>
+                </div>
+              </div>
+
+              <form id="compose-form" onsubmit="handleDispatchSubmit(event);">
+                <!-- Single Resident Audience -->
+                <div id="section-audience-single" style="margin-bottom: var(--spacing-sm);">
+                  <label class="form-label" for="compose-resident-select">Select Resident Recipient <span style="color: var(--color-primary);">*</span></label>
+                  <select id="compose-resident-select" class="text-input" style="height: 42px; padding: 0 12px;" onchange="onResidentSelectChange();">
+                    <option value="">-- Choose Resident from Registry --</option>
+                  </select>
+
+                  <div class="form-grid-2 mt-xs">
+                    <div>
+                      <label class="form-label" for="compose-manual-name">Recipient Name</label>
+                      <input type="text" id="compose-manual-name" class="text-input" style="height: 38px;" placeholder="Full name of resident" required>
+                    </div>
+                    <div>
+                      <label class="form-label" for="compose-manual-contact">Mobile Number / Email <span style="color: var(--color-primary);">*</span></label>
+                      <input type="text" id="compose-manual-contact" class="text-input" style="height: 38px;" placeholder="e.g. 0917-123-4567 or email" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bulk Broadcast Audience -->
+                <div id="section-audience-bulk" style="display: none; margin-bottom: var(--spacing-sm); padding: 14px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
+                  <label class="form-label" for="compose-broadcast-target">Broadcast Target Group <span style="color: var(--color-primary);">*</span></label>
+                  <select id="compose-broadcast-target" class="text-input" style="height: 42px; padding: 0 12px;" onchange="updateEstimatedRecipients();">
+                    <option value="all">All Active Residents with Registered Phone/Email</option>
+                    <option value="purok_1">Purok 1 Residents Only</option>
+                    <option value="purok_2">Purok 2 Residents Only</option>
+                    <option value="purok_3">Purok 3 Residents Only</option>
+                    <option value="purok_4">Purok 4 Residents Only</option>
+                    <option value="purok_5">Purok 5 Residents Only</option>
+                    <option value="purok_6">Purok 6 Residents Only</option>
+                    <option value="purok_7">Purok 7 Residents Only</option>
+                    <option value="hazard_critical">Disaster Critical Hazard Zone (River Buffer Corridor)</option>
+                    <option value="vulnerable_4ps">4Ps &amp; Indigent Households</option>
+                    <option value="vulnerable_seniors">Senior Citizens &amp; PWD Residents</option>
+                    <option value="household_heads">Household Heads Only</option>
+                  </select>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
+                    <span class="typography-caption" style="color: var(--color-text-muted);">Estimated matching recipients:</span>
+                    <span class="badge-blue" id="lbl-estimated-recipients" style="font-weight: 700;">0 recipients</span>
+                  </div>
+                </div>
+
+                <!-- Channel and Category Row -->
+                <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="compose-channel">Delivery Channel</label>
+                    <select id="compose-channel" class="text-input" style="height: 40px; padding: 0 12px;" onchange="updateCharacterCount();">
+                      <option value="SMS">SMS Cellular Message (Primary)</option>
+                      <option value="Email">Official Email Notification</option>
+                      <option value="Both">Dual Dispatch (SMS + Email)</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="compose-category">Message Category</label>
+                    <select id="compose-category" class="text-input" style="height: 40px; padding: 0 12px;">
+                      <option value="General">General Announcement</option>
+                      <option value="Clearance">Clearance &amp; Documents</option>
+                      <option value="Summons">Lupon Hearing Summons</option>
+                      <option value="Incident">Emergency &amp; Incidents</option>
+                      <option value="Advisory">Severe Weather / Disaster</option>
+                      <option value="Relief">Relief &amp; Ayuda Distribution</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Template Preset Dropdown -->
+                <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label class="form-label" for="compose-template-select" style="margin-bottom: 0;">Apply Pre-Configured Template</label>
+                    <span class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">1-Click Auto-Fill</span>
+                  </div>
+                  <select id="compose-template-select" class="text-input" style="height: 38px; padding: 0 10px;" onchange="applySelectedTemplate();">
+                    <option value="">-- Select Template to Pre-fill --</option>
+                    <option value="clearance_ready">Clearance Ready for Pickup</option>
+                    <option value="blotter_summons">Lupon Mediation Hearing Summons</option>
+                    <option value="incident_dispatch">Emergency Incident En-Route Alert</option>
+                    <option value="advisory_flood">Severe Weather / Orange Rainfall Warning</option>
+                    <option value="relief_distribution">Relief Goods / Ayuda Distribution Schedule</option>
+                    <option value="general_assembly">Barangay General Assembly Invitation</option>
+                  </select>
+                </div>
+
+                <!-- Merge Tags Insert Toolbar -->
+                <div>
+                  <div class="typography-caption" style="font-size: 0.6875rem; color: var(--color-text-muted);">
+                    Click merge tag to insert placeholder:
+                  </div>
+                  <div class="merge-tag-chips">
+                    <button type="button" class="merge-tag-btn" onclick="insertMergeTag('{{name}}');">{{name}}</button>
+                    <button type="button" class="merge-tag-btn" onclick="insertMergeTag('{{tracking_no}}');">{{tracking_no}}</button>
+                    <button type="button" class="merge-tag-btn" onclick="insertMergeTag('{{cert_type}}');">{{cert_type}}</button>
+                    <button type="button" class="merge-tag-btn" onclick="insertMergeTag('{{case_no}}');">{{case_no}}</button>
+                    <button type="button" class="merge-tag-btn" onclick="insertMergeTag('{{hearing_date}}');">{{hearing_date}}</button>
+                    <button type="button" class="merge-tag-btn" onclick="insertMergeTag('{{purok}}');">{{purok}}</button>
+                  </div>
+                </div>
+
+                <!-- Message Body -->
+                <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label class="form-label" for="compose-message" style="margin-bottom: 0;">Message Content <span style="color: var(--color-primary);">*</span></label>
+                    <span class="typography-caption" id="lbl-char-counter" style="font-family: monospace; font-weight: 600;">0 / 160 chars (1 Credit)</span>
+                  </div>
+                  <textarea id="compose-message" class="text-input" style="height: 120px; padding: 10px 14px; resize: vertical; line-height: 1.5;" placeholder="Type announcement or notification text..." oninput="updateLivePreview(); updateCharacterCount();" required></textarea>
+                </div>
+
+                <!-- Telemetry & Cost Note -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-md); font-size: 0.75rem;">
+                  <span style="color: var(--color-text-muted);" id="lbl-cost-summary">Est. Cost: 1 credit &bull; Remaining: 2,450</span>
+                  <span class="badge-neutral" style="font-size: 0.625rem;">Sender: BRGY-OFFICE</span>
+                </div>
+
+                <!-- Form Actions -->
+                <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
+                  <button type="button" class="button-outline" onclick="resetComposerForm();" style="height: 40px; padding: 0 18px;">
+                    Clear
+                  </button>
+                  <button type="submit" class="button-primary" id="btn-submit-dispatch" style="height: 40px; padding: 0 24px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="22" y1="2" x2="11" y2="13"/>
+                      <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    <span>Dispatch Notification Now</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right: Interactive Smartphone Preview -->
+            <div class="phone-mockup-wrap">
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: var(--spacing-sm);">
+                <span class="typography-label" style="font-size: 0.6875rem; text-transform: uppercase;">Citizen Phone Preview</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem;">Interactive</span>
+              </div>
+
+              <!-- Real Smartphone Frame -->
+              <div class="phone-frame">
+                <div class="phone-notch"></div>
+                <div class="phone-status-bar">
+                  <span id="preview-clock">9:41</span>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4a1 1 0 0 0 1.41 1.41l1.79-.62C9.07 21.26 10.49 22 12 22c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg>
+                    <span>5G</span>
+                    <div style="width: 14px; height: 8px; border: 1px solid currentColor; border-radius: 2px; position: relative;">
+                      <div style="width: 80%; height: 100%; background: currentColor;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message App Header -->
+                <div class="phone-header">
+                  <div class="phone-sender-avatar">BO</div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.75rem; color: #141414;">BRGY-OFFICE</div>
+                    <div style="font-size: 0.625rem; color: #10b981; font-weight: 600;">Official Verified Gov Service</div>
+                  </div>
+                </div>
+
+                <!-- Message Feed Screen -->
+                <div class="phone-screen-body">
+                  <div style="text-align: center; font-size: 0.625rem; color: #a1a1aa; margin: 4px 0;" id="preview-date-label">
+                    Today &bull; 9:41 AM
+                  </div>
+
+                  <!-- The Live SMS Bubble -->
+                  <div class="sms-bubble-wrap">
+                    <div class="sms-bubble" id="preview-bubble-text">
+                      Magandang araw Juan! Handa na po ang inyong Barangay Clearance sa Barangay Hall. Reference: BC-2026-08192. Dalhin ang valid ID.
+                    </div>
+                    <span class="sms-meta-tag" id="preview-meta-tag">SMS &bull; Delivered &bull; Just now</span>
+                  </div>
+                </div>
+
+                <!-- Simulated Text Input Area -->
+                <div class="phone-input-bar">
+                  <div class="phone-fake-input">Reply to official announcement...</div>
+                  <div style="width: 28px; height: 28px; border-radius: 50%; background: #141414; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">
+                    &uarr;
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: DISPATCH AUDIT LOGS -->
+        <section id="tab-content-logs" style="display: none;">
+          <div class="composer-card">
+            <!-- Filter Toolbar -->
+            <div class="notif-filter-bar">
+              <div style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap; align-items: center; flex: 1;">
+                <input type="text" id="log-search-input" class="text-input" style="height: 38px; min-width: 240px; padding: 0 12px;" placeholder="Search recipient, contact, dispatch code..." oninput="filterNotificationLogs();">
+                
+                <select id="log-channel-filter" class="filter-select" style="height: 38px; border-radius: var(--rounded-sm); padding: 0 10px;" onchange="filterNotificationLogs();">
+                  <option value="">All Channels</option>
+                  <option value="SMS">SMS Only</option>
+                  <option value="Email">Email Only</option>
+                  <option value="Both">Dual (Both)</option>
+                </select>
+
+                <select id="log-category-filter" class="filter-select" style="height: 38px; border-radius: var(--rounded-sm); padding: 0 10px;" onchange="filterNotificationLogs();">
+                  <option value="">All Categories</option>
+                  <option value="Clearance">Clearances</option>
+                  <option value="Summons">Lupon Summons</option>
+                  <option value="Incident">Emergency Incidents</option>
+                  <option value="Advisory">Weather / Disaster</option>
+                  <option value="Relief">Relief / Ayuda</option>
+                  <option value="General">General Announcements</option>
+                </select>
+
+                <select id="log-status-filter" class="filter-select" style="height: 38px; border-radius: var(--rounded-sm); padding: 0 10px;" onchange="filterNotificationLogs();">
+                  <option value="">All Statuses</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Sent">Sent</option>
+                  <option value="Queued">Queued</option>
+                  <option value="Failed">Failed</option>
+                </select>
+              </div>
+
+              <button class="button-outline" onclick="resetLogFilters();" style="height: 38px; padding: 0 14px; font-size: 0.75rem;">
+                Reset Filters
+              </button>
+            </div>
+
+            <!-- Table Container -->
+            <div class="member-table-wrap">
+              <table class="data-table" style="font-size: 0.8125rem;">
+                <thead>
+                  <tr>
+                    <th>Dispatch Code</th>
+                    <th>Recipient</th>
+                    <th>Contact &bull; Purok</th>
+                    <th>Channel &bull; Category</th>
+                    <th>Message Excerpt</th>
+                    <th>Delivery Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="notif-logs-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Empty State for Logs -->
+            <div id="notif-empty-state" style="display: none; padding: 48px 24px; text-align: center;">
+              <p class="typography-body-lg" style="color: var(--color-text-muted);">No notification dispatches found matching filters.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: TEMPLATES & AUTOMATED TRIGGERS -->
+        <section id="tab-content-templates" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+            <!-- Left: Automated Triggers -->
+            <div class="composer-card">
+              <div style="margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+                <h3 class="typography-heading-4">Automated System Triggers.</h3>
+                <p class="typography-caption">Seamless cross-module event notifications dispatched automatically.</p>
+              </div>
+
+              <div class="toggle-switch-wrap">
+                <div>
+                  <div style="font-weight: 600; font-size: 0.875rem;">Document &amp; Clearance Pick-up Alerts</div>
+                  <div class="typography-caption">Auto-send SMS when a Clearance/Indigency certificate is issued.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="trigger-clearance" checked onchange="saveTriggerSettings();">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-wrap">
+                <div>
+                  <div style="font-weight: 600; font-size: 0.875rem;">Lupon Mediation Summons Notices</div>
+                  <div class="typography-caption">Auto-send SMS when a blotter hearing date is scheduled.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="trigger-blotter" checked onchange="saveTriggerSettings();">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-wrap">
+                <div>
+                  <div style="font-weight: 600; font-size: 0.875rem;">Tanod Quick Response Alert to Caller</div>
+                  <div class="typography-caption">Auto-send SMS confirmation when Tanod unit is dispatched.</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="trigger-incident" checked onchange="saveTriggerSettings();">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Right: Standard Message Templates -->
+            <div class="composer-card">
+              <div style="margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+                <h3 class="typography-heading-4">Template Library.</h3>
+                <p class="typography-caption">Standardized municipal and barangay advisory templates.</p>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: var(--spacing-xs);" id="template-cards-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: GATEWAY & CARRIER SETTINGS -->
+        <section id="tab-content-gateway" style="display: none;">
+          <div style="max-width: 680px; margin: 0 auto;">
+            <div class="composer-card">
+              <div style="margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+                <h3 class="typography-heading-4">Carrier Gateway Configuration.</h3>
+                <p class="typography-caption">Philippine telco gateway connection parameters and SMS credit management.</p>
+              </div>
+
+              <form id="gateway-settings-form" onsubmit="handleGatewaySave(event);">
+                <div class="form-group" style="margin-bottom: var(--spacing-sm);">
+                  <label class="form-label" for="gw-provider-select">Active Telco SMS Gateway Provider</label>
+                  <select id="gw-provider-select" class="text-input" style="height: 42px; padding: 0 12px;">
+                    <option value="simulation">Carrier Simulation Engine (Offline &bull; Zero External Cost)</option>
+                    <option value="semaphore">Semaphore API (Philippines &bull; Smart/Globe/Dito)</option>
+                    <option value="philsms">PhilSMS Gateway (Local Gov Approved)</option>
+                    <option value="twilio">Twilio Global SMS / WhatsApp</option>
+                  </select>
+                </div>
+
+                <div class="form-grid-2 mt-xs">
+                  <div class="form-group" style="margin-bottom: var(--spacing-sm);">
+                    <label class="form-label" for="gw-sender-id">Official Sender ID</label>
+                    <input type="text" id="gw-sender-id" class="text-input" style="height: 40px; font-weight: 700; letter-spacing: 0.05em;" value="BRGY-OFFICE" maxlength="11">
+                    <span class="typography-caption" style="font-size: 0.6875rem;">Max 11 alphanumeric characters approved by NTC.</span>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: var(--spacing-sm);">
+                    <label class="form-label" for="gw-api-key">API Secret Key / Auth Token</label>
+                    <input type="password" id="gw-api-key" class="text-input" style="height: 40px;" value="••••••••••••••••••••••••••••••••">
+                  </div>
+                </div>
+
+                <div style="padding: 16px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-md);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 600; font-size: 0.8125rem;">Remaining SMS Message Credits</span>
+                    <span class="badge-neutral" id="gw-credits-display" style="font-size: 0.875rem; font-weight: 700;">2,450 Credits</span>
+                  </div>
+                  <p class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 12px;">
+                    Each standard message (up to 160 characters) consumes 1 credit.
+                  </p>
+                  <button type="button" class="button-outline" onclick="topUpCredits(500);" style="height: 32px; padding: 0 14px; font-size: 0.75rem;">
+                    + Recharge 500 Credits (Simulate)
+                  </button>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
+                  <button type="submit" class="button-primary" style="height: 40px; padding: 0 24px;">
+                    Save Gateway Configuration
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL 1: TEST GATEWAY PING -->
+  <dialog id="test-ping-modal" class="modal-dialog" style="max-width: 480px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+      <h3 class="typography-heading-4">Test Gateway Ping.</h3>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('test-ping-modal').close();" style="height: 28px; padding: 0 10px;">
+        Cancel
+      </button>
+    </div>
+
+    <form id="test-ping-form" onsubmit="handleTestPingSubmit(event);">
+      <p class="typography-body-sm" style="color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">
+        Send a real-time test cellular ping to verify gateway connectivity and delivery receipt processing.
+      </p>
+
+      <div class="form-group" style="margin-bottom: var(--spacing-md);">
+        <label class="form-label" for="ping-contact-input">Destination Phone Number or Email <span style="color: var(--color-primary);">*</span></label>
+        <input type="text" id="ping-contact-input" class="text-input" style="height: 42px;" placeholder="0917-000-0000 or email@domain.com" required>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+        <button type="button" class="button-outline" onclick="document.getElementById('test-ping-modal').close();" style="height: 38px; padding: 0 16px;">
+          Close
+        </button>
+        <button type="submit" class="button-primary" id="btn-submit-ping" style="height: 38px; padding: 0 20px;">
+          Send Test Ping
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 2: INSPECT DISPATCH RECEIPT -->
+  <dialog id="inspect-modal" class="modal-dialog" style="max-width: 540px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge-blue" id="inspect-code-badge">SMS-2026-00000</span>
+        <span class="typography-caption">Official Delivery Receipt</span>
+      </div>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('inspect-modal').close();" style="height: 28px; padding: 0 10px;">
+        Close
+      </button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.8125rem;">
+      <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--color-hairline-soft);">
+        <span style="color: var(--color-text-muted);">Recipient Name:</span>
+        <span style="font-weight: 600;" id="inspect-recipient-name">-</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--color-hairline-soft);">
+        <span style="color: var(--color-text-muted);">Destination Contact:</span>
+        <span style="font-family: monospace; font-weight: 600;" id="inspect-recipient-contact">-</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--color-hairline-soft);">
+        <span style="color: var(--color-text-muted);">Channel &bull; Category:</span>
+        <span id="inspect-channel-category">-</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--color-hairline-soft);">
+        <span style="color: var(--color-text-muted);">Gateway Tracking ID:</span>
+        <span style="font-family: monospace;" id="inspect-gw-ref">-</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--color-hairline-soft);">
+        <span style="color: var(--color-text-muted);">Delivery Status &amp; Time:</span>
+        <span id="inspect-status-time">-</span>
+      </div>
+
+      <div style="margin-top: 4px;">
+        <span style="font-weight: 600; display: block; margin-bottom: 6px;">Full Dispatched Message Body:</span>
+        <div style="background: var(--color-canvas-soft); padding: 12px 14px; border-radius: var(--rounded-sm); font-size: 0.8125rem; line-height: 1.5; border: 1px solid var(--color-hairline-soft);" id="inspect-full-message">
+          -
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); margin-top: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+      <button type="button" class="button-outline" onclick="document.getElementById('inspect-modal').close();" style="height: 36px; padding: 0 16px;">
+        Close
+      </button>
+      <button type="button" class="button-primary" id="btn-inspect-resend" style="height: 36px; padding: 0 18px;">
+        Resend Dispatch
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Script Inclusions -->
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/topbar.js"></script>
+  <script src="js/components/mobile-nav.js"></script>
+
+  <!-- Notifications Dispatch Controller Logic -->
+  <script>
+    let allResidents = [];
+    let allLogs = [];
+    let currentComposeMode = 'single';
+    let currentCredits = 2450;
+    let inspectingLogId = null;
+
+    const DEFAULT_TEMPLATES = {
+      clearance_ready: {
+        category: 'Clearance',
+        text: 'Magandang araw {{name}}, handa na po ang inyong {{cert_type}} sa Barangay Hall. Reference Code: {{tracking_no}}. Dalhin ang inyong valid ID para sa pag-claim.'
+      },
+      blotter_summons: {
+        category: 'Summons',
+        text: 'PABATID mula sa Lupon Tagapamayapa: Kayo ay inaanyayahang dumalo sa mediation hearing ukol sa Kaso Blg {{case_no}} sa darating na {{hearing_date}} sa Barangay Session Hall.'
+      },
+      incident_dispatch: {
+        category: 'Incident',
+        text: 'PABATID: Ang inyong emergency report ay natanggap na. Rumesponde na po ang Barangay Tanod Quick Response Unit sa inyong lokasyon.'
+      },
+      advisory_flood: {
+        category: 'Advisory',
+        text: 'BABALA NG BAHA: Itinaas ang Orange Rainfall Warning. Ang mga residente sa tabi ng ilog at mababang Purok ay pinapayuhang maghanda para sa posibleng paglikas.'
+      },
+      relief_distribution: {
+        category: 'Relief',
+        text: 'PAUNAWA: May nakatakdang pamamahagi ng ayuda/food packs para sa mga profiled beneficiaries bukas, 9:00 AM sa Barangay Covered Court.'
+      },
+      general_assembly: {
+        category: 'General',
+        text: 'PAANYAYA: Inaanyayahan ang lahat ng mga residente na dumalo sa Barangay General Assembly ngayong darating na Sabado, 8:00 AM sa Barangay Gymnasium.'
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Render App Shell Navigation
+      if (window.AppSidebar) await AppSidebar.render('notifications');
+      if (window.AppTopbar) AppTopbar.render('SMS & Notification Dispatch');
+      if (window.MobileNav) MobileNav.render('notifications');
+
+      // 2. Initialize Database & Seed initial sample logs if empty
+      await initNotificationsStore();
+
+      // 3. Load Residents
+      await loadResidents();
+
+      // 4. Load Logs and Telemetry
+      await loadLogs();
+
+      // 5. Render Templates
+      renderTemplateCards();
+
+      // 6. Real-time Clock on Smartphone Preview
+      updatePhoneClock();
+      setInterval(updatePhoneClock, 30000);
+
+      // Default Live Preview text
+      updateLivePreview();
+      updateCharacterCount();
+    });
+
+    // Clock for phone preview
+    function updatePhoneClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      const timeStr = `${hours}:${minutes} ${ampm}`;
+      const clockEl = document.getElementById('preview-clock');
+      if (clockEl) clockEl.textContent = `${hours}:${minutes}`;
+      const dateEl = document.getElementById('preview-date-label');
+      if (dateEl) dateEl.textContent = `Today • ${timeStr}`;
+    }
+
+    // Initialize DB & Seed Demo Logs
+    async function initNotificationsStore() {
+      try {
+        if (!window.barangayDB) return;
+        const existing = await barangayDB.getAll('notifications');
+        if (existing && existing.length > 0) {
+          allLogs = existing;
+        } else {
+          // Pre-seed realistic notifications
+          const seed = [
+            {
+              id: 1,
+              dispatchCode: 'SMS-2026-08191',
+              recipientName: 'Maria Santos Cruz',
+              recipientContact: '0917-555-0192',
+              channel: 'SMS',
+              category: 'Clearance',
+              message: 'Magandang araw Maria, handa na po ang inyong Barangay Clearance sa Barangay Hall. Reference Code: BC-2026-00012. Dalhin ang inyong valid ID.',
+              status: 'Delivered',
+              gatewayRef: 'SMP-8f921a',
+              costCredits: 1,
+              createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
+            },
+            {
+              id: 2,
+              dispatchCode: 'SMS-2026-08192',
+              recipientName: 'Roberto Mendoza Reyes',
+              recipientContact: '0920-888-4421',
+              channel: 'SMS',
+              category: 'Summons',
+              message: 'PABATID mula sa Lupon Tagapamayapa: Kayo ay inaanyayahang dumalo sa mediation hearing ukol sa Kaso Blg BLTR-2026-00003 bukas sa Barangay Session Hall.',
+              status: 'Delivered',
+              gatewayRef: 'SMP-9a10bc',
+              costCredits: 1,
+              createdAt: new Date(Date.now() - 3600000 * 5).toISOString()
+            },
+            {
+              id: 3,
+              dispatchCode: 'SMS-2026-08193',
+              recipientName: 'Purok 4 River Corridor Residents',
+              recipientContact: '84 Recipients',
+              channel: 'SMS',
+              category: 'Advisory',
+              message: 'BABALA NG BAHA: Itinaas ang Orange Rainfall Warning. Ang mga residente sa tabi ng ilog at mababang Purok ay pinapayuhang maghanda para sa paglikas.',
+              status: 'Delivered',
+              gatewayRef: 'SMP-4c281e',
+              costCredits: 84,
+              createdAt: new Date(Date.now() - 3600000 * 12).toISOString()
+            }
+          ];
+
+          for (const item of seed) {
+            await barangayDB.add('notifications', item);
+          }
+          allLogs = seed;
+        }
+      } catch (err) {
+        console.warn('Init notifications fallback:', err);
+      }
+    }
+
+    // Load Residents
+    async function loadResidents() {
+      try {
+        if (window.barangayDB) {
+          allResidents = await barangayDB.getAll('residents') || [];
+        }
+        const select = document.getElementById('compose-resident-select');
+        select.innerHTML = '<option value="">-- Choose Resident from Registry --</option>' +
+          allResidents.map(r => {
+            const name = `${r.lastName}, ${r.firstName} ${r.middleName || ''}`.trim();
+            const phone = r.phone || r.contactNo || '';
+            return `<option value="${r.id}" data-name="${name}" data-phone="${phone}" data-purok="${r.purok || ''}">${name} (${r.purok || 'Purok'} - ${phone || 'No phone'})</option>`;
+          }).join('');
+
+        updateEstimatedRecipients();
+      } catch (err) {
+        console.error('Failed to load residents:', err);
+      }
+    }
+
+    // Tab Navigation Switcher
+    window.switchToTab = function(tabName) {
+      ['compose', 'logs', 'templates', 'gateway'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const content = document.getElementById(`tab-content-${t}`);
+        if (btn) btn.classList.toggle('active', t === tabName);
+        if (content) content.style.display = (t === tabName) ? 'block' : 'none';
+      });
+
+      if (tabName === 'logs') {
+        renderLogsTable();
+      }
+    };
+
+    // Mode Switcher (Single vs Bulk)
+    window.setComposeMode = function(mode) {
+      currentComposeMode = mode;
+      document.getElementById('btn-mode-single').classList.toggle('active', mode === 'single');
+      document.getElementById('btn-mode-bulk').classList.toggle('active', mode === 'bulk');
+      document.getElementById('section-audience-single').style.display = (mode === 'single') ? 'block' : 'none';
+      document.getElementById('section-audience-bulk').style.display = (mode === 'bulk') ? 'block' : 'none';
+
+      const manualName = document.getElementById('compose-manual-name');
+      const manualContact = document.getElementById('compose-manual-contact');
+      if (mode === 'bulk') {
+        manualName.removeAttribute('required');
+        manualContact.removeAttribute('required');
+      } else {
+        manualName.setAttribute('required', 'required');
+        manualContact.setAttribute('required', 'required');
+      }
+
+      updateEstimatedRecipients();
+      updateCharacterCount();
+    };
+
+    // Resident dropdown selection handler
+    window.onResidentSelectChange = function() {
+      const select = document.getElementById('compose-resident-select');
+      const selected = select.options[select.selectedIndex];
+      if (selected && selected.value) {
+        document.getElementById('compose-manual-name').value = selected.getAttribute('data-name') || '';
+        document.getElementById('compose-manual-contact').value = selected.getAttribute('data-phone') || '';
+      }
+      updateLivePreview();
+    };
+
+    // Calculate Estimated Recipients in Bulk Mode
+    window.updateEstimatedRecipients = function() {
+      const target = document.getElementById('compose-broadcast-target').value;
+      let count = 0;
+
+      if (allResidents.length === 0) {
+        count = 120; // Default realistic simulation count
+      } else {
+        if (target === 'all') {
+          count = allResidents.length;
+        } else if (target.startsWith('purok_')) {
+          const num = target.replace('purok_', '');
+          count = allResidents.filter(r => (r.purok || '').includes(num)).length || Math.max(12, Math.floor(allResidents.length / 7));
+        } else if (target === 'hazard_critical') {
+          count = allResidents.filter(r => (r.purok || '').includes('1') || (r.purok || '').includes('4')).length || 24;
+        } else if (target === 'vulnerable_4ps') {
+          count = allResidents.filter(r => r.isFourPs || r.is4ps || r.isIndigent).length || 38;
+        } else if (target === 'vulnerable_seniors') {
+          count = allResidents.filter(r => r.isSenior || r.isPwd || (r.age && r.age >= 60)).length || 45;
+        } else if (target === 'household_heads') {
+          count = Math.max(10, Math.floor(allResidents.length * 0.35));
+        }
+      }
+
+      const lbl = document.getElementById('lbl-estimated-recipients');
+      if (lbl) lbl.textContent = `${count} recipients`;
+      return count;
+    };
+
+    // Apply 1-Click Pre-configured Template
+    window.applySelectedTemplate = function() {
+      const select = document.getElementById('compose-template-select');
+      const key = select.value;
+      if (!key || !DEFAULT_TEMPLATES[key]) return;
+
+      const tmpl = DEFAULT_TEMPLATES[key];
+      document.getElementById('compose-category').value = tmpl.category;
+      document.getElementById('compose-message').value = tmpl.text;
+
+      updateLivePreview();
+      updateCharacterCount();
+    };
+
+    // Insert Merge Tag at cursor position
+    window.insertMergeTag = function(tag) {
+      const textarea = document.getElementById('compose-message');
+      const start = textarea.selectionStart || textarea.value.length;
+      const end = textarea.selectionEnd || textarea.value.length;
+      const text = textarea.value;
+
+      textarea.value = text.substring(0, start) + tag + text.substring(end);
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+
+      updateLivePreview();
+      updateCharacterCount();
+    };
+
+    // Update Live Smartphone Preview
+    window.updateLivePreview = function() {
+      let msg = document.getElementById('compose-message').value.trim();
+      if (!msg) {
+        msg = 'Type your announcement or notification text on the left to see instant mobile reflection...';
+      }
+
+      // Replace tags with sample data for realistic display
+      const name = document.getElementById('compose-manual-name').value.trim() || 'Juan Dela Cruz';
+      const previewText = msg
+        .replace(/\{\{name\}\}/g, name)
+        .replace(/\{\{recipient_name\}\}/g, name)
+        .replace(/\{\{resident_name\}\}/g, name)
+        .replace(/\{\{tracking_no\}\}/g, 'BC-2026-08192')
+        .replace(/\{\{cert_type\}\}/g, 'Barangay Clearance')
+        .replace(/\{\{case_no\}\}/g, 'BLTR-2026-00014')
+        .replace(/\{\{hearing_date\}\}/g, 'Sept 12, 2026 9:00 AM')
+        .replace(/\{\{purok\}\}/g, 'Purok 4');
+
+      const bubbleEl = document.getElementById('preview-bubble-text');
+      if (bubbleEl) bubbleEl.textContent = previewText;
+
+      const channel = document.getElementById('compose-channel').value;
+      const metaEl = document.getElementById('preview-meta-tag');
+      if (metaEl) metaEl.textContent = `${channel} • Delivered • Just now`;
+    };
+
+    // Update Character & Credit Counter
+    window.updateCharacterCount = function() {
+      const text = document.getElementById('compose-message').value;
+      const chars = text.length;
+      const perCredit = 160;
+      const creditsPerMsg = Math.max(1, Math.ceil(chars / perCredit));
+
+      const countEl = document.getElementById('lbl-char-counter');
+      if (countEl) {
+        countEl.textContent = `${chars} / ${creditsPerMsg * perCredit} chars (${creditsPerMsg} Credit${creditsPerMsg > 1 ? 's' : ''})`;
+      }
+
+      // Cost summary
+      let recCount = 1;
+      if (currentComposeMode === 'bulk') {
+        recCount = updateEstimatedRecipients();
+      }
+      const totalCost = creditsPerMsg * recCount;
+      const costEl = document.getElementById('lbl-cost-summary');
+      if (costEl) {
+        costEl.textContent = `Est. Cost: ${totalCost} credit${totalCost > 1 ? 's' : ''} (${recCount} recipient${recCount > 1 ? 's' : ''}) • Remaining: ${currentCredits.toLocaleString()}`;
+      }
+    };
+
+    // Reset Composer Form
+    window.resetComposerForm = function() {
+      document.getElementById('compose-form').reset();
+      setComposeMode('single');
+      updateLivePreview();
+      updateCharacterCount();
+    };
+
+    // Handle Dispatch Submission
+    window.handleDispatchSubmit = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-dispatch');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Dispatching Cellular Route...</span>';
+
+      try {
+        const channel = document.getElementById('compose-channel').value;
+        const category = document.getElementById('compose-category').value;
+        const message = document.getElementById('compose-message').value.trim();
+
+        if (!message) {
+          alert('Message body cannot be empty.');
+          btn.disabled = false;
+          btn.innerHTML = '<span>Dispatch Notification Now</span>';
+          return;
+        }
+
+        const chars = message.length;
+        const creditsPerMsg = Math.max(1, Math.ceil(chars / 160));
+
+        let dispatchedItems = [];
+        const year = new Date().getFullYear();
+
+        if (currentComposeMode === 'single') {
+          const recName = document.getElementById('compose-manual-name').value.trim() || 'Citizen Resident';
+          const recContact = document.getElementById('compose-manual-contact').value.trim();
+          const dispCode = `SMS-${year}-${Math.floor(10000 + Math.random() * 90000)}`;
+
+          const item = {
+            id: Date.now(),
+            dispatchCode: dispCode,
+            recipientName: recName,
+            recipientContact: recContact,
+            channel: channel,
+            category: category,
+            message: message.replace(/\{\{name\}\}/g, recName),
+            status: 'Delivered',
+            gatewayRef: 'SMP-' + Math.random().toString(16).substr(2, 6),
+            costCredits: creditsPerMsg,
+            createdAt: new Date().toISOString()
+          };
+
+          if (window.barangayDB) await barangayDB.add('notifications', item);
+          dispatchedItems.push(item);
+          currentCredits = Math.max(0, currentCredits - creditsPerMsg);
+        } else {
+          const target = document.getElementById('compose-broadcast-target').value;
+          const targetText = document.getElementById('compose-broadcast-target').selectedOptions[0].text;
+          const recCount = updateEstimatedRecipients();
+          const dispCode = `SMS-${year}-${Math.floor(10000 + Math.random() * 90000)}`;
+
+          const item = {
+            id: Date.now(),
+            dispatchCode: dispCode,
+            recipientName: `Broadcast: ${targetText}`,
+            recipientContact: `${recCount} Recipients`,
+            channel: channel,
+            category: category,
+            message: message,
+            status: 'Delivered',
+            gatewayRef: 'SMP-BC-' + Math.random().toString(16).substr(2, 6),
+            costCredits: creditsPerMsg * recCount,
+            createdAt: new Date().toISOString()
+          };
+
+          if (window.barangayDB) await barangayDB.add('notifications', item);
+          dispatchedItems.push(item);
+          currentCredits = Math.max(0, currentCredits - (creditsPerMsg * recCount));
+        }
+
+        // Add to local state
+        allLogs.unshift(...dispatchedItems);
+
+        // Update telemetry
+        updateTelemetryDisplay();
+
+        alert(`Notification dispatched successfully! (${dispatchedItems.length} message record created). Delivery status: Delivered.`);
+        resetComposerForm();
+        switchToTab('logs');
+      } catch (err) {
+        console.error('Dispatch failed:', err);
+        alert('Error during dispatch: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          <span>Dispatch Notification Now</span>
+        `;
+      }
+    };
+
+    // Load Logs from Store & Update Telemetry
+    async function loadLogs() {
+      try {
+        if (window.barangayDB) {
+          const logs = await barangayDB.getAll('notifications');
+          if (logs && logs.length > 0) {
+            allLogs = logs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          }
+        }
+        updateTelemetryDisplay();
+        renderLogsTable();
+      } catch (err) {
+        console.error('Failed to load logs:', err);
+      }
+    }
+
+    // Update Top Telemetry Display
+    function updateTelemetryDisplay() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayCount = allLogs.filter(l => (l.createdAt || '').startsWith(todayStr)).length;
+      const totalCount = allLogs.length;
+      const deliveredCount = allLogs.filter(l => l.status === 'Delivered').length;
+      const rate = totalCount > 0 ? ((deliveredCount / totalCount) * 100).toFixed(1) : 99.4;
+
+      document.getElementById('stat-total-today').textContent = todayCount;
+      document.getElementById('stat-total-all').textContent = `${totalCount} messages all-time`;
+      document.getElementById('stat-delivery-rate').textContent = `${rate}%`;
+      document.getElementById('stat-delivered-count').textContent = `${deliveredCount} successfully delivered`;
+      document.getElementById('stat-credits-balance').textContent = currentCredits.toLocaleString();
+      document.getElementById('gw-credits-display').textContent = `${currentCredits.toLocaleString()} Credits`;
+    }
+
+    // Render Logs Table
+    function renderLogsTable(filtered = null) {
+      const list = filtered !== null ? filtered : allLogs;
+      const tbody = document.getElementById('notif-logs-tbody');
+      const emptyState = document.getElementById('notif-empty-state');
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      tbody.innerHTML = list.map(item => {
+        let catBadge = '<span class="badge-neutral">General</span>';
+        if (item.category === 'Clearance') catBadge = '<span class="badge-blue">Clearance</span>';
+        else if (item.category === 'Summons') catBadge = '<span class="badge-purple">Summons</span>';
+        else if (item.category === 'Incident') catBadge = '<span class="badge-rose" style="color: #ef4444;">Incident</span>';
+        else if (item.category === 'Advisory') catBadge = '<span class="badge-amber">Advisory</span>';
+        else if (item.category === 'Relief') catBadge = '<span class="badge-emerald">Relief</span>';
+
+        const dateStr = item.createdAt 
+          ? new Date(item.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : '—';
+
+        return `
+          <tr>
+            <td>
+              <div style="font-family: monospace; font-weight: 700; font-size: 0.75rem; color: var(--color-ink);">
+                ${item.dispatchCode || 'SMS-2026'}
+              </div>
+              <div class="typography-caption" style="font-size: 0.625rem; color: var(--color-text-muted);">${dateStr}</div>
+            </td>
+            <td>
+              <div style="font-weight: 600; font-size: 0.8125rem;">${item.recipientName || 'Resident'}</div>
+            </td>
+            <td>
+              <div style="font-family: monospace; font-size: 0.75rem;">${item.recipientContact || '—'}</div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                ${catBadge}
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 5px;">${item.channel || 'SMS'}</span>
+              </div>
+            </td>
+            <td>
+              <div style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.75rem; color: var(--color-text-muted);" title="${item.message || ''}">
+                ${item.message || ''}
+              </div>
+            </td>
+            <td>
+              <span style="display: inline-flex; align-items: center; gap: 5px; font-weight: 600; font-size: 0.75rem; color: #10b981;">
+                <span style="width: 5px; height: 5px; border-radius: 50%; background: #10b981;"></span>
+                ${item.status || 'Delivered'}
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: flex; justify-content: flex-end; gap: 4px;">
+                <button class="table-action-btn" onclick="openInspectModal(${item.id});" title="Inspect Delivery Receipt">
+                  Inspect
+                </button>
+                <button class="table-action-btn" onclick="resendLogItem(${item.id});" title="Resend Notification">
+                  Resend
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Filter Logs
+    window.filterNotificationLogs = function() {
+      const q = (document.getElementById('log-search-input').value || '').toLowerCase().trim();
+      const channel = document.getElementById('log-channel-filter').value;
+      const cat = document.getElementById('log-category-filter').value;
+      const status = document.getElementById('log-status-filter').value;
+
+      const filtered = allLogs.filter(item => {
+        if (q) {
+          const match = (item.dispatchCode || '').toLowerCase().includes(q) ||
+            (item.recipientName || '').toLowerCase().includes(q) ||
+            (item.recipientContact || '').toLowerCase().includes(q) ||
+            (item.message || '').toLowerCase().includes(q);
+          if (!match) return false;
+        }
+        if (channel && item.channel !== channel) return false;
+        if (cat && item.category !== cat) return false;
+        if (status && item.status !== status) return false;
+        return true;
+      });
+
+      renderLogsTable(filtered);
+    };
+
+    window.resetLogFilters = function() {
+      document.getElementById('log-search-input').value = '';
+      document.getElementById('log-channel-filter').value = '';
+      document.getElementById('log-category-filter').value = '';
+      document.getElementById('log-status-filter').value = '';
+      renderLogsTable();
+    };
+
+    // Inspect Delivery Receipt Modal
+    window.openInspectModal = function(id) {
+      inspectingLogId = id;
+      const item = allLogs.find(l => l.id === id);
+      if (!item) return;
+
+      document.getElementById('inspect-code-badge').textContent = item.dispatchCode || 'SMS-2026';
+      document.getElementById('inspect-recipient-name').textContent = item.recipientName || 'Resident';
+      document.getElementById('inspect-recipient-contact').textContent = item.recipientContact || '—';
+      document.getElementById('inspect-channel-category').textContent = `${item.channel || 'SMS'} • ${item.category || 'General'}`;
+      document.getElementById('inspect-gw-ref').textContent = item.gatewayRef || 'SMP-89a12c';
+      document.getElementById('inspect-status-time').innerHTML = `<span style="color: #10b981; font-weight: 600;">&#10003; ${item.status || 'Delivered'}</span> &bull; ${new Date(item.createdAt).toLocaleString()}`;
+      document.getElementById('inspect-full-message').textContent = item.message || 'No content';
+
+      document.getElementById('btn-inspect-resend').onclick = () => {
+        document.getElementById('inspect-modal').close();
+        resendLogItem(id);
+      };
+
+      document.getElementById('inspect-modal').showModal();
+    };
+
+    // Resend Item
+    window.resendLogItem = async function(id) {
+      const item = allLogs.find(l => l.id === id);
+      if (!item) return;
+
+      if (!confirm(`Resend notification to ${item.recipientName} (${item.recipientContact})?`)) return;
+
+      const newItem = {
+        ...item,
+        id: Date.now(),
+        dispatchCode: `SMS-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+        gatewayRef: 'RESEND-' + Math.random().toString(16).substr(2, 6),
+        status: 'Delivered',
+        createdAt: new Date().toISOString()
+      };
+
+      if (window.barangayDB) await barangayDB.add('notifications', newItem);
+      allLogs.unshift(newItem);
+      currentCredits = Math.max(0, currentCredits - (item.costCredits || 1));
+      updateTelemetryDisplay();
+      renderLogsTable();
+      alert(`Notification resent successfully! New Dispatch ID: ${newItem.dispatchCode}`);
+    };
+
+    // Render Template Cards in Tab 3
+    function renderTemplateCards() {
+      const container = document.getElementById('template-cards-list');
+      if (!container) return;
+
+      container.innerHTML = Object.keys(DEFAULT_TEMPLATES).map(key => {
+        const t = DEFAULT_TEMPLATES[key];
+        return `
+          <div style="border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-sm); padding: 12px; background: var(--color-canvas);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-weight: 600; font-size: 0.8125rem;">${key.replace('_', ' ').toUpperCase()}</span>
+              <span class="badge-neutral" style="font-size: 0.625rem;">${t.category}</span>
+            </div>
+            <p class="typography-caption" style="font-size: 0.75rem; line-height: 1.4; color: var(--color-text-muted); margin-bottom: 8px;">
+              ${t.text}
+            </p>
+            <button type="button" class="button-outline" onclick="loadTemplateToComposer('${key}');" style="height: 28px; padding: 0 10px; font-size: 0.6875rem;">
+              Use in Composer &rarr;
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.loadTemplateToComposer = function(key) {
+      switchToTab('compose');
+      document.getElementById('compose-template-select').value = key;
+      applySelectedTemplate();
+    };
+
+    // Save Auto-trigger Toggles
+    window.saveTriggerSettings = function() {
+      const c = document.getElementById('trigger-clearance').checked;
+      const b = document.getElementById('trigger-blotter').checked;
+      const i = document.getElementById('trigger-incident').checked;
+      localStorage.setItem('bms_auto_trigger_clearance', c);
+      localStorage.setItem('bms_auto_trigger_blotter', b);
+      localStorage.setItem('bms_auto_trigger_incident', i);
+      const activeCount = [c, b, i].filter(Boolean).length;
+      document.getElementById('stat-active-triggers').textContent = `${activeCount} / 3`;
+    };
+
+    // Test Ping Modal & Submit
+    window.openTestPingModal = function() {
+      document.getElementById('test-ping-form').reset();
+      document.getElementById('test-ping-modal').showModal();
+    };
+
+    window.handleTestPingSubmit = async function(e) {
+      e.preventDefault();
+      const contact = document.getElementById('ping-contact-input').value.trim();
+      const btn = document.getElementById('btn-submit-ping');
+      btn.disabled = true;
+      btn.textContent = 'Sending Cellular Ping...';
+
+      setTimeout(async () => {
+        const pingItem = {
+          id: Date.now(),
+          dispatchCode: `TEST-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+          recipientName: 'Test Ping Receiver',
+          recipientContact: contact,
+          channel: contact.includes('@') ? 'Email' : 'SMS',
+          category: 'General',
+          message: 'BarangayOS Gateway Connection Ping: Verified high-priority delivery channel ready.',
+          status: 'Delivered',
+          gatewayRef: 'SMP-TEST-' + Math.random().toString(16).substr(2, 6),
+          costCredits: 1,
+          createdAt: new Date().toISOString()
+        };
+
+        if (window.barangayDB) await barangayDB.add('notifications', pingItem);
+        allLogs.unshift(pingItem);
+        currentCredits = Math.max(0, currentCredits - 1);
+        updateTelemetryDisplay();
+        renderLogsTable();
+
+        btn.disabled = false;
+        btn.textContent = 'Send Test Ping';
+        document.getElementById('test-ping-modal').close();
+        alert(`Test Ping Delivered! Verified carrier transaction: ${pingItem.gatewayRef} to ${contact}`);
+      }, 700);
+    };
+
+    // Top up Credits
+    window.topUpCredits = function(amt) {
+      currentCredits += amt;
+      updateTelemetryDisplay();
+      alert(`Recharged ${amt} SMS credits! Current Balance: ${currentCredits.toLocaleString()}`);
+    };
+
+    // Save Gateway Settings Form
+    window.handleGatewaySave = function(e) {
+      e.preventDefault();
+      const provider = document.getElementById('gw-provider-select').value;
+      const sender = document.getElementById('gw-sender-id').value.trim() || 'BRGY-OFFICE';
+      localStorage.setItem('bms_sms_provider', provider);
+      localStorage.setItem('bms_sms_sender_id', sender);
+      document.getElementById('stat-sender-id').textContent = `Sender: ${sender}`;
+      alert('Carrier Gateway configuration updated and verified!');
+    };
+  </script>
+</body>
+</html>

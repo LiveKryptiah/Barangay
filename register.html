@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .auth-page-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-xl) var(--spacing-md) var(--spacing-section);
+      min-height: calc(100vh - 160px);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Nav Pill Mount -->
+  <div id="navbar-mount"></div>
+
+  <!-- Main Content Area -->
+  <main class="auth-page-container">
+
+    <div class="auth-card" style="max-width: 540px;">
+      <div class="mb-lg">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+          <h1 id="page-title" class="typography-heading-3">Create an account.</h1>
+          <span id="role-badge" class="badge-neutral" style="display: none;">Initial Setup</span>
+        </div>
+        <p id="page-subtitle" class="typography-body-lg">Register official credentials with real cryptographic persistence.</p>
+      </div>
+
+      <!-- Account Role Segmented Control -->
+      <div class="form-group mb-lg" id="role-selector-group">
+        <label class="form-label">Account Role</label>
+        <div class="segmented-control" role="tablist">
+          <button type="button" class="segmented-control-option active" data-role="admin">
+            Administrator
+          </button>
+          <button type="button" class="segmented-control-option" data-role="official">
+            Barangay Staff
+          </button>
+          <button type="button" class="segmented-control-option" data-role="resident">
+            Resident
+          </button>
+        </div>
+        <input type="hidden" id="selected-role" value="admin">
+      </div>
+
+      <form id="register-form" autocomplete="off">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="full-name">Full Legal Name</label>
+            <div class="text-input-wrap">
+              <input 
+                type="text" 
+                id="full-name" 
+                class="text-input" 
+                placeholder="e.g. Hon. Juan Dela Cruz" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="position">Position / Designation</label>
+            <div class="text-input-wrap">
+              <select id="position" name="position" class="text-input" required>
+                <optgroup label="Elected Barangay Officials">
+                  <option value="Punong Barangay (Barangay Captain)" selected>Punong Barangay (Barangay Captain)</option>
+                  <option value="Barangay Kagawad (Councilor)">Barangay Kagawad (Councilor)</option>
+                  <option value="SK Chairperson (Youth Council)">SK Chairperson (Youth Council)</option>
+                </optgroup>
+                <optgroup label="Appointive Officials & Administrative Staff">
+                  <option value="Barangay Secretary">Barangay Secretary</option>
+                  <option value="Barangay Treasurer">Barangay Treasurer</option>
+                  <option value="Barangay Administrator">Barangay Administrator</option>
+                  <option value="Barangay Records Officer / Clerk">Barangay Records Officer / Clerk</option>
+                </optgroup>
+                <optgroup label="Peace, Order & Community Services">
+                  <option value="Barangay Tanod (Executive Officer)">Barangay Tanod (Executive Officer)</option>
+                  <option value="Lupong Tagapamayapa (Mediator)">Lupong Tagapamayapa (Mediator)</option>
+                  <option value="Barangay Health Worker (BHW)">Barangay Health Worker (BHW)</option>
+                  <option value="Barangay Nutrition Scholar (BNS)">Barangay Nutrition Scholar (BNS)</option>
+                </optgroup>
+                <optgroup label="General Public">
+                  <option value="Resident / Community Member">Resident / Community Member</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <div class="text-input-wrap">
+              <input 
+                type="text" 
+                id="username" 
+                class="text-input" 
+                placeholder="e.g. brgy_admin" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Official Email Address</label>
+            <div class="text-input-wrap">
+              <input 
+                type="email" 
+                id="email" 
+                class="text-input" 
+                placeholder="e.g. admin@barangay.gov.ph" 
+                required
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <div class="text-input-wrap">
+              <input 
+                type="password" 
+                id="password" 
+                class="text-input" 
+                placeholder="Minimum 6 characters" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="confirm-password">Confirm Password</label>
+            <div class="text-input-wrap">
+              <input 
+                type="password" 
+                id="confirm-password" 
+                class="text-input" 
+                placeholder="Re-enter password" 
+                required
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-md mb-xl">
+          <p class="typography-caption">
+            By creating an account, credentials and administrative records are encrypted via PBKDF2-HMAC-SHA256 and stored persistently in your local database.
+          </p>
+        </div>
+
+        <button type="submit" id="submit-btn" class="button-primary w-full">
+          Create Account
+        </button>
+
+        <div class="mt-lg text-center">
+          <p class="typography-body-sm">
+            Already registered? 
+            <a href="login.html" class="typography-link" style="font-size: 0.875rem; text-decoration: underline;">Sign in to your account</a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Inverted Ink Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/nav.js"></script>
+  <script src="js/components/footer.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Render Nav & Footer
+      await NavPill.render('register');
+      Footer.render();
+
+      // 2. Setup Mode Check
+      const hasAdmin = await authService.hasAdminAccount();
+      const urlParams = new URLSearchParams(window.location.search);
+      const isSetupMode = urlParams.get('mode') === 'setup' || !hasAdmin;
+
+      const pageTitle = document.getElementById('page-title');
+      const pageSubtitle = document.getElementById('page-subtitle');
+      const roleBadge = document.getElementById('role-badge');
+      const roleSelectorGroup = document.getElementById('role-selector-group');
+      const positionSelect = document.getElementById('position');
+
+      if (isSetupMode) {
+        pageTitle.textContent = 'Barangay System Setup.';
+        pageSubtitle.textContent = 'Set up the primary Administrator account to initialize your local Barangay database.';
+        roleBadge.className = 'badge-popular';
+        roleBadge.textContent = 'Primary Admin';
+        roleBadge.style.display = 'inline-flex';
+        positionSelect.value = 'Punong Barangay (Barangay Captain)';
+      }
+
+      // 3. Segmented Role Selector & Two-Way Sync
+      const segmentedOptions = document.querySelectorAll('.segmented-control-option');
+      const selectedRoleInput = document.getElementById('selected-role');
+
+      function setRole(role) {
+        selectedRoleInput.value = role;
+        segmentedOptions.forEach(b => {
+          if (b.getAttribute('data-role') === role) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+      }
+
+      segmentedOptions.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const role = btn.getAttribute('data-role');
+          setRole(role);
+
+          if (role === 'admin') {
+            positionSelect.value = 'Punong Barangay (Barangay Captain)';
+          } else if (role === 'official') {
+            positionSelect.value = 'Barangay Secretary';
+          } else {
+            positionSelect.value = 'Resident / Community Member';
+          }
+        });
+      });
+
+      positionSelect.addEventListener('change', () => {
+        const val = positionSelect.value;
+        if (val.includes('Resident')) {
+          setRole('resident');
+        } else if (val.includes('Punong Barangay') || val.includes('Administrator')) {
+          setRole('admin');
+        } else {
+          setRole('official');
+        }
+      });
+
+      // 4. Form Submit
+      const form = document.getElementById('register-form');
+      const submitBtn = document.getElementById('submit-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const fullName = document.getElementById('full-name').value;
+        const position = document.getElementById('position').value;
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const role = selectedRoleInput.value;
+
+        if (password !== confirmPassword) {
+          Toast.error('Passwords do not match. Please verify.');
+          return;
+        }
+
+        if (password.length < 6) {
+          Toast.error('Password must be at least 6 characters long.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating Account...';
+
+        try {
+          await authService.register({
+            username,
+            email,
+            password,
+            fullName,
+            role,
+            position
+          });
+
+          Toast.success('Account created successfully. Logging you in...');
+
+          // Auto-login after registration
+          setTimeout(async () => {
+            await authService.login(username, password, true);
+            window.location.href = 'dashboard.html';
+          }, 1000);
+
+        } catch (err) {
+          Toast.error(err.message || 'Registration failed. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Public Portal &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    /* Public Portal Layout */
+    .portal-body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-canvas);
+      color: var(--color-ink);
+    }
+
+    .portal-main {
+      flex: 1;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+
+    /* Floating Public Nav Pill */
+    .public-nav-wrapper {
+      position: sticky;
+      top: var(--spacing-md);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      padding: 0 var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .public-nav-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      height: 60px;
+      padding: 6px 10px 6px var(--spacing-lg);
+      background-color: var(--color-canvas-soft);
+      border-radius: var(--rounded-full);
+      width: 100%;
+      max-width: 1120px;
+      border: 1px solid var(--color-hairline-soft);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .public-nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .public-nav-link {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .public-nav-link:hover {
+      color: var(--color-ink);
+    }
+
+    @media (max-width: 768px) {
+      .public-nav-links {
+        display: none;
+      }
+    }
+
+    /* Portal Hero */
+    .portal-hero {
+      text-align: center;
+      padding: var(--spacing-xl) 0 var(--spacing-2xl);
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .portal-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background-color: var(--color-canvas-soft);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .status-dot-green {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #10b981;
+    }
+
+    /* Section Styles */
+    .portal-section {
+      padding: var(--spacing-xl) 0;
+      border-top: 1px solid var(--color-hairline-soft);
+    }
+
+    .portal-section-header {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    /* Service Cards Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-md);
+    }
+
+    @media (max-width: 768px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .service-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .service-card:hover {
+      border-color: var(--color-ink);
+      transform: translateY(-2px);
+    }
+
+    .service-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 30%;
+      background-color: var(--color-canvas-soft);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-hairline);
+    }
+
+    .requirements-list {
+      margin: var(--spacing-sm) 0 var(--spacing-md);
+      padding-left: 18px;
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    /* Tracker Card */
+    .tracker-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-xl);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .tracker-search-wrap {
+      display: flex;
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .tracker-search-wrap input {
+      height: 46px;
+      font-size: 0.9375rem;
+      border-radius: var(--rounded-full);
+      padding-left: 20px;
+      flex: 1;
+    }
+
+    /* 4-Step Stepper */
+    .stepper-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+      position: relative;
+    }
+
+    @media (max-width: 640px) {
+      .stepper-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step-box {
+      background-color: var(--color-canvas-soft);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-sm);
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .step-box.active {
+      border-color: var(--color-primary);
+      background-color: rgba(0, 102, 255, 0.04);
+    }
+
+    .step-box.completed {
+      border-color: #10b981;
+      background-color: rgba(16, 185, 129, 0.04);
+    }
+
+    .step-number {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+    }
+
+    .step-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    .step-status {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--color-text-faint);
+    }
+
+    /* Transparency Council Grid */
+    .council-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-sm);
+    }
+
+    @media (max-width: 1024px) {
+      .council-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .council-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .council-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    /* Hotlines Grid */
+    .hotlines-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-sm);
+    }
+
+    @media (max-width: 768px) {
+      .hotlines-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hotline-item {
+      background-color: var(--color-canvas-soft);
+      border-radius: var(--rounded-sm);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hotline-number {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      font-family: monospace;
+    }
+
+    /* Public Inverted Footer */
+    .portal-footer {
+      background-color: var(--color-ink);
+      color: #ffffff;
+      border-top-left-radius: var(--rounded-2xl);
+      border-top-right-radius: var(--rounded-2xl);
+      padding: var(--spacing-2xl) var(--spacing-lg) var(--spacing-xl);
+      margin-top: var(--spacing-2xl);
+    }
+
+    .portal-footer a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .portal-footer a:hover {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="portal-body">
+
+  <!-- Floating Public Navigation Pill -->
+  <div class="public-nav-wrapper">
+    <nav class="public-nav-pill" aria-label="Citizen Navigation">
+      <a href="portal.html" class="nav-brand" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-ink);">
+        <div id="portal-seal-icon" class="nav-brand-icon" style="width: 34px; height: 34px; border-radius: 30%; font-size: 1rem; flex-shrink: 0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="typography-title" style="font-size: 0.875rem; line-height: 1.1;" id="portal-nav-brgy">Barangay San Isidro</div>
+          <div class="typography-caption" style="font-size: 0.625rem;">Citizen Services Portal</div>
+        </div>
+      </a>
+
+      <!-- Anchor Links -->
+      <ul class="public-nav-links">
+        <li><a href="#services" class="public-nav-link">Clearances</a></li>
+        <li><a href="#track" class="public-nav-link">Track Request</a></li>
+        <li><a href="verify.html" class="public-nav-link" style="font-weight: 600; color: var(--color-primary);">Verify Document</a></li>
+        <li><a href="#directory" class="public-nav-link">Officials</a></li>
+        <li><a href="#hotlines" class="public-nav-link">Emergency Hotlines</a></li>
+      </ul>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme" style="width: 36px; height: 36px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+          </svg>
+        </button>
+        <a href="login.html" class="button-pill-soft" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
+          Staff Portal &rarr;
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Top App Bar (Native eGov Style) -->
+  <header class="egov-appbar" id="portal-mobile-appbar">
+    <div class="egov-appbar-left">
+      <div class="egov-seal-squircle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="egov-appbar-titles">
+        <span class="egov-appbar-main" id="mobile-bar-brgy">Barangay San Isidro</span>
+        <span class="egov-appbar-sub">Official Citizen eServices</span>
+      </div>
+    </div>
+    <div class="egov-appbar-actions">
+      <button type="button" class="egov-icon-btn" id="mobile-notif-btn" title="Barangay Announcements" onclick="switchNavTab('announcements')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="egov-badge-dot"></span>
+      </button>
+      <button type="button" class="egov-icon-btn" id="mobile-profile-btn" title="Resident Account" onclick="openProfileSheet()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="portal-main">
+    <!-- Desktop-Only Hero Banner -->
+    <section class="portal-hero desktop-only-block">
+      <div class="portal-hero-badge">
+        <span class="status-dot-green"></span>
+        <span id="portal-hero-jurisdiction">City of San Isidro &bull; Online Services Active</span>
+      </div>
+      <h1 class="typography-heading-1" style="margin-bottom: var(--spacing-sm); font-size: 2.5rem; line-height: 1.15;">
+        Fast, Transparent &amp; Digital Barangay Public Services.
+      </h1>
+      <p class="typography-body-lg" style="color: var(--color-text-muted); margin-bottom: var(--spacing-lg);">
+        Request official clearances online, track application verification status in real-time, and access community assistance directly from your computer or phone.
+      </p>
+
+      <div style="display: flex; justify-content: center; gap: var(--spacing-sm); flex-wrap: wrap;">
+        <a href="#services" class="button-primary" style="height: 44px; padding: 0 24px; font-size: 0.9375rem;">
+          Request a Document &rarr;
+        </a>
+        <a href="#track" class="button-outline" style="height: 44px; padding: 0 20px; font-size: 0.9375rem;">
+          Track Application
+        </a>
+        <a href="verify.html" class="button-outline" style="height: 44px; padding: 0 20px; font-size: 0.9375rem; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          Verify Document (QR)
+        </a>
+      </div>
+    </section>
+
+    <!-- Mobile-Only eGov Resident Greeting Hero -->
+    <section class="egov-greeting-box mobile-only-block" id="mobile-welcome-section">
+      <div class="egov-greeting-header">
+        <div>
+          <div class="egov-online-badge">
+            <span class="status-dot-green"></span>
+            <span id="mobile-jurisdiction-chip">City of San Isidro &bull; Active</span>
+          </div>
+          <h2 class="egov-greeting-title" id="egov-greeting-text">Good day, Resident!</h2>
+          <p class="egov-greeting-subtitle">How can we help you today?</p>
+        </div>
+        <div class="topbar-user-avatar" id="mobile-resident-avatar" style="width: 44px; height: 44px; font-size: 1rem; border-radius: 14px; background: var(--egov-blue-soft); color: var(--egov-blue); display: flex; align-items: center; justify-content: center; font-weight: 800;">
+          PH
+        </div>
+      </div>
+
+      <!-- Mobile Quick Document Search Bar -->
+      <div style="position: relative; margin-top: 14px;">
+        <input 
+          type="text" 
+          id="mobile-quick-track-input" 
+          class="text-input" 
+          placeholder="Enter tracking # (e.g. BC-2026-00001)..." 
+          style="height: 46px; padding-left: 42px; border-radius: 9999px; font-size: 0.875rem;" 
+          onkeydown="if(event.key==='Enter'){event.preventDefault();quickTrackMobile();}"
+        >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 16px; top: 14px; color: var(--color-text-muted);">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Mobile-Only Quick Services (2-Column Grid) -->
+    <section class="mobile-only-block" style="margin-bottom: 24px;">
+      <div class="egov-section-title-wrap">
+        <h3 class="egov-section-title">Quick Services</h3>
+        <a href="javascript:void(0)" class="egov-section-link" onclick="switchNavTab('services')">View All &rarr;</a>
+      </div>
+
+      <div class="egov-quick-grid">
+        <button type="button" class="egov-service-btn" onclick="openRequestModal('Barangay Clearance')">
+          <div class="egov-service-icon-wrap" style="background: rgba(0, 56, 168, 0.08); color: #0038a8;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="egov-service-label">Barangay Clearance</div>
+          <div class="egov-service-desc">Employment &amp; IDs</div>
+        </button>
+
+        <button type="button" class="egov-service-btn" onclick="openRequestModal('Certificate of Indigency')">
+          <div class="egov-service-icon-wrap" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="egov-service-label">Indigency Cert.</div>
+          <div class="egov-service-desc">Free Welfare &amp; Meds</div>
+        </button>
+
+        <button type="button" class="egov-service-btn" onclick="openRequestModal('Certificate of Residency')">
+          <div class="egov-service-icon-wrap" style="background: rgba(2, 132, 199, 0.1); color: #0284c7;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="egov-service-label">Residency Cert.</div>
+          <div class="egov-service-desc">Utility &amp; Address</div>
+        </button>
+
+        <button type="button" class="egov-service-btn" onclick="openRequestModal('Business Clearance')">
+          <div class="egov-service-icon-wrap" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="egov-service-label">Business Permit</div>
+          <div class="egov-service-desc">Commercial License</div>
+        </button>
+
+        <a href="verify.html" class="egov-service-btn">
+          <div class="egov-service-icon-wrap" style="background: rgba(5, 150, 105, 0.1); color: #059669;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M7 12h10M12 7v10"/></svg>
+          </div>
+          <div class="egov-service-label">Verify Document</div>
+          <div class="egov-service-desc">QR Anti-Fraud Check</div>
+        </a>
+
+        <button type="button" class="egov-service-btn" onclick="switchNavTab('requests')">
+          <div class="egov-service-icon-wrap" style="background: rgba(217, 119, 6, 0.1); color: #d97706;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="egov-service-label">Track Request</div>
+          <div class="egov-service-desc">Live Status Monitor</div>
+        </button>
+
+        <a href="#hotlines" class="egov-service-btn" onclick="document.getElementById('hotlines').scrollIntoView({behavior:'smooth'})">
+          <div class="egov-service-icon-wrap" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="egov-service-label">Emergency Desk</div>
+          <div class="egov-service-desc">Tanod Patrol &amp; PNP</div>
+        </a>
+
+        <a href="#directory" class="egov-service-btn" onclick="document.getElementById('directory').scrollIntoView({behavior:'smooth'})">
+          <div class="egov-service-icon-wrap" style="background: rgba(100, 116, 139, 0.1); color: #475569;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+          </div>
+          <div class="egov-service-label">Barangay Council</div>
+          <div class="egov-service-desc">Officials Directory</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Mobile-Only My Requests / Status Tracker -->
+    <section class="mobile-only-block" id="mobile-requests-section" style="margin-bottom: 24px;">
+      <div class="egov-section-title-wrap">
+        <h3 class="egov-section-title">My Recent Requests</h3>
+        <span class="badge-neutral" style="font-size: 0.6875rem;" id="mobile-request-count">Live Status</span>
+      </div>
+
+      <div id="mobile-requests-list">
+        <!-- Sample/Real Request Cards Injected Dynamically -->
+        <div class="egov-request-card" onclick="quickTrackSample('BC-2026-00001')">
+          <div class="egov-request-left">
+            <div class="egov-request-icon" style="background: rgba(0, 56, 168, 0.08); color: #0038a8;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.875rem;">Barangay Clearance</div>
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); font-family: monospace;">#BC-2026-00001</div>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span class="egov-status-badge approved">🟢 Approved</span>
+            <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 4px;">Ready for pickup</div>
+          </div>
+        </div>
+
+        <div class="egov-request-card" onclick="quickTrackSample('IND-2026-00002')">
+          <div class="egov-request-left">
+            <div class="egov-request-icon" style="background: rgba(37, 99, 235, 0.08); color: #2563eb;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.875rem;">Cert. of Indigency</div>
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); font-family: monospace;">#IND-2026-00002</div>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span class="egov-status-badge processing">🔵 Processing</span>
+            <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 4px;">Under Review</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barangay Announcements Carousel (Mobile & Desktop) -->
+    <section id="announcements" class="portal-section" style="padding-top: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft);">
+      <div class="egov-section-title-wrap">
+        <div>
+          <span class="typography-label" style="color: var(--color-primary);">OFFICIAL GAZETTE</span>
+          <h3 class="egov-section-title">Barangay Announcements</h3>
+        </div>
+        <span class="badge-blue" style="font-size: 0.6875rem;">Community Updates</span>
+      </div>
+
+      <div class="egov-announcements-scroll">
+        <article class="egov-announce-card" onclick="openAnnounceModal(1)" style="cursor: pointer;">
+          <div>
+            <span class="egov-announce-badge health">HEALTH MISSION</span>
+            <h4 class="egov-announce-title">Free Medical &amp; Dental Mission</h4>
+            <p class="egov-announce-snippet">Free health consultations, dental checkups, pediatric screenings, and free maintenance medicines for senior citizens this Saturday.</p>
+          </div>
+          <div class="egov-announce-footer">
+            <span>📅 Saturday &bull; 8:00 AM</span>
+            <span style="color: var(--egov-blue); font-weight: 700;">View Details &rarr;</span>
+          </div>
+        </article>
+
+        <article class="egov-announce-card" onclick="openAnnounceModal(2)" style="cursor: pointer;">
+          <div>
+            <span class="egov-announce-badge alert">DISASTER &amp; SAFETY</span>
+            <h4 class="egov-announce-title">Oplan Taob-Taob Anti-Dengue Drive</h4>
+            <p class="egov-announce-snippet">Community-wide fogging and clean-up operation across Purok 1 to Purok 7. Please inspect flower pots and open drums.</p>
+          </div>
+          <div class="egov-announce-footer">
+            <span>📅 Every Weekend &bull; Puroks 1-7</span>
+            <span style="color: var(--egov-blue); font-weight: 700;">View Details &rarr;</span>
+          </div>
+        </article>
+
+        <article class="egov-announce-card" onclick="openAnnounceModal(3)" style="cursor: pointer;">
+          <div>
+            <span class="egov-announce-badge notice">JUSTICE &amp; PEACE</span>
+            <h4 class="egov-announce-title">Katarungang Pambarangay Mediation</h4>
+            <p class="egov-announce-snippet">Weekly Lupon Tagapamayapa dispute conciliation hearings are conducted Tuesdays &amp; Thursdays under the supervision of the Punong Barangay.</p>
+          </div>
+          <div class="egov-announce-footer">
+            <span>📅 Tue &amp; Thu &bull; Session Hall</span>
+            <span style="color: var(--egov-blue); font-weight: 700;">View Details &rarr;</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 1: CLEARANCES & ONLINE APPLICATION -->
+    <section id="services" class="portal-section">
+      <div class="portal-section-header" style="text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <span class="typography-label" style="color: var(--color-primary);">ONLINE CLEARANCES</span>
+        <h2 class="typography-heading-3 mt-xs">Official Barangay Documents.</h2>
+        <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+          Submit requirements online to expedite release upon claiming at the Barangay Hall.
+        </p>
+      </div>
+
+      <div class="services-grid">
+        <!-- Service 1: Barangay Clearance -->
+        <div class="service-card">
+          <div>
+            <div class="service-header">
+              <div class="service-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <span class="badge-blue" id="fee-badge-clearance">₱50.00 Standard</span>
+            </div>
+            <h3 class="typography-heading-4" style="margin-bottom: 4px;">Barangay Clearance.</h3>
+            <p class="typography-body-sm" style="color: var(--color-text-muted);">
+              Official record certification required for local employment, postal ID, police clearance, and bank accounts.
+            </p>
+            <ul class="requirements-list">
+              <li>1 Valid Government-Issued ID</li>
+              <li>Proof of Residency or Community Tax Certificate (Cedula)</li>
+              <li>Same-Day Processing upon physical verification</li>
+            </ul>
+          </div>
+          <button class="button-primary" onclick="openRequestModal('Barangay Clearance');" style="height: 38px; width: 100%; font-size: 0.8125rem;">
+            Apply for Clearance &rarr;
+          </button>
+        </div>
+
+        <!-- Service 2: Certificate of Indigency -->
+        <div class="service-card">
+          <div>
+            <div class="service-header">
+              <div class="service-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                </svg>
+              </div>
+              <span class="badge-emerald">Free / Statutory Waived</span>
+            </div>
+            <h3 class="typography-heading-4" style="margin-bottom: 4px;">Certificate of Indigency.</h3>
+            <p class="typography-body-sm" style="color: var(--color-text-muted);">
+              Free public welfare certification for hospital bills, medical subsidies, scholarship grants, and legal aid.
+            </p>
+            <ul class="requirements-list">
+              <li>1 Valid Government or Student ID</li>
+              <li>Clinical / Hospital bill or Scholarship referral letter</li>
+              <li>Statutory Free under Republic Act No. 11261</li>
+            </ul>
+          </div>
+          <button class="button-outline" onclick="openRequestModal('Certificate of Indigency');" style="height: 38px; width: 100%; font-size: 0.8125rem;">
+            Apply for Indigency &rarr;
+          </button>
+        </div>
+
+        <!-- Service 3: Certificate of Residency -->
+        <div class="service-card">
+          <div>
+            <div class="service-header">
+              <div class="service-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <span class="badge-blue" id="fee-badge-residency">₱50.00 Standard</span>
+            </div>
+            <h3 class="typography-heading-4" style="margin-bottom: 4px;">Certificate of Residency.</h3>
+            <p class="typography-body-sm" style="color: var(--color-text-muted);">
+              Affidavit of bonafide address for Meralco/water utility connections, school enrolment, or COMELEC transfer.
+            </p>
+            <ul class="requirements-list">
+              <li>1 Valid ID with local address</li>
+              <li>Proof of Billing or Lease Contract / Homeowners Certificate</li>
+              <li>24-Hour Expedited Release</li>
+            </ul>
+          </div>
+          <button class="button-outline" onclick="openRequestModal('Certificate of Residency');" style="height: 38px; width: 100%; font-size: 0.8125rem;">
+            Apply for Residency &rarr;
+          </button>
+        </div>
+
+        <!-- Service 4: Business Permit / Clearance -->
+        <div class="service-card">
+          <div>
+            <div class="service-header">
+              <div class="service-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+              </div>
+              <span class="badge-purple" id="fee-badge-business">₱500.00 Commercial</span>
+            </div>
+            <h3 class="typography-heading-4" style="margin-bottom: 4px;">Barangay Business Clearance.</h3>
+            <p class="typography-body-sm" style="color: var(--color-text-muted);">
+              Mandatory commercial clearance for DTI / SEC registered enterprises, stores, food establishments, and offices.
+            </p>
+            <ul class="requirements-list">
+              <li>DTI Business Name / SEC Registration Certificate</li>
+              <li>Contract of Lease or Property Title of Commercial Site</li>
+              <li>Sanitary &amp; BFP Safety Inspection endorsement</li>
+            </ul>
+          </div>
+          <button class="button-outline" onclick="openRequestModal('Business Clearance');" style="height: 38px; width: 100%; font-size: 0.8125rem;">
+            Apply for Business Clearance &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: LIVE APPLICATION TRACKER -->
+    <section id="track" class="portal-section">
+      <div class="portal-section-header" style="text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <span class="typography-label" style="color: var(--color-primary);">REAL-TIME VERIFICATION</span>
+        <h2 class="typography-heading-3 mt-xs">Track Your Document Application.</h2>
+        <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+          Enter your digital tracking code (e.g. BC-2026-00001) to monitor live clearance review and pickup schedule.
+        </p>
+      </div>
+
+      <div class="tracker-card">
+        <form id="tracker-form" onsubmit="event.preventDefault(); trackCode();">
+          <div class="tracker-search-wrap">
+            <input type="text" id="track-input" class="text-input" placeholder="Enter tracking code (e.g. BC-2026-00001)..." required autocomplete="off">
+            <button type="submit" class="button-primary" style="height: 46px; padding: 0 22px; font-size: 0.875rem;">
+              Search Code
+            </button>
+          </div>
+        </form>
+
+        <!-- Dynamic Results Container -->
+        <div id="tracker-result-box" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); margin-bottom: var(--spacing-md); flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge-blue" id="track-result-code" style="font-family: monospace; font-size: 0.8125rem;">BC-2026-00001</span>
+                <span class="badge-emerald" id="track-result-status">Valid</span>
+              </div>
+              <h3 class="typography-heading-4 mt-xs" id="track-result-name">Applicant Name</h3>
+              <div class="typography-caption" id="track-result-meta">Document Type &bull; Purpose</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="typography-caption">Estimated Fee</div>
+              <div class="typography-title" style="font-size: 1.125rem; color: #059669;" id="track-result-fee">₱50.00</div>
+            </div>
+          </div>
+
+          <!-- 4-Step Stepper -->
+          <div class="stepper-container">
+            <div class="step-box completed" id="step-1">
+              <span class="step-number">Step 1</span>
+              <span class="step-title">Request Received</span>
+              <span class="step-status" id="step-1-time">Logged</span>
+            </div>
+
+            <div class="step-box" id="step-2">
+              <span class="step-number">Step 2</span>
+              <span class="step-title">Blotter &amp; Record Check</span>
+              <span class="step-status" id="step-2-time">Pending</span>
+            </div>
+
+            <div class="step-box" id="step-3">
+              <span class="step-number">Step 3</span>
+              <span class="step-title">Signatory Approval</span>
+              <span class="step-status" id="step-3-time">Pending</span>
+            </div>
+
+            <div class="step-box" id="step-4">
+              <span class="step-number">Step 4</span>
+              <span class="step-title">Ready for Release</span>
+              <span class="step-status" id="step-4-time">Claim at Hall</span>
+            </div>
+          </div>
+
+          <div style="background-color: var(--color-canvas-soft); padding: 12px 16px; border-radius: var(--rounded-sm); margin-top: var(--spacing-md); font-size: 0.8125rem; line-height: 1.5;" id="track-result-guidance">
+            <strong>Claiming Instructions:</strong> Please present your valid ID at the Barangay Hall Records Counter, Counter 2.
+          </div>
+        </div>
+
+        <div id="tracker-empty-state" style="text-align: center; color: var(--color-text-muted); font-size: 0.8125rem; padding: 20px 0;">
+          No search entered yet. Enter your code above to inspect processing status.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: TRANSPARENCY & OFFICIALS DIRECTORY -->
+    <section id="directory" class="portal-section">
+      <div class="portal-section-header" style="text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <span class="typography-label" style="color: var(--color-primary);">GOVERNMENT TRANSPARENCY</span>
+        <h2 class="typography-heading-3 mt-xs">Barangay Leadership &amp; Council.</h2>
+        <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+          Elective and appointive leaders serving the community of <span id="transparency-brgy-name">Barangay San Isidro</span>.
+        </p>
+      </div>
+
+      <div class="council-grid" id="public-council-container">
+        <!-- Loaded dynamically from officials store -->
+      </div>
+    </section>
+
+    <!-- SECTION 4: EMERGENCY HOTLINES & COMMUNITY INFORMATION -->
+    <section id="hotlines" class="portal-section">
+      <div class="portal-section-header" style="text-align: center; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <span class="typography-label" style="color: #ef4444;">EMERGENCY DISPATCH</span>
+        <h2 class="typography-heading-3 mt-xs">Emergency Hotlines &amp; Service Hours.</h2>
+        <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+          Save these verified 24/7 hotline numbers for quick response during medical, fire, or safety emergencies.
+        </p>
+      </div>
+
+      <div class="hotlines-grid">
+        <div class="hotline-item">
+          <div class="nav-brand-icon" style="background-color: var(--color-primary); width: 36px; height: 36px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted);">Barangay Hall Direct Hotline</div>
+            <div class="hotline-number" id="hotline-brgy-phone">(02) 8123-4567</div>
+          </div>
+        </div>
+
+        <div class="hotline-item">
+          <div class="nav-brand-icon" style="background-color: #059669; width: 36px; height: 36px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted);">Barangay Tanod Dispatch</div>
+            <div class="hotline-number">0917-888-9999</div>
+          </div>
+        </div>
+
+        <div class="hotline-item">
+          <div class="nav-brand-icon" style="background-color: #ef4444; width: 36px; height: 36px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-text-muted);">Bureau of Fire Protection (BFP)</div>
+            <div class="hotline-number">911 / (02) 8456-7890</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Public Inverted Polarity Footer -->
+  <footer class="portal-footer">
+    <div style="max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-md);">
+      <div>
+        <div style="font-weight: 700; font-size: 1.125rem;" id="footer-brgy-title">Barangay San Isidro</div>
+        <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);" id="footer-address">
+          Barangay Hall Complex, J.P. Rizal St. &bull; Regular Hours: Monday &ndash; Friday, 8:00 AM &ndash; 5:00 PM
+        </div>
+      </div>
+
+      <div style="display: flex; gap: var(--spacing-md); font-size: 0.8125rem;">
+        <a href="#services">Clearances</a>
+        <a href="#track">Track Status</a>
+        <a href="#directory">Council</a>
+        <a href="login.html" style="font-weight: 700; color: #ffffff;">Staff Administration Portal &rarr;</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL: ONLINE DOCUMENT APPLICATION -->
+  <dialog id="request-modal" class="modal-dialog" style="width: 90%; max-width: 640px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-md);">
+      <div>
+        <h3 class="typography-heading-4" id="modal-doc-title">Apply for Barangay Document.</h3>
+        <p class="typography-caption">Fill in citizen details to submit your document processing request.</p>
+      </div>
+      <button class="button-pill-soft" onclick="document.getElementById('request-modal').close();" style="height: 30px; padding: 0 10px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+
+    <form id="online-request-form">
+      <input type="hidden" id="req-doc-type" value="Barangay Clearance">
+
+      <!-- Citizen Name -->
+      <div class="form-group" style="margin-bottom: var(--spacing-sm);">
+        <label class="form-label" for="req-name">Full Legal Name <span style="color: var(--color-primary);">*</span></label>
+        <input type="text" id="req-name" class="text-input" placeholder="e.g. Juan M. Dela Cruz" required>
+      </div>
+
+      <!-- Purok & Address -->
+      <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="req-purok">Purok / Zone <span style="color: var(--color-primary);">*</span></label>
+          <select id="req-purok" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+            <option value="Purok 1">Purok 1</option>
+            <option value="Purok 2">Purok 2</option>
+            <option value="Purok 3">Purok 3</option>
+            <option value="Purok 4">Purok 4</option>
+            <option value="Purok 5">Purok 5</option>
+            <option value="Purok 6">Purok 6</option>
+            <option value="Purok 7">Purok 7</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-address">House / Street Address <span style="color: var(--color-primary);">*</span></label>
+          <input type="text" id="req-address" class="text-input" placeholder="e.g. 123 Mabini St." required>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="req-phone">Mobile Phone Number <span style="color: var(--color-primary);">*</span></label>
+          <input type="tel" id="req-phone" class="text-input" placeholder="09XXXXXXXXX" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-email">Email Address</label>
+          <input type="email" id="req-email" class="text-input" placeholder="citizen@example.com">
+        </div>
+      </div>
+
+      <!-- Purpose & Valid ID -->
+      <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
+        <div class="form-group">
+          <label class="form-label" for="req-purpose">Purpose of Document <span style="color: var(--color-primary);">*</span></label>
+          <select id="req-purpose" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+            <option value="Local Employment Application">Local Employment Application</option>
+            <option value="Postal ID / Government ID">Postal ID / Government ID Application</option>
+            <option value="Bank Account Opening">Bank Account Opening</option>
+            <option value="Police Clearance Requirement">Police Clearance Requirement</option>
+            <option value="Hospital / Medical Assistance">Hospital / Medical Assistance</option>
+            <option value="Scholarship / Educational Assistance">Scholarship / Educational Assistance</option>
+            <option value="Electricity / Water Utility Connection">Utility Connection</option>
+            <option value="Business Permit Renewal">Business Permit Renewal</option>
+            <option value="General Legal Purpose">General Legal Purpose</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="req-id-type">Valid Government ID Presented <span style="color: var(--color-primary);">*</span></label>
+          <select id="req-id-type" class="filter-select" style="width: 100%; border-radius: var(--rounded-sm); height: 42px;" required>
+            <option value="PhilSys National ID">PhilSys National ID</option>
+            <option value="Driver's License">Driver's License (LTO)</option>
+            <option value="Voter's ID / Certificate">Voter's ID / Certificate</option>
+            <option value="UMID / SSS / GSIS">UMID / SSS / GSIS Card</option>
+            <option value="Passport">Philippine Passport</option>
+            <option value="Senior Citizen ID">Senior Citizen ID</option>
+            <option value="Student ID / School ID">Student ID / School ID</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Data Privacy Consent -->
+      <div style="background-color: var(--color-canvas-soft); padding: 12px 16px; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-md);">
+        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.75rem; color: var(--color-ink);">
+          <input type="checkbox" id="req-privacy" required style="accent-color: var(--color-primary); margin-top: 2px;">
+          <span>I consent to the collection and processing of my personal details for official barangay certification in accordance with the Data Privacy Act of 2012 (RA 10173).</span>
+        </label>
+      </div>
+
+      <!-- Submit Action -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+        <button type="button" class="button-pill-soft" onclick="document.getElementById('request-modal').close();" style="height: 38px; padding: 0 16px;">
+          Cancel
+        </button>
+        <button type="submit" class="button-primary" id="btn-submit-request" style="height: 38px; padding: 0 22px;">
+          Submit Application
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL: APPLICATION CONFIRMATION SUCCESS -->
+  <dialog id="success-modal" class="modal-dialog" style="width: 90%; max-width: 480px; text-align: center;">
+    <div class="nav-brand-icon" style="width: 52px; height: 52px; border-radius: 50%; font-size: 1.5rem; margin: 0 auto var(--spacing-sm); background-color: #059669;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <h3 class="typography-heading-4">Application Submitted!</h3>
+    <p class="typography-body-sm" style="color: var(--color-text-muted); margin-top: 4px;">
+      Your document request has been logged into the barangay database.
+    </p>
+
+    <div style="background-color: var(--color-canvas-soft); border: 1.5px dashed var(--color-primary); border-radius: var(--rounded-md); padding: 16px; margin: var(--spacing-md) 0;">
+      <div class="typography-caption" style="color: var(--color-text-muted);">YOUR TRACKING REFERENCE CODE:</div>
+      <div style="font-size: 1.375rem; font-weight: 800; font-family: monospace; color: var(--color-primary); letter-spacing: 0.05em; margin: 4px 0;" id="success-tracking-code">
+        BC-2026-00042
+      </div>
+      <button type="button" class="table-action-btn" id="btn-copy-code" style="margin-top: 4px;">
+        Copy Tracking Code
+      </button>
+    </div>
+
+    <p class="typography-caption" style="text-align: left; line-height: 1.5; color: var(--color-ink); margin-bottom: var(--spacing-md);">
+      <strong>Next Steps:</strong> Please proceed to the Barangay Hall during service hours (Monday &ndash; Friday, 8:00 AM &ndash; 5:00 PM). Present your reference code and valid ID at the Records Counter to claim and settle any applicable fees.
+    </p>
+
+    <button class="button-primary" onclick="document.getElementById('success-modal').close();" style="height: 38px; width: 100%;">
+      Done &amp; Return to Portal
+    </button>
+  <!-- MODAL: ANNOUNCEMENT DETAILS (eGov Style) -->
+  <dialog id="announce-modal" class="modal-dialog" style="width: 90%; max-width: 520px;">
+    <div class="bottom-sheet-handle mobile-only-block"></div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+      <span class="egov-announce-badge" id="ann-modal-badge">OFFICIAL NOTICE</span>
+      <button class="button-pill-soft" onclick="document.getElementById('announce-modal').close();" style="height: 30px; padding: 0 12px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+    <h3 class="typography-heading-4" id="ann-modal-title" style="margin-bottom: 6px;">Announcement Title</h3>
+    <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 14px;" id="ann-modal-date">Date &bull; Location</div>
+    <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-ink);" id="ann-modal-body">Announcement content...</div>
+    <button type="button" class="button-primary" style="margin-top: 20px; width: 100%; height: 42px;" onclick="document.getElementById('announce-modal').close();">
+      Acknowledge &amp; Return
+    </button>
+  </dialog>
+
+  <!-- MODAL: RESIDENT PROFILE & ACCOUNT (eGov Bottom Sheet Style) -->
+  <dialog id="profile-sheet" class="modal-dialog" style="width: 90%; max-width: 460px;">
+    <div class="bottom-sheet-handle mobile-only-block"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="topbar-user-avatar" id="sheet-profile-avatar" style="width: 44px; height: 44px; font-size: 1.125rem; border-radius: 12px; background: var(--egov-blue-soft); color: var(--egov-blue); display: flex; align-items: center; justify-content: center; font-weight: 800;">
+          PH
+        </div>
+        <div>
+          <h4 style="margin: 0; font-size: 1rem; font-weight: 800;" id="sheet-profile-name">Citizen / Resident</h4>
+          <div style="font-size: 0.75rem; color: var(--color-text-muted);" id="sheet-profile-sub">Barangay San Isidro &bull; Registered</div>
+        </div>
+      </div>
+      <button class="button-pill-soft" onclick="document.getElementById('profile-sheet').close();" style="height: 30px; padding: 0 10px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+
+    <div style="background: var(--color-canvas-soft); border-radius: 16px; padding: 14px; margin-bottom: 16px; font-size: 0.8125rem; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--color-text-muted);">Jurisdiction:</span>
+        <strong style="color: var(--color-ink);">Barangay San Isidro</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--color-text-muted);">eServices Status:</span>
+        <strong style="color: #10b981;">Online Verified</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--color-text-muted);">Digital ID System:</span>
+        <span class="badge-blue" style="font-size: 0.6875rem;">PhilSys Ready</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <a href="verify.html" class="button-outline" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M7 12h10M12 7v10"/></svg>
+        <span>Open QR Document Verifier</span>
+      </a>
+
+      <a href="login.html" class="button-primary" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Barangay Official / Staff Login</span>
+      </a>
+    </div>
+  </dialog>
+
+  <!-- FIXED eGov PH MOBILE BOTTOM NAVIGATION BAR -->
+  <nav class="egov-bottom-nav" aria-label="Mobile Navigation">
+    <div class="egov-bottom-nav-inner">
+      <button type="button" class="egov-nav-item active" id="bot-nav-home" onclick="switchNavTab('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+        <div class="egov-nav-pill-active" id="nav-indicator-pill"></div>
+      </button>
+
+      <button type="button" class="egov-nav-item" id="bot-nav-services" onclick="switchNavTab('services')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Services</span>
+      </button>
+
+      <button type="button" class="egov-nav-item" id="bot-nav-requests" onclick="switchNavTab('requests')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Requests</span>
+      </button>
+
+      <button type="button" class="egov-nav-item" id="bot-nav-announcements" onclick="switchNavTab('announcements')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>News</span>
+      </button>
+
+      <button type="button" class="egov-nav-item" id="bot-nav-profile" onclick="openProfileSheet()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components/toast.js"></script>
+
+  <script>
+    // eGov Tab Switcher
+    function switchNavTab(tab) {
+      const tabs = ['home', 'services', 'requests', 'announcements', 'profile'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`bot-nav-${t}`);
+        if (btn) btn.classList.remove('active');
+      });
+
+      const activeBtn = document.getElementById(`bot-nav-${tab}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (tab === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (tab === 'services') {
+        const sec = document.getElementById('services');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+      } else if (tab === 'requests') {
+        const sec = document.getElementById('mobile-requests-section') || document.getElementById('track');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+      } else if (tab === 'announcements') {
+        const sec = document.getElementById('announcements');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Open Profile Bottom Sheet
+    function openProfileSheet() {
+      const sheet = document.getElementById('profile-sheet');
+      if (sheet) sheet.showModal();
+    }
+
+    // Quick Mobile Tracking from Header Bar
+    function quickTrackMobile() {
+      const input = document.getElementById('mobile-quick-track-input');
+      if (!input || !input.value.trim()) return;
+      const code = input.value.trim();
+      const trackInput = document.getElementById('track-input');
+      if (trackInput) trackInput.value = code;
+      const trackSec = document.getElementById('track');
+      if (trackSec) trackSec.scrollIntoView({ behavior: 'smooth' });
+      if (typeof window.trackCode === 'function') {
+        window.trackCode();
+      }
+    }
+
+    function quickTrackSample(code) {
+      const trackInput = document.getElementById('track-input');
+      if (trackInput) trackInput.value = code;
+      const trackSec = document.getElementById('track');
+      if (trackSec) trackSec.scrollIntoView({ behavior: 'smooth' });
+      if (typeof window.trackCode === 'function') {
+        window.trackCode();
+      }
+    }
+
+    // Announcement Details Modal Data
+    const announcementData = {
+      1: {
+        badge: 'HEALTH MISSION',
+        badgeClass: 'health',
+        title: 'Annual Free Medical & Dental Mission',
+        date: 'Saturday, September 12, 2026 • 8:00 AM – 3:00 PM • Covered Court',
+        body: `
+          <p>The Office of the Punong Barangay, in partnership with the City Health Department and volunteer medical practitioners, cordially invites all bonafide residents to the <strong>Annual Barangay Health &amp; Dental Mission</strong>.</p>
+          <ul style="margin: 10px 0; padding-left: 20px;">
+            <li>Free General Physician consultations and vital signs screening</li>
+            <li>Free tooth extractions and oral prophylaxis</li>
+            <li>Free maintenance medicines for hypertensive and diabetic senior citizens</li>
+            <li>Pediatric vitamins and deworming for children aged 1-12</li>
+          </ul>
+          <p><em>Requirements:</em> Please bring 1 valid ID or Barangay Resident ID. Priority queuing will be given to Senior Citizens, PWDs, and pregnant mothers.</p>
+        `
+      },
+      2: {
+        badge: 'DISASTER & SAFETY',
+        badgeClass: 'alert',
+        title: 'Oplan Taob-Taob Anti-Dengue Clean-Up Drive',
+        date: 'Every Saturday Morning • Purok 1 to Purok 7',
+        body: `
+          <p>To combat the seasonal rise of dengue cases, the Barangay Health Workers (BHW) and Barangay Tanod volunteers will conduct simultaneous fogging and habitat elimination across all puroks.</p>
+          <p>Residents are advised to inspect water drums, flower vases, used tires, and roof gutters. Cover all clean water containers to prevent mosquito breeding.</p>
+        `
+      },
+      3: {
+        badge: 'JUSTICE & PEACE',
+        badgeClass: 'notice',
+        title: 'Katarungang Pambarangay Mediation Docket Sessions',
+        date: 'Every Tuesday & Thursday • 2:00 PM • Lupong Tagapamayapa Hall',
+        body: `
+          <p>The Lupong Tagapamayapa holds scheduled conciliation and mediation sessions under Republic Act No. 7160 (Local Government Code of 1991). Citizens with active mediation notices (KP Form 9) are required to appear promptly on their designated hearing dates.</p>
+        `
+      }
+    };
+
+    function openAnnounceModal(id) {
+      const data = announcementData[id];
+      if (!data) return;
+      const modal = document.getElementById('announce-modal');
+      const badge = document.getElementById('ann-modal-badge');
+      const title = document.getElementById('ann-modal-title');
+      const date = document.getElementById('ann-modal-date');
+      const body = document.getElementById('ann-modal-body');
+
+      badge.textContent = data.badge;
+      badge.className = `egov-announce-badge ${data.badgeClass}`;
+      title.textContent = data.title;
+      date.textContent = data.date;
+      body.innerHTML = data.body;
+
+      modal.showModal();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Set dynamic time-of-day greeting
+      const hr = new Date().getHours();
+      const greeting = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
+      const greetEl = document.getElementById('egov-greeting-text');
+      if (greetEl) {
+        greetEl.textContent = `${greeting}, Neighbor!`;
+      }
+
+      // Check current session for resident personalized greeting
+      if (window.barangayAuth || window.authService) {
+        try {
+          const auth = window.barangayAuth ? window.barangayAuth.getUser() : null;
+          if (auth && auth.full_name) {
+            const firstName = auth.full_name.split(' ')[0];
+            if (greetEl) greetEl.textContent = `${greeting}, ${firstName}!`;
+            const sheetName = document.getElementById('sheet-profile-name');
+            if (sheetName) sheetName.textContent = auth.full_name;
+          }
+        } catch (e) {}
+      }
+
+      // 1. Theme Manager Initialization
+      if (window.ThemeManager) {
+        window.ThemeManager.init();
+      }
+
+      // 2. Load Real Barangay Identity & Settings
+      async function loadPortalSettings() {
+        try {
+          const idSetting = await window.barangayDB.get('settings', 'identity');
+          if (idSetting && idSetting.value) {
+            const v = idSetting.value;
+            if (v.barangayName) {
+              document.getElementById('portal-nav-brgy').textContent = v.barangayName;
+              document.getElementById('transparency-brgy-name').textContent = v.barangayName;
+              document.getElementById('footer-brgy-title').textContent = v.barangayName;
+            }
+            if (v.municipalityCity) {
+              document.getElementById('portal-hero-jurisdiction').textContent = `${v.municipalityCity} • Online Services Active`;
+            }
+            if (v.address) {
+              document.getElementById('footer-address').textContent = `${v.address} • Regular Hours: ${v.officeHours || 'Mon-Fri, 8AM-5PM'}`;
+            }
+            if (v.contactNumber) {
+              document.getElementById('hotline-brgy-phone').textContent = v.contactNumber;
+            }
+            if (v.logoBase64) {
+              document.getElementById('portal-seal-icon').innerHTML = `<img src="${v.logoBase64}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" alt="Seal">`;
+            }
+          }
+
+          // Load Fee Schedules
+          const feeSetting = await window.barangayDB.get('settings', 'fees');
+          if (feeSetting && feeSetting.value) {
+            const f = feeSetting.value;
+            if (f.barangayClearance !== undefined) {
+              document.getElementById('fee-badge-clearance').textContent = `₱${parseFloat(f.barangayClearance).toFixed(2)} Standard`;
+            }
+            if (f.certificateResidency !== undefined) {
+              document.getElementById('fee-badge-residency').textContent = `₱${parseFloat(f.certificateResidency).toFixed(2)} Standard`;
+            }
+            if (f.businessPermit !== undefined) {
+              document.getElementById('fee-badge-business').textContent = `₱${parseFloat(f.businessPermit).toFixed(2)} Commercial`;
+            }
+          }
+        } catch (err) {
+          console.warn('Portal settings load:', err);
+        }
+      }
+
+      // 3. Load Real Officials from Database
+      async function loadCouncilDirectory() {
+        const container = document.getElementById('public-council-container');
+        try {
+          const officials = await window.barangayDB.getAll('officials');
+          if (!officials || officials.length === 0) {
+            container.innerHTML = `
+              <div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: var(--color-text-muted); background: var(--color-canvas-soft); border-radius: var(--rounded-md);">
+                Official council directory is currently being updated by the Secretariat.
+              </div>
+            `;
+            return;
+          }
+
+          // Sort by rank order
+          officials.sort((a, b) => (a.order || 50) - (b.order || 50));
+
+          container.innerHTML = officials.map(o => {
+            const initials = o.fullName.replace(/Hon\.\s*/i, '').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+            const isPB = o.position === 'Punong Barangay';
+
+            return `
+              <div class="council-card">
+                <div class="official-avatar ${isPB ? 'captain' : ''}" style="width: 44px; height: 44px; font-size: 0.875rem; border-radius: 30%; background: ${isPB ? 'var(--color-primary)' : 'var(--color-canvas-soft)'}; color: ${isPB ? '#ffffff' : 'var(--color-ink)'}; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 1px solid var(--color-hairline); flex-shrink: 0;">
+                  ${initials}
+                </div>
+                <div>
+                  <div style="font-weight: 700; font-size: 0.875rem; color: var(--color-ink);">${o.fullName}</div>
+                  <div style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">${o.position}</div>
+                  ${o.committee && o.committee !== 'None / Not Applicable' ? `
+                    <div style="font-size: 0.6875rem; color: var(--color-text-muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      ${o.committee}
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+        } catch (err) {
+          console.warn('Council load error:', err);
+        }
+      }
+
+      // 4. Modal Open Function
+      window.openRequestModal = (docType) => {
+        document.getElementById('req-doc-type').value = docType;
+        document.getElementById('modal-doc-title').textContent = `Apply for ${docType}.`;
+        document.getElementById('online-request-form').reset();
+        document.getElementById('req-doc-type').value = docType;
+        document.getElementById('request-modal').showModal();
+      };
+
+      // 5. Handle Online Request Submission
+      document.getElementById('online-request-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const docType = document.getElementById('req-doc-type').value;
+        const name = document.getElementById('req-name').value.trim();
+        const purok = document.getElementById('req-purok').value;
+        const address = document.getElementById('req-address').value.trim();
+        const phone = document.getElementById('req-phone').value.trim();
+        const email = document.getElementById('req-email').value.trim();
+        const purpose = document.getElementById('req-purpose').value;
+        const idType = document.getElementById('req-id-type').value;
+
+        if (!name || !address || !phone) {
+          showToast('Please fill in all required fields', 'error');
+          return;
+        }
+
+        try {
+          // Generate unique tracking code: e.g. BC-2026-XXXXX
+          let prefix = 'BC';
+          if (docType === 'Certificate of Indigency') prefix = 'CI';
+          else if (docType === 'Certificate of Residency') prefix = 'CR';
+          else if (docType === 'Business Clearance') prefix = 'BP';
+
+          const year = new Date().getFullYear();
+          const allCerts = await window.barangayDB.getAll('certificates');
+          const sequence = String(allCerts.length + 1).padStart(5, '0');
+          const trackingCode = `${prefix}-${year}-${sequence}`;
+
+          const newCertificate = {
+            trackingCode: trackingCode,
+            type: docType,
+            recipientName: name,
+            purok: purok,
+            address: address,
+            contactPhone: phone,
+            email: email,
+            purpose: purpose,
+            governmentId: idType,
+            status: 'Pending Review',
+            amountPaid: 0,
+            orNumber: 'PENDING-PAYMENT',
+            issuedAt: null,
+            requestedAt: new Date().toISOString(),
+            source: 'Citizen Public Portal'
+          };
+
+          await window.barangayDB.add('certificates', newCertificate);
+
+          // Log security audit
+          await window.barangayDB.add('audit_logs', {
+            userId: 'PUBLIC_CITIZEN',
+            action: 'ONLINE_DOCUMENT_REQUESTED',
+            details: `Online application for ${docType} submitted by ${name} (${trackingCode})`,
+            timestamp: new Date().toISOString()
+          });
+
+          document.getElementById('request-modal').close();
+          document.getElementById('success-tracking-code').textContent = trackingCode;
+          document.getElementById('success-modal').showModal();
+
+          // Auto populate tracking search
+          document.getElementById('track-input').value = trackingCode;
+          trackCode();
+        } catch (err) {
+          console.error('Request submission error:', err);
+          showToast('Failed to submit application', 'error');
+        }
+      });
+
+      // 6. Copy Tracking Code Handler
+      document.getElementById('btn-copy-code').addEventListener('click', () => {
+        const code = document.getElementById('success-tracking-code').textContent.trim();
+        navigator.clipboard.writeText(code).then(() => {
+          showToast('Tracking code copied to clipboard!');
+        });
+      });
+
+      // 7. Track Tracking Code Function
+      window.trackCode = async () => {
+        const query = document.getElementById('track-input').value.trim().toUpperCase();
+        if (!query) {
+          showToast('Please enter a tracking code', 'warning');
+          return;
+        }
+
+        const resultBox = document.getElementById('tracker-result-box');
+        const emptyState = document.getElementById('tracker-empty-state');
+
+        try {
+          const allCerts = await window.barangayDB.getAll('certificates');
+          const found = allCerts.find(c => c.trackingCode && c.trackingCode.toUpperCase() === query);
+
+          if (!found) {
+            emptyState.innerHTML = `
+              <div style="color: #ef4444; font-weight: 600;">Tracking code "${query}" was not found.</div>
+              <div class="typography-caption" style="margin-top: 4px;">Please check the code or verify with the Barangay Hall Records Office.</div>
+            `;
+            emptyState.style.display = 'block';
+            resultBox.style.display = 'none';
+            return;
+          }
+
+          emptyState.style.display = 'none';
+          resultBox.style.display = 'block';
+
+          document.getElementById('track-result-code').textContent = found.trackingCode;
+          document.getElementById('track-result-name').textContent = found.recipientName;
+          document.getElementById('track-result-meta').textContent = `${found.type} • ${found.purpose}`;
+
+          const feeAmt = parseFloat(found.amountPaid) || 0;
+          document.getElementById('track-result-fee').textContent = feeAmt > 0 ? `₱${feeAmt.toFixed(2)}` : (found.type === 'Certificate of Indigency' ? 'Free (Indigent)' : '₱50.00 (Due at Pickup)');
+
+          const isIssued = found.status === 'Issued';
+          const isPending = found.status === 'Pending Review';
+          const isRevoked = found.status === 'Revoked';
+
+          const statusBadge = document.getElementById('track-result-status');
+          if (isRevoked) {
+            statusBadge.textContent = 'Revoked / Rejected';
+            statusBadge.className = 'badge-rose';
+          } else if (isIssued) {
+            statusBadge.textContent = 'Approved & Ready';
+            statusBadge.className = 'badge-emerald';
+          } else {
+            statusBadge.textContent = 'In Review';
+            statusBadge.className = 'badge-amber';
+          }
+
+          // Stepper Update
+          const s1 = document.getElementById('step-1');
+          const s2 = document.getElementById('step-2');
+          const s3 = document.getElementById('step-3');
+          const s4 = document.getElementById('step-4');
+
+          s1.className = 'step-box completed';
+          document.getElementById('step-1-time').textContent = found.requestedAt ? new Date(found.requestedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) : 'Logged';
+
+          if (isIssued) {
+            s2.className = 'step-box completed';
+            document.getElementById('step-2-time').textContent = 'Cleared';
+
+            s3.className = 'step-box completed';
+            document.getElementById('step-3-time').textContent = 'Signed';
+
+            s4.className = 'step-box active';
+            document.getElementById('step-4-time').textContent = 'Ready for Release';
+
+            document.getElementById('track-result-guidance').innerHTML = `
+              <strong style="color: #059669;">Approved:</strong> Your document has been signed and prepared. Please present your valid ID at Counter 1 of the Barangay Hall to claim.
+            `;
+          } else if (isRevoked) {
+            s2.className = 'step-box';
+            s3.className = 'step-box';
+            s4.className = 'step-box';
+            document.getElementById('track-result-guidance').innerHTML = `
+              <strong style="color: #ef4444;">Application Rejected / Revoked:</strong> Please visit the Barangay Hall Secretariat to clarify clearance requirements.
+            `;
+          } else {
+            // Pending Review
+            s2.className = 'step-box active';
+            document.getElementById('step-2-time').textContent = 'In Verification';
+
+            s3.className = 'step-box';
+            document.getElementById('step-3-time').textContent = 'Pending';
+
+            s4.className = 'step-box';
+            document.getElementById('step-4-time').textContent = 'Pending';
+
+            document.getElementById('track-result-guidance').innerHTML = `
+              <strong>Under Review:</strong> Your online submission has been received. Please proceed to the Barangay Hall with your valid ID for physical identity confirmation.
+            `;
+          }
+        } catch (err) {
+          console.error('Tracking error:', err);
+          showToast('Failed to query tracking database', 'error');
+        }
+      };
+
+      // 8. Initial Loading
+      await loadPortalSettings();
+      await loadCouncilDirectory();
+    });
+  </script>
+</body>
+</html>

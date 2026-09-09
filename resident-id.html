@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PVC Resident ID Studio &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .page-hero {
+      padding: var(--spacing-xs) 0 var(--spacing-sm);
+    }
+
+    .studio-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: var(--spacing-lg);
+      align-items: start;
+      margin-bottom: var(--spacing-section);
+    }
+
+    @media (max-width: 1024px) {
+      .studio-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Control Panel */
+    .control-panel {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .panel-card {
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+    }
+
+    .panel-card-title {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Photo Slot & Camera preview in panel */
+    .photo-slot-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .photo-preview-box {
+      width: 84px;
+      height: 84px;
+      border-radius: 30%;
+      border: 1.5px dashed var(--color-hairline);
+      background-color: var(--color-canvas-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .photo-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    /* Right Preview Stage */
+    .preview-stage {
+      background-color: var(--color-canvas-soft);
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-xl) var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-lg);
+      min-height: 520px;
+    }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 880px;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+
+    .view-mode-tabs {
+      display: inline-flex;
+      background-color: var(--color-canvas);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--rounded-full);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .view-mode-btn {
+      padding: 5px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      border-radius: var(--rounded-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .view-mode-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+
+    /* ----------------------------------------------------
+       CR80 PVC CARD SPECIFICATION (85.6mm x 53.98mm)
+       Screen scale: 428px x 270px (1.585 aspect ratio)
+       ---------------------------------------------------- */
+    .id-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .pvc-card {
+      width: 428px;
+      height: 270px;
+      border-radius: 14px;
+      background-color: #ffffff;
+      color: #141414;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+      border: 1px solid #d4d4d8;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 14px 10px;
+      box-sizing: border-box;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Preset: Republic Watermark with subtle security micro-pattern */
+    .pvc-card.preset-watermark::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(#141414 0.5px, transparent 0.5px),
+        radial-gradient(#141414 0.5px, #ffffff 0.5px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    /* Top Republic Header */
+    .card-header-rep {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1.5px solid #141414;
+      padding-bottom: 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-seal-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 30%;
+      background-color: #141414;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8125rem;
+      flex-shrink: 0;
+    }
+
+    .card-header-titles {
+      text-align: center;
+      flex: 1;
+      line-height: 1.15;
+    }
+
+    .card-hdr-republic {
+      font-size: 0.53125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #52525b;
+    }
+
+    .card-hdr-jurisdiction {
+      font-size: 0.5625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #27272a;
+    }
+
+    .card-hdr-brgy {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #09090b;
+    }
+
+    .card-type-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding: 2px 6px;
+      background-color: #f4f4f5;
+      border-radius: 4px;
+      font-size: 0.59375rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #18181b;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Front Body: Photo + Demographics */
+    .card-front-body {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-photo-frame {
+      width: 86px;
+      height: 86px;
+      border-radius: 10px;
+      border: 1.5px solid #18181b;
+      background-color: #f4f4f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .card-photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-photo-avatar-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #71717a;
+    }
+
+    .card-demo-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .card-resident-name {
+      font-size: 0.9375rem;
+      font-weight: 800;
+      color: #09090b;
+      text-transform: uppercase;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-control-no {
+      font-size: 0.625rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 700;
+      color: #27272a;
+      letter-spacing: 0.03em;
+    }
+
+    .card-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 8px;
+      margin-top: 4px;
+      font-size: 0.5625rem;
+    }
+
+    .card-meta-item {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .card-meta-lbl {
+      color: #71717a;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.5rem;
+    }
+
+    .card-meta-val {
+      color: #18181b;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-badge-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 4px;
+    }
+
+    .card-mini-chip {
+      font-size: 0.5rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 9999px;
+      background-color: #e4e4e7;
+      color: #18181b;
+      text-transform: uppercase;
+    }
+
+    .card-mini-chip.blood {
+      background-color: #18181b;
+      color: #ffffff;
+    }
+
+    /* Front Card Bottom Signatures */
+    .card-front-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid #e4e4e7;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-sig-block {
+      text-align: center;
+      width: 140px;
+    }
+
+    .card-sig-line {
+      border-bottom: 1px solid #71717a;
+      height: 16px;
+      margin-bottom: 2px;
+    }
+
+    .card-sig-name {
+      font-size: 0.5625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #09090b;
+      line-height: 1.1;
+    }
+
+    .card-sig-title {
+      font-size: 0.46875rem;
+      color: #71717a;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card-validity-chip {
+      font-size: 0.5rem;
+      font-weight: 600;
+      color: #52525b;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+
+    /* ----------------------------------------------------
+       BACK OF PVC CARD LAYOUT
+       ---------------------------------------------------- */
+    .card-back-body {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 4px;
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-qr-box {
+      width: 86px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .card-qr-svg {
+      width: 72px;
+      height: 72px;
+      background: #ffffff;
+      padding: 2px;
+      border: 1px solid #e4e4e7;
+      border-radius: 6px;
+    }
+
+    .card-qr-caption {
+      font-size: 0.46875rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #52525b;
+      text-align: center;
+    }
+
+    .card-back-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 4px;
+      font-size: 0.53125rem;
+      line-height: 1.25;
+      color: #27272a;
+    }
+
+    .card-ice-block {
+      background-color: #f4f4f5;
+      border-radius: 6px;
+      padding: 4px 6px;
+    }
+
+    .card-ice-title {
+      font-weight: 800;
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #09090b;
+      margin-bottom: 2px;
+    }
+
+    .card-legal-disclaimer {
+      font-size: 0.46875rem;
+      color: #52525b;
+      text-align: justify;
+      line-height: 1.2;
+    }
+
+    .card-back-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid #e4e4e7;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-thumb-box {
+      width: 48px;
+      height: 48px;
+      border: 1px dashed #71717a;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.4375rem;
+      font-weight: 600;
+      color: #71717a;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.1;
+      flex-shrink: 0;
+    }
+
+    /* ----------------------------------------------------
+       PRINT STYLES: PVC CR80 vs A4 PAPER SHEET
+       ---------------------------------------------------- */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      #printable-id-stage, #printable-id-stage * {
+        visibility: visible !important;
+      }
+
+      #printable-id-stage {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 15mm !important;
+        justify-content: center !important;
+        align-items: center !important;
+        background: transparent !important;
+      }
+
+      .pvc-card {
+        box-shadow: none !important;
+        border: 1px solid #141414 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* Single PVC Card Printer Mode */
+      body.print-pvc-mode #printable-id-stage {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      body.print-pvc-mode .pvc-card {
+        width: 85.6mm !important;
+        height: 53.98mm !important;
+        border-radius: 3.18mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <!-- Main Content Workspace -->
+    <div class="app-main">
+      <div id="mobile-header-mount"></div>
+      <div id="app-topbar-mount"></div>
+
+      <main class="app-content">
+        <!-- Page Hero Section -->
+        <section class="page-hero">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+                <h1 class="typography-heading-2">PVC Resident ID Studio.</h1>
+                <span class="badge-neutral" id="studio-status-badge">CR80 Standard</span>
+              </div>
+              <p class="typography-body-lg">
+                Official Republic of the Philippines resident card generation, live photo capture, and cryptographic QR code issuance.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;">
+              <button class="button-outline" id="btn-download-png" title="Download High-Resolution PNG Card">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Download PNG</span>
+              </button>
+              <button class="button-primary" id="btn-print-card" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 6 2 18 2 18 9"/>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                  <rect width="12" height="8" x="6" y="14"/>
+                </svg>
+                <span>Print ID Card</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Studio Workspace Grid -->
+        <div class="studio-layout">
+          <!-- Left Configuration Form Panel -->
+          <div class="control-panel">
+            <!-- 1. Select Resident -->
+            <div class="panel-card">
+              <div class="panel-card-title">
+                <span>1. Select Resident Profile</span>
+                <a href="residents.html" style="font-size: 0.6875rem; color: var(--color-primary); text-decoration: none;">Roster &rarr;</a>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <select id="select-resident" class="filter-select" style="width: 100%; height: 42px;">
+                  <option value="">-- Choose Registered Resident from Database --</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 2. Biometric Photo Acquisition -->
+            <div class="panel-card">
+              <div class="panel-card-title">
+                <span>2. Biometric Photo</span>
+                <span class="badge-neutral" style="font-size: 0.625rem;">1x1 / 2x2</span>
+              </div>
+              <div class="photo-slot-wrap">
+                <div class="photo-preview-box" id="slot-photo-preview">
+                  <span id="slot-photo-avatar" style="font-weight: 800; font-size: 1.25rem; color: var(--color-text-muted);">ID</span>
+                </div>
+                <div class="photo-actions">
+                  <input type="file" id="file-photo-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                  <button type="button" class="button-outline" id="btn-trigger-upload" style="height: 32px; font-size: 0.75rem; justify-content: center;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload Image</span>
+                  </button>
+                  <button type="button" class="button-outline" id="btn-trigger-camera" style="height: 32px; font-size: 0.75rem; justify-content: center;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Webcam Capture</span>
+                  </button>
+                  <button type="button" class="button-pill-soft" id="btn-clear-photo" style="height: 26px; font-size: 0.6875rem; color: #ef4444; justify-content: center; display: none;">
+                    Remove Photo
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Card Metadata & Settings -->
+            <div class="panel-card">
+              <div class="panel-card-title">
+                <span>3. ID Card Parameters</span>
+              </div>
+              <div class="form-grid-2" style="margin-bottom: var(--spacing-xs);">
+                <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                  <label class="form-label" for="card-blood-type">Blood Type</label>
+                  <select id="card-blood-type" class="text-input" style="height: 38px; padding: 0 10px;">
+                    <option value="Unknown">Not Stated</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+" selected>O+</option>
+                    <option value="O-">O-</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                  <label class="form-label" for="card-validity">Validity Period</label>
+                  <select id="card-validity" class="text-input" style="height: 38px; padding: 0 10px;">
+                    <option value="1">1 Year from Issue</option>
+                    <option value="2">2 Years from Issue</option>
+                    <option value="3" selected>3 Years from Issue</option>
+                    <option value="5">5 Years (Senior/Permanent)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                <label class="form-label" for="card-emerg-name">Emergency Contact Person</label>
+                <input type="text" id="card-emerg-name" class="text-input" style="height: 38px;" placeholder="e.g. Maria Dela Cruz (Spouse)">
+              </div>
+
+              <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                <label class="form-label" for="card-emerg-contact">Emergency Contact Phone</label>
+                <input type="tel" id="card-emerg-contact" class="text-input" style="height: 38px;" placeholder="e.g. 0917-123-4567">
+              </div>
+
+              <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                <label class="form-label" for="card-signatory">Punong Barangay Signatory</label>
+                <input type="text" id="card-signatory" class="text-input" style="height: 38px;" value="Hon. Punong Barangay">
+              </div>
+
+              <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+                <label class="form-label" for="card-preset-style">Card Styling Preset</label>
+                <select id="card-preset-style" class="text-input" style="height: 38px; padding: 0 10px;">
+                  <option value="preset-watermark" selected>Executive Security Watermark</option>
+                  <option value="preset-clean">Minimalist Monochrome</option>
+                </select>
+              </div>
+
+              <button type="button" class="button-primary mt-sm" id="btn-save-id-record" style="width: 100%; height: 42px; justify-content: center;">
+                Save &amp; Log Official ID Issuance
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Interactive Stage: Live Front & Back Preview -->
+          <div class="preview-stage">
+            <div class="preview-toolbar">
+              <div class="view-mode-tabs" role="tablist">
+                <button type="button" class="view-mode-btn active" data-view="dual">Dual View</button>
+                <button type="button" class="view-mode-btn" data-view="front">Front Only</button>
+                <button type="button" class="view-mode-btn" data-view="back">Back Only</button>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge-neutral" style="font-size: 0.6875rem;">Standard CR80 &bull; 85.6 &times; 54 mm</span>
+              </div>
+            </div>
+
+            <!-- The Printable Card Render Target -->
+            <div id="printable-id-stage" class="id-cards-container">
+              <!-- FRONT OF CARD -->
+              <div class="pvc-card preset-watermark" id="card-front-element">
+                <div>
+                  <div class="card-header-rep">
+                    <div class="card-seal-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="card-header-titles">
+                      <div class="card-hdr-republic">Republic of the Philippines</div>
+                      <div class="card-hdr-jurisdiction" id="pvc-jurisdiction">Province of Rizal &bull; Municipality of Rodriguez</div>
+                      <div class="card-hdr-brgy" id="pvc-brgy-name">Barangay San Isidro</div>
+                    </div>
+                    <div class="card-seal-icon" style="background-color: transparent; border: 1px solid #141414; color: #141414;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="card-type-strip">
+                    <span>Resident Identification Card</span>
+                    <span id="pvc-card-no" class="card-control-no">BRGY-ID-2026-00001</span>
+                  </div>
+                </div>
+
+                <!-- Middle Front Demographics -->
+                <div class="card-front-body">
+                  <div class="card-photo-frame" id="pvc-photo-frame">
+                    <span class="card-photo-avatar-text" id="pvc-photo-initials">JD</span>
+                  </div>
+
+                  <div class="card-demo-col">
+                    <div class="card-resident-name" id="pvc-full-name">JUAN DELA CRUZ JR.</div>
+                    <div class="card-control-no" id="pvc-res-code" style="color: #71717a;">RES-2026-00001</div>
+
+                    <div class="card-meta-grid">
+                      <div class="card-meta-item">
+                        <span class="card-meta-lbl">Address / Purok</span>
+                        <span class="card-meta-val" id="pvc-address">Purok 1, Main Street</span>
+                      </div>
+                      <div class="card-meta-item">
+                        <span class="card-meta-lbl">Date of Birth / Age</span>
+                        <span class="card-meta-val" id="pvc-dob-age">Jan 15, 1990 (36 yrs)</span>
+                      </div>
+                      <div class="card-meta-item">
+                        <span class="card-meta-lbl">Civil Status / Gender</span>
+                        <span class="card-meta-val" id="pvc-status-gender">Single &bull; Male</span>
+                      </div>
+                      <div class="card-meta-item">
+                        <span class="card-meta-lbl">Voter Status</span>
+                        <span class="card-meta-val" id="pvc-voter-status">Registered (Precinct 012)</span>
+                      </div>
+                    </div>
+
+                    <div class="card-badge-row" id="pvc-badge-row">
+                      <span class="card-mini-chip blood" id="pvc-chip-blood">BLOOD O+</span>
+                      <span class="card-mini-chip" id="pvc-chip-voter">VOTER</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Front Signatures -->
+                <div class="card-front-footer">
+                  <div class="card-sig-block">
+                    <div class="card-sig-line"></div>
+                    <div class="card-sig-name" id="pvc-sig-bearer">Juan Dela Cruz Jr.</div>
+                    <div class="card-sig-title">Bearer's Signature</div>
+                  </div>
+
+                  <div class="card-validity-chip" id="pvc-validity-display">
+                    EXP: DEC 31, 2029
+                  </div>
+
+                  <div class="card-sig-block">
+                    <div class="card-sig-line"></div>
+                    <div class="card-sig-name" id="pvc-sig-captain">Hon. Punong Barangay</div>
+                    <div class="card-sig-title">Punong Barangay</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BACK OF CARD -->
+              <div class="pvc-card preset-watermark" id="card-back-element">
+                <div>
+                  <div class="card-header-rep" style="padding-bottom: 4px;">
+                    <div style="font-size: 0.53125rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #18181b;">
+                      Official Document Verification &bull; Republic of the Philippines
+                    </div>
+                    <div class="card-control-no" id="pvc-back-control-no">BRGY-ID-2026-00001</div>
+                  </div>
+                </div>
+
+                <!-- Middle Back Grid -->
+                <div class="card-back-body">
+                  <div class="card-qr-box">
+                    <div class="card-qr-svg" id="pvc-qr-container">
+                      <!-- Injected via QRCode.generateSVG -->
+                    </div>
+                    <div class="card-qr-caption">Scan to Verify</div>
+                  </div>
+
+                  <div class="card-back-info">
+                    <div class="card-ice-block">
+                      <div class="card-ice-title">In Case of Emergency (ICE):</div>
+                      <div style="font-weight: 700; color: #09090b;" id="pvc-ice-name">Maria Dela Cruz (Spouse)</div>
+                      <div style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.5rem;" id="pvc-ice-contact">0917-123-4567</div>
+                    </div>
+
+                    <div class="card-legal-disclaimer">
+                      This card certifies that the bearer is a bona fide resident of this Barangay under <strong>R.A. 7160 (Local Government Code of 1991)</strong>. Non-transferable. If found, please return to the Barangay Hall or nearest police station.
+                    </div>
+
+                    <div style="font-size: 0.46875rem; color: #52525b; line-height: 1.15;" id="pvc-hall-info">
+                      Barangay Hall Complex &bull; Hotline: (02) 8987-6543 / 0917-123-4567
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Back Attestation -->
+                <div class="card-back-footer">
+                  <div class="card-thumb-box">
+                    Right<br>Thumb
+                  </div>
+
+                  <div class="card-sig-block" style="width: 170px;">
+                    <div class="card-sig-line"></div>
+                    <div class="card-sig-name" id="pvc-sig-secretary">Hon. Barangay Secretary</div>
+                    <div class="card-sig-title">Attested by Barangay Secretary</div>
+                  </div>
+
+                  <div style="text-align: right; font-size: 0.46875rem; font-family: ui-monospace, monospace; color: #71717a;">
+                    SEAL CERTIFIED<br>DIGITAL TOKEN
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Camera Live Capture Modal -->
+  <dialog id="camera-modal" class="modal-dialog" style="max-width: 480px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+      <h3 class="typography-heading-4">Webcam Photo Capture.</h3>
+      <button type="button" class="button-pill-soft" id="btn-close-camera" style="height: 28px; padding: 0 10px;">Close</button>
+    </div>
+
+    <div style="position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: var(--rounded-sm); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+      <video id="camera-stream-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+      <!-- Square Framing Overlay -->
+      <div style="position: absolute; width: 200px; height: 200px; border: 2px dashed #ffffff; border-radius: 12px; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);"></div>
+    </div>
+
+    <canvas id="camera-capture-canvas" style="display: none;"></canvas>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--spacing-md);">
+      <span class="typography-caption">Align resident's face inside square guide</span>
+      <button type="button" class="button-primary" id="btn-take-snapshot" style="height: 38px; padding: 0 20px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/></svg>
+        <span>Take Snapshot</span>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/lib/qrcode.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/sidebar.js"></script>
+
+  <script>
+    let allResidents = [];
+    let selectedResident = null;
+    let currentPhotoDataUrl = null;
+    let cameraStream = null;
+    let currentAuthUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Render App Shell Sidebar immediately
+      try {
+        await AppSidebar.render('resident-id');
+      } catch (err) {
+        console.error('Sidebar mount error:', err);
+      }
+
+      // 2. Guard route
+      if (window.authService) {
+        const auth = await authService.requireAuth('login.html');
+        if (auth) {
+          currentAuthUser = auth.user;
+        }
+      }
+
+      // 3. Load Settings for Letterhead & Signatories
+      await loadBarangayIdentitySettings();
+
+      // 4. Load Residents
+      await loadResidentsList();
+
+      // 5. Check URL parameter (e.g. ?residentId=123)
+      checkUrlParameters();
+
+      // 6. Bind All Event Listeners
+      bindEventListeners();
+
+      // 7. Initial QR Code render
+      updateCardQRCode('BRGY-ID-2026-00001');
+    });
+
+    // Load Settings
+    async function loadBarangayIdentitySettings() {
+      try {
+        const idSetting = await window.barangayDB.get('settings', 'identity');
+        if (idSetting && idSetting.value) {
+          const v = idSetting.value;
+          if (v.barangayName) {
+            document.getElementById('pvc-brgy-name').textContent = v.barangayName.toUpperCase();
+          }
+          if (v.province && v.municipalityCity) {
+            document.getElementById('pvc-jurisdiction').textContent = `${v.province.toUpperCase()} • ${v.municipalityCity.toUpperCase()}`;
+          }
+          if (v.hallAddress || v.contactNo) {
+            document.getElementById('pvc-hall-info').textContent = `${v.hallAddress || 'Barangay Hall'} • Hotline: ${v.contactNo || '(02) 8987-6543'}`;
+          }
+        }
+
+        // Check Officials for Captain & Secretary
+        const officials = await window.barangayDB.getAll('officials');
+        if (officials && officials.length > 0) {
+          const cap = officials.find(o => o.position === 'Punong Barangay' && o.status === 'active');
+          if (cap) {
+            document.getElementById('card-signatory').value = cap.fullName;
+            document.getElementById('pvc-sig-captain').textContent = cap.fullName;
+          }
+          const sec = officials.find(o => (o.position === 'Barangay Secretary' || o.position === 'Secretary') && o.status === 'active');
+          if (sec) {
+            document.getElementById('pvc-sig-secretary').textContent = sec.fullName;
+          }
+        }
+      } catch (err) {
+        console.warn('Settings load error in resident-id:', err);
+      }
+    }
+
+    // Load Residents dropdown
+    async function loadResidentsList() {
+      try {
+        allResidents = await window.barangayDB.getAll('residents');
+        const select = document.getElementById('select-resident');
+        select.innerHTML = '<option value="">-- Choose Registered Resident from Database --</option>';
+
+        allResidents.sort((a, b) => (a.lastName || '').localeCompare(b.lastName || ''));
+
+        allResidents.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r.id;
+          const full = [r.lastName, r.firstName, r.middleName, r.suffix].filter(Boolean).join(' ');
+          opt.textContent = `${full} (${r.purok || 'Unassigned'}) - ${r.residentCode || 'ID:' + r.id}`;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Failed to load residents:', e);
+        Toast.error('Could not load residents database.');
+      }
+    }
+
+    // Check URL parameters
+    function checkUrlParameters() {
+      const params = new URLSearchParams(window.location.search);
+      const resId = params.get('residentId');
+      if (resId) {
+        const select = document.getElementById('select-resident');
+        select.value = resId;
+        selectResident(resId);
+      }
+    }
+
+    // Handle Resident Selection
+    function selectResident(id) {
+      const res = allResidents.find(r => r.id == id);
+      if (!res) return;
+
+      selectedResident = res;
+
+      // Full Name
+      const parts = [res.firstName, res.middleName, res.lastName, res.suffix].filter(Boolean);
+      const fullName = parts.join(' ').toUpperCase();
+      document.getElementById('pvc-full-name').textContent = fullName || 'RESIDENT NAME';
+      document.getElementById('pvc-sig-bearer').textContent = fullName || 'Resident Bearer';
+
+      // Control Code
+      const idCode = `BRGY-ID-${new Date().getFullYear()}-${String(res.id).padStart(5, '0')}`;
+      document.getElementById('pvc-card-no').textContent = idCode;
+      document.getElementById('pvc-back-control-no').textContent = idCode;
+      document.getElementById('pvc-res-code').textContent = res.residentCode || `RES-${new Date().getFullYear()}-${String(res.id).padStart(5, '0')}`;
+
+      // Address & Purok
+      document.getElementById('pvc-address').textContent = `${res.purok || 'Purok 1'}${res.address ? ', ' + res.address : ''}`;
+
+      // DOB & Age
+      const age = res.age || (res.birthdate ? calculateAge(res.birthdate) : '—');
+      document.getElementById('pvc-dob-age').textContent = `${res.birthdate || 'No Date'} (${age} yrs)`;
+
+      // Civil Status & Gender
+      document.getElementById('pvc-status-gender').textContent = `${res.civilStatus || 'Single'} • ${res.gender || 'Male'}`;
+
+      // Voter status
+      document.getElementById('pvc-voter-status').textContent = res.isVoter ? `Registered (${res.precinct || 'Precinct Active'})` : 'Non-Voter';
+
+      // Emergency Contact
+      document.getElementById('card-emerg-name').value = res.emergencyName || res.emergencyContact || '';
+      document.getElementById('card-emerg-contact').value = res.phone || '';
+      document.getElementById('pvc-ice-name').textContent = res.emergencyName || res.emergencyContact || 'Barangay Desk Contact';
+      document.getElementById('pvc-ice-contact').textContent = res.phone || '(02) 8987-6543';
+
+      // Badges
+      const badgeContainer = document.getElementById('pvc-badge-row');
+      badgeContainer.innerHTML = '';
+      const bloodVal = document.getElementById('card-blood-type').value;
+      badgeContainer.innerHTML += `<span class="card-mini-chip blood" id="pvc-chip-blood">BLOOD ${bloodVal}</span>`;
+
+      if (res.isVoter) badgeContainer.innerHTML += `<span class="card-mini-chip">VOTER</span>`;
+      if (res.isSenior || (typeof age === 'number' && age >= 60)) badgeContainer.innerHTML += `<span class="card-mini-chip">SENIOR</span>`;
+      if (res.isPwd) badgeContainer.innerHTML += `<span class="card-mini-chip">PWD</span>`;
+      if (res.isSoloParent) badgeContainer.innerHTML += `<span class="card-mini-chip">SOLO PARENT</span>`;
+      if (res.isFourPs) badgeContainer.innerHTML += `<span class="card-mini-chip">4PS</span>`;
+
+      // Photo
+      if (res.photoUrl || res.photo_url) {
+        setResidentPhoto(res.photoUrl || res.photo_url);
+      } else {
+        clearPhoto();
+      }
+
+      // Update Initials
+      const initials = `${(res.firstName || ' ')[0]}${(res.lastName || ' ')[0]}`.toUpperCase();
+      document.getElementById('slot-photo-avatar').textContent = initials;
+      document.getElementById('pvc-photo-initials').textContent = initials;
+
+      // Update QR Code
+      updateCardQRCode(idCode);
+      updateValidityDate();
+    }
+
+    // Set Resident Photo
+    function setResidentPhoto(dataUrl) {
+      currentPhotoDataUrl = dataUrl;
+
+      // In left panel
+      const slotBox = document.getElementById('slot-photo-preview');
+      slotBox.innerHTML = `<img src="${dataUrl}" alt="Photo">`;
+      document.getElementById('btn-clear-photo').style.display = 'inline-flex';
+
+      // On PVC card
+      const cardFrame = document.getElementById('pvc-photo-frame');
+      cardFrame.innerHTML = `<img src="${dataUrl}" alt="Photo">`;
+    }
+
+    // Clear Photo
+    function clearPhoto() {
+      currentPhotoDataUrl = null;
+      const initials = selectedResident 
+        ? `${(selectedResident.firstName || ' ')[0]}${(selectedResident.lastName || ' ')[0]}`.toUpperCase() 
+        : 'ID';
+
+      document.getElementById('slot-photo-preview').innerHTML = `<span id="slot-photo-avatar" style="font-weight: 800; font-size: 1.25rem; color: var(--color-text-muted);">${initials}</span>`;
+      document.getElementById('pvc-photo-frame').innerHTML = `<span class="card-photo-avatar-text" id="pvc-photo-initials">${initials}</span>`;
+      document.getElementById('btn-clear-photo').style.display = 'none';
+      document.getElementById('file-photo-input').value = '';
+    }
+
+    // Update QR Code SVG
+    function updateCardQRCode(code) {
+      const ext = window.location.pathname.endsWith('.php') ? '.php' : '.html';
+      const verifyUrl = `${window.location.origin}${window.location.pathname.replace(/[^/]*$/, '')}verify${ext}?code=${encodeURIComponent(code)}`;
+      
+      const qrContainer = document.getElementById('pvc-qr-container');
+      if (window.QRCode && window.QRCode.generateSVG) {
+        const svg = window.QRCode.generateSVG(verifyUrl, {
+          size: 72,
+          margin: 1,
+          colorDark: '#141414',
+          colorLight: '#ffffff'
+        });
+        qrContainer.innerHTML = svg;
+      }
+    }
+
+    // Update Validity Date
+    function updateValidityDate() {
+      const years = parseInt(document.getElementById('card-validity').value, 10) || 1;
+      const d = new Date();
+      d.setFullYear(d.getFullYear() + years);
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      const formatted = `EXP: ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+      document.getElementById('pvc-validity-display').textContent = formatted;
+    }
+
+    // Calculate age
+    function calculateAge(bdayStr) {
+      if (!bdayStr) return null;
+      const bday = new Date(bdayStr);
+      if (isNaN(bday)) return null;
+      const now = new Date();
+      let age = now.getFullYear() - bday.getFullYear();
+      const m = now.getMonth() - bday.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < bday.getDate())) age--;
+      return age >= 0 ? age : 0;
+    }
+
+    // Bind Event Listeners
+    function bindEventListeners() {
+      // Resident picker
+      document.getElementById('select-resident').addEventListener('change', (e) => {
+        if (e.target.value) {
+          selectResident(e.target.value);
+        }
+      });
+
+      // View mode tabs (Dual, Front, Back)
+      document.querySelectorAll('.view-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.getAttribute('data-view');
+          const frontEl = document.getElementById('card-front-element');
+          const backEl = document.getElementById('card-back-element');
+
+          if (mode === 'front') {
+            frontEl.style.display = 'flex';
+            backEl.style.display = 'none';
+          } else if (mode === 'back') {
+            frontEl.style.display = 'none';
+            backEl.style.display = 'flex';
+          } else {
+            frontEl.style.display = 'flex';
+            backEl.style.display = 'flex';
+          }
+        });
+      });
+
+      // Preset Style Switch
+      document.getElementById('card-preset-style').addEventListener('change', (e) => {
+        const val = e.target.value;
+        const frontEl = document.getElementById('card-front-element');
+        const backEl = document.getElementById('card-back-element');
+        frontEl.className = `pvc-card ${val}`;
+        backEl.className = `pvc-card ${val}`;
+      });
+
+      // Blood type change
+      document.getElementById('card-blood-type').addEventListener('change', (e) => {
+        const chip = document.getElementById('pvc-chip-blood');
+        if (chip) chip.textContent = `BLOOD ${e.target.value}`;
+      });
+
+      // Validity change
+      document.getElementById('card-validity').addEventListener('change', updateValidityDate);
+
+      // Signatory input change
+      document.getElementById('card-signatory').addEventListener('input', (e) => {
+        document.getElementById('pvc-sig-captain').textContent = e.target.value.trim() || 'Hon. Punong Barangay';
+      });
+
+      // Emergency Inputs change
+      document.getElementById('card-emerg-name').addEventListener('input', (e) => {
+        document.getElementById('pvc-ice-name').textContent = e.target.value.trim() || 'Barangay Desk Contact';
+      });
+      document.getElementById('card-emerg-contact').addEventListener('input', (e) => {
+        document.getElementById('pvc-ice-contact').textContent = e.target.value.trim() || '(02) 8987-6543';
+      });
+
+      // Trigger upload file
+      document.getElementById('btn-trigger-upload').addEventListener('click', () => {
+        document.getElementById('file-photo-input').click();
+      });
+
+      // File input change
+      document.getElementById('file-photo-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          // Crop to square via canvas
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const size = Math.min(img.width, img.height);
+            canvas.width = 400;
+            canvas.height = 400;
+            const ctx = canvas.getContext('2d');
+            const sx = (img.width - size) / 2;
+            const sy = (img.height - size) / 2;
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, 400, 400);
+            const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+            setResidentPhoto(croppedDataUrl);
+            Toast.success('Photo uploaded and formatted.');
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Remove photo
+      document.getElementById('btn-clear-photo').addEventListener('click', clearPhoto);
+
+      // Trigger webcam capture modal
+      document.getElementById('btn-trigger-camera').addEventListener('click', startWebcam);
+      document.getElementById('btn-close-camera').addEventListener('click', stopWebcam);
+      document.getElementById('btn-take-snapshot').addEventListener('click', takeWebcamSnapshot);
+
+      // Print card
+      document.getElementById('btn-print-card').addEventListener('click', () => {
+        // Ensure dual view is visible before print
+        document.getElementById('card-front-element').style.display = 'flex';
+        document.getElementById('card-back-element').style.display = 'flex';
+        window.print();
+      });
+
+      // Download PNG using html2canvas/Canvas fallback
+      document.getElementById('btn-download-png').addEventListener('click', downloadCardSnapshot);
+
+      // Save ID card record
+      document.getElementById('btn-save-id-record').addEventListener('click', saveResidentIdRecord);
+    }
+
+    // Start Webcam
+    async function startWebcam() {
+      const modal = document.getElementById('camera-modal');
+      const video = document.getElementById('camera-stream-video');
+
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+          audio: false
+        });
+        video.srcObject = cameraStream;
+        modal.showModal();
+      } catch (err) {
+        console.error('Webcam error:', err);
+        Toast.error('Could not access webcam. Please verify camera permissions.');
+      }
+    }
+
+    // Stop Webcam
+    function stopWebcam() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      const modal = document.getElementById('camera-modal');
+      if (modal.open) modal.close();
+    }
+
+    // Snapshot from Webcam
+    function takeWebcamSnapshot() {
+      const video = document.getElementById('camera-stream-video');
+      const canvas = document.getElementById('camera-capture-canvas');
+      if (!video || !video.videoWidth) return;
+
+      const size = Math.min(video.videoWidth, video.videoHeight);
+      canvas.width = 400;
+      canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+
+      const sx = (video.videoWidth - size) / 2;
+      const sy = (video.videoHeight - size) / 2;
+      ctx.drawImage(video, sx, sy, size, size, 0, 0, 400, 400);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      setResidentPhoto(dataUrl);
+      stopWebcam();
+      Toast.success('Webcam photo captured.');
+    }
+
+    // Save Resident ID Record
+    async function saveResidentIdRecord() {
+      if (!selectedResident) {
+        Toast.error('Please select a resident profile first.');
+        return;
+      }
+
+      const idNumber = document.getElementById('pvc-card-no').textContent.trim();
+      const bloodType = document.getElementById('card-blood-type').value;
+      const emergName = document.getElementById('card-emerg-name').value.trim();
+      const emergContact = document.getElementById('card-emerg-contact').value.trim();
+      const signatory = document.getElementById('card-signatory').value.trim();
+
+      const years = parseInt(document.getElementById('card-validity').value, 10) || 1;
+      const validUntil = new Date();
+      validUntil.setFullYear(validUntil.getFullYear() + years);
+
+      const idRecord = {
+        idNumber: idNumber,
+        residentId: selectedResident.id,
+        bloodType: bloodType,
+        emergencyName: emergName,
+        emergencyContact: emergContact,
+        validUntil: validUntil.toISOString().split('T')[0],
+        signatoryName: signatory,
+        issuedBy: (currentAuthUser && currentAuthUser.fullName) || 'Barangay Staff',
+        status: 'Active',
+        photoUrl: currentPhotoDataUrl,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        await window.barangayDB.add('resident_ids', idRecord);
+
+        // Update photo on resident if present
+        if (currentPhotoDataUrl) {
+          selectedResident.photoUrl = currentPhotoDataUrl;
+          selectedResident.photo_url = currentPhotoDataUrl;
+          await window.barangayDB.put('residents', selectedResident);
+        }
+
+        if (window.authService) {
+          await window.authService.logAudit('RESIDENT_ID_ISSUED', `Issued PVC Resident ID ${idNumber} for ${selectedResident.firstName} ${selectedResident.lastName}`);
+        }
+
+        Toast.success(`Resident ID ${idNumber} logged in database.`);
+      } catch (err) {
+        console.error('Error saving ID record:', err);
+        Toast.error('Could not save ID record to database.');
+      }
+    }
+
+    // Download Card Snapshot as SVG / Image
+    function downloadCardSnapshot() {
+      const frontEl = document.getElementById('card-front-element');
+      if (!frontEl) return;
+
+      Toast.info('Preparing print preview for high-resolution card export...');
+      window.print();
+    }
+  </script>
+</body>
+</html>
