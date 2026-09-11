@@ -5,7 +5,7 @@
  */
 
 const DB_NAME = 'BarangayManagementDB';
-const DB_VERSION = 9;
+const DB_VERSION = 10;
 
 class BarangayDB {
   constructor() {
@@ -234,6 +234,44 @@ class BarangayDB {
           hStore.createIndex('scheduledDate', 'scheduledDate', { unique: false });
           hStore.createIndex('hearingType', 'hearingType', { unique: false });
           hStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 24. Disbursement Vouchers & Expenditure Tracking Store
+        if (!db.objectStoreNames.contains('disbursement_vouchers')) {
+          const dvStore = db.createObjectStore('disbursement_vouchers', { keyPath: 'id', autoIncrement: true });
+          dvStore.createIndex('dvNumber', 'dvNumber', { unique: true });
+          dvStore.createIndex('fundSource', 'fundSource', { unique: false });
+          dvStore.createIndex('expenseClass', 'expenseClass', { unique: false });
+          dvStore.createIndex('status', 'status', { unique: false });
+          dvStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 25. Revenue Collections & Official Receipts Store
+        if (!db.objectStoreNames.contains('revenue_collections')) {
+          const rcStore = db.createObjectStore('revenue_collections', { keyPath: 'id', autoIncrement: true });
+          rcStore.createIndex('orNumber', 'orNumber', { unique: true });
+          rcStore.createIndex('revenueSource', 'revenueSource', { unique: false });
+          rcStore.createIndex('fundDestination', 'fundDestination', { unique: false });
+          rcStore.createIndex('status', 'status', { unique: false });
+          rcStore.createIndex('receiptDate', 'receiptDate', { unique: false });
+        }
+
+        // 26. Budget Obligation Requests (OBR) Store
+        if (!db.objectStoreNames.contains('budget_obligations')) {
+          const obrStore = db.createObjectStore('budget_obligations', { keyPath: 'id', autoIncrement: true });
+          obrStore.createIndex('obrNumber', 'obrNumber', { unique: true });
+          obrStore.createIndex('obligationType', 'obligationType', { unique: false });
+          obrStore.createIndex('status', 'status', { unique: false });
+          obrStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 27. Financial Reports & Statement Snapshots Store
+        if (!db.objectStoreNames.contains('financial_reports')) {
+          const frStore = db.createObjectStore('financial_reports', { keyPath: 'id', autoIncrement: true });
+          frStore.createIndex('reportCode', 'reportCode', { unique: true });
+          frStore.createIndex('reportType', 'reportType', { unique: false });
+          frStore.createIndex('fiscalYear', 'fiscalYear', { unique: false });
+          frStore.createIndex('status', 'status', { unique: false });
         }
       };
 

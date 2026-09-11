@@ -626,6 +626,132 @@ INSERT INTO `lupon_hearings` (`case_id`, `hearing_number`, `hearing_type`, `sche
 (2, '1st Hearing', 'PB Mediation Hearing', '2026-02-12', '10:00:00', 'Barangay Hall Session Hall', 'Hon. Antonio S. Valdez', 1, 1, 'Parties appeared with lot sketch plans. Disagreement on boundary stones. PB mediation unable to reach compromise within 15-day window.', 'Referred to Pangkat ng Tagapagkasundo. Parties selected Engr. Danilo Fernandez, Atty. Ernesto Salcedo, and Virgilio Santos.'),
 (2, '2nd Hearing', 'Pangkat Conciliation Hearing', '2026-03-02', '14:00:00', 'Purok 1 Riverside Site & Lupon Office', 'Engr. Danilo R. Fernandez', 1, 1, 'Pangkat conducted ocular relocation survey. Verified 0.52-meter encroachment by respondent perimeter wall into natural watercourse.', 'Pangkat drafted proposed amicable realignment. Final conciliation session set for next week.');
 
+-- ------------------------------------------------------------
+-- 23. DISBURSEMENT VOUCHERS & EXPENDITURE TRACKING TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `disbursement_vouchers` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `dv_number` VARCHAR(40) NOT NULL UNIQUE,
+  `budget_allocation_id` INT DEFAULT NULL,
+  `payee_name` VARCHAR(200) NOT NULL,
+  `particulars` TEXT NOT NULL,
+  `fund_source` ENUM('General Fund', '20% Barangay Development Fund', '5% BDRRM Calamity Fund', '10% SK Youth Development Fund', '5% GAD Fund', '1% Senior / PWD Fund', '1% LCPC Fund') NOT NULL DEFAULT 'General Fund',
+  `amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `check_no` VARCHAR(50) DEFAULT NULL,
+  `check_date` DATE DEFAULT NULL,
+  `bank_name` VARCHAR(100) DEFAULT 'Land Bank of the Philippines',
+  `expense_class` ENUM('Personal Services', 'MOOE', 'Capital Outlay') NOT NULL DEFAULT 'MOOE',
+  `certified_by` VARCHAR(150) NOT NULL DEFAULT 'Maria Santos - Barangay Treasurer',
+  `approved_by` VARCHAR(150) NOT NULL DEFAULT 'Hon. Antonio S. Valdez - Punong Barangay',
+  `status` ENUM('Draft', 'Certified', 'Approved', 'Released', 'Cancelled') NOT NULL DEFAULT 'Draft',
+  `released_at` DATETIME DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_dv_number` (`dv_number`),
+  INDEX `idx_dv_fund` (`fund_source`),
+  INDEX `idx_dv_status` (`status`),
+  INDEX `idx_dv_expense` (`expense_class`),
+  INDEX `idx_dv_created` (`created_at`),
+  CONSTRAINT `fk_dv_budget` FOREIGN KEY (`budget_allocation_id`) REFERENCES `budget_allocations` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 24. REVENUE COLLECTIONS & OFFICIAL RECEIPTS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `revenue_collections` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `or_number` VARCHAR(40) NOT NULL UNIQUE,
+  `rcd_number` VARCHAR(40) DEFAULT NULL,
+  `payer_name` VARCHAR(200) NOT NULL,
+  `revenue_source` ENUM('Clearance Fees', 'Business Permits', 'Rental Income', 'IRA Share', 'Real Property Tax Share', 'Donations & Grants', 'Other Local Revenue') NOT NULL DEFAULT 'Clearance Fees',
+  `particulars` TEXT DEFAULT NULL,
+  `amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `fund_destination` ENUM('General Fund', '20% Barangay Development Fund', '5% BDRRM Calamity Fund', '10% SK Youth Development Fund', '5% GAD Fund', '1% Senior / PWD Fund', '1% LCPC Fund') NOT NULL DEFAULT 'General Fund',
+  `collected_by` VARCHAR(150) NOT NULL DEFAULT 'Maria Santos - Barangay Treasurer',
+  `receipt_date` DATE NOT NULL,
+  `deposit_date` DATE DEFAULT NULL,
+  `deposit_bank` VARCHAR(100) DEFAULT NULL,
+  `deposit_slip_no` VARCHAR(50) DEFAULT NULL,
+  `status` ENUM('Collected', 'Deposited', 'Remitted', 'Voided') NOT NULL DEFAULT 'Collected',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_rc_or` (`or_number`),
+  INDEX `idx_rc_source` (`revenue_source`),
+  INDEX `idx_rc_fund` (`fund_destination`),
+  INDEX `idx_rc_status` (`status`),
+  INDEX `idx_rc_date` (`receipt_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 25. BUDGET OBLIGATION REQUESTS (OBR) TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `budget_obligations` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `obr_number` VARCHAR(40) NOT NULL UNIQUE,
+  `budget_allocation_id` INT DEFAULT NULL,
+  `obligation_type` ENUM('Purchase Order', 'Contract', 'Payroll', 'Utility', 'Other') NOT NULL DEFAULT 'Purchase Order',
+  `obligee_name` VARCHAR(200) NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `date_obligated` DATE NOT NULL,
+  `status` ENUM('Pending', 'Approved', 'Disbursed', 'Cancelled') NOT NULL DEFAULT 'Pending',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_obr_number` (`obr_number`),
+  INDEX `idx_obr_budget` (`budget_allocation_id`),
+  INDEX `idx_obr_status` (`status`),
+  INDEX `idx_obr_type` (`obligation_type`),
+  CONSTRAINT `fk_obr_budget` FOREIGN KEY (`budget_allocation_id`) REFERENCES `budget_allocations` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 26. FINANCIAL REPORTS & STATEMENT SNAPSHOTS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `financial_reports` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `report_code` VARCHAR(40) NOT NULL UNIQUE,
+  `report_type` ENUM('Statement of Receipts & Expenditures', 'Annual Budget Report', 'Quarterly Financial Report', 'Fund Utilization Report') NOT NULL DEFAULT 'Statement of Receipts & Expenditures',
+  `fiscal_year` YEAR NOT NULL DEFAULT '2026',
+  `period_label` VARCHAR(50) NOT NULL,
+  `total_receipts` DECIMAL(14, 2) NOT NULL DEFAULT 0.00,
+  `total_expenditures` DECIMAL(14, 2) NOT NULL DEFAULT 0.00,
+  `net_balance` DECIMAL(14, 2) NOT NULL DEFAULT 0.00,
+  `report_data` LONGTEXT DEFAULT NULL,
+  `generated_by` VARCHAR(150) NOT NULL DEFAULT 'System',
+  `status` ENUM('Draft', 'Finalized', 'Submitted to COA') NOT NULL DEFAULT 'Draft',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_fr_code` (`report_code`),
+  INDEX `idx_fr_type` (`report_type`),
+  INDEX `idx_fr_year` (`fiscal_year`),
+  INDEX `idx_fr_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT BUDGET & FINANCIAL MANAGEMENT SEED DATA
+-- ------------------------------------------------------------
+INSERT INTO `disbursement_vouchers` (`dv_number`, `budget_allocation_id`, `payee_name`, `particulars`, `fund_source`, `amount`, `check_no`, `check_date`, `bank_name`, `expense_class`, `certified_by`, `approved_by`, `status`, `released_at`) VALUES
+('DV-2026-0001', 5, 'Metro Pharma Distribution Inc.', 'Payment for procurement of essential maintenance medicines & clinic supplies per PO-2026-0020', 'General Fund', 234200.00, 'CHK-0892741', '2026-08-25', 'Land Bank of the Philippines', 'MOOE', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Released', '2026-08-25 14:30:00'),
+('DV-2026-0002', 1, 'Luzon Green Energy Solutions Corp.', 'Partial payment (50%) for solar LED streetlights installation per PO-2026-0019 - Mobilization', 'General Fund', 239250.00, 'CHK-0892742', '2026-08-20', 'Land Bank of the Philippines', 'Capital Outlay', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Released', '2026-08-20 10:15:00'),
+('DV-2026-0003', NULL, 'Barangay Staff - August 2026 Payroll', 'Payment of salaries and wages for Barangay Secretary, Treasurer, and 5 Tanod personnel for August 2026', 'General Fund', 87500.00, 'CHK-0892743', '2026-08-31', 'Land Bank of the Philippines', 'Personal Services', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Released', '2026-08-31 09:00:00'),
+('DV-2026-0004', 4, 'Barangay Maternal Health Outreach Program', 'Reimbursement of expenses for maternal healthcare awareness seminar and livelihood training materials', '5% GAD Fund', 45000.00, 'CHK-0892744', '2026-09-05', 'Land Bank of the Philippines', 'MOOE', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Approved', NULL),
+('DV-2026-0005', 6, 'San Isidro Senior Citizens Association', 'Quarterly wellness kits distribution and maintenance medicine subsidy for 85 registered senior citizens', '1% Senior / PWD Fund', 68000.00, NULL, NULL, 'Land Bank of the Philippines', 'MOOE', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Certified', NULL),
+('DV-2026-0006', 3, 'San Isidro Youth Sports League Committee', 'Procurement of sports equipment and uniform sets for Annual Barangay Youth Basketball League 2026', '10% SK Youth Development Fund', 125000.00, NULL, NULL, 'Land Bank of the Philippines', 'MOOE', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Draft', NULL);
+
+INSERT INTO `revenue_collections` (`or_number`, `rcd_number`, `payer_name`, `revenue_source`, `particulars`, `amount`, `fund_destination`, `collected_by`, `receipt_date`, `deposit_date`, `deposit_bank`, `deposit_slip_no`, `status`) VALUES
+('OR-2026-0451', 'RCD-2026-08-01', 'Juan Dela Cruz', 'Clearance Fees', 'Barangay Clearance for employment purposes', 50.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-08-01', '2026-08-02', 'Land Bank of the Philippines', 'DS-2026-0821', 'Deposited'),
+('OR-2026-0452', 'RCD-2026-08-01', 'Rosario Fernandez', 'Clearance Fees', 'Barangay Clearance and Certificate of Residency', 80.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-08-01', '2026-08-02', 'Land Bank of the Philippines', 'DS-2026-0821', 'Deposited'),
+('OR-2026-0453', 'RCD-2026-08-05', 'Sari-Sari Store ni Aling Nena', 'Business Permits', 'Annual Barangay Business Clearance renewal - Retail / Sari-Sari Store', 150.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-08-05', '2026-08-06', 'Land Bank of the Philippines', 'DS-2026-0822', 'Deposited'),
+('OR-2026-0454', 'RCD-2026-08-10', 'Department of Budget and Management', 'IRA Share', 'Internal Revenue Allotment (IRA) share for Q3 2026 - 2nd tranche', 2850000.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-08-10', '2026-08-10', 'Land Bank of the Philippines', 'DS-2026-0823', 'Deposited'),
+('OR-2026-0455', 'RCD-2026-08-15', 'Municipal Treasurer Office', 'Real Property Tax Share', 'Barangay share of Real Property Tax collections for July 2026', 185000.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-08-15', '2026-08-16', 'Land Bank of the Philippines', 'DS-2026-0824', 'Deposited'),
+('OR-2026-0456', NULL, 'Pedro Mendoza', 'Clearance Fees', 'Barangay Clearance for NBI requirement', 50.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-09-01', NULL, NULL, NULL, 'Collected'),
+('OR-2026-0457', NULL, 'Lions Club International - District 301-A2', 'Donations & Grants', 'Cash donation for Barangay Health Station medical equipment upgrade', 75000.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-09-05', NULL, NULL, NULL, 'Collected'),
+('OR-2026-0458', 'RCD-2026-08-20', 'Commercial Space Tenant - Mercado Family', 'Rental Income', 'Monthly rental of Barangay Hall commercial space - August 2026', 8500.00, 'General Fund', 'Maria Santos - Barangay Treasurer', '2026-08-20', '2026-08-21', 'Land Bank of the Philippines', 'DS-2026-0825', 'Deposited');
+
+INSERT INTO `budget_obligations` (`obr_number`, `budget_allocation_id`, `obligation_type`, `obligee_name`, `description`, `amount`, `date_obligated`, `status`) VALUES
+('OBR-2026-0001', 1, 'Purchase Order', 'Luzon Green Energy Solutions Corp.', 'Obligation for solar LED streetlights PO-2026-0019 (full contract amount)', 478500.00, '2026-08-15', 'Disbursed'),
+('OBR-2026-0002', 5, 'Purchase Order', 'Metro Pharma Distribution Inc.', 'Obligation for medicines and clinic supplies PO-2026-0020', 234200.00, '2026-08-20', 'Disbursed'),
+('OBR-2026-0003', NULL, 'Payroll', 'Barangay Regular Staff', 'Monthly payroll obligation for 8 regular barangay personnel - August 2026', 87500.00, '2026-08-01', 'Disbursed'),
+('OBR-2026-0004', 4, 'Contract', 'Barangay GAD Focal Point System', 'Obligation for maternal healthcare outreach and livelihood training program', 45000.00, '2026-09-01', 'Approved');
+
 SET FOREIGN_KEY_CHECKS = 1;
 
 

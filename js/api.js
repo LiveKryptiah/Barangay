@@ -232,6 +232,45 @@
     if (rec.proceedings_summary !== undefined && rec.proceedingsSummary === undefined) rec.proceedingsSummary = rec.proceedings_summary;
     if (rec.next_action !== undefined && rec.nextAction === undefined) rec.nextAction = rec.next_action;
 
+    // Disbursement Vouchers
+    if (rec.dv_number !== undefined && rec.dvNumber === undefined) rec.dvNumber = rec.dv_number;
+    if (rec.payee_name !== undefined && rec.payeeName === undefined) rec.payeeName = rec.payee_name;
+    if (rec.check_no !== undefined && rec.checkNo === undefined) rec.checkNo = rec.check_no;
+    if (rec.check_date !== undefined && rec.checkDate === undefined) rec.checkDate = rec.check_date;
+    if (rec.bank_name !== undefined && rec.bankName === undefined) rec.bankName = rec.bank_name;
+    if (rec.expense_class !== undefined && rec.expenseClass === undefined) rec.expenseClass = rec.expense_class;
+    if (rec.certified_by !== undefined && rec.certifiedBy === undefined) rec.certifiedBy = rec.certified_by;
+    if (rec.approved_by !== undefined && rec.approvedBy === undefined) rec.approvedBy = rec.approved_by;
+    if (rec.released_at !== undefined && rec.releasedAt === undefined) rec.releasedAt = rec.released_at;
+
+    // Revenue Collections
+    if (rec.or_number !== undefined && rec.orNumber === undefined) rec.orNumber = rec.or_number;
+    if (rec.rcd_number !== undefined && rec.rcdNumber === undefined) rec.rcdNumber = rec.rcd_number;
+    if (rec.payer_name !== undefined && rec.payerName === undefined) rec.payerName = rec.payer_name;
+    if (rec.revenue_source !== undefined && rec.revenueSource === undefined) rec.revenueSource = rec.revenue_source;
+    if (rec.fund_destination !== undefined && rec.fundDestination === undefined) rec.fundDestination = rec.fund_destination;
+    if (rec.collected_by !== undefined && rec.collectedBy === undefined) rec.collectedBy = rec.collected_by;
+    if (rec.receipt_date !== undefined && rec.receiptDate === undefined) rec.receiptDate = rec.receipt_date;
+    if (rec.deposit_date !== undefined && rec.depositDate === undefined) rec.depositDate = rec.deposit_date;
+    if (rec.deposit_bank !== undefined && rec.depositBank === undefined) rec.depositBank = rec.deposit_bank;
+    if (rec.deposit_slip_no !== undefined && rec.depositSlipNo === undefined) rec.depositSlipNo = rec.deposit_slip_no;
+
+    // Budget Obligations
+    if (rec.obr_number !== undefined && rec.obrNumber === undefined) rec.obrNumber = rec.obr_number;
+    if (rec.obligation_type !== undefined && rec.obligationType === undefined) rec.obligationType = rec.obligation_type;
+    if (rec.obligee_name !== undefined && rec.obligeeName === undefined) rec.obligeeName = rec.obligee_name;
+    if (rec.date_obligated !== undefined && rec.dateObligated === undefined) rec.dateObligated = rec.date_obligated;
+
+    // Financial Reports
+    if (rec.report_code !== undefined && rec.reportCode === undefined) rec.reportCode = rec.report_code;
+    if (rec.report_type !== undefined && rec.reportType === undefined) rec.reportType = rec.report_type;
+    if (rec.period_label !== undefined && rec.periodLabel === undefined) rec.periodLabel = rec.period_label;
+    if (rec.total_receipts !== undefined && rec.totalReceipts === undefined) rec.totalReceipts = rec.total_receipts;
+    if (rec.total_expenditures !== undefined && rec.totalExpenditures === undefined) rec.totalExpenditures = rec.total_expenditures;
+    if (rec.net_balance !== undefined && rec.netBalance === undefined) rec.netBalance = rec.net_balance;
+    if (rec.report_data !== undefined && rec.reportData === undefined) rec.reportData = rec.report_data;
+    if (rec.generated_by !== undefined && rec.generatedBy === undefined) rec.generatedBy = rec.generated_by;
+
     return rec;
   }
 
@@ -418,6 +457,45 @@
     if (out.proceedingsSummary !== undefined && out.proceedings_summary === undefined) out.proceedings_summary = out.proceedingsSummary;
     if (out.nextAction !== undefined && out.next_action === undefined) out.next_action = out.nextAction;
 
+    // Disbursement Vouchers
+    if (out.dvNumber !== undefined && out.dv_number === undefined) out.dv_number = out.dvNumber;
+    if (out.payeeName !== undefined && out.payee_name === undefined) out.payee_name = out.payeeName;
+    if (out.checkNo !== undefined && out.check_no === undefined) out.check_no = out.checkNo;
+    if (out.checkDate !== undefined && out.check_date === undefined) out.check_date = out.checkDate;
+    if (out.bankName !== undefined && out.bank_name === undefined) out.bank_name = out.bankName;
+    if (out.expenseClass !== undefined && out.expense_class === undefined) out.expense_class = out.expenseClass;
+    if (out.certifiedBy !== undefined && out.certified_by === undefined) out.certified_by = out.certifiedBy;
+    if (out.approvedBy !== undefined && out.approved_by === undefined) out.approved_by = out.approvedBy;
+    if (out.releasedAt !== undefined && out.released_at === undefined) out.released_at = out.releasedAt;
+
+    // Revenue Collections
+    if (out.orNumber !== undefined && out.or_number === undefined) out.or_number = out.orNumber;
+    if (out.rcdNumber !== undefined && out.rcd_number === undefined) out.rcd_number = out.rcdNumber;
+    if (out.payerName !== undefined && out.payer_name === undefined) out.payer_name = out.payerName;
+    if (out.revenueSource !== undefined && out.revenue_source === undefined) out.revenue_source = out.revenueSource;
+    if (out.fundDestination !== undefined && out.fund_destination === undefined) out.fund_destination = out.fundDestination;
+    if (out.collectedBy !== undefined && out.collected_by === undefined) out.collected_by = out.collectedBy;
+    if (out.receiptDate !== undefined && out.receipt_date === undefined) out.receipt_date = out.receiptDate;
+    if (out.depositDate !== undefined && out.deposit_date === undefined) out.deposit_date = out.depositDate;
+    if (out.depositBank !== undefined && out.deposit_bank === undefined) out.deposit_bank = out.depositBank;
+    if (out.depositSlipNo !== undefined && out.deposit_slip_no === undefined) out.deposit_slip_no = out.depositSlipNo;
+
+    // Budget Obligations
+    if (out.obrNumber !== undefined && out.obr_number === undefined) out.obr_number = out.obrNumber;
+    if (out.obligationType !== undefined && out.obligation_type === undefined) out.obligation_type = out.obligationType;
+    if (out.obligeeName !== undefined && out.obligee_name === undefined) out.obligee_name = out.obligeeName;
+    if (out.dateObligated !== undefined && out.date_obligated === undefined) out.date_obligated = out.dateObligated;
+
+    // Financial Reports
+    if (out.reportCode !== undefined && out.report_code === undefined) out.report_code = out.reportCode;
+    if (out.reportType !== undefined && out.report_type === undefined) out.report_type = out.reportType;
+    if (out.periodLabel !== undefined && out.period_label === undefined) out.period_label = out.periodLabel;
+    if (out.totalReceipts !== undefined && out.total_receipts === undefined) out.total_receipts = out.totalReceipts;
+    if (out.totalExpenditures !== undefined && out.total_expenditures === undefined) out.total_expenditures = out.totalExpenditures;
+    if (out.netBalance !== undefined && out.net_balance === undefined) out.net_balance = out.netBalance;
+    if (out.reportData !== undefined && out.report_data === undefined) out.report_data = out.reportData;
+    if (out.generatedBy !== undefined && out.generated_by === undefined) out.generated_by = out.generatedBy;
+
     return out;
   }
 
@@ -481,7 +559,11 @@
     legislative_sessions:'api/legislative.php?action=sessions',
     lupon_cases:   'api/lupon.php',
     lupon_members: 'api/lupon.php?action=members',
-    lupon_hearings:'api/lupon.php?action=hearings'
+    lupon_hearings:'api/lupon.php?action=hearings',
+    disbursement_vouchers:'api/budget.php?action=vouchers',
+    revenue_collections:'api/budget.php?action=collections',
+    budget_obligations:'api/budget.php?action=obligations',
+    financial_reports:'api/budget.php?action=reports'
   };
 
   // Barangay DB Client
@@ -523,6 +605,10 @@
       if (storeName === 'lupon_cases') action = 'create_case';
       if (storeName === 'lupon_members') action = 'add_member';
       if (storeName === 'lupon_hearings') action = 'schedule_hearing';
+      if (storeName === 'disbursement_vouchers') action = 'create_voucher';
+      if (storeName === 'revenue_collections') action = 'record_collection';
+      if (storeName === 'budget_obligations') action = 'create_obligation';
+      if (storeName === 'financial_reports') action = 'generate_report';
       if (storeName === 'incidents' && (record.type === 'Curfew Violation' || record.minor_age)) {
         action = 'create_curfew';
       }
@@ -545,6 +631,9 @@
       if (storeName === 'lupon_cases') action = 'update_case';
       if (storeName === 'lupon_members') action = 'update_member';
       if (storeName === 'lupon_hearings') action = 'update_hearing';
+      if (storeName === 'disbursement_vouchers') action = 'update_voucher';
+      if (storeName === 'revenue_collections') action = 'update_collection';
+      if (storeName === 'budget_obligations') action = 'update_obligation';
 
       const url = `${endpoint.split('?')[0]}?action=${action}`;
       return await apiRequest(url, 'POST', record);

@@ -217,6 +217,16 @@ class AppSidebar {
             </li>
 
             <li>
+              <a href="budget${ext}" class="ex-app-shell-row ${activePage === 'budget' ? 'active' : ''}" title="Budget &amp; Financial Management (COA Compliant)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #10b981;">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span>Budget &amp; Finance</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">COA</span>
+              </a>
+            </li>
+
+            <li>
               <a href="legislation${ext}" class="ex-app-shell-row ${activePage === 'legislation' ? 'active' : ''}" title="Sangguniang Barangay Legislative Tracking & Ordinances">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #8b5cf6;">
                   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -377,6 +387,7 @@ class AppSidebar {
       notifications: 'SMS & Notification Dispatch',
       health: 'Barangay Health Station & Nutrition Hub',
       procurement: 'Bids, Awards & Fiscal Hub',
+      budget: 'Budget & Financial Management',
       legislation: 'Sangguniang Legislation & Ordinances',
       officials: 'Officials & Staff Directory',
       reports: 'Executive Reports & Analytics',
@@ -486,7 +497,7 @@ class AppSidebar {
             ${activePage === 'incidents' ? '<div class="egov-nav-pill-active"></div>' : ''}
           </a>
 
-          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
+          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','budget','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             <span>More</span>
           </button>
