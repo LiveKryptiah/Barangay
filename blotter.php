@@ -664,7 +664,13 @@ require_auth('login.php');
       <p style="font-size: 0.84rem; color: var(--color-ink); margin-top: 4px;" id="dossier-settlement-text">-</p>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+    <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm); flex-wrap: wrap;">
+      <button type="button" class="button-outline" id="dossier-btn-escalate-kp" style="height: 38px; padding: 0 16px; font-size: 0.8125rem; color: #4f46e5; border-color: #c7d2fe; display: inline-flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3v18"/><path d="m3 7 9-4 9 4"/><path d="M6 7v6a6 6 0 0 0 12 0V7"/>
+        </svg>
+        Escalate to KP Conciliation &rarr;
+      </button>
       <button type="button" class="button-outline" id="dossier-btn-print" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
         Print Legal Form &rarr;
       </button>
@@ -1079,6 +1085,28 @@ require_auth('login.php');
         document.getElementById('dossier-modal').close();
         openPrintModal(c.id);
       };
+
+      const escalateBtn = document.getElementById('dossier-btn-escalate-kp');
+      if (escalateBtn) {
+        escalateBtn.onclick = () => {
+          document.getElementById('dossier-modal').close();
+          const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
+          sessionStorage.setItem('kp_escalate_case', JSON.stringify({
+            blotterCaseId: c.id,
+            blotterCaseNo: c.caseNumber,
+            complainantName: c.complainantName,
+            complainantAddress: c.complainantPurok ? `${c.complainantPurok}, Barangay San Isidro` : 'Barangay San Isidro, Cabuyao City',
+            complainantContact: c.complainantPhone || '',
+            respondentName: c.respondentName,
+            respondentAddress: c.respondentPurok ? `${c.respondentPurok}, Barangay San Isidro` : 'Barangay San Isidro, Cabuyao City',
+            respondentContact: c.respondentPhone || '',
+            disputeType: c.incidentType || 'Other Community Dispute',
+            complaintDetails: c.narrative || '',
+            reliefSought: 'Amicable settlement and conciliation before the Lupong Tagapamayapa.'
+          }));
+          window.location.href = `lupon${ext}?escalate=1`;
+        };
+      }
 
       document.getElementById('dossier-modal').showModal();
     };

@@ -164,6 +164,18 @@ class AppSidebar {
             </li>
 
             <li>
+              <a href="lupon${ext}" class="ex-app-shell-row ${activePage === 'lupon' ? 'active' : ''}" title="Lupong Tagapamayapa &amp; Katarungang Pambarangay Studio (RA 7160)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #6366f1;">
+                  <path d="M12 3v18"/>
+                  <path d="m3 7 9-4 9 4"/>
+                  <path d="M6 7v6a6 6 0 0 0 12 0V7"/>
+                </svg>
+                <span>Lupon &amp; KP Conciliation</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">LUPON</span>
+              </a>
+            </li>
+
+            <li>
               <a href="incidents${ext}" class="ex-app-shell-row ${activePage === 'incidents' ? 'active' : ''}" title="Emergency Dispatch & Tanod Patrol">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #ef4444;">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -189,6 +201,31 @@ class AppSidebar {
                 </svg>
                 <span>Health Station</span>
                 <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">BHW</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="procurement${ext}" class="ex-app-shell-row ${activePage === 'procurement' ? 'active' : ''}" title="Bids & Awards Committee (BAC) & Procurement Management">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #f59e0b;">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                <span>Bids &amp; Awards</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">BAC</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="legislation${ext}" class="ex-app-shell-row ${activePage === 'legislation' ? 'active' : ''}" title="Sangguniang Barangay Legislative Tracking & Ordinances">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #8b5cf6;">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  <line x1="9" y1="7" x2="15" y2="7"/>
+                  <line x1="9" y1="11" x2="13" y2="11"/>
+                </svg>
+                <span>Legislation</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">SANGGUNIAN</span>
               </a>
             </li>
 
@@ -335,9 +372,12 @@ class AppSidebar {
       'geo-profiling': 'Purok Geo-Profiling & Heatmap',
       certificates: 'Clearances & Certifications',
       blotter: 'Peace & Order Blotter',
+      lupon: 'Lupong Tagapamayapa & KP Studio',
       incidents: 'Incident Dispatch & Patrol',
       notifications: 'SMS & Notification Dispatch',
       health: 'Barangay Health Station & Nutrition Hub',
+      procurement: 'Bids, Awards & Fiscal Hub',
+      legislation: 'Sangguniang Legislation & Ordinances',
       officials: 'Officials & Staff Directory',
       reports: 'Executive Reports & Analytics',
       settings: 'System Settings & Backup'
@@ -446,7 +486,7 @@ class AppSidebar {
             ${activePage === 'incidents' ? '<div class="egov-nav-pill-active"></div>' : ''}
           </a>
 
-          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['notifications','health','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
+          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             <span>More</span>
           </button>

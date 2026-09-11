@@ -5,7 +5,7 @@
  */
 
 const DB_NAME = 'BarangayManagementDB';
-const DB_VERSION = 6;
+const DB_VERSION = 9;
 
 class BarangayDB {
   constructor() {
@@ -157,6 +157,83 @@ class BarangayDB {
           medStore.createIndex('category', 'category', { unique: false });
           medStore.createIndex('expiryDate', 'expiryDate', { unique: false });
           medStore.createIndex('batchNo', 'batchNo', { unique: false });
+        }
+
+        // 16. Budget Allocations Store (AIP & Statutory Funds)
+        if (!db.objectStoreNames.contains('budget_allocations')) {
+          const budgetStore = db.createObjectStore('budget_allocations', { keyPath: 'id', autoIncrement: true });
+          budgetStore.createIndex('fiscalYear', 'fiscalYear', { unique: false });
+          budgetStore.createIndex('fundSource', 'fundSource', { unique: false });
+          budgetStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 17. BAC Procurement Projects Store (PRs, POs, Contracts)
+        if (!db.objectStoreNames.contains('procurement_projects')) {
+          const procStore = db.createObjectStore('procurement_projects', { keyPath: 'id', autoIncrement: true });
+          procStore.createIndex('prNumber', 'prNumber', { unique: true });
+          procStore.createIndex('poNumber', 'poNumber', { unique: false });
+          procStore.createIndex('status', 'status', { unique: false });
+          procStore.createIndex('fundSource', 'fundSource', { unique: false });
+          procStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 18. Procurement Bids & Canvass Quotes Store
+        if (!db.objectStoreNames.contains('procurement_bids')) {
+          const bidStore = db.createObjectStore('procurement_bids', { keyPath: 'id', autoIncrement: true });
+          bidStore.createIndex('projectId', 'projectId', { unique: false });
+          bidStore.createIndex('complianceStatus', 'complianceStatus', { unique: false });
+          bidStore.createIndex('canvassedAt', 'canvassedAt', { unique: false });
+        }
+
+        // 19. Sangguniang Barangay Legislative Documents (Ordinances, Resolutions, EOs)
+        if (!db.objectStoreNames.contains('legislative_documents')) {
+          const legStore = db.createObjectStore('legislative_documents', { keyPath: 'id', autoIncrement: true });
+          legStore.createIndex('controlNumber', 'controlNumber', { unique: true });
+          legStore.createIndex('docType', 'docType', { unique: false });
+          legStore.createIndex('readingStage', 'readingStage', { unique: false });
+          legStore.createIndex('status', 'status', { unique: false });
+          legStore.createIndex('committee', 'committee', { unique: false });
+          legStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 20. Sangguniang Barangay Sessions & Minutes
+        if (!db.objectStoreNames.contains('legislative_sessions')) {
+          const sessStore = db.createObjectStore('legislative_sessions', { keyPath: 'id', autoIncrement: true });
+          sessStore.createIndex('sessionNumber', 'sessionNumber', { unique: true });
+          sessStore.createIndex('sessionType', 'sessionType', { unique: false });
+          sessStore.createIndex('sessionDate', 'sessionDate', { unique: false });
+          sessStore.createIndex('sessionStatus', 'sessionStatus', { unique: false });
+          sessStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 21. Lupong Tagapamayapa Members Roster (RA 7160 Sec. 399)
+        if (!db.objectStoreNames.contains('lupon_members')) {
+          const luponStore = db.createObjectStore('lupon_members', { keyPath: 'id', autoIncrement: true });
+          luponStore.createIndex('fullName', 'fullName', { unique: false });
+          luponStore.createIndex('status', 'status', { unique: false });
+          luponStore.createIndex('committeeAssignment', 'committeeAssignment', { unique: false });
+          luponStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 22. Katarungang Pambarangay (KP) Dispute Cases (RA 7160 Sec. 408-418)
+        if (!db.objectStoreNames.contains('lupon_cases')) {
+          const kpStore = db.createObjectStore('lupon_cases', { keyPath: 'id', autoIncrement: true });
+          kpStore.createIndex('caseNumber', 'caseNumber', { unique: true });
+          kpStore.createIndex('stage', 'stage', { unique: false });
+          kpStore.createIndex('disputeType', 'disputeType', { unique: false });
+          kpStore.createIndex('dateFiled', 'dateFiled', { unique: false });
+          kpStore.createIndex('complainantName', 'complainantName', { unique: false });
+          kpStore.createIndex('respondentName', 'respondentName', { unique: false });
+          kpStore.createIndex('createdAt', 'createdAt', { unique: false });
+        }
+
+        // 23. KP Mediation & Conciliation Hearings Docket
+        if (!db.objectStoreNames.contains('lupon_hearings')) {
+          const hStore = db.createObjectStore('lupon_hearings', { keyPath: 'id', autoIncrement: true });
+          hStore.createIndex('caseId', 'caseId', { unique: false });
+          hStore.createIndex('scheduledDate', 'scheduledDate', { unique: false });
+          hStore.createIndex('hearingType', 'hearingType', { unique: false });
+          hStore.createIndex('createdAt', 'createdAt', { unique: false });
         }
       };
 

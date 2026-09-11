@@ -365,5 +365,269 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('auto_notify_incident', '1')
 ON DUPLICATE KEY UPDATE `setting_key`=`setting_key`;
 
+-- ------------------------------------------------------------
+-- 15. ANNUAL INVESTMENT PROGRAM & BUDGET ALLOCATIONS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `budget_allocations` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `fiscal_year` YEAR NOT NULL DEFAULT '2026',
+  `fund_source` ENUM('General Fund', '20% Barangay Development Fund', '5% BDRRM Calamity Fund', '10% SK Youth Development Fund', '5% GAD Fund', '1% Senior / PWD Fund', '1% LCPC Fund') NOT NULL,
+  `program_title` VARCHAR(200) NOT NULL,
+  `implementing_committee` VARCHAR(150) NOT NULL DEFAULT 'Committee on Appropriations',
+  `approved_budget` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `obligated_amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_budget_year` (`fiscal_year`),
+  INDEX `idx_budget_fund` (`fund_source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 16. BIDS & AWARDS COMMITTEE (BAC) PROCUREMENT PROJECTS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `procurement_projects` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `pr_number` VARCHAR(40) NOT NULL UNIQUE,
+  `po_number` VARCHAR(40) DEFAULT NULL UNIQUE,
+  `project_title` VARCHAR(255) NOT NULL,
+  `classification` ENUM('Goods & Supplies', 'Infrastructure Projects', 'Consulting Services') NOT NULL DEFAULT 'Goods & Supplies',
+  `procurement_mode` ENUM('Small Value Procurement (SVP)', 'Competitive Public Bidding', 'Shopping', 'Emergency Cases', 'Direct Contracting') NOT NULL DEFAULT 'Small Value Procurement (SVP)',
+  `fund_source` VARCHAR(100) NOT NULL DEFAULT '20% Barangay Development Fund',
+  `budget_allocation_id` INT DEFAULT NULL,
+  `abc_amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `philgeps_ref` VARCHAR(60) DEFAULT NULL,
+  `end_user_committee` VARCHAR(150) NOT NULL DEFAULT 'Committee on Infrastructure',
+  `status` ENUM('PR Draft', 'Approved for Canvass', 'Canvass / RFQ Open', 'Bids Evaluated', 'Awarded / PO Issued', 'Delivered & Inspected', 'Completed', 'Cancelled') NOT NULL DEFAULT 'PR Draft',
+  `winning_bidder` VARCHAR(200) DEFAULT NULL,
+  `winning_amount` DECIMAL(12, 2) DEFAULT NULL,
+  `date_awarded` DATE DEFAULT NULL,
+  `target_delivery_days` INT NOT NULL DEFAULT 15,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_proc_pr` (`pr_number`),
+  INDEX `idx_proc_po` (`po_number`),
+  INDEX `idx_proc_status` (`status`),
+  INDEX `idx_proc_fund` (`fund_source`),
+  CONSTRAINT `fk_proc_budget` FOREIGN KEY (`budget_allocation_id`) REFERENCES `budget_allocations` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 17. CANVASS QUOTATIONS & ABSTRACT OF BIDS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `procurement_bids` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `project_id` INT NOT NULL,
+  `supplier_name` VARCHAR(200) NOT NULL,
+  `tin_number` VARCHAR(50) DEFAULT NULL,
+  `contact_person` VARCHAR(100) DEFAULT NULL,
+  `contact_no` VARCHAR(50) DEFAULT NULL,
+  `quotation_amount` DECIMAL(12, 2) NOT NULL,
+  `compliance_status` ENUM('Responsive', 'Non-Responsive', 'Disqualified') NOT NULL DEFAULT 'Responsive',
+  `ranking` INT DEFAULT 1,
+  `remarks` TEXT DEFAULT NULL,
+  `canvassed_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_bid_project` (`project_id`),
+  INDEX `idx_bid_status` (`compliance_status`),
+  CONSTRAINT `fk_bid_project` FOREIGN KEY (`project_id`) REFERENCES `procurement_projects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT BUDGET ALLOCATIONS & PROCUREMENT SEED DATA
+-- ------------------------------------------------------------
+INSERT INTO `budget_allocations` (`fiscal_year`, `fund_source`, `program_title`, `implementing_committee`, `approved_budget`, `obligated_amount`) VALUES
+('2026', '20% Barangay Development Fund', 'Barangay Street Lighting & Road Concreting Project', 'Committee on Infrastructure', 2500000.00, 485000.00),
+('2026', '5% BDRRM Calamity Fund', 'Disaster Preparedness Equipment & Emergency Relief Stockpiling', 'BDRRMC / Committee on Peace & Order', 950000.00, 280000.00),
+('2026', '10% SK Youth Development Fund', 'Annual Barangay Youth Sports League & Leadership Congress', 'Sangguniang Kabataan (SK)', 1200000.00, 310000.00),
+('2026', '5% GAD Fund', 'Maternal & Reproductive Healthcare Outreach and Livelihood Training', 'Committee on Women & Family', 650000.00, 145000.00),
+('2026', 'General Fund', 'Barangay Health Station Pharmaceutical & Clinic Supplies', 'Committee on Health & Sanitation', 800000.00, 240000.00),
+('2026', '1% Senior / PWD Fund', 'Senior Citizens Wellness Kits & Maintenance Medicine Subsidy', 'Office of Senior Citizens Affairs (OSCA)', 350000.00, 110000.00);
+
+INSERT INTO `procurement_projects` (`pr_number`, `po_number`, `project_title`, `classification`, `procurement_mode`, `fund_source`, `budget_allocation_id`, `abc_amount`, `philgeps_ref`, `end_user_committee`, `status`, `winning_bidder`, `winning_amount`, `date_awarded`, `target_delivery_days`) VALUES
+('PR-2026-0041', 'PO-2026-0019', 'Supply & Installation of 60W Integrated Solar LED Streetlights (Purok 1-4)', 'Infrastructure Projects', 'Small Value Procurement (SVP)', '20% Barangay Development Fund', 1, 485000.00, 'PHILGEPS-2026-98124', 'Committee on Infrastructure', 'Awarded / PO Issued', 'Luzon Green Energy Solutions Corp.', 478500.00, '2026-08-15', 30),
+('PR-2026-0042', 'PO-2026-0020', 'Procurement of Essential Maintenance Medicines & Clinic Supplies', 'Goods & Supplies', 'Shopping', 'General Fund', 5, 240000.00, 'PHILGEPS-2026-98311', 'Committee on Health & Sanitation', 'Delivered & Inspected', 'Metro Pharma Distribution Inc.', 234200.00, '2026-08-20', 15),
+('PR-2026-0043', NULL, 'Emergency Disaster Relief Food Packs & Hygiene Kits (500 Family Packs)', 'Goods & Supplies', 'Emergency Cases', '5% BDRRM Calamity Fund', 2, 280000.00, 'PHILGEPS-2026-98502', 'BDRRMC / Peace & Order', 'Canvass / RFQ Open', NULL, NULL, NULL, 7);
+
+INSERT INTO `procurement_bids` (`project_id`, `supplier_name`, `tin_number`, `contact_person`, `contact_no`, `quotation_amount`, `compliance_status`, `ranking`, `remarks`) VALUES
+(1, 'Luzon Green Energy Solutions Corp.', '234-567-890-000', 'Engr. Dennis Santos', '0917-555-4321', 478500.00, 'Responsive', 1, 'Lowest Calculated and Responsive Bid (LCRB) complying with technical specifications.'),
+(1, 'Solaria Philippines Industrial Inc.', '345-678-901-000', 'Ms. Rachel Tan', '0918-666-7890', 482000.00, 'Responsive', 2, 'Compliant second lowest quotation.'),
+(1, 'Apex Tech Power Solutions', '456-789-012-000', 'Mr. Kevin Cruz', '0920-777-1234', 484900.00, 'Responsive', 3, 'Compliant quotation within ABC limit.'),
+(2, 'Metro Pharma Distribution Inc.', '123-456-789-001', 'Dr. Arlene Ramos', '0917-888-2345', 234200.00, 'Responsive', 1, 'LCRB with FDA compliance certificates submitted.'),
+(2, 'San Isidro Community Drug Distributor', '234-567-890-002', 'Mr. Vicente Gomez', '0919-999-3456', 238000.00, 'Responsive', 2, 'Complying second lowest quote.'),
+(2, 'Pharmasure Health Supply Co.', '345-678-901-003', 'Ms. Teresa Lim', '0922-111-4567', 239500.00, 'Responsive', 3, 'Complying quotation within ABC.');
+
+-- ------------------------------------------------------------
+-- 18. SANGGUNIANG BARANGAY LEGISLATIVE DOCUMENTS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `legislative_documents` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `doc_type` ENUM('Barangay Ordinance', 'Barangay Resolution', 'Executive Order') NOT NULL DEFAULT 'Barangay Ordinance',
+  `control_number` VARCHAR(50) NOT NULL UNIQUE,
+  `title` VARCHAR(255) NOT NULL,
+  `sponsor_name` VARCHAR(150) NOT NULL DEFAULT 'Hon. Rafael G. Dizon',
+  `co_sponsors` TEXT DEFAULT NULL,
+  `committee` VARCHAR(150) NOT NULL DEFAULT 'Committee on Rules & Ethics',
+  `reading_stage` ENUM('First Reading', 'Committee Hearing', 'Second Reading', 'Third & Final Reading', 'Enacted / Approved', 'Disapproved', 'Under Sangguniang Panlungsod Review') NOT NULL DEFAULT 'Enacted / Approved',
+  `date_enacted` DATE DEFAULT NULL,
+  `date_posted` DATE DEFAULT NULL,
+  `effectivity_date` DATE DEFAULT NULL,
+  `city_council_review_status` ENUM('Pending Review', 'Declared Operative / Valid', 'Returned with Comments', 'Disapproved / Ultra Vires') NOT NULL DEFAULT 'Declared Operative / Valid',
+  `sanctions_penalties` TEXT DEFAULT NULL,
+  `document_body` LONGTEXT DEFAULT NULL,
+  `status` ENUM('Draft', 'Active / In Effect', 'Repealed / Amended', 'Archived') NOT NULL DEFAULT 'Active / In Effect',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_leg_control` (`control_number`),
+  INDEX `idx_leg_type` (`doc_type`),
+  INDEX `idx_leg_stage` (`reading_stage`),
+  INDEX `idx_leg_status` (`status`),
+  INDEX `idx_leg_committee` (`committee`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 19. SANGGUNIANG BARANGAY SESSIONS & MINUTES TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `legislative_sessions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `session_number` VARCHAR(50) NOT NULL UNIQUE,
+  `session_type` ENUM('Regular Session', 'Special Session', 'Committee Hearing', 'Public Consultation') NOT NULL DEFAULT 'Regular Session',
+  `session_date` DATE NOT NULL,
+  `session_time` TIME NOT NULL DEFAULT '09:00:00',
+  `presiding_officer` VARCHAR(150) NOT NULL DEFAULT 'Hon. Antonio S. Valdez',
+  `quorum_status` ENUM('Quorum Present', 'No Quorum') NOT NULL DEFAULT 'Quorum Present',
+  `present_count` INT NOT NULL DEFAULT 8,
+  `total_members` INT NOT NULL DEFAULT 9,
+  `agenda_topics` TEXT DEFAULT NULL,
+  `minutes_summary` LONGTEXT DEFAULT NULL,
+  `session_status` ENUM('Scheduled', 'In Progress', 'Adjourned', 'Cancelled') NOT NULL DEFAULT 'Adjourned',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_sess_number` (`session_number`),
+  INDEX `idx_sess_date` (`session_date`),
+  INDEX `idx_sess_type` (`session_type`),
+  INDEX `idx_sess_status` (`session_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT LEGISLATIVE SEED DATA (RA 7160 COMPLIANT)
+-- ------------------------------------------------------------
+INSERT INTO `legislative_documents` (`doc_type`, `control_number`, `title`, `sponsor_name`, `co_sponsors`, `committee`, `reading_stage`, `date_enacted`, `date_posted`, `effectivity_date`, `city_council_review_status`, `sanctions_penalties`, `document_body`, `status`) VALUES
+('Barangay Ordinance', 'ORD-2026-001', 'Comprehensive Ecological Solid Waste Management & Mandatory Waste Segregation-at-Source Ordinance', 'Hon. Benjamin Alcantara', 'Hon. Teresa Morales, Hon. Carlos Santos', 'Committee on Environment & Sanitation', 'Enacted / Approved', '2026-02-15', '2026-02-18', '2026-03-05', 'Declared Operative / Valid', '1st Offense: Reprimand & 4h community service; 2nd Offense: PHP 500 fine; 3rd Offense: PHP 1,000 fine & blotter entry.', 'AN ORDINANCE INSTITUTIONALIZING MANDATORY SOLID WASTE SEGREGATION-AT-SOURCE, REGULATING SINGLE-USE PLASTICS, AND ESTABLISHING PUROK MATERIAL RECOVERY FACILITIES (MRF) PURSUANT TO REPUBLIC ACT NO. 9003.', 'Active / In Effect'),
+('Barangay Ordinance', 'ORD-2026-002', 'Barangay Child Protection & Curfew Hours Regulation for Minors (10:00 PM to 4:00 AM)', 'Hon. Teresa B. Morales', 'Hon. Rafael Dizon, Hon. Joshua Hernandez (SK)', 'Committee on Peace & Order', 'Enacted / Approved', '2026-03-10', '2026-03-12', '2026-03-27', 'Declared Operative / Valid', '1st Offense: Minor escorted home & parental warning; 2nd Offense: Parental counseling with BCPC; 3rd Offense: 8h community service.', 'AN ORDINANCE PRESCRIBING CURFEW HOURS FOR UNACCOMPANIED MINORS FROM 10:00 PM TO 4:00 AM TO PROMOTE CHILD PROTECTION AND CRIME PREVENTION PURSUANT TO RA 7160 AND RA 9344.', 'Active / In Effect'),
+('Barangay Ordinance', 'ORD-2026-003', 'Mandatory Anti-Rabies Vaccination, Pet Registration, and Stray Animal Control Ordinance', 'Hon. Carlos M. Santos', 'Hon. Benjamin Alcantara', 'Committee on Agriculture & Animal Welfare', 'Enacted / Approved', '2026-07-20', '2026-07-22', '2026-08-06', 'Under Sangguniang Panlungsod Review', 'Failure to register/vaccinate dog: PHP 500; Stray dog impounding redemption fee: PHP 300.', 'AN ORDINANCE REQUIRING ANNUAL ANTI-RABIES VACCINATION AND BARANGAY REGISTRATION OF CANINE AND FELINE PETS, REGULATING STRAY ANIMALS PURSUANT TO RA 9482 (ANTI-RABIES ACT OF 2007).', 'Active / In Effect'),
+('Barangay Resolution', 'RES-2026-014', 'A Resolution Approving and Adopting the Annual Investment Program (AIP) for Fiscal Year 2026 amounting to PHP 8,450,000.00', 'Hon. Rafael G. Dizon', 'All Sangguniang Barangay Members', 'Committee on Appropriations', 'Enacted / Approved', '2026-01-15', '2026-01-18', '2026-01-18', 'Declared Operative / Valid', 'N/A - Appropriation Measure', 'A RESOLUTION FORMALLY ADOPTING AND ENDORSING THE ANNUAL INVESTMENT PROGRAM (AIP) AND 20% BARANGAY DEVELOPMENT FUND (BDF) BUDGET FOR CALENDAR YEAR 2026.', 'Active / In Effect'),
+('Barangay Resolution', 'RES-2026-015', 'A Resolution Authorizing the Punong Barangay to Enter into a MOA with the Department of Health (DOH) for Health Station Modernization', 'Hon. Elena Ramos', 'Hon. Teresa Morales', 'Committee on Health & Sanitation', 'Enacted / Approved', '2026-05-12', '2026-05-15', '2026-05-15', 'Declared Operative / Valid', 'N/A', 'A RESOLUTION GRANTING SPECIAL AUTHORITY TO HON. ANTONIO S. VALDEZ TO SIGN THE PRIMARY CARE CLINIC UPGRADE MEMORANDUM OF AGREEMENT WITH THE DOH REGIONAL OFFICE.', 'Active / In Effect');
+
+INSERT INTO `legislative_sessions` (`session_number`, `session_type`, `session_date`, `session_time`, `presiding_officer`, `quorum_status`, `present_count`, `total_members`, `agenda_topics`, `minutes_summary`, `session_status`) VALUES
+('RS-2026-015', 'Regular Session', '2026-08-10', '09:00:00', 'Hon. Antonio S. Valdez', 'Quorum Present', 8, 9, '1. Review of Ecological Solid Waste segregation monitoring\n2. Requisition of solar streetlighting procurement\n3. Katarungang Pambarangay case updates', 'Session convened at 9:00 AM with 8 of 9 council members present (Quorum certified by Secretary). Committee on Environment reported 88% household compliance with segregation in Purok 1-3. Council unanimously approved BAC resolution for solar streetlighting PR-2026-0041. Session adjourned at 11:45 AM.', 'Adjourned'),
+('RS-2026-016', 'Regular Session', '2026-08-24', '09:00:00', 'Hon. Antonio S. Valdez', 'Quorum Present', 9, 9, '1. Anti-Rabies pet registration drive progress\n2. Review of Sangguniang Bayan feedback on Curfew Ordinance\n3. BDRRMC Monsoon preparedness protocol', 'Session called to order at 9:02 AM with complete attendance (9 of 9 members). Sangguniang Bayan official certification declaring Ordinance No. 2026-002 operative was entered into the official journal. BDRRMC presented relief stockpile inventory. Meeting adjourned at 12:15 PM.', 'Adjourned');
+
+-- ------------------------------------------------------------
+-- 20. LUPONG TAGAPAMAYAPA MEMBERS ROSTER TABLE (RA 7160 SEC. 399)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `lupon_members` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `resident_id` INT DEFAULT NULL,
+  `full_name` VARCHAR(150) NOT NULL,
+  `committee_assignment` VARCHAR(100) NOT NULL DEFAULT 'Conciliation Panel',
+  `profession_background` VARCHAR(150) DEFAULT 'Community Elder',
+  `contact_no` VARCHAR(50) DEFAULT '',
+  `appointment_date` DATE NOT NULL,
+  `oath_date` DATE DEFAULT NULL,
+  `status` ENUM('Active', 'Inactive', 'On Leave') NOT NULL DEFAULT 'Active',
+  `cases_handled_count` INT NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_lupon_name` (`full_name`),
+  INDEX `idx_lupon_status` (`status`),
+  CONSTRAINT `fk_lupon_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 21. KATARUNGANG PAMBARANGAY (KP) DISPUTE CASES TABLE (SEC. 408-418)
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `lupon_cases` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `case_number` VARCHAR(50) NOT NULL UNIQUE,
+  `blotter_case_id` INT DEFAULT NULL,
+  `complainant_name` VARCHAR(150) NOT NULL,
+  `complainant_address` VARCHAR(255) NOT NULL,
+  `complainant_contact` VARCHAR(50) DEFAULT '',
+  `respondent_name` VARCHAR(150) NOT NULL,
+  `respondent_address` VARCHAR(255) NOT NULL,
+  `respondent_contact` VARCHAR(50) DEFAULT '',
+  `dispute_type` VARCHAR(100) NOT NULL,
+  `complaint_details` TEXT NOT NULL,
+  `relief_sought` TEXT DEFAULT NULL,
+  `date_filed` DATE NOT NULL,
+  `stage` ENUM('PB Mediation', 'Pangkat Conciliation', 'Arbitrated', 'Amicably Settled', 'Repudiated', 'CFA Issued', 'Dismissed') NOT NULL DEFAULT 'PB Mediation',
+  `pangkat_chairman` VARCHAR(150) DEFAULT NULL,
+  `pangkat_secretary` VARCHAR(150) DEFAULT NULL,
+  `pangkat_member` VARCHAR(150) DEFAULT NULL,
+  `pb_deadline` DATE DEFAULT NULL,
+  `pangkat_deadline` DATE DEFAULT NULL,
+  `settlement_terms` TEXT DEFAULT NULL,
+  `settlement_date` DATE DEFAULT NULL,
+  `settlement_amount` DECIMAL(10, 2) DEFAULT 0.00,
+  `compliance_due_date` DATE DEFAULT NULL,
+  `cfa_reason` VARCHAR(255) DEFAULT NULL,
+  `cfa_date` DATE DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_kp_case_no` (`case_number`),
+  INDEX `idx_kp_stage` (`stage`),
+  INDEX `idx_kp_type` (`dispute_type`),
+  INDEX `idx_kp_date` (`date_filed`),
+  CONSTRAINT `fk_kp_blotter` FOREIGN KEY (`blotter_case_id`) REFERENCES `blotter_cases` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 22. KP MEDIATION & CONCILIATION HEARINGS DOCKET
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `lupon_hearings` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `case_id` INT NOT NULL,
+  `hearing_number` VARCHAR(20) NOT NULL DEFAULT '1st Hearing',
+  `hearing_type` ENUM('PB Mediation Hearing', 'Pangkat Conciliation Hearing', 'Arbitration Proceeding') NOT NULL DEFAULT 'PB Mediation Hearing',
+  `scheduled_date` DATE NOT NULL,
+  `scheduled_time` TIME NOT NULL DEFAULT '14:00:00',
+  `venue` VARCHAR(150) NOT NULL DEFAULT 'Barangay Hall Mediation Room',
+  `presiding_officer` VARCHAR(150) NOT NULL DEFAULT 'Hon. Antonio S. Valdez',
+  `complainant_present` TINYINT(1) NOT NULL DEFAULT 1,
+  `respondent_present` TINYINT(1) NOT NULL DEFAULT 1,
+  `proceedings_summary` TEXT DEFAULT NULL,
+  `next_action` VARCHAR(255) DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_hearing_case` (`case_id`),
+  INDEX `idx_hearing_date` (`scheduled_date`),
+  CONSTRAINT `fk_hearing_case` FOREIGN KEY (`case_id`) REFERENCES `lupon_cases` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT LUPONG TAGAPAMAYAPA SEED DATA (RA 7160 COMPLIANT)
+-- ------------------------------------------------------------
+INSERT INTO `lupon_members` (`full_name`, `committee_assignment`, `profession_background`, `contact_no`, `appointment_date`, `oath_date`, `status`, `cases_handled_count`) VALUES
+('Atty. Ernesto M. Salcedo', 'Legal & Arbitration Committee', 'Retired Labor Arbiter / Attorney', '0917-234-5678', '2025-01-10', '2025-01-12', 'Active', 14),
+('Prof. Lydia V. Gonzaga', 'Family & Neighborhood Conciliation', 'Retired Public School Principal', '0918-345-6789', '2025-01-10', '2025-01-12', 'Active', 19),
+('Engr. Danilo R. Fernandez', 'Boundary & Property Disputes', 'Retired Civil Engineer & Geodetic Surveyor', '0920-456-7890', '2025-01-10', '2025-01-12', 'Active', 11),
+('Pastor Manuel S. De Jesus', 'Moral Guidance & Youth Restitution', 'Community Pastor / BCPC Member', '0922-567-8901', '2025-01-10', '2025-01-12', 'Active', 16),
+('Mrs. Corazon F. Mercado', 'Financial Obligations & Tenancy Panel', 'Retired Bank Branch Manager', '0927-678-9012', '2025-01-10', '2025-01-12', 'Active', 22),
+('Mr. Rolando T. Navarro', 'Conciliation Panel', 'Barangay Senior Citizen Association Officer', '0919-789-0123', '2025-01-10', '2025-01-12', 'Active', 8),
+('Dr. Alicia B. Soriano', 'Public Health & Sanitation Disputes', 'Retired Community Physician', '0915-890-1234', '2025-01-10', '2025-01-12', 'Active', 9),
+('Mr. Felipe K. Pangilinan', 'Commercial & Market Stall Disputes', 'Local Business Owners Association Lead', '0916-901-2345', '2025-01-10', '2025-01-12', 'Active', 13),
+('Ms. Beatriz N. Villanueva', 'Women & Children Crisis Liaison', 'Registered Social Worker (RSW)', '0928-012-3456', '2025-01-10', '2025-01-12', 'Active', 17),
+('Mr. Virgilio C. Santos', 'Conciliation Panel', 'Former Kagawad on Peace & Order', '0939-123-4567', '2025-01-10', '2025-01-12', 'Active', 15);
+
+INSERT INTO `lupon_cases` (`case_number`, `blotter_case_id`, `complainant_name`, `complainant_address`, `complainant_contact`, `respondent_name`, `respondent_address`, `respondent_contact`, `dispute_type`, `complaint_details`, `relief_sought`, `date_filed`, `stage`, `pangkat_chairman`, `pangkat_secretary`, `pangkat_member`, `pb_deadline`, `pangkat_deadline`, `settlement_terms`, `settlement_date`, `settlement_amount`, `compliance_due_date`, `cfa_reason`, `cfa_date`) VALUES
+('KP-2026-0001', 1, 'Maria Santos y Dela Cruz', 'House 14, Block 2, Mabini St., Purok 3', '0917-555-0101', 'Pedro Reyes y Alcantara', 'House 88, Sampaguita St., Purok 5', '0918-555-0202', 'Unpaid Debt / Financial Obligation', 'Complainant lent respondent the sum of PHP 15,000.00 on August 15, 2025 under a handwritten promissory note due on December 15, 2025. Despite repeated verbal and written demands, respondent has failed and refused to pay the outstanding obligation.', 'Full repayment of the principal loan amount of PHP 15,000.00 without interest.', '2026-01-10', 'Amicably Settled', 'Prof. Lydia V. Gonzaga', 'Mrs. Corazon F. Mercado', 'Mr. Rolando T. Navarro', '2026-01-25', '2026-02-10', 'Respondent agrees to settle the full obligation of PHP 15,000.00 in three (3) monthly installments of PHP 5,000.00 every 15th of February, March, and April 2026 payable at the Barangay Treasury. Failure to pay any installment shall make the entire unpaid balance immediately due and demandable with execution pursuant to RA 7160 Sec. 417.', '2026-01-22', 15000.00, '2026-04-15', NULL, NULL),
+('KP-2026-0002', 3, 'Rodrigo M. Garcia', 'Lot 12, Purok 1 Riverside Drive', '0919-555-0303', 'Eduardo T. Mendoza', 'Lot 13, Purok 1 Riverside Drive', '0920-555-0404', 'Property & Boundary Dispute', 'Respondent erected an unauthorized concrete perimeter wall extending 0.65 meters into complainant registered property line, obstructing rainwater drainage and causing recurring flash ponding during downpours.', 'Demolition/removal of encroaching concrete boundary fence and restoration of common drainage right-of-way.', '2026-02-05', 'Pangkat Conciliation', 'Engr. Danilo R. Fernandez', 'Atty. Ernesto M. Salcedo', 'Mr. Virgilio C. Santos', '2026-02-20', '2026-03-20', NULL, NULL, 0.00, NULL, NULL, NULL),
+('KP-2026-0003', NULL, 'Gemma L. Rivera', '142 Rizal Ave., Purok 4', '0922-555-0505', 'Marilou P. Dimaculangan', '148 Rizal Ave., Purok 4', '0923-555-0606', 'Verbal Defamation & Slander', 'Respondent publicly shouted malicious and defamatory remarks accusing complainant of misappropriating homeowners association funds during a purok gathering on February 28, 2026, causing public humiliation.', 'Public retraction of defamatory accusations, written apology before the Lupon, and undertaking to cease further slander.', '2026-03-02', 'PB Mediation', NULL, NULL, NULL, '2026-03-17', NULL, NULL, NULL, 0.00, NULL, NULL, NULL),
+('KP-2026-0004', 2, 'Kagawad Ramon Santos', 'Barangay Compound, Purok 2', '0917-555-0707', 'Antonio B. Macaraeg', 'Purok 6 Annex Commercial Strip', '0928-555-0808', 'Noise Disturbance & Public Nuisance', 'Respondent operates an outdoor commercial videoke bar operating beyond 10:00 PM in direct violation of Barangay Curfew & Anti-Noise Ordinance No. 2026-002, disrupting resting families and students.', 'Compliance with ordinance operating hours and relocation of speakers indoors.', '2026-01-18', 'CFA Issued', 'Atty. Ernesto M. Salcedo', 'Ms. Beatriz N. Villanueva', 'Mr. Felipe K. Pangilinan', '2026-02-02', '2026-03-04', NULL, NULL, 0.00, NULL, 'Willful failure of respondent to appear before the Punong Barangay and Pangkat despite three (3) consecutive duly served summonses without valid cause.', '2026-03-05');
+
+INSERT INTO `lupon_hearings` (`case_id`, `hearing_number`, `hearing_type`, `scheduled_date`, `scheduled_time`, `venue`, `presiding_officer`, `complainant_present`, `respondent_present`, `proceedings_summary`, `next_action`) VALUES
+(1, '1st Hearing', 'PB Mediation Hearing', '2026-01-15', '14:00:00', 'Barangay Hall Mediation Room', 'Hon. Antonio S. Valdez', 1, 1, 'Both parties appeared. Complainant presented promissory note dated Aug 15, 2025. Respondent acknowledged debt but requested installment arrangement due to business slowdown.', 'PB suggested 3-installment plan; parties referred to drafting of Amicable Settlement.'),
+(1, '2nd Hearing', 'PB Mediation Hearing', '2026-01-22', '14:30:00', 'Barangay Hall Mediation Room', 'Hon. Antonio S. Valdez', 1, 1, 'Parties formally executed KP Form 16 (Kasunduang Pag-aayos). Initial installment scheduled for February 15, 2026.', 'Case closed as Amicably Settled. Secretary to monitor compliance.'),
+(2, '1st Hearing', 'PB Mediation Hearing', '2026-02-12', '10:00:00', 'Barangay Hall Session Hall', 'Hon. Antonio S. Valdez', 1, 1, 'Parties appeared with lot sketch plans. Disagreement on boundary stones. PB mediation unable to reach compromise within 15-day window.', 'Referred to Pangkat ng Tagapagkasundo. Parties selected Engr. Danilo Fernandez, Atty. Ernesto Salcedo, and Virgilio Santos.'),
+(2, '2nd Hearing', 'Pangkat Conciliation Hearing', '2026-03-02', '14:00:00', 'Purok 1 Riverside Site & Lupon Office', 'Engr. Danilo R. Fernandez', 1, 1, 'Pangkat conducted ocular relocation survey. Verified 0.52-meter encroachment by respondent perimeter wall into natural watercourse.', 'Pangkat drafted proposed amicable realignment. Final conciliation session set for next week.');
+
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+
 

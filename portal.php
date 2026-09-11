@@ -359,6 +359,8 @@ require_once __DIR__ . '/config/database.php';
         <li><a href="#track" class="public-nav-link">Track Request</a></li>
         <li><a href="verify.php" class="public-nav-link" style="font-weight: 600; color: var(--color-primary);">Verify Document</a></li>
         <li><a href="#directory" class="public-nav-link">Officials</a></li>
+        <li><a href="#procurement-disclosures" class="public-nav-link">Procurement</a></li>
+        <li><a href="#ordinances-legal" class="public-nav-link">Ordinances</a></li>
         <li><a href="#hotlines" class="public-nav-link">Emergency Hotlines</a></li>
       </ul>
 
@@ -839,6 +841,91 @@ require_once __DIR__ . '/config/database.php';
 
       <div class="council-grid" id="public-council-container">
         <!-- Loaded dynamically from officials store -->
+      </div>
+    </section>
+
+    <!-- SECTION: PUBLIC PROCUREMENT DISCLOSURES (RA 9184 & DILG FULL DISCLOSURE POLICY) -->
+    <section id="procurement-disclosures" class="portal-section">
+      <div class="portal-section-header" style="text-align: center; max-width: 720px; margin-left: auto; margin-right: auto;">
+        <span class="typography-label" style="color: #f59e0b;">FISCAL TRANSPARENCY &bull; RA 9184</span>
+        <h2 class="typography-heading-3 mt-xs">Public Bidding &amp; Procurement Disclosures.</h2>
+        <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+          In compliance with the DILG Full Disclosure Policy (FDP) and the Government Procurement Reform Act (RA 9184), all barangay invitations to bid, PhilGEPS postings, and contract awards are published below for citizen oversight.
+        </p>
+      </div>
+
+      <!-- Public Procurement Telemetry Strip -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);">
+        <div style="background: var(--color-canvas-soft); border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-md); padding: 14px 16px;">
+          <div style="font-size: 0.6875rem; color: var(--color-text-muted); font-weight: 700; text-transform: uppercase;">Total AIP Appropriations (2026)</div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: var(--color-ink); margin-top: 4px;" id="portal-public-budget">&#8369;8,450,000.00</div>
+          <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 2px;">Statutory development &amp; calamity funds</div>
+        </div>
+        <div style="background: var(--color-canvas-soft); border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-md); padding: 14px 16px;">
+          <div style="font-size: 0.6875rem; color: var(--color-text-muted); font-weight: 700; text-transform: uppercase;">Obligated Projects</div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #3b82f6; margin-top: 4px;" id="portal-public-obligated">&#8369;1,570,000.00</div>
+          <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 2px;">Contracts awarded to complying bidders</div>
+        </div>
+        <div style="background: var(--color-canvas-soft); border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-md); padding: 14px 16px;">
+          <div style="font-size: 0.6875rem; color: var(--color-text-muted); font-weight: 700; text-transform: uppercase;">Fiscal Savings Realized</div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #10b981; margin-top: 4px;" id="portal-public-savings">&#8369;12,300.00</div>
+          <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 2px;">Saved through competitive canvass / LCRB</div>
+        </div>
+      </div>
+
+      <!-- Public Procurement Table -->
+      <div class="data-table-wrap" style="border-radius: var(--rounded-md); border: 1px solid var(--color-hairline-soft); overflow-x: auto; background: var(--color-canvas);">
+        <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.8125rem;">
+          <thead>
+            <tr style="background: var(--color-canvas-soft);">
+              <th style="padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-hairline-soft);">PR / PO Reference</th>
+              <th style="padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-hairline-soft);">Project Description</th>
+              <th style="padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-hairline-soft);">Procurement Mode</th>
+              <th style="padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-hairline-soft);">Fund Source</th>
+              <th style="padding: 10px 14px; text-align: right; border-bottom: 1px solid var(--color-hairline-soft);">Approved Budget (ABC)</th>
+              <th style="padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-hairline-soft);">PhilGEPS Ref</th>
+              <th style="padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-hairline-soft);">Status &amp; Contractor</th>
+            </tr>
+          </thead>
+          <tbody id="portal-procurement-tbody">
+            <!-- Dynamically populated from public_disclosures -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION: SANGGUNIANG BARANGAY ORDINANCES & COMMUNITY REGULATIONS (RA 7160) -->
+    <section id="ordinances-legal" class="portal-section">
+      <div class="portal-section-header" style="text-align: center; max-width: 760px; margin-left: auto; margin-right: auto;">
+        <span class="typography-label" style="color: #8b5cf6;">COMMUNITY LEGAL REPOSITORY &bull; RA 7160</span>
+        <h2 class="typography-heading-3 mt-xs">Barangay Ordinances &amp; Public Regulations.</h2>
+        <p class="typography-body-sm mt-xs" style="color: var(--color-text-muted);">
+          Official legal gazette and active regulatory measures enacted by the Sangguniang Barangay. Browse community laws, sanctions, solid waste rules, minor curfews, and public policies.
+        </p>
+      </div>
+
+      <!-- Search & Filter Controls -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 420px;">
+          <input 
+            type="text" 
+            id="portal-ordinance-search" 
+            class="text-input" 
+            placeholder="Search ordinance title, keywords, sanctions..." 
+            style="height: 38px; font-size: 0.8125rem;"
+            oninput="filterPublicOrdinances();"
+          >
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="button-pill-soft" id="filter-btn-all" onclick="setOrdinanceTypeFilter('');" style="font-size: 0.75rem; height: 32px; font-weight: 600;">All Measures</button>
+          <button type="button" class="button-pill-soft" id="filter-btn-ord" onclick="setOrdinanceTypeFilter('Ordinance');" style="font-size: 0.75rem; height: 32px;">Ordinances</button>
+          <button type="button" class="button-pill-soft" id="filter-btn-res" onclick="setOrdinanceTypeFilter('Resolution');" style="font-size: 0.75rem; height: 32px;">Resolutions</button>
+        </div>
+      </div>
+
+      <!-- Public Ordinances Cards Grid -->
+      <div class="services-grid" id="portal-ordinances-container">
+        <!-- Dynamically populated from legislative_documents -->
       </div>
     </section>
 
@@ -1564,9 +1651,215 @@ require_once __DIR__ . '/config/database.php';
         }
       };
 
+      // 9. Load Public Procurement Disclosures (RA 9184 & DILG FDP)
+      async function loadPublicProcurementDisclosures() {
+        const tbody = document.getElementById('portal-procurement-tbody');
+        if (!tbody) return;
+
+        try {
+          let projects = [];
+          let budgets = [];
+
+          if (window.barangayDB) {
+            const allP = await window.barangayDB.getAll('procurement_projects');
+            projects = (allP || []).filter(p => p.status !== 'PR Draft');
+            budgets = await window.barangayDB.getAll('budget_allocations') || [];
+          }
+
+          if (projects.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 28px; color: var(--color-text-muted);">
+                  Official procurement disclosures are currently being updated by the BAC Secretariat.
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          // Calculate budget metrics
+          const totalBudget = budgets.reduce((sum, b) => sum + (parseFloat(b.approvedBudget || b.approved_budget) || 0), 0);
+          const totalObligated = budgets.reduce((sum, b) => sum + (parseFloat(b.obligatedAmount || b.obligated_amount) || 0), 0);
+          let savings = 0;
+          projects.forEach(p => {
+            if (p.winningAmount && p.abcAmount && ['Awarded / PO Issued', 'Delivered & Inspected', 'Completed'].includes(p.status)) {
+              const diff = parseFloat(p.abcAmount) - parseFloat(p.winningAmount);
+              if (diff > 0) savings += diff;
+            }
+          });
+
+          if (totalBudget > 0) {
+            document.getElementById('portal-public-budget').textContent = '₱' + totalBudget.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+          if (totalObligated > 0) {
+            document.getElementById('portal-public-obligated').textContent = '₱' + totalObligated.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+          if (savings > 0) {
+            document.getElementById('portal-public-savings').textContent = '₱' + savings.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+
+          tbody.innerHTML = projects.map(p => {
+            const abc = parseFloat(p.abcAmount || p.abc_amount) || 0;
+            let statusBadge = 'badge-neutral';
+            if (p.status === 'Canvass / RFQ Open') statusBadge = 'badge-blue';
+            if (p.status === 'Awarded / PO Issued' || p.status === 'Delivered & Inspected' || p.status === 'Completed') statusBadge = 'badge-green';
+
+            return `
+              <tr>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft);">
+                  <strong style="font-family: monospace; color: var(--color-ink);">${p.prNumber || p.pr_number}</strong>
+                  ${p.poNumber ? `<br><span style="font-size: 0.6875rem; color: #10b981; font-family: monospace;">${p.poNumber}</span>` : ''}
+                </td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft);">
+                  <div style="font-weight: 600; color: var(--color-ink);">${p.projectTitle || p.project_title}</div>
+                  <div style="font-size: 0.6875rem; color: var(--color-text-muted);">${p.endUserCommittee || p.end_user_committee || 'General'}</div>
+                </td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft); font-size: 0.75rem;">
+                  ${p.procurementMode || p.procurement_mode}
+                </td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft); font-size: 0.75rem;">
+                  ${p.fundSource || p.fund_source}
+                </td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft); text-align: right; font-weight: 700; color: var(--color-ink);">
+                  ₱${abc.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft); font-family: monospace; font-size: 0.75rem;">
+                  ${p.philgepsRef || p.philgeps_ref || 'Posted'}
+                </td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid var(--color-hairline-soft);">
+                  <span class="${statusBadge}" style="font-size: 0.6875rem;">${p.status}</span>
+                  ${p.winningBidder ? `<div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 2px;">${p.winningBidder}</div>` : ''}
+                </td>
+              </tr>
+            `;
+          }).join('');
+        } catch (err) {
+          console.warn('Procurement disclosures load error:', err);
+        }
+      }
+
+      // 10. Load Public Ordinances & Legal Repository
+      let publicOrdinances = [];
+      let currentOrdinanceTypeFilter = '';
+
+      window.setOrdinanceTypeFilter = function(type) {
+        currentOrdinanceTypeFilter = type;
+        document.getElementById('filter-btn-all').classList.toggle('active', type === '');
+        document.getElementById('filter-btn-ord').classList.toggle('active', type === 'Ordinance');
+        document.getElementById('filter-btn-res').classList.toggle('active', type === 'Resolution');
+        filterPublicOrdinances();
+      };
+
+      window.filterPublicOrdinances = function() {
+        const query = (document.getElementById('portal-ordinance-search')?.value || '').toLowerCase();
+        const container = document.getElementById('portal-ordinances-container');
+        if (!container) return;
+
+        const filtered = publicOrdinances.filter(doc => {
+          const type = doc.docType || doc.doc_type || 'Ordinance';
+          if (currentOrdinanceTypeFilter && type !== currentOrdinanceTypeFilter) return false;
+          if (!query) return true;
+
+          const title = (doc.title || '').toLowerCase();
+          const control = (doc.controlNumber || doc.control_number || '').toLowerCase();
+          const penalties = (doc.sanctionsPenalties || doc.sanctions_penalties || '').toLowerCase();
+          const body = (doc.documentBody || doc.document_body || '').toLowerCase();
+
+          return title.includes(query) || control.includes(query) || penalties.includes(query) || body.includes(query);
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 36px; background: var(--color-canvas-soft); border-radius: var(--rounded-md); border: 1px dashed var(--color-hairline-soft);">
+              <div style="font-weight: 600; color: var(--color-ink);">No matching community regulations found.</div>
+              <div class="typography-caption" style="margin-top: 4px;">Try refining your search keyword or selecting "All Measures".</div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = filtered.map(doc => {
+          const id = doc.id;
+          const control = doc.controlNumber || doc.control_number;
+          const type = doc.docType || doc.doc_type;
+          const title = doc.title;
+          const sponsor = doc.sponsorName || doc.sponsor_name || 'Sangguniang Barangay';
+          const effectivity = doc.effectivityDate || doc.effectivity_date || 'In Effect';
+          const penalties = doc.sanctionsPenalties || doc.sanctions_penalties;
+          const body = doc.documentBody || doc.document_body || '';
+
+          return `
+            <div class="service-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <span class="badge-neutral" style="font-family: monospace; font-size: 0.6875rem;">${control}</span>
+                  <span class="badge-neutral" style="background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 0.6875rem;">&check; Law in Force</span>
+                </div>
+                <h3 class="typography-heading-4" style="font-size: 0.9375rem; line-height: 1.35; margin-bottom: 6px;">${title}</h3>
+                <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 12px;">
+                  Sponsor: <strong>${sponsor}</strong> &bull; Effective: <strong>${effectivity}</strong>
+                </div>
+
+                ${penalties ? `
+                  <div style="background: var(--color-canvas-soft); border-left: 3px solid #8b5cf6; padding: 8px 12px; border-radius: 0 var(--rounded-sm) var(--rounded-sm) 0; margin-bottom: 12px;">
+                    <div style="font-size: 0.6875rem; font-weight: 700; color: #8b5cf6; text-transform: uppercase;">Sanctions &amp; Penalties</div>
+                    <div style="font-size: 0.75rem; color: var(--color-ink); line-height: 1.4; margin-top: 2px;">${penalties}</div>
+                  </div>
+                ` : ''}
+
+                <div id="ord-body-${id}" style="display: none; font-size: 0.75rem; line-height: 1.5; color: var(--color-ink); background: var(--color-canvas-soft); padding: 10px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); margin-bottom: 12px; white-space: pre-wrap;">${body}</div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--color-hairline-soft); margin-top: 8px;">
+                <span class="typography-caption" style="font-size: 0.6875rem;">RA 7160 Sec. 59 Certified</span>
+                <button type="button" class="button-pill-soft" onclick="toggleOrdinanceBody(${id}, this);" style="font-size: 0.6875rem; height: 28px; padding: 0 10px;">
+                  Read Provisions &darr;
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      };
+
+      window.toggleOrdinanceBody = function(id, btn) {
+        const pane = document.getElementById(`ord-body-${id}`);
+        if (!pane) return;
+        const isHidden = pane.style.display === 'none';
+        pane.style.display = isHidden ? 'block' : 'none';
+        btn.innerHTML = isHidden ? 'Hide Provisions &uarr;' : 'Read Provisions &darr;';
+      };
+
+      async function loadPublicOrdinances() {
+        try {
+          // In PHP/REST API mode or IndexedDB mode:
+          // Try public unauthenticated endpoint first or fall back to barangayDB
+          try {
+            const res = await fetch('api/legislative.php?action=public_registry');
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.data && Array.isArray(json.data.documents)) {
+                publicOrdinances = json.data.documents;
+                filterPublicOrdinances();
+                return;
+              }
+            }
+          } catch (netErr) {}
+
+          if (window.barangayDB) {
+            const allDocs = await window.barangayDB.getAll('legislative_documents');
+            publicOrdinances = (allDocs || []).filter(d => (d.readingStage || d.reading_stage) === 'Enacted' && (d.cityCouncilReviewStatus || d.city_council_review_status) !== 'Disapproved');
+            filterPublicOrdinances();
+          }
+        } catch (e) {
+          console.warn('Public ordinances load error:', e);
+        }
+      }
+
       // 8. Initial Loading
       await loadPortalSettings();
       await loadCouncilDirectory();
+      await loadPublicProcurementDisclosures();
+      await loadPublicOrdinances();
     });
   </script>
 </body>
