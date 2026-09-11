@@ -572,7 +572,7 @@ require_auth('login.php');
           'Released': 'badge-green',
           'Cancelled': 'badge-rose'
         };
-        return \`<span class="badge \${map[status] || 'badge-neutral'}\">\${status}</span>\`;
+        return `<span class="badge ${map[status] || 'badge-neutral'}">${status}</span>`;
       } else if (type === 'collection') {
         const map = {
           'Collected': 'badge-blue',
@@ -580,15 +580,15 @@ require_auth('login.php');
           'Remitted': 'badge-emerald',
           'Voided': 'badge-rose'
         };
-        return \`<span class="badge \${map[status] || 'badge-neutral'}\">\${status}</span>\`;
+        return `<span class="badge ${map[status] || 'badge-neutral'}">${status}</span>`;
       } else if (type === 'report') {
         const map = {
           'Draft': 'badge-neutral',
           'Final': 'badge-green'
         };
-        return \`<span class="badge \${map[status] || 'badge-neutral'}\">\${status}</span>\`;
+        return `<span class="badge ${map[status] || 'badge-neutral'}">${status}</span>`;
       }
-      return \`<span class="badge badge-neutral">\${status}</span>\`;
+      return `<span class="badge badge-neutral">${status}</span>`;
     };
 
     function openModal(id) {
@@ -608,8 +608,8 @@ require_auth('login.php');
     function switchTab(tabId) {
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(\`tab-\${tabId}\`).classList.add('active');
-      document.querySelector(\`.tab-btn[onclick="switchTab('\${tabId}')"]\`).classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`).classList.add('active');
       
       if (tabId === 'allocations') refreshAllocations();
       if (tabId === 'vouchers') refreshVouchers();
@@ -621,7 +621,7 @@ require_auth('login.php');
     }
 
     async function apiCall(action, method='GET', body=null) {
-      let url = \`api/budget.php?action=\${action}\`;
+      let url = `api/budget.php?action=${action}`;
       let options = { method, headers: {} };
       if (body && method !== 'GET') {
         options.headers['Content-Type'] = 'application/json';
@@ -667,51 +667,51 @@ require_auth('login.php');
       aipBar.style.width = Math.min(d.aip_utilization, 100) + '%';
       
       document.getElementById('stat-disbursements').textContent = formatCurrency(d.disbursed);
-      document.getElementById('stat-disbursements-sub').textContent = \`\${formatCurrency(d.disbursed)} Released / \${formatCurrency(d.disbursed_pending)} Pending\`;
+      document.getElementById('stat-disbursements-sub').textContent = `${formatCurrency(d.disbursed)} Released / ${formatCurrency(d.disbursed_pending)} Pending`;
       
       document.getElementById('stat-revenue').textContent = formatCurrency(d.revenue);
-      document.getElementById('stat-revenue-sub').textContent = \`\${formatCurrency(d.revenue_deposited)} Deposited\`;
+      document.getElementById('stat-revenue-sub').textContent = `${formatCurrency(d.revenue_deposited)} Deposited`;
       
       document.getElementById('stat-balance').textContent = formatCurrency(d.balance);
       const bColor = d.balance_percent > 50 ? 'success' : (d.balance_percent > 20 ? 'warning' : 'danger');
-      document.getElementById('stat-balance').style.color = \`var(--color-\${bColor === 'success'?'emerald':(bColor==='warning'?'amber':'rose')})\`;
+      document.getElementById('stat-balance').style.color = `var(--color-${bColor === 'success'?'emerald':(bColor==='warning'?'amber':'rose')})`;
     }
 
     async function refreshAllocations() {
       const year = document.getElementById('filter-year').value;
-      const res = await apiCall(\`get_allocations&year=\${year}\`);
+      const res = await apiCall(`get_allocations&year=${year}`);
       const list = res.data || [];
       currentAllocList = list;
       
       const tbody = document.getElementById('allocations-tbody');
       if(list.length === 0) {
-        tbody.innerHTML = \`<tr><td colspan="8" style="text-align:center;" class="text-muted">No allocations found for this fiscal year.</td></tr>\`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;" class="text-muted">No allocations found for this fiscal year.</td></tr>`;
         return;
       }
       
       tbody.innerHTML = list.map(a => {
         const bal = parseFloat(a.approved_budget) - parseFloat(a.obligated_amount);
         const pct = a.approved_budget > 0 ? (a.obligated_amount / a.approved_budget) * 100 : 0;
-        return \`
+        return `
           <tr>
-            <td>\${a.fund_source}</td>
-            <td><strong>\${a.program_title}</strong></td>
-            <td>\${a.committee || '-'}</td>
-            <td>\${formatCurrency(a.approved_budget)}</td>
-            <td>\${formatCurrency(a.obligated_amount)}</td>
-            <td>\${formatCurrency(bal)}</td>
+            <td>${a.fund_source}</td>
+            <td><strong>${a.program_title}</strong></td>
+            <td>${a.committee || '-'}</td>
+            <td>${formatCurrency(a.approved_budget)}</td>
+            <td>${formatCurrency(a.obligated_amount)}</td>
+            <td>${formatCurrency(bal)}</td>
             <td>
               <div class="utilization-bar-wrap" style="height:4px; margin:0 0 2px 0;">
-                <div class="utilization-bar" style="width:\${Math.min(pct, 100)}%"></div>
+                <div class="utilization-bar" style="width:${Math.min(pct, 100)}%"></div>
               </div>
-              <small class="typography-caption">\${pct.toFixed(1)}%</small>
+              <small class="typography-caption">${pct.toFixed(1)}%</small>
             </td>
             <td>
-              <button class="icon-button" onclick="editAlloc(\${a.id})" title="Edit">✏️</button>
-              <button class="icon-button text-rose" onclick="deleteAlloc(\${a.id})" title="Delete">🗑️</button>
+              <button class="icon-button" onclick="editAlloc(${a.id})" title="Edit">✏️</button>
+              <button class="icon-button text-rose" onclick="deleteAlloc(${a.id})" title="Delete">🗑️</button>
             </td>
           </tr>
-        \`;
+        `;
       }).join('');
       
       populateAllocDropdown();
@@ -720,14 +720,14 @@ require_auth('login.php');
     function populateAllocDropdown() {
       const sel = document.getElementById('voucher_alloc_id');
       sel.innerHTML = '<option value="">-- None --</option>' + 
-        currentAllocList.map(a => \`<option value="\${a.id}">\${a.program_title} (\${a.fund_source})</option>\`).join('');
+        currentAllocList.map(a => `<option value="${a.id}">${a.program_title} (${a.fund_source})</option>`).join('');
     }
 
     async function refreshVouchers() {
       const stat = document.getElementById('filter-voucher-status').value;
       const q = document.getElementById('search-vouchers').value.toLowerCase();
       
-      const res = await apiCall(\`get_vouchers&status=\${stat}\`);
+      const res = await apiCall(`get_vouchers&status=${stat}`);
       const list = res.data || [];
       currentVoucherList = list;
       
@@ -739,33 +739,33 @@ require_auth('login.php');
       
       const tbody = document.getElementById('vouchers-tbody');
       if(filtered.length === 0) {
-        tbody.innerHTML = \`<tr><td colspan="8" style="text-align:center;" class="text-muted">No vouchers found.</td></tr>\`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;" class="text-muted">No vouchers found.</td></tr>`;
         return;
       }
       
-      tbody.innerHTML = filtered.map(v => \`
+      tbody.innerHTML = filtered.map(v => `
         <tr>
-          <td>\${v.dv_number || '-'}</td>
-          <td>\${v.payee_name}</td>
-          <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="\${v.particulars}">\${v.particulars}</td>
-          <td>\${v.fund_source}</td>
-          <td>\${v.expense_class}</td>
-          <td><strong>\${formatCurrency(v.amount)}</strong></td>
-          <td>\${getStatusBadge(v.status, 'voucher')}</td>
+          <td>${v.dv_number || '-'}</td>
+          <td>${v.payee_name}</td>
+          <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${v.particulars}">${v.particulars}</td>
+          <td>${v.fund_source}</td>
+          <td>${v.expense_class}</td>
+          <td><strong>${formatCurrency(v.amount)}</strong></td>
+          <td>${getStatusBadge(v.status, 'voucher')}</td>
           <td>
-            <button class="icon-button" onclick="viewVoucher(\${v.id})" title="View">👁️</button>
-            <button class="icon-button" onclick="promptApproveVoucher(\${v.id})" title="Update Status">✅</button>
-            <button class="icon-button" onclick="printDV(\${v.id})" title="Print DV">🖨️</button>
+            <button class="icon-button" onclick="viewVoucher(${v.id})" title="View">👁️</button>
+            <button class="icon-button" onclick="promptApproveVoucher(${v.id})" title="Update Status">✅</button>
+            <button class="icon-button" onclick="printDV(${v.id})" title="Print DV">🖨️</button>
           </td>
         </tr>
-      \`).join('');
+      `).join('');
     }
 
     async function refreshCollections() {
       const src = document.getElementById('filter-collection-source').value;
       const q = document.getElementById('search-collections').value.toLowerCase();
       
-      const res = await apiCall(\`get_collections&source=\${src}\`);
+      const res = await apiCall(`get_collections&source=${src}`);
       const list = res.data || [];
       
       const filtered = list.filter(c => 
@@ -775,24 +775,24 @@ require_auth('login.php');
       
       const tbody = document.getElementById('collections-tbody');
       if(filtered.length === 0) {
-        tbody.innerHTML = \`<tr><td colspan="8" style="text-align:center;" class="text-muted">No collections found.</td></tr>\`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;" class="text-muted">No collections found.</td></tr>`;
         return;
       }
       
-      tbody.innerHTML = filtered.map(c => \`
+      tbody.innerHTML = filtered.map(c => `
         <tr>
-          <td>\${c.or_number || '-'}</td>
-          <td>\${c.payer_name}</td>
-          <td>\${c.revenue_source}</td>
-          <td style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">\${c.particulars}</td>
-          <td><strong>\${formatCurrency(c.amount)}</strong></td>
-          <td>\${formatDate(c.receipt_date)}</td>
-          <td>\${getStatusBadge(c.status, 'collection')}</td>
+          <td>${c.or_number || '-'}</td>
+          <td>${c.payer_name}</td>
+          <td>${c.revenue_source}</td>
+          <td style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.particulars}</td>
+          <td><strong>${formatCurrency(c.amount)}</strong></td>
+          <td>${formatDate(c.receipt_date)}</td>
+          <td>${getStatusBadge(c.status, 'collection')}</td>
           <td>
-            <button class="icon-button text-rose" onclick="deleteCollection(\${c.id})" title="Delete">🗑️</button>
+            <button class="icon-button text-rose" onclick="deleteCollection(${c.id})" title="Delete">🗑️</button>
           </td>
         </tr>
-      \`).join('');
+      `).join('');
     }
 
     async function refreshReports() {
@@ -800,24 +800,24 @@ require_auth('login.php');
       const list = res.data || [];
       const tbody = document.getElementById('reports-tbody');
       if(list.length === 0) {
-        tbody.innerHTML = \`<tr><td colspan="8" style="text-align:center;" class="text-muted">No financial reports generated.</td></tr>\`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;" class="text-muted">No financial reports generated.</td></tr>`;
         return;
       }
-      tbody.innerHTML = list.map(r => \`
+      tbody.innerHTML = list.map(r => `
         <tr>
-          <td>\${r.report_code || '-'}</td>
-          <td>\${r.report_type}</td>
-          <td>\${r.period_label}</td>
-          <td>\${formatCurrency(r.total_receipts)}</td>
-          <td>\${formatCurrency(r.total_expenditures)}</td>
-          <td><strong>\${formatCurrency(r.ending_balance)}</strong></td>
-          <td>\${getStatusBadge(r.status, 'report')}</td>
+          <td>${r.report_code || '-'}</td>
+          <td>${r.report_type}</td>
+          <td>${r.period_label}</td>
+          <td>${formatCurrency(r.total_receipts)}</td>
+          <td>${formatCurrency(r.total_expenditures)}</td>
+          <td><strong>${formatCurrency(r.ending_balance)}</strong></td>
+          <td>${getStatusBadge(r.status, 'report')}</td>
           <td>
              <button class="icon-button" onclick="alert('Print not implemented for summary')" title="Print">🖨️</button>
-             <button class="icon-button text-rose" onclick="deleteReport(\${r.id})" title="Delete">🗑️</button>
+             <button class="icon-button text-rose" onclick="deleteReport(${r.id})" title="Delete">🗑️</button>
           </td>
         </tr>
-      \`).join('');
+      `).join('');
     }
 
     async function refreshFundSummary() {
@@ -828,17 +828,17 @@ require_auth('login.php');
       
       cont.innerHTML = list.map(f => {
         const pct = f.budget > 0 ? (f.obligated / f.budget) * 100 : 0;
-        return \`
+        return `
           <div style="margin-bottom:var(--spacing-md);">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <strong>\${f.fund_source}</strong>
-              <span class="text-muted">\${formatCurrency(f.obligated)} / \${formatCurrency(f.budget)}</span>
+              <strong>${f.fund_source}</strong>
+              <span class="text-muted">${formatCurrency(f.obligated)} / ${formatCurrency(f.budget)}</span>
             </div>
             <div class="utilization-bar-wrap" style="height:10px;">
-              <div class="utilization-bar \${pct > 80 ? 'danger' : (pct > 50 ? 'warning' : 'success')}" style="width:\${Math.min(pct, 100)}%"></div>
+              <div class="utilization-bar ${pct > 80 ? 'danger' : (pct > 50 ? 'warning' : 'success')}" style="width:${Math.min(pct, 100)}%"></div>
             </div>
           </div>
-        \`;
+        `;
       }).join('');
     }
 
@@ -931,18 +931,18 @@ require_auth('login.php');
     function viewVoucher(id) {
       const v = currentVoucherList.find(x => x.id == id);
       if(!v) return;
-      document.getElementById('view-voucher-content').innerHTML = \`
+      document.getElementById('view-voucher-content').innerHTML = `
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <div><strong>DV Number:</strong> \${v.dv_number || '-'}</div>
-          <div><strong>Status:</strong> \${v.status}</div>
-          <div style="grid-column:1/-1;"><strong>Payee:</strong> \${v.payee_name}</div>
-          <div style="grid-column:1/-1;"><strong>Particulars:</strong> \${v.particulars}</div>
-          <div><strong>Fund Source:</strong> \${v.fund_source}</div>
-          <div><strong>Expense Class:</strong> \${v.expense_class}</div>
-          <div><strong>Amount:</strong> \${formatCurrency(v.amount)}</div>
-          <div><strong>Check No:</strong> \${v.check_no || '-'}</div>
+          <div><strong>DV Number:</strong> ${v.dv_number || '-'}</div>
+          <div><strong>Status:</strong> ${v.status}</div>
+          <div style="grid-column:1/-1;"><strong>Payee:</strong> ${v.payee_name}</div>
+          <div style="grid-column:1/-1;"><strong>Particulars:</strong> ${v.particulars}</div>
+          <div><strong>Fund Source:</strong> ${v.fund_source}</div>
+          <div><strong>Expense Class:</strong> ${v.expense_class}</div>
+          <div><strong>Amount:</strong> ${formatCurrency(v.amount)}</div>
+          <div><strong>Check No:</strong> ${v.check_no || '-'}</div>
         </div>
-      \`;
+      `;
       openModal('view-voucher-modal');
     }
     
@@ -950,7 +950,7 @@ require_auth('login.php');
       const v = currentVoucherList.find(x => x.id == id);
       if(!v) return;
       document.getElementById('approve_v_id').value = v.id;
-      document.getElementById('approve-voucher-details').innerHTML = \`Payee: <strong>\${v.payee_name}</strong><br>Amount: <strong>\${formatCurrency(v.amount)}</strong><br>Current Status: <strong>\${v.status}</strong>\`;
+      document.getElementById('approve-voucher-details').innerHTML = `Payee: <strong>${v.payee_name}</strong><br>Amount: <strong>${formatCurrency(v.amount)}</strong><br>Current Status: <strong>${v.status}</strong>`;
       openModal('approve-voucher-modal');
     }
     
@@ -971,18 +971,18 @@ require_auth('login.php');
       if(!v) return;
       
       const printContainer = document.getElementById('print-statutory-container');
-      printContainer.innerHTML = \`
+      printContainer.innerHTML = `
         <div class="dv-print-header">
           <h3>DISBURSEMENT VOUCHER</h3>
           <p>Republic of the Philippines<br>Province / City / Municipality<br><strong>Barangay</strong></p>
         </div>
         <div style="text-align:right; margin-bottom:10px;">
-          <strong>No.:</strong> \${v.dv_number || '______________'}
+          <strong>No.:</strong> ${v.dv_number || '______________'}
         </div>
         <table class="dv-print-table">
           <tr>
-            <td colspan="3"><strong>Payee:</strong> \${v.payee_name}</td>
-            <td colspan="1"><strong>Fund Cluster:</strong> \${v.fund_source}</td>
+            <td colspan="3"><strong>Payee:</strong> ${v.payee_name}</td>
+            <td colspan="1"><strong>Fund Cluster:</strong> ${v.fund_source}</td>
           </tr>
           <tr>
             <td colspan="4"><strong>Address:</strong> _________________________________________</td>
@@ -994,14 +994,14 @@ require_auth('login.php');
             <td>Amount</td>
           </tr>
           <tr style="height:200px; vertical-align:top;">
-            <td>\${v.particulars}</td>
-            <td>\${v.expense_class}</td>
+            <td>${v.particulars}</td>
+            <td>${v.expense_class}</td>
             <td></td>
-            <td style="text-align:right;">\${formatCurrency(v.amount)}</td>
+            <td style="text-align:right;">${formatCurrency(v.amount)}</td>
           </tr>
           <tr>
             <td colspan="3" style="text-align:right;"><strong>Total</strong></td>
-            <td style="text-align:right;"><strong>\${formatCurrency(v.amount)}</strong></td>
+            <td style="text-align:right;"><strong>${formatCurrency(v.amount)}</strong></td>
           </tr>
         </table>
         
@@ -1009,17 +1009,17 @@ require_auth('login.php');
           <div class="dv-print-sig-box">
             <p><strong>A. Certified:</strong></p>
             <br>
-            <div class="dv-print-sig-line"><strong>\${v.certified_by || ''}</strong></div>
+            <div class="dv-print-sig-line"><strong>${v.certified_by || ''}</strong></div>
             <p>Barangay Treasurer</p>
           </div>
           <div class="dv-print-sig-box">
             <p><strong>B. Approved for Payment:</strong></p>
             <br>
-            <div class="dv-print-sig-line"><strong>\${v.approved_by || ''}</strong></div>
+            <div class="dv-print-sig-line"><strong>${v.approved_by || ''}</strong></div>
             <p>Punong Barangay</p>
           </div>
         </div>
-      \`;
+      `;
       window.print();
     }
 
