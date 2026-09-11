@@ -5,7 +5,7 @@
  */
 
 const DB_NAME = 'BarangayManagementDB';
-const DB_VERSION = 10;
+const DB_VERSION = 11;
 
 class BarangayDB {
   constructor() {
@@ -272,6 +272,37 @@ class BarangayDB {
           frStore.createIndex('reportType', 'reportType', { unique: false });
           frStore.createIndex('fiscalYear', 'fiscalYear', { unique: false });
           frStore.createIndex('status', 'status', { unique: false });
+        }
+
+        // 28. DRRM Evacuation Centers Store
+        if (!db.objectStoreNames.contains('drrm_evacuation_centers')) {
+          const centerStore = db.createObjectStore('drrm_evacuation_centers', { keyPath: 'id', autoIncrement: true });
+          centerStore.createIndex('centerName', 'centerName', { unique: false });
+          centerStore.createIndex('purok', 'purok', { unique: false });
+          centerStore.createIndex('status', 'status', { unique: false });
+        }
+
+        // 29. DRRM Evacuees Masterlist Store
+        if (!db.objectStoreNames.contains('drrm_evacuees')) {
+          const evacStore = db.createObjectStore('drrm_evacuees', { keyPath: 'id', autoIncrement: true });
+          evacStore.createIndex('evacueeCode', 'evacueeCode', { unique: true });
+          evacStore.createIndex('evacuationCenterId', 'evacuationCenterId', { unique: false });
+          evacStore.createIndex('purokOrigin', 'purokOrigin', { unique: false });
+          evacStore.createIndex('status', 'status', { unique: false });
+        }
+
+        // 30. DRRM Relief Items Store
+        if (!db.objectStoreNames.contains('drrm_relief_items')) {
+          const itemStore = db.createObjectStore('drrm_relief_items', { keyPath: 'id', autoIncrement: true });
+          itemStore.createIndex('itemCode', 'itemCode', { unique: true });
+          itemStore.createIndex('category', 'category', { unique: false });
+        }
+
+        // 31. DRRM Relief Distributions Store
+        if (!db.objectStoreNames.contains('drrm_relief_distributions')) {
+          const distStore = db.createObjectStore('drrm_relief_distributions', { keyPath: 'id', autoIncrement: true });
+          distStore.createIndex('distributionCode', 'distributionCode', { unique: true });
+          distStore.createIndex('distributedAt', 'distributedAt', { unique: false });
         }
       };
 

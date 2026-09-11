@@ -271,6 +271,48 @@
     if (rec.report_data !== undefined && rec.reportData === undefined) rec.reportData = rec.report_data;
     if (rec.generated_by !== undefined && rec.generatedBy === undefined) rec.generatedBy = rec.generated_by;
 
+    // DRRM Evacuation Centers
+    if (rec.center_name !== undefined && rec.centerName === undefined) rec.centerName = rec.center_name;
+    if (rec.capacity_families !== undefined && rec.capacityFamilies === undefined) rec.capacityFamilies = rec.capacity_families;
+    if (rec.capacity_individuals !== undefined && rec.capacityIndividuals === undefined) rec.capacityIndividuals = rec.capacity_individuals;
+    if (rec.current_families !== undefined && rec.currentFamilies === undefined) rec.currentFamilies = rec.current_families;
+    if (rec.current_individuals !== undefined && rec.currentIndividuals === undefined) rec.currentIndividuals = rec.current_individuals;
+    if (rec.has_generator !== undefined && rec.hasGenerator === undefined) rec.hasGenerator = Boolean(rec.has_generator);
+    if (rec.has_water_supply !== undefined && rec.hasWaterSupply === undefined) rec.hasWaterSupply = Boolean(rec.has_water_supply);
+    if (rec.has_clinic_station !== undefined && rec.hasClinicStation === undefined) rec.hasClinicStation = Boolean(rec.has_clinic_station);
+    if (rec.center_manager !== undefined && rec.centerManager === undefined) rec.centerManager = rec.center_manager;
+
+    // DRRM Evacuees
+    if (rec.evacuee_code !== undefined && rec.evacueeCode === undefined) rec.evacueeCode = rec.evacuee_code;
+    if (rec.evacuation_center_id !== undefined && rec.evacuationCenterId === undefined) rec.evacuationCenterId = rec.evacuation_center_id;
+    if (rec.household_id !== undefined && rec.householdId === undefined) rec.householdId = rec.household_id;
+    if (rec.family_head_name !== undefined && rec.familyHeadName === undefined) rec.familyHeadName = rec.family_head_name;
+    if (rec.purok_origin !== undefined && rec.purokOrigin === undefined) rec.purokOrigin = rec.purok_origin;
+    if (rec.members_count !== undefined && rec.membersCount === undefined) rec.membersCount = rec.members_count;
+    if (rec.seniors_count !== undefined && rec.seniorsCount === undefined) rec.seniorsCount = rec.seniors_count;
+    if (rec.children_count !== undefined && rec.childrenCount === undefined) rec.childrenCount = rec.children_count;
+    if (rec.pwd_count !== undefined && rec.pwdCount === undefined) rec.pwdCount = rec.pwd_count;
+    if (rec.pregnant_lactating_count !== undefined && rec.pregnantLactatingCount === undefined) rec.pregnantLactatingCount = rec.pregnant_lactating_count;
+    if (rec.room_tent_no !== undefined && rec.roomTentNo === undefined) rec.roomTentNo = rec.room_tent_no;
+    if (rec.special_medical_needs !== undefined && rec.specialMedicalNeeds === undefined) rec.specialMedicalNeeds = rec.special_medical_needs;
+    if (rec.check_in_date !== undefined && rec.checkInDate === undefined) rec.checkInDate = rec.check_in_date;
+    if (rec.check_out_date !== undefined && rec.checkOutDate === undefined) rec.checkOutDate = rec.check_out_date;
+
+    // DRRM Relief Items & Distributions
+    if (rec.item_code !== undefined && rec.itemCode === undefined) rec.itemCode = rec.item_code;
+    if (rec.item_name !== undefined && rec.itemName === undefined) rec.itemName = rec.item_name;
+    if (rec.stock_quantity !== undefined && rec.stockQuantity === undefined) rec.stockQuantity = rec.stock_quantity;
+    if (rec.reorder_level !== undefined && rec.reorderLevel === undefined) rec.reorderLevel = rec.reorder_level;
+    if (rec.unit_cost !== undefined && rec.unitCost === undefined) rec.unitCost = rec.unit_cost;
+    if (rec.distribution_code !== undefined && rec.distributionCode === undefined) rec.distributionCode = rec.distribution_code;
+    if (rec.calamity_name !== undefined && rec.calamityName === undefined) rec.calamityName = rec.calamity_name;
+    if (rec.evacuee_id !== undefined && rec.evacueeId === undefined) rec.evacueeId = rec.evacuee_id;
+    if (rec.recipient_name !== undefined && rec.recipientName === undefined) rec.recipientName = rec.recipient_name;
+    if (rec.relief_item_id !== undefined && rec.reliefItemId === undefined) rec.reliefItemId = rec.relief_item_id;
+    if (rec.quantity_given !== undefined && rec.quantityGiven === undefined) rec.quantityGiven = rec.quantity_given;
+    if (rec.distributed_by !== undefined && rec.distributedBy === undefined) rec.distributedBy = rec.distributed_by;
+    if (rec.distributed_at !== undefined && rec.distributedAt === undefined) rec.distributedAt = rec.distributed_at;
+
     return rec;
   }
 
@@ -496,6 +538,48 @@
     if (out.reportData !== undefined && out.report_data === undefined) out.report_data = out.reportData;
     if (out.generatedBy !== undefined && out.generated_by === undefined) out.generated_by = out.generatedBy;
 
+    // DRRM Evacuation Centers
+    if (out.centerName !== undefined && out.center_name === undefined) out.center_name = out.centerName;
+    if (out.capacityFamilies !== undefined && out.capacity_families === undefined) out.capacity_families = out.capacityFamilies;
+    if (out.capacityIndividuals !== undefined && out.capacity_individuals === undefined) out.capacity_individuals = out.capacityIndividuals;
+    if (out.currentFamilies !== undefined && out.current_families === undefined) out.current_families = out.currentFamilies;
+    if (out.currentIndividuals !== undefined && out.current_individuals === undefined) out.current_individuals = out.currentIndividuals;
+    if (out.hasGenerator !== undefined && out.has_generator === undefined) out.has_generator = out.hasGenerator ? 1 : 0;
+    if (out.hasWaterSupply !== undefined && out.has_water_supply === undefined) out.has_water_supply = out.hasWaterSupply ? 1 : 0;
+    if (out.hasClinicStation !== undefined && out.has_clinic_station === undefined) out.has_clinic_station = out.hasClinicStation ? 1 : 0;
+    if (out.centerManager !== undefined && out.center_manager === undefined) out.center_manager = out.centerManager;
+
+    // DRRM Evacuees
+    if (out.evacueeCode !== undefined && out.evacuee_code === undefined) out.evacuee_code = out.evacueeCode;
+    if (out.evacuationCenterId !== undefined && out.evacuation_center_id === undefined) out.evacuation_center_id = out.evacuationCenterId;
+    if (out.householdId !== undefined && out.household_id === undefined) out.household_id = out.householdId;
+    if (out.familyHeadName !== undefined && out.family_head_name === undefined) out.family_head_name = out.familyHeadName;
+    if (out.purokOrigin !== undefined && out.purok_origin === undefined) out.purok_origin = out.purokOrigin;
+    if (out.membersCount !== undefined && out.members_count === undefined) out.members_count = out.membersCount;
+    if (out.seniorsCount !== undefined && out.seniors_count === undefined) out.seniors_count = out.seniorsCount;
+    if (out.childrenCount !== undefined && out.children_count === undefined) out.children_count = out.childrenCount;
+    if (out.pwdCount !== undefined && out.pwd_count === undefined) out.pwd_count = out.pwdCount;
+    if (out.pregnantLactatingCount !== undefined && out.pregnant_lactating_count === undefined) out.pregnant_lactating_count = out.pregnantLactatingCount;
+    if (out.roomTentNo !== undefined && out.room_tent_no === undefined) out.room_tent_no = out.roomTentNo;
+    if (out.specialMedicalNeeds !== undefined && out.special_medical_needs === undefined) out.special_medical_needs = out.specialMedicalNeeds;
+    if (out.checkInDate !== undefined && out.check_in_date === undefined) out.check_in_date = out.checkInDate;
+    if (out.checkOutDate !== undefined && out.check_out_date === undefined) out.check_out_date = out.checkOutDate;
+
+    // DRRM Relief Items & Distributions
+    if (out.itemCode !== undefined && out.item_code === undefined) out.item_code = out.itemCode;
+    if (out.itemName !== undefined && out.item_name === undefined) out.item_name = out.itemName;
+    if (out.stockQuantity !== undefined && out.stock_quantity === undefined) out.stock_quantity = out.stockQuantity;
+    if (out.reorderLevel !== undefined && out.reorder_level === undefined) out.reorder_level = out.reorderLevel;
+    if (out.unitCost !== undefined && out.unit_cost === undefined) out.unit_cost = out.unitCost;
+    if (out.distributionCode !== undefined && out.distribution_code === undefined) out.distribution_code = out.distributionCode;
+    if (out.calamityName !== undefined && out.calamity_name === undefined) out.calamity_name = out.calamityName;
+    if (out.evacueeId !== undefined && out.evacuee_id === undefined) out.evacuee_id = out.evacueeId;
+    if (out.recipientName !== undefined && out.recipient_name === undefined) out.recipient_name = out.recipientName;
+    if (out.reliefItemId !== undefined && out.relief_item_id === undefined) out.relief_item_id = out.reliefItemId;
+    if (out.quantityGiven !== undefined && out.quantity_given === undefined) out.quantity_given = out.quantityGiven;
+    if (out.distributedBy !== undefined && out.distributed_by === undefined) out.distributed_by = out.distributedBy;
+    if (out.distributedAt !== undefined && out.distributed_at === undefined) out.distributed_at = out.distributedAt;
+
     return out;
   }
 
@@ -563,7 +647,11 @@
     disbursement_vouchers:'api/budget.php?action=vouchers',
     revenue_collections:'api/budget.php?action=collections',
     budget_obligations:'api/budget.php?action=obligations',
-    financial_reports:'api/budget.php?action=reports'
+    financial_reports:'api/budget.php?action=reports',
+    drrm_evacuation_centers:'api/drrm.php?action=centers',
+    drrm_evacuees:          'api/drrm.php?action=evacuees',
+    drrm_relief_items:      'api/drrm.php?action=relief_inventory',
+    drrm_relief_distributions:'api/drrm.php?action=distributions'
   };
 
   // Barangay DB Client
@@ -609,6 +697,10 @@
       if (storeName === 'revenue_collections') action = 'record_collection';
       if (storeName === 'budget_obligations') action = 'create_obligation';
       if (storeName === 'financial_reports') action = 'generate_report';
+      if (storeName === 'drrm_evacuation_centers') action = 'create_center';
+      if (storeName === 'drrm_evacuees') action = 'register_evacuee';
+      if (storeName === 'drrm_relief_items') action = 'create_relief_item';
+      if (storeName === 'drrm_relief_distributions') action = 'record_distribution';
       if (storeName === 'incidents' && (record.type === 'Curfew Violation' || record.minor_age)) {
         action = 'create_curfew';
       }
@@ -634,6 +726,9 @@
       if (storeName === 'disbursement_vouchers') action = 'update_voucher';
       if (storeName === 'revenue_collections') action = 'update_collection';
       if (storeName === 'budget_obligations') action = 'update_obligation';
+      if (storeName === 'drrm_evacuation_centers') action = 'update_center';
+      if (storeName === 'drrm_evacuees') action = 'update_evacuee';
+      if (storeName === 'drrm_relief_items') action = 'update_relief_item';
 
       const url = `${endpoint.split('?')[0]}?action=${action}`;
       return await apiRequest(url, 'POST', record);

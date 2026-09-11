@@ -752,6 +752,131 @@ INSERT INTO `budget_obligations` (`obr_number`, `budget_allocation_id`, `obligat
 ('OBR-2026-0003', NULL, 'Payroll', 'Barangay Regular Staff', 'Monthly payroll obligation for 8 regular barangay personnel - August 2026', 87500.00, '2026-08-01', 'Disbursed'),
 ('OBR-2026-0004', 4, 'Contract', 'Barangay GAD Focal Point System', 'Obligation for maternal healthcare outreach and livelihood training program', 45000.00, '2026-09-01', 'Approved');
 
+-- ------------------------------------------------------------
+-- 27. DRRM EVACUATION CENTERS & TEMPORARY SHELTER TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `drrm_evacuation_centers` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `center_name` VARCHAR(150) NOT NULL,
+  `purok` VARCHAR(50) NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `capacity_families` INT NOT NULL DEFAULT 50,
+  `capacity_individuals` INT NOT NULL DEFAULT 250,
+  `current_families` INT NOT NULL DEFAULT 0,
+  `current_individuals` INT NOT NULL DEFAULT 0,
+  `has_generator` TINYINT(1) NOT NULL DEFAULT 1,
+  `has_water_supply` TINYINT(1) NOT NULL DEFAULT 1,
+  `has_clinic_station` TINYINT(1) NOT NULL DEFAULT 1,
+  `center_manager` VARCHAR(100) NOT NULL DEFAULT 'BDRRMC Camp Manager',
+  `contact_no` VARCHAR(30) DEFAULT '',
+  `status` ENUM('Standby / Inactive', 'Active / Open', 'Full Capacity', 'Decommissioned') NOT NULL DEFAULT 'Standby / Inactive',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_evac_purok` (`purok`),
+  INDEX `idx_evac_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 28. DRRM EVACUEES & DISPLACED FAMILIES MASTERLIST TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `drrm_evacuees` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `evacuee_code` VARCHAR(40) NOT NULL UNIQUE,
+  `evacuation_center_id` INT NOT NULL,
+  `household_id` INT DEFAULT NULL,
+  `family_head_name` VARCHAR(150) NOT NULL,
+  `purok_origin` VARCHAR(50) NOT NULL,
+  `contact_no` VARCHAR(30) DEFAULT '',
+  `members_count` INT NOT NULL DEFAULT 1,
+  `seniors_count` INT NOT NULL DEFAULT 0,
+  `children_count` INT NOT NULL DEFAULT 0,
+  `pwd_count` INT NOT NULL DEFAULT 0,
+  `pregnant_lactating_count` INT NOT NULL DEFAULT 0,
+  `room_tent_no` VARCHAR(50) DEFAULT 'Tent 1',
+  `special_medical_needs` TEXT DEFAULT NULL,
+  `check_in_date` DATETIME NOT NULL,
+  `check_out_date` DATETIME DEFAULT NULL,
+  `status` ENUM('Sheltered', 'Transferred', 'Decamped / Returned Home') NOT NULL DEFAULT 'Sheltered',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_evacuee_center` (`evacuation_center_id`),
+  INDEX `idx_evacuee_code` (`evacuee_code`),
+  INDEX `idx_evacuee_purok` (`purok_origin`),
+  INDEX `idx_evacuee_status` (`status`),
+  CONSTRAINT `fk_evac_center` FOREIGN KEY (`evacuation_center_id`) REFERENCES `drrm_evacuation_centers` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_evac_household` FOREIGN KEY (`household_id`) REFERENCES `households` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 29. DRRM RELIEF GOODS & EMERGENCY STOCKPILE INVENTORY TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `drrm_relief_items` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `item_code` VARCHAR(40) NOT NULL UNIQUE,
+  `item_name` VARCHAR(150) NOT NULL,
+  `category` ENUM('Food Packs', 'Hygiene Kits', 'Medical & First Aid', 'Bedding & Shelter', 'Emergency Tools & Rescue') NOT NULL DEFAULT 'Food Packs',
+  `unit` VARCHAR(30) NOT NULL DEFAULT 'packs',
+  `stock_quantity` INT NOT NULL DEFAULT 0,
+  `reorder_level` INT NOT NULL DEFAULT 100,
+  `unit_cost` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+  `fund_source` VARCHAR(100) DEFAULT '5% BDRRM Calamity Fund',
+  `expiry_date` DATE DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_relief_code` (`item_code`),
+  INDEX `idx_relief_cat` (`category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 30. DRRM RELIEF DISTRIBUTIONS & DAFAC JOURNAL TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `drrm_relief_distributions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `distribution_code` VARCHAR(40) NOT NULL UNIQUE,
+  `calamity_name` VARCHAR(150) NOT NULL,
+  `evacuee_id` INT DEFAULT NULL,
+  `recipient_name` VARCHAR(150) NOT NULL,
+  `purok` VARCHAR(50) NOT NULL,
+  `relief_item_id` INT NOT NULL,
+  `quantity_given` INT NOT NULL DEFAULT 1,
+  `distributed_by` VARCHAR(150) NOT NULL DEFAULT 'BDRRMC Relief Operations Team',
+  `distributed_at` DATETIME NOT NULL,
+  `remarks` VARCHAR(255) DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_dist_code` (`distribution_code`),
+  INDEX `idx_dist_evacuee` (`evacuee_id`),
+  INDEX `idx_dist_item` (`relief_item_id`),
+  INDEX `idx_dist_date` (`distributed_at`),
+  CONSTRAINT `fk_dist_evacuee` FOREIGN KEY (`evacuee_id`) REFERENCES `drrm_evacuees` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_dist_item` FOREIGN KEY (`relief_item_id`) REFERENCES `drrm_relief_items` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT DRRM SEED DATA (RA 10121 COMPLIANT)
+-- ------------------------------------------------------------
+INSERT INTO `drrm_evacuation_centers` (`center_name`, `purok`, `address`, `capacity_families`, `capacity_individuals`, `current_families`, `current_individuals`, `has_generator`, `has_water_supply`, `has_clinic_station`, `center_manager`, `contact_no`, `status`) VALUES
+('San Isidro Multi-Purpose Evacuation Center', 'Purok 2', 'Barangay Complex, J.P. Rizal St., Purok 2', 80, 400, 18, 82, 1, 1, 1, 'Kagawad Benjamin Alcantara', '0917-555-1122', 'Active / Open'),
+('San Isidro Elementary School - Gymnasium', 'Purok 3', 'School Compound, Mabini Ext., Purok 3', 120, 600, 0, 0, 1, 1, 1, 'Prof. Lydia V. Gonzaga', '0918-555-3344', 'Standby / Inactive'),
+('Riverside Community Covered Court', 'Purok 1', 'Riverside Drive near Marikina River tributary, Purok 1', 45, 200, 0, 0, 0, 1, 0, 'Tanod Team Leader Danilo Cruz', '0920-555-5566', 'Standby / Inactive');
+
+INSERT INTO `drrm_evacuees` (`evacuee_code`, `evacuation_center_id`, `household_id`, `family_head_name`, `purok_origin`, `contact_no`, `members_count`, `seniors_count`, `children_count`, `pwd_count`, `pregnant_lactating_count`, `room_tent_no`, `special_medical_needs`, `check_in_date`, `status`) VALUES
+('EVAC-2026-0001', 1, 1, 'Eduardo T. Mendoza', 'Purok 1', '0920-555-0404', 5, 1, 2, 0, 0, 'Tent A-01', 'Hypertension maintenance required (Losartan 50mg)', '2026-09-08 18:30:00', 'Sheltered'),
+('EVAC-2026-0002', 1, 2, 'Elena Vda. de Castro', 'Purok 1', '0917-555-0912', 4, 2, 1, 1, 0, 'Tent A-02', 'Wheelchair accessibility needed; diabetic maintenance', '2026-09-08 19:15:00', 'Sheltered'),
+('EVAC-2026-0003', 1, NULL, 'Rodel C. Bautista', 'Purok 6', '0922-555-8831', 6, 0, 3, 0, 1, 'Tent B-05', 'Infant formula & pediatric oral rehydration needed', '2026-09-09 06:45:00', 'Sheltered');
+
+INSERT INTO `drrm_relief_items` (`item_code`, `item_name`, `category`, `unit`, `stock_quantity`, `reorder_level`, `unit_cost`, `fund_source`, `expiry_date`) VALUES
+('REL-FP-01', 'BDRRMC Family Food Pack (6kg Rice, Canned Goods, Coffee)', 'Food Packs', 'packs', 420, 150, 560.00, '5% BDRRM Calamity Fund', '2027-08-31'),
+('REL-HK-02', 'Family Emergency Hygiene Kit (Soap, Toothpaste, Sanitizer, Pads)', 'Hygiene Kits', 'kits', 280, 100, 350.00, '5% BDRRM Calamity Fund', '2028-06-30'),
+('REL-FA-03', 'First Aid Trauma Kit & Basic OTC Medications', 'Medical & First Aid', 'kits', 85, 40, 750.00, '5% BDRRM Calamity Fund', '2027-12-31'),
+('REL-BD-04', 'Emergency Sleeping Mat & Thermal Blanket Set', 'Bedding & Shelter', 'sets', 310, 80, 420.00, '5% BDRRM Calamity Fund', NULL),
+('REL-EQ-05', 'Emergency Rechargeable LED Searchlight & Siren', 'Emergency Tools & Rescue', 'units', 35, 15, 1200.00, '5% BDRRM Calamity Fund', NULL);
+
+INSERT INTO `drrm_relief_distributions` (`distribution_code`, `calamity_name`, `evacuee_id`, `recipient_name`, `purok`, `relief_item_id`, `quantity_given`, `distributed_by`, `distributed_at`, `remarks`) VALUES
+('DAFAC-2026-0001', 'Habagat Heavy Monsoon & Flash Flood', 1, 'Eduardo T. Mendoza', 'Purok 1', 1, 2, 'Kag. Benjamin Alcantara', '2026-09-09 08:00:00', 'Initial 3-day family ration pack issued upon arrival'),
+('DAFAC-2026-0002', 'Habagat Heavy Monsoon & Flash Flood', 1, 'Eduardo T. Mendoza', 'Purok 1', 2, 1, 'BHW Teresa Morales', '2026-09-09 08:05:00', 'Family hygiene set released'),
+('DAFAC-2026-0003', 'Habagat Heavy Monsoon & Flash Flood', 2, 'Elena Vda. de Castro', 'Purok 1', 1, 2, 'Kag. Benjamin Alcantara', '2026-09-09 08:30:00', 'Initial food assistance ration'),
+('DAFAC-2026-0004', 'Habagat Heavy Monsoon & Flash Flood', 3, 'Rodel C. Bautista', 'Purok 6', 1, 2, 'Kag. Benjamin Alcantara', '2026-09-09 09:15:00', 'Food pack issued with supplementary infant pack');
+
 SET FOREIGN_KEY_CHECKS = 1;
 
 

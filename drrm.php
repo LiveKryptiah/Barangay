@@ -1,0 +1,1172 @@
+<?php
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/auth.php';
+require_auth('login.php');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disaster Risk Reduction &amp; Management (BDRRMC) &bull; Barangay Management System</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <script src="js/components/theme.js"></script>
+  <style>
+    .meter-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--color-field);
+      border-radius: var(--rounded-full);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .meter-bar {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: var(--rounded-full);
+      transition: width 0.3s ease;
+    }
+    .meter-bar.warning { background: var(--color-amber); }
+    .meter-bar.danger { background: var(--color-rose); }
+    .meter-bar.success { background: var(--color-emerald); }
+
+    .drrm-tab-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      border-bottom: 1px solid var(--color-hairline-soft);
+      margin-bottom: var(--spacing-md);
+      overflow-x: auto;
+    }
+
+    .drrm-tab-btn {
+      padding: 10px 18px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      transition: all 0.2s ease;
+    }
+
+    .drrm-tab-btn:hover {
+      color: var(--color-ink);
+    }
+
+    .drrm-tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .drrm-tab-panel {
+      display: none;
+    }
+
+    .drrm-tab-panel.active {
+      display: block;
+    }
+
+    .center-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    @media (max-width: 1024px) {
+      .center-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .center-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .alert-pill-toggle {
+      display: inline-flex;
+      background: var(--color-field);
+      border-radius: var(--rounded-full);
+      padding: 3px;
+      gap: 4px;
+    }
+
+    .alert-pill-btn {
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--rounded-full);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      transition: all 0.2s;
+    }
+
+    .alert-pill-btn.active.normal { background: var(--color-canvas); color: var(--color-ink); }
+    .alert-pill-btn.active.white  { background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; }
+    .alert-pill-btn.active.blue   { background: #2563eb; color: #ffffff; }
+    .alert-pill-btn.active.red    { background: #dc2626; color: #ffffff; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #print-statutory-container, #print-statutory-container * { visibility: visible; }
+      #print-statutory-container { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+    }
+  </style>
+</head>
+<body class="app-layout">
+  <div class="app-shell">
+    <div id="sidebar-mount"></div>
+    <div class="app-main">
+      <div id="mobile-header-mount"></div>
+      <div id="app-topbar-mount"></div>
+
+      <main class="app-content">
+        <!-- Page Hero Section -->
+        <section class="page-hero">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:var(--spacing-md);">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-xs); margin-bottom: 4px;">
+                <span class="badge-neutral" style="color: #ea580c; font-weight: 700; border-color: rgba(234, 88, 12, 0.3);">RA 10121 BDRRMC</span>
+                <span class="badge-neutral">NDRRMC &bull; DILG Camp Coordination</span>
+              </div>
+              <h1 class="typography-heading-2">Disaster Risk Reduction &amp; Management</h1>
+              <p class="typography-body-lg" style="color: var(--color-text-muted); max-width: 720px;">
+                Camp evacuation coordination, DAFAC relief distribution journal, spatial hazard monitoring, and 5% Calamity Fund tracking.
+              </p>
+            </div>
+
+            <!-- Emergency Actions & Level Pill -->
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--spacing-sm);">
+              <div class="alert-pill-toggle" id="alert-status-pill">
+                <button type="button" class="alert-pill-btn normal active" onclick="setAlertLevel('Normal')">Normal</button>
+                <button type="button" class="alert-pill-btn white" onclick="setAlertLevel('White')">White Alert</button>
+                <button type="button" class="alert-pill-btn blue" onclick="setAlertLevel('Blue')">Blue Alert</button>
+                <button type="button" class="alert-pill-btn red" onclick="setAlertLevel('Red')">Red Alert</button>
+              </div>
+
+              <div style="display:flex; gap:var(--spacing-xs);">
+                <button class="button-outline" onclick="openBroadcastModal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  SMS Advisory
+                </button>
+                <button class="button-primary" onclick="openCheckInModal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                  Check-in Family
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stats Ladder -->
+        <section class="stats-ladder" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+          <!-- Card 1: Sheltered Evacuees -->
+          <div class="studio-card">
+            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Sheltered Evacuees</span>
+            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0;" id="stat-evacuees">0 Fam / 0 Pax</div>
+            <div class="meter-wrap">
+              <div class="meter-bar" id="meter-evacuees-bar" style="width: 0%;"></div>
+            </div>
+            <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 4px;" id="stat-evacuees-sub">0% shelter occupancy</div>
+          </div>
+
+          <!-- Card 2: Evacuation Centers -->
+          <div class="studio-card">
+            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Evacuation Centers</span>
+            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0;" id="stat-centers">0 Active / 0 Total</div>
+            <div class="typography-caption" style="color: var(--color-text-muted);" id="stat-centers-sub">0 Standby facilities</div>
+          </div>
+
+          <!-- Card 3: Relief Stockpile -->
+          <div class="studio-card">
+            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Relief Stockpile</span>
+            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0;" id="stat-relief">0 Units</div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="badge badge-neutral" id="stat-relief-valuation">₱ 0.00 Val</span>
+              <span class="badge badge-rose" id="badge-low-stock" style="display:none;">Low Stock</span>
+            </div>
+          </div>
+
+          <!-- Card 4: 5% BDRRM Calamity Fund -->
+          <div class="studio-card">
+            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">5% Calamity Fund</span>
+            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0; color: var(--color-emerald);" id="stat-fund">₱ 0.00</div>
+            <div class="typography-caption" style="color: var(--color-text-muted);" id="stat-fund-util">0% Utilized (70% QRF / 30% Prep)</div>
+          </div>
+        </section>
+
+        <!-- Tab Navigation -->
+        <nav class="drrm-tab-nav" aria-label="DRRM Subsections">
+          <button type="button" class="drrm-tab-btn active" onclick="switchTab('evacuation')">Evacuation Centers &amp; Shelters</button>
+          <button type="button" class="drrm-tab-btn" onclick="switchTab('relief')">DAFAC &amp; Relief Operations</button>
+          <button type="button" class="drrm-tab-btn" onclick="switchTab('hazards')">Purok Hazards &amp; Vulnerability</button>
+          <button type="button" class="drrm-tab-btn" onclick="switchTab('advisories')">Early Warning &amp; Advisories</button>
+        </nav>
+
+        <!-- Tab 1: Evacuation Centers & Shelters -->
+        <div class="drrm-tab-panel active" id="tab-evacuation">
+          <!-- Centers Overview Grid -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-sm);">
+            <h3 class="typography-heading-4">Designated Evacuation Centers</h3>
+            <div style="display:flex; gap:var(--spacing-xs);">
+              <button class="button-outline" onclick="printMasterlist()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print Masterlist
+              </button>
+              <button class="button-primary" onclick="openCenterModal()">+ New Shelter Site</button>
+            </div>
+          </div>
+
+          <div class="center-grid" id="centers-container">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Camp Masterlist Table -->
+          <div class="studio-card" style="margin-top:var(--spacing-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-sm); flex-wrap:wrap; gap:var(--spacing-xs);">
+              <h3 class="typography-heading-4">Sheltered Families &amp; Evacuee Masterlist</h3>
+              <div style="display:flex; gap:var(--spacing-xs);">
+                <input type="text" id="search-evacuees" class="text-input" placeholder="Search head or code..." oninput="refreshEvacuees()" style="width:200px; padding:6px 12px;">
+                <select id="filter-evac-status" class="text-input" onchange="refreshEvacuees()" style="padding:6px 12px;">
+                  <option value="">All Statuses</option>
+                  <option value="Sheltered" selected>Currently Sheltered</option>
+                  <option value="Decamped / Returned Home">Decamped</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Evacuee Code</th>
+                    <th>Family Head</th>
+                    <th>Purok Origin</th>
+                    <th>Pax</th>
+                    <th>Vulnerable Groups</th>
+                    <th>Shelter &amp; Room/Tent</th>
+                    <th>Check-in Date</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="evacuees-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: DAFAC & Relief Operations -->
+        <div class="drrm-tab-panel" id="tab-relief">
+          <!-- Relief Stockpile Card -->
+          <div class="studio-card" style="margin-bottom:var(--spacing-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-sm);">
+              <div>
+                <h3 class="typography-heading-4">Emergency Relief Goods Stockpile</h3>
+                <p class="typography-caption" style="color:var(--color-text-muted);">Stockpile inventory charged against 5% BDRRM Calamity Fund.</p>
+              </div>
+              <button class="button-primary" onclick="openReliefModal()">+ Add / Restock Item</button>
+            </div>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Item Code</th>
+                    <th>Item Description</th>
+                    <th>Category</th>
+                    <th>Unit Cost</th>
+                    <th>Available Stock</th>
+                    <th>Reorder Level</th>
+                    <th>Stock Health</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="relief-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- DAFAC Distribution Log -->
+          <div class="studio-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-sm); flex-wrap:wrap; gap:var(--spacing-xs);">
+              <div>
+                <h3 class="typography-heading-4">DAFAC Relief Distribution Journal</h3>
+                <p class="typography-caption" style="color:var(--color-text-muted);">Disaster Assistance Family Access Card issuances log.</p>
+              </div>
+              <div style="display:flex; gap:var(--spacing-xs);">
+                <button class="button-outline" onclick="printDAFAC()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                  Print DAFAC Journal
+                </button>
+                <button class="button-primary" onclick="openDafacModal()">+ Record Distribution</button>
+              </div>
+            </div>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>DAFAC Code</th>
+                    <th>Date &amp; Time</th>
+                    <th>Recipient Head</th>
+                    <th>Purok</th>
+                    <th>Item Given</th>
+                    <th>Qty</th>
+                    <th>Calamity Event</th>
+                    <th>Issued By</th>
+                  </tr>
+                </thead>
+                <tbody id="dafac-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Purok Hazards & Vulnerability -->
+        <div class="drrm-tab-panel" id="tab-hazards">
+          <div class="studio-card">
+            <div style="margin-bottom:var(--spacing-sm);">
+              <h3 class="typography-heading-4">Purok Disaster Exposure &amp; Demographic Vulnerability</h3>
+              <p class="typography-caption" style="color:var(--color-text-muted);">Real-time aggregation from Geo-Profiling and Household Risk assessments.</p>
+            </div>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Purok Zone</th>
+                    <th>Active Population</th>
+                    <th>Vulnerable Persons</th>
+                    <th>Flood Hazard Risk</th>
+                    <th>Landslide Risk</th>
+                    <th>Fire Exposure</th>
+                  </tr>
+                </thead>
+                <tbody id="hazards-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Early Warning & Advisories -->
+        <div class="drrm-tab-panel" id="tab-advisories">
+          <div class="studio-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-sm);">
+              <div>
+                <h3 class="typography-heading-4">Early Warning Bulletins &amp; Advisories Dispatch</h3>
+                <p class="typography-caption" style="color:var(--color-text-muted);">Automated SMS text broadcasts to community leader relays.</p>
+              </div>
+              <button class="button-primary" onclick="openBroadcastModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send Calamity Advisory
+              </button>
+            </div>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Alert Level</th>
+                    <th>Calamity Nature</th>
+                    <th>Target Zone</th>
+                    <th>Subject / Message</th>
+                  </tr>
+                </thead>
+                <tbody id="advisories-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Dialog Modals -->
+
+  <!-- 1. Center Modal -->
+  <dialog class="modal-dialog" id="center-modal">
+    <div class="studio-card" style="width: 500px; max-width: 90vw;">
+      <h3 class="typography-heading-4" style="margin-bottom:var(--spacing-md);">Register Evacuation Center</h3>
+      <form id="center-form" onsubmit="saveCenter(event)">
+        <input type="hidden" name="id" id="center_id">
+        <div style="margin-bottom:var(--spacing-sm);">
+          <label class="typography-caption">Facility / Center Name</label>
+          <input type="text" class="text-input" name="center_name" required placeholder="e.g. San Isidro Covered Court" style="width:100%;">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Purok Location</label>
+            <select class="text-input" name="purok" style="width:100%;">
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+              <option value="Purok 4">Purok 4</option>
+              <option value="Purok 5">Purok 5</option>
+              <option value="Purok 6">Purok 6</option>
+              <option value="Purok 7">Purok 7</option>
+            </select>
+          </div>
+          <div>
+            <label class="typography-caption">Initial Status</label>
+            <select class="text-input" name="status" style="width:100%;">
+              <option value="Active / Open">Active / Open</option>
+              <option value="Standby / Inactive">Standby / Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Max Family Capacity</label>
+            <input type="number" class="text-input" name="capacity_families" value="50" required style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Max Individual Capacity</label>
+            <input type="number" class="text-input" name="capacity_individuals" value="250" required style="width:100%;">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Camp Manager Name</label>
+            <input type="text" class="text-input" name="center_manager" value="Kagawad on Duty" required style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Contact Number</label>
+            <input type="text" class="text-input" name="contact_no" placeholder="0917-..." style="width:100%;">
+          </div>
+        </div>
+        <div style="margin-bottom:var(--spacing-md);">
+          <label class="typography-caption">Exact Street Address</label>
+          <input type="text" class="text-input" name="address" placeholder="e.g. Complex Grounds, J.P. Rizal" style="width:100%;">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--spacing-xs);">
+          <button type="button" class="button-outline" onclick="closeModal('center-modal')">Cancel</button>
+          <button type="submit" class="button-primary">Save Center</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 2. Check-in Evacuee Modal -->
+  <dialog class="modal-dialog" id="checkin-modal">
+    <div class="studio-card" style="width: 550px; max-width: 90vw;">
+      <h3 class="typography-heading-4" style="margin-bottom:var(--spacing-md);">Check-in Evacuee Family</h3>
+      <form id="checkin-form" onsubmit="saveEvacuee(event)">
+        <div style="margin-bottom:var(--spacing-sm);">
+          <label class="typography-caption">Target Evacuation Center</label>
+          <select class="text-input" name="evacuation_center_id" id="checkin-center-select" required style="width:100%;">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Family Head Full Name</label>
+            <input type="text" class="text-input" name="family_head_name" required placeholder="e.g. Roberto M. Santos" style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Purok of Origin</label>
+            <select class="text-input" name="purok_origin" style="width:100%;">
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+              <option value="Purok 4">Purok 4</option>
+              <option value="Purok 5">Purok 5</option>
+              <option value="Purok 6">Purok 6</option>
+              <option value="Purok 7">Purok 7</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:var(--spacing-xs); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Total Pax</label>
+            <input type="number" class="text-input" name="members_count" value="4" min="1" required style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Seniors</label>
+            <input type="number" class="text-input" name="seniors_count" value="0" min="0" style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Children</label>
+            <input type="number" class="text-input" name="children_count" value="0" min="0" style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">PWD</label>
+            <input type="number" class="text-input" name="pwd_count" value="0" min="0" style="width:100%;">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Tent / Modular Room No.</label>
+            <input type="text" class="text-input" name="room_tent_no" value="Tent A-01" style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Emergency Contact No.</label>
+            <input type="text" class="text-input" name="contact_no" placeholder="09XX-XXX-XXXX" style="width:100%;">
+          </div>
+        </div>
+        <div style="margin-bottom:var(--spacing-md);">
+          <label class="typography-caption">Special Medical Needs / Maintenance Medicines</label>
+          <input type="text" class="text-input" name="special_medical_needs" placeholder="e.g. Maintenance for hypertension; wheelchair bound" style="width:100%;">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--spacing-xs);">
+          <button type="button" class="button-outline" onclick="closeModal('checkin-modal')">Cancel</button>
+          <button type="submit" class="button-primary">Complete Check-in</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 3. Decamp Modal -->
+  <dialog class="modal-dialog" id="decamp-modal">
+    <div class="studio-card" style="width: 400px; max-width: 90vw;">
+      <h3 class="typography-heading-4" style="margin-bottom:var(--spacing-sm);">Confirm Decamping</h3>
+      <p class="typography-body-lg" style="color:var(--color-text-muted); margin-bottom:var(--spacing-md);">
+        Are you sure this family is ready to safely return home or transfer? This will free up shelter capacity.
+      </p>
+      <input type="hidden" id="decamp-evacuee-id">
+      <div style="display:flex; justify-content:flex-end; gap:var(--spacing-xs);">
+        <button type="button" class="button-outline" onclick="closeModal('decamp-modal')">Cancel</button>
+        <button type="button" class="button-primary" onclick="confirmDecamp()">Confirm Decamp</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 4. Relief Item Modal -->
+  <dialog class="modal-dialog" id="relief-modal">
+    <div class="studio-card" style="width: 480px; max-width: 90vw;">
+      <h3 class="typography-heading-4" style="margin-bottom:var(--spacing-md);">Stockpile Emergency Relief Goods</h3>
+      <form id="relief-form" onsubmit="saveRelief(event)">
+        <div style="margin-bottom:var(--spacing-sm);">
+          <label class="typography-caption">Item Description</label>
+          <input type="text" class="text-input" name="item_name" required placeholder="e.g. Family Hygiene Pack (Soap, Towel, Sanitizer)" style="width:100%;">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Category</label>
+            <select class="text-input" name="category" style="width:100%;">
+              <option value="Food Packs">Food Packs</option>
+              <option value="Hygiene Kits">Hygiene Kits</option>
+              <option value="Medical & First Aid">Medical & First Aid</option>
+              <option value="Bedding & Shelter">Bedding & Shelter</option>
+              <option value="Emergency Tools & Rescue">Emergency Tools & Rescue</option>
+            </select>
+          </div>
+          <div>
+            <label class="typography-caption">Quantity to Stock</label>
+            <input type="number" class="text-input" name="quantity" value="100" min="1" required style="width:100%;">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-md);">
+          <div>
+            <label class="typography-caption">Unit (e.g. packs, kits, sets)</label>
+            <input type="text" class="text-input" name="unit" value="packs" style="width:100%;">
+          </div>
+          <div>
+            <label class="typography-caption">Unit Cost (₱)</label>
+            <input type="number" step="0.01" class="text-input" name="unit_cost" value="450.00" style="width:100%;">
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--spacing-xs);">
+          <button type="button" class="button-outline" onclick="closeModal('relief-modal')">Cancel</button>
+          <button type="submit" class="button-primary">Save to Stockpile</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 5. DAFAC Distribution Modal -->
+  <dialog class="modal-dialog" id="dafac-modal">
+    <div class="studio-card" style="width: 480px; max-width: 90vw;">
+      <h3 class="typography-heading-4" style="margin-bottom:var(--spacing-md);">Record DAFAC Relief Issuance</h3>
+      <form id="dafac-form" onsubmit="saveDafac(event)">
+        <div style="margin-bottom:var(--spacing-sm);">
+          <label class="typography-caption">Recipient Full Name (Family Head)</label>
+          <input type="text" class="text-input" name="recipient_name" required placeholder="e.g. Eduardo T. Mendoza" style="width:100%;">
+        </div>
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Select Relief Good</label>
+            <select class="text-input" name="relief_item_id" id="dafac-item-select" required style="width:100%;">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="typography-caption">Quantity</label>
+            <input type="number" class="text-input" name="quantity_given" value="1" min="1" required style="width:100%;">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Purok</label>
+            <select class="text-input" name="purok" style="width:100%;">
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+              <option value="Purok 4">Purok 4</option>
+              <option value="Purok 5">Purok 5</option>
+              <option value="Purok 6">Purok 6</option>
+              <option value="Purok 7">Purok 7</option>
+            </select>
+          </div>
+          <div>
+            <label class="typography-caption">Calamity / Weather Event</label>
+            <input type="text" class="text-input" name="calamity_name" value="Heavy Monsoon Rains" required style="width:100%;">
+          </div>
+        </div>
+        <div style="margin-bottom:var(--spacing-md);">
+          <label class="typography-caption">Remarks</label>
+          <input type="text" class="text-input" name="remarks" placeholder="e.g. 3-day emergency ration" style="width:100%;">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--spacing-xs);">
+          <button type="button" class="button-outline" onclick="closeModal('dafac-modal')">Cancel</button>
+          <button type="submit" class="button-primary">Record Distribution</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 6. Broadcast Advisory Modal -->
+  <dialog class="modal-dialog" id="broadcast-modal">
+    <div class="studio-card" style="width: 500px; max-width: 90vw;">
+      <h3 class="typography-heading-4" style="margin-bottom:var(--spacing-md);">Broadcast Calamity Advisory</h3>
+      <form id="broadcast-form" onsubmit="sendBroadcast(event)">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--spacing-sm); margin-bottom:var(--spacing-sm);">
+          <div>
+            <label class="typography-caption">Alert Level</label>
+            <select class="text-input" name="alert_level" style="width:100%;">
+              <option value="White Alert">White Alert (Precautionary)</option>
+              <option value="Blue Alert">Blue Alert (50% Deployment)</option>
+              <option value="Red Alert" selected>Red Alert (Full Response)</option>
+            </select>
+          </div>
+          <div>
+            <label class="typography-caption">Calamity Type</label>
+            <input type="text" class="text-input" name="calamity_type" value="Typhoon & Heavy Flooding" required style="width:100%;">
+          </div>
+        </div>
+        <div style="margin-bottom:var(--spacing-sm);">
+          <label class="typography-caption">Target Affected Puroks</label>
+          <input type="text" class="text-input" name="affected_purok" value="Purok 1, Purok 2, Riverside Zone" required style="width:100%;">
+        </div>
+        <div style="margin-bottom:var(--spacing-md);">
+          <label class="typography-caption">SMS Advisory Message</label>
+          <textarea class="text-input" name="message" required style="width:100%; height:90px; resize:vertical;">[BDRRMC ADVISORY]: Heavy rainfall alert issued. Residents in low-lying areas near the river are advised to evacuate preemptively to San Isidro Multi-Purpose Center.</textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:var(--spacing-xs);">
+          <button type="button" class="button-outline" onclick="closeModal('broadcast-modal')">Cancel</button>
+          <button type="submit" class="button-primary" style="background:#dc2626;">Dispatch Alert Broadcast</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Printable Container -->
+  <div id="print-statutory-container" style="display:none;"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/sidebar.js"></script>
+
+  <script>
+    let currentCenters = [];
+    let currentEvacuees = [];
+    let currentRelief = [];
+
+    const formatCurrency = (val) => {
+      const num = parseFloat(val) || 0;
+      return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(num);
+    };
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m && typeof m.showModal === 'function') m.showModal();
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m && typeof m.close === 'function') m.close();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.drrm-tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.drrm-tab-btn').forEach(b => b.classList.remove('active'));
+      
+      const panel = document.getElementById('tab-' + tabId);
+      if (panel) panel.classList.add('active');
+      
+      const btn = Array.from(document.querySelectorAll('.drrm-tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (btn) btn.classList.add('active');
+
+      if (tabId === 'evacuation') { refreshCenters(); refreshEvacuees(); }
+      if (tabId === 'relief') { refreshRelief(); refreshDistributions(); }
+      if (tabId === 'hazards') refreshPurokHazards();
+      if (tabId === 'advisories') refreshAdvisories();
+    }
+
+    async function apiCall(action, method = 'GET', body = null) {
+      const options = { method, headers: { 'Accept': 'application/json' } };
+      if (body && method !== 'GET') {
+        options.headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(body);
+      }
+      try {
+        const res = await fetch(`api/drrm.php?action=${action}`, options);
+        if (!res.ok) throw new Error('API request failed');
+        return await res.json();
+      } catch (err) {
+        console.error(`API Error [${action}]:`, err);
+        return { success: false, data: [] };
+      }
+    }
+
+    async function refreshAllData() {
+      await refreshStats();
+      await refreshCenters();
+      await refreshEvacuees();
+      await refreshRelief();
+      await refreshDistributions();
+      await refreshPurokHazards();
+      await refreshAdvisories();
+    }
+
+    async function refreshStats() {
+      const res = await apiCall('stats');
+      const d = res.data || {};
+      
+      document.getElementById('stat-evacuees').textContent = `${d.total_families || 0} Fam / ${d.total_pax || 0} Pax`;
+      const occRate = d.occupancy_rate || 0;
+      const occBar = document.getElementById('meter-evacuees-bar');
+      occBar.style.width = Math.min(100, occRate) + '%';
+      occBar.className = 'meter-bar ' + (occRate > 85 ? 'danger' : (occRate > 60 ? 'warning' : 'success'));
+      document.getElementById('stat-evacuees-sub').textContent = `${occRate}% shelter occupancy (${d.capacity_individuals || 0} max cap)`;
+
+      document.getElementById('stat-centers').textContent = `${d.active_centers || 0} Active / ${d.total_centers || 0} Total`;
+      document.getElementById('stat-centers-sub').textContent = `${d.standby_centers || 0} Standby facilities`;
+
+      const relief = d.relief_stockpile || {};
+      document.getElementById('stat-relief').textContent = `${relief.total_units || 0} Units`;
+      document.getElementById('stat-relief-valuation').textContent = formatCurrency(relief.total_valuation || 0);
+      document.getElementById('badge-low-stock').style.display = (relief.low_stock_count > 0) ? 'inline-block' : 'none';
+
+      const fund = d.calamity_fund || {};
+      document.getElementById('stat-fund').textContent = formatCurrency(fund.balance || 0);
+      document.getElementById('stat-fund-util').textContent = `${fund.utilization_rate || 0}% Utilized of ${formatCurrency(fund.approved_budget || 0)}`;
+    }
+
+    async function refreshCenters() {
+      const res = await apiCall('centers');
+      const list = (res.data && res.data.centers) ? res.data.centers : (Array.isArray(res.data) ? res.data : []);
+      currentCenters = list;
+
+      const container = document.getElementById('centers-container');
+      const select = document.getElementById('checkin-center-select');
+      select.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = '<div style="grid-column:1/-1;" class="studio-card text-muted">No evacuation centers registered.</div>';
+        return;
+      }
+
+      select.innerHTML = list.map(c => `<option value="${c.id}">${c.name || c.center_name} (${c.purok})</option>`).join('');
+
+      container.innerHTML = list.map(c => {
+        const occ = c.occupancy_rate || 0;
+        const barColor = occ >= 90 ? 'danger' : (occ >= 65 ? 'warning' : 'success');
+        const isActive = c.status === 'Active / Open';
+        return `
+          <div class="studio-card" style="border-left: 4px solid ${isActive ? 'var(--color-primary)' : 'var(--color-hairline)'};">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+              <span class="badge-neutral" style="font-size:0.6875rem;">${c.purok}</span>
+              <span class="badge ${isActive ? 'badge-blue' : 'badge-neutral'}">${c.status}</span>
+            </div>
+            <h4 class="typography-heading-4" style="margin-bottom:6px;">${c.center_name || c.name}</h4>
+            <p class="typography-caption" style="color:var(--color-text-muted); margin-bottom:8px;">${c.address || 'Barangay Shelter'}</p>
+
+            <div style="font-size:0.8125rem; font-weight:600; margin-bottom:2px;">
+              ${c.live_families || c.current_families || 0} / ${c.capacity_families || 50} Families (${c.live_individuals || c.current_individuals || 0} pax)
+            </div>
+            <div class="meter-wrap" style="height:6px; margin-bottom:8px;">
+              <div class="meter-bar ${barColor}" style="width:${Math.min(100, occ)}%;"></div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--color-text-muted);">
+              <span>Gen: ${c.has_generator ? '⚡ Yes' : '❌ No'} | Water: ${c.has_water_supply ? '💧 Yes' : '❌ No'}</span>
+              <span>${c.contact_no || ''}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function refreshEvacuees() {
+      const q = document.getElementById('search-evacuees').value.trim();
+      const status = document.getElementById('filter-evac-status').value;
+      const res = await apiCall(`evacuees&q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`);
+      const list = (res.data && res.data.evacuees) ? res.data.evacuees : (Array.isArray(res.data) ? res.data : []);
+      currentEvacuees = list;
+
+      const tbody = document.getElementById('evacuees-tbody');
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:24px;" class="text-muted">No evacuee families found for this filter.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(e => {
+        const isSheltered = e.status === 'Sheltered';
+        const vulnTags = [];
+        if (e.seniors_count > 0) vulnTags.push(`${e.seniors_count} Senior`);
+        if (e.children_count > 0) vulnTags.push(`${e.children_count} Child`);
+        if (e.pwd_count > 0) vulnTags.push(`${e.pwd_count} PWD`);
+        if (e.pregnant_lactating_count > 0) vulnTags.push(`Pregnant`);
+
+        return `
+          <tr>
+            <td><code>${e.evacuee_code}</code></td>
+            <td><strong>${e.family_head_name || e.family_head}</strong></td>
+            <td>${e.purok_origin || e.purok}</td>
+            <td><strong>${e.members_count}</strong></td>
+            <td>
+              ${vulnTags.length ? vulnTags.map(t => `<span class="badge-neutral" style="font-size:0.625rem;">${t}</span>`).join(' ') : '<span class="text-muted">—</span>'}
+              ${e.special_medical_needs ? `<div style="font-size:0.6875rem; color:var(--color-rose); margin-top:2px;">⚕️ ${e.special_medical_needs}</div>` : ''}
+            </td>
+            <td>
+              <div>${e.center_name || 'Shelter'}</div>
+              <small class="typography-caption text-muted">${e.room_tent_no || 'Tent'}</small>
+            </td>
+            <td>${e.date_in || e.check_in_date || '—'}</td>
+            <td><span class="badge ${isSheltered ? 'badge-amber' : 'badge-green'}">${e.status}</span></td>
+            <td style="text-align:right;">
+              ${isSheltered ? `<button class="button-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="openDecampModal(${e.id})">Decamp</button>` : '—'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function refreshRelief() {
+      const res = await apiCall('relief_inventory');
+      const list = (res.data && res.data.items) ? res.data.items : (Array.isArray(res.data) ? res.data : []);
+      currentRelief = list;
+
+      const tbody = document.getElementById('relief-tbody');
+      const select = document.getElementById('dafac-item-select');
+      select.innerHTML = '<option value="">Select relief good...</option>';
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;" class="text-muted">No relief items in stockpile inventory.</td></tr>';
+        return;
+      }
+
+      list.forEach(item => {
+        if (item.stock_quantity > 0) {
+          select.innerHTML += `<option value="${item.id}">${item.item_name} (${item.stock_quantity} ${item.unit} on hand)</option>`;
+        }
+      });
+
+      tbody.innerHTML = list.map(item => {
+        const isLow = (item.stock_quantity <= item.reorder_level);
+        return `
+          <tr>
+            <td><code>${item.item_code}</code></td>
+            <td><strong>${item.item_name}</strong></td>
+            <td><span class="badge-neutral">${item.category}</span></td>
+            <td>${formatCurrency(item.unit_cost)}</td>
+            <td><strong style="font-size:1rem;">${item.stock_quantity}</strong> ${item.unit}</td>
+            <td>${item.reorder_level} ${item.unit}</td>
+            <td><span class="badge ${isLow ? 'badge-rose' : 'badge-green'}">${isLow ? 'Critically Low' : 'Adequate'}</span></td>
+            <td style="text-align:right;">
+              <button class="button-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="promptRestock(${item.id})">+ Restock</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function refreshDistributions() {
+      const res = await apiCall('distributions');
+      const list = (res.data && res.data.distributions) ? res.data.distributions : (Array.isArray(res.data) ? res.data : []);
+
+      const tbody = document.getElementById('dafac-tbody');
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px;" class="text-muted">No DAFAC relief distributions recorded yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(d => `
+        <tr>
+          <td><code>${d.distribution_code}</code></td>
+          <td>${d.date || d.distributed_at}</td>
+          <td><strong>${d.recipient || d.recipient_name}</strong></td>
+          <td>${d.purok}</td>
+          <td>${d.item_name || 'Relief Pack'}</td>
+          <td><strong>${d.quantity || d.quantity_given}</strong> ${d.unit || 'packs'}</td>
+          <td>${d.calamity || d.calamity_name}</td>
+          <td><small class="typography-caption text-muted">${d.distributed_by}</small></td>
+        </tr>
+      `).join('');
+    }
+
+    async function refreshPurokHazards() {
+      const res = await apiCall('hazards');
+      const list = (res.data && res.data.hazards) ? res.data.hazards : [];
+      const tbody = document.getElementById('hazards-tbody');
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px;" class="text-muted">No hazard profiling data available.</td></tr>';
+        return;
+      }
+
+      const getRiskBadge = (lvl) => {
+        if (lvl === 'High' || lvl === 'Critical') return '<span class="badge badge-rose">High Risk</span>';
+        if (lvl === 'Medium') return '<span class="badge badge-amber">Medium Risk</span>';
+        return '<span class="badge badge-green">Low Risk</span>';
+      };
+
+      tbody.innerHTML = list.map(h => `
+        <tr>
+          <td><strong>${h.purok}</strong></td>
+          <td>${h.population || 0} residents</td>
+          <td><span class="badge-neutral">${h.vulnerable || 0} Priority Vulnerable</span></td>
+          <td>${getRiskBadge(h.flood_risk)}</td>
+          <td>${getRiskBadge(h.landslide_risk)}</td>
+          <td>${getRiskBadge(h.fire_risk)}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function refreshAdvisories() {
+      const res = await apiCall('advisories');
+      const list = (res.data && res.data.advisories) ? res.data.advisories : [];
+      const tbody = document.getElementById('advisories-tbody');
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px;" class="text-muted">No emergency advisories broadcasted recently.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(a => {
+        const isRed = a.alert_level === 'Red';
+        return `
+          <tr>
+            <td><small>${a.created_at || 'Just now'}</small></td>
+            <td><span class="badge ${isRed ? 'badge-rose' : 'badge-blue'}">${a.alert_level || 'Alert'}</span></td>
+            <td><strong>${a.calamity_type || 'Weather Alert'}</strong></td>
+            <td>${a.affected_purok || 'All Zones'}</td>
+            <td>${a.message || a.subject}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Handlers
+    function openCenterModal() { document.getElementById('center-form').reset(); openModal('center-modal'); }
+    function openCheckInModal() { document.getElementById('checkin-form').reset(); openModal('checkin-modal'); }
+    function openDecampModal(id) { document.getElementById('decamp-evacuee-id').value = id; openModal('decamp-modal'); }
+    function openReliefModal() { document.getElementById('relief-form').reset(); openModal('relief-modal'); }
+    function openDafacModal() { document.getElementById('dafac-form').reset(); openModal('dafac-modal'); }
+    function openBroadcastModal() { document.getElementById('broadcast-form').reset(); openModal('broadcast-modal'); }
+
+    function setAlertLevel(level) {
+      document.querySelectorAll('.alert-pill-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.alert-pill-btn')).find(b => b.textContent.includes(level));
+      if (activeBtn) activeBtn.classList.add('active');
+      Toast.info(`Emergency readiness set to: ${level}`);
+    }
+
+    async function saveCenter(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const res = await apiCall('create_center', 'POST', data);
+      if (res && res.success !== false) {
+        Toast.success('Evacuation center registered successfully');
+        closeModal('center-modal');
+        refreshCenters();
+        refreshStats();
+      } else {
+        Toast.error(res.message || 'Failed to save center');
+      }
+    }
+
+    async function saveEvacuee(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const res = await apiCall('register_evacuee', 'POST', data);
+      if (res && res.success !== false) {
+        Toast.success('Family checked in successfully');
+        closeModal('checkin-modal');
+        refreshEvacuees();
+        refreshCenters();
+        refreshStats();
+      } else {
+        Toast.error(res.message || 'Failed to check in evacuee');
+      }
+    }
+
+    async function confirmDecamp() {
+      const id = document.getElementById('decamp-evacuee-id').value;
+      const res = await apiCall('decamp_evacuee', 'POST', { id });
+      if (res && res.success !== false) {
+        Toast.success('Family decamped and shelter capacity freed');
+        closeModal('decamp-modal');
+        refreshEvacuees();
+        refreshCenters();
+        refreshStats();
+      } else {
+        Toast.error(res.message || 'Failed to decamp');
+      }
+    }
+
+    async function saveRelief(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const res = await apiCall('create_relief_item', 'POST', data);
+      if (res && res.success !== false) {
+        Toast.success('Relief goods added to stockpile');
+        closeModal('relief-modal');
+        refreshRelief();
+        refreshStats();
+      } else {
+        Toast.error(res.message || 'Failed to save relief item');
+      }
+    }
+
+    async function promptRestock(id) {
+      const qtyStr = prompt('Enter quantity to add to stock:', '50');
+      if (!qtyStr) return;
+      const qty = parseInt(qtyStr, 10);
+      if (isNaN(qty) || qty <= 0) return alert('Invalid quantity');
+      const res = await apiCall('restock_item', 'POST', { id, quantity: qty });
+      if (res && res.success !== false) {
+        Toast.success(`Stock added (+${qty})`);
+        refreshRelief();
+        refreshStats();
+      }
+    }
+
+    async function saveDafac(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const res = await apiCall('record_distribution', 'POST', data);
+      if (res && res.success !== false) {
+        Toast.success('DAFAC issuance recorded and stock deducted');
+        closeModal('dafac-modal');
+        refreshDistributions();
+        refreshRelief();
+        refreshStats();
+      } else {
+        Toast.error(res.message || 'Failed to record distribution');
+      }
+    }
+
+    async function sendBroadcast(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const res = await apiCall('broadcast_advisory', 'POST', data);
+      if (res && res.success !== false) {
+        Toast.success('Advisory broadcasted to SMS relay successfully');
+        closeModal('broadcast-modal');
+        refreshAdvisories();
+        refreshStats();
+      } else {
+        Toast.error(res.message || 'Failed to broadcast advisory');
+      }
+    }
+
+    // Official Statutory Print Reports
+    function printMasterlist() {
+      const container = document.getElementById('print-statutory-container');
+      const rows = currentEvacuees.map((e, idx) => `
+        <tr>
+          <td style="border:1px solid #000; padding:6px; text-align:center;">${idx+1}</td>
+          <td style="border:1px solid #000; padding:6px;"><strong>${e.family_head_name || e.family_head}</strong></td>
+          <td style="border:1px solid #000; padding:6px; text-align:center;">${e.evacuee_code}</td>
+          <td style="border:1px solid #000; padding:6px;">${e.purok_origin || e.purok}</td>
+          <td style="border:1px solid #000; padding:6px; text-align:center;">${e.members_count}</td>
+          <td style="border:1px solid #000; padding:6px; text-align:center;">${e.seniors_count || 0}</td>
+          <td style="border:1px solid #000; padding:6px; text-align:center;">${e.children_count || 0}</td>
+          <td style="border:1px solid #000; padding:6px; text-align:center;">${e.pwd_count || 0}</td>
+          <td style="border:1px solid #000; padding:6px;">${e.center_name} (${e.room_tent_no || ''})</td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <div style="font-family:Arial, sans-serif; padding:20px; color:#000;">
+          <div style="text-align:center; margin-bottom:20px;">
+            <p style="margin:0; font-size:9pt;">Republic of the Philippines &bull; City / Municipality</p>
+            <h2 style="margin:4px 0; font-size:14pt;">BARANGAY DISASTER RISK REDUCTION &amp; MANAGEMENT COUNCIL</h2>
+            <h3 style="margin:4px 0; font-size:12pt; text-decoration:underline;">OFFICIAL EVACUATION CAMP MASTERLIST (RA 10121)</h3>
+            <p style="margin:0; font-size:9pt;">Generated on: ${new Date().toLocaleString()}</p>
+          </div>
+
+          <table style="width:100%; border-collapse:collapse; font-size:8.5pt; margin-bottom:30px;">
+            <thead>
+              <tr style="background:#f0f0f0;">
+                <th style="border:1px solid #000; padding:6px; width:30px;">#</th>
+                <th style="border:1px solid #000; padding:6px;">Family Head Name</th>
+                <th style="border:1px solid #000; padding:6px; width:100px;">DAFAC / Evac ID</th>
+                <th style="border:1px solid #000; padding:6px; width:80px;">Origin</th>
+                <th style="border:1px solid #000; padding:6px; width:40px;">Pax</th>
+                <th style="border:1px solid #000; padding:6px; width:40px;">Sen</th>
+                <th style="border:1px solid #000; padding:6px; width:40px;">Chd</th>
+                <th style="border:1px solid #000; padding:6px; width:40px;">PWD</th>
+                <th style="border:1px solid #000; padding:6px;">Assigned Shelter</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:40px; font-size:9pt;">
+            <div style="text-align:center;">
+              <p>Prepared by:</p><br><br>
+              <strong>BDRRMC CAMP COORDINATOR</strong><br>
+              <span>Evacuation Shelter In-Charge</span>
+            </div>
+            <div style="text-align:center;">
+              <p>Attested &amp; Certified by:</p><br><br>
+              <strong>HON. ANTONIO S. VALDEZ</strong><br>
+              <span>Punong Barangay / BDRRMC Chairperson</span>
+            </div>
+          </div>
+        </div>
+      `;
+      window.print();
+    }
+
+    function printDAFAC() {
+      window.print();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.AppSidebar) await AppSidebar.render('drrm');
+      await refreshAllData();
+    });
+  </script>
+</body>
+</html>

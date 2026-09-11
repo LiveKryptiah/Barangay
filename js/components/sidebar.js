@@ -165,7 +165,7 @@ class AppSidebar {
 
             <li>
               <a href="lupon${ext}" class="ex-app-shell-row ${activePage === 'lupon' ? 'active' : ''}" title="Lupong Tagapamayapa &amp; Katarungang Pambarangay Studio (RA 7160)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #6366f1;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M12 3v18"/>
                   <path d="m3 7 9-4 9 4"/>
                   <path d="M6 7v6a6 6 0 0 0 12 0V7"/>
@@ -177,10 +177,21 @@ class AppSidebar {
 
             <li>
               <a href="incidents${ext}" class="ex-app-shell-row ${activePage === 'incidents' ? 'active' : ''}" title="Emergency Dispatch & Tanod Patrol">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #ef4444;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                 </svg>
                 <span>Incident Dispatch</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="drrm${ext}" class="ex-app-shell-row ${activePage === 'drrm' ? 'active' : ''}" title="Disaster Risk Reduction &amp; Management (RA 10121)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M12 8v4"/><path d="M12 16h.01"/>
+                </svg>
+                <span>Disaster &amp; DRRM</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">BDRRMC</span>
               </a>
             </li>
 
@@ -196,7 +207,7 @@ class AppSidebar {
 
             <li>
               <a href="health${ext}" class="ex-app-shell-row ${activePage === 'health' ? 'active' : ''}" title="Health Station & Nutrition Information System">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #10b981;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                 </svg>
                 <span>Health Station</span>
@@ -206,7 +217,7 @@ class AppSidebar {
 
             <li>
               <a href="procurement${ext}" class="ex-app-shell-row ${activePage === 'procurement' ? 'active' : ''}" title="Bids & Awards Committee (BAC) & Procurement Management">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #f59e0b;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                   <line x1="3" y1="6" x2="21" y2="6"/>
                   <path d="M16 10a4 4 0 0 1-8 0"/>
@@ -218,7 +229,7 @@ class AppSidebar {
 
             <li>
               <a href="budget${ext}" class="ex-app-shell-row ${activePage === 'budget' ? 'active' : ''}" title="Budget &amp; Financial Management (COA Compliant)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #10b981;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                 </svg>
                 <span>Budget &amp; Finance</span>
@@ -228,7 +239,7 @@ class AppSidebar {
 
             <li>
               <a href="legislation${ext}" class="ex-app-shell-row ${activePage === 'legislation' ? 'active' : ''}" title="Sangguniang Barangay Legislative Tracking & Ordinances">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #8b5cf6;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                   <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                   <line x1="9" y1="7" x2="15" y2="7"/>
@@ -275,7 +286,7 @@ class AppSidebar {
           <ul class="sidebar-nav">
             <li>
               <a href="portal${ext}" target="_blank" class="ex-app-shell-row" title="Open Citizen Public Portal">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: var(--color-primary);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="2" y1="12" x2="22" y2="12"/>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -287,7 +298,7 @@ class AppSidebar {
 
             <li>
               <a href="verify${ext}" target="_blank" class="ex-app-shell-row ${activePage === 'verify' ? 'active' : ''}" title="Verify Official Document">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #10b981;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   <path d="M9 12l2 2 4-4"/>
                 </svg>
@@ -384,6 +395,7 @@ class AppSidebar {
       blotter: 'Peace & Order Blotter',
       lupon: 'Lupong Tagapamayapa & KP Studio',
       incidents: 'Incident Dispatch & Patrol',
+      drrm: 'Disaster Risk Reduction & Management',
       notifications: 'SMS & Notification Dispatch',
       health: 'Barangay Health Station & Nutrition Hub',
       procurement: 'Bids, Awards & Fiscal Hub',
@@ -497,7 +509,7 @@ class AppSidebar {
             ${activePage === 'incidents' ? '<div class="egov-nav-pill-active"></div>' : ''}
           </a>
 
-          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','budget','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
+          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','budget','drrm','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             <span>More</span>
           </button>
