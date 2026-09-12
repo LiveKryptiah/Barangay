@@ -362,7 +362,7 @@ require_auth('login.php');
               <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
                 <div class="form-group">
                   <label class="form-label" for="setting-contact-email">Official Public Email</label>
-                  <input type="email" id="setting-contact-email" class="text-input" placeholder="e.g. office@barangaysanisidro.gov.ph">
+                  <input type="email" id="setting-contact-email" class="text-input" placeholder="e.g. office@barangaysanisidro.local">
                 </div>
 
                 <div class="form-group">
@@ -754,7 +754,7 @@ require_auth('login.php');
             document.getElementById('setting-province-name').value = 'Metropolitan Manila';
             document.getElementById('setting-hall-address').value = 'Barangay Hall Complex, J.P. Rizal St.';
             document.getElementById('setting-contact-phone').value = '(02) 8123-4567 / 0917-888-9999';
-            document.getElementById('setting-contact-email').value = 'office@barangaysanisidro.gov.ph';
+            document.getElementById('setting-contact-email').value = 'office@barangaysanisidro.local';
             document.getElementById('setting-office-hours').value = 'Monday – Friday, 8:00 AM – 5:00 PM';
           }
           updateLivePreview();

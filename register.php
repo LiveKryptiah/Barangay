@@ -18,6 +18,7 @@ if (is_logged_in()) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BarangayOS - Open-source Local Government Unit (LGU) administration and community management platform. Developed for administrative demonstration and educational use.">
   <title>Register &bull; Barangay Management System</title>
   <link rel="stylesheet" href="css/design-system.css">
   <script src="js/components/theme.js"></script>
@@ -140,7 +141,7 @@ if (is_logged_in()) {
                 type="email" 
                 id="email" 
                 class="text-input" 
-                placeholder="e.g. admin@barangay.gov.ph" 
+                placeholder="e.g. admin@barangay.local" 
                 required
               >
             </div>

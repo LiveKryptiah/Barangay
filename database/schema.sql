@@ -349,7 +349,7 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('province', 'Rizal'),
 ('hall_address', 'Barangay Hall Complex, J.P. Rizal St., San Isidro'),
 ('contact_no', '(02) 8987-6543 / 0917-123-4567'),
-('email', 'info@sanisidro.gov.ph'),
+('email', 'info@sanisidro.local'),
 ('service_hours', 'Mon - Fri: 8:00 AM - 5:00 PM'),
 ('logo_url', ''),
 ('fee_clearance', '50.00'),

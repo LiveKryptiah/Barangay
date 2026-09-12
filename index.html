@@ -31,15 +31,10 @@
           return;
         }
 
-        const hasAdmin = await authService.hasAdminAccount();
-        if (!hasAdmin) {
-          window.location.replace('login.html');
-        } else {
-          window.location.replace('login.html');
-        }
+        window.location.replace('portal.html');
       } catch (e) {
         console.error('Initialization error:', e);
-        window.location.replace('login.html');
+        window.location.replace('portal.html');
       }
     });
   </script>

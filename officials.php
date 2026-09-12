@@ -579,7 +579,7 @@ require_auth('login.php');
 
         <div class="form-group">
           <label class="form-label" for="official-email">Official Email</label>
-          <input type="email" id="official-email" class="text-input" placeholder="official@barangay.gov.ph">
+          <input type="email" id="official-email" class="text-input" placeholder="official@barangay.local">
         </div>
       </div>
 

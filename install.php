@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_install'])) {
                 INSERT INTO `users` (`username`, `password_hash`, `full_name`, `email`, `role`, `position`, `status`)
                 VALUES (?, ?, ?, ?, 'admin', 'Punong Barangay / Administrator', 'active')
             ");
-            $adminInsert->execute(['admin', $defaultPassHash, 'System Administrator', 'admin@barangay.gov.ph']);
+            $adminInsert->execute(['admin', $defaultPassHash, 'System Administrator', 'admin@barangay.local']);
             $installationLog[] = "✓ Initial administrator account provisioned (username: 'admin', default pass: 'Password123!')";
         } else {
             $installationLog[] = "✓ Existing administrator account preserved";
