@@ -187,7 +187,7 @@ if (is_logged_in()) {
   </footer>
 
   <script src="js/api.js"></script>
-  <script src="js/components/navbar.js"></script>
+  <script src="js/components/nav.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Mount navbar

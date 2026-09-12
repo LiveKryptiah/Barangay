@@ -191,7 +191,7 @@ if (is_logged_in()) {
   </main>
 
   <script src="js/api.js"></script>
-  <script src="js/components/navbar.js"></script>
+  <script src="js/components/nav.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (window.AppNavbar) {

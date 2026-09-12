@@ -99,7 +99,7 @@ if ($action === 'stats') {
     ]);
 }
 
-if ($action === 'allocations') {
+if ($action === 'allocations' || $action === 'budget') {
     $year = $_GET['year'] ?? null;
     $sql = "SELECT * FROM `budget_allocations`";
     $params = [];
@@ -112,7 +112,7 @@ if ($action === 'allocations') {
     json_response(true, $allocations);
 }
 
-if ($action === 'create_allocation') {
+if ($action === 'create_allocation' || $action === 'create_budget') {
     $fiscal_year = $input['fiscal_year'] ?? date('Y');
     $fund_source = $input['fund_source'] ?? 'General Fund';
     $program_title = $input['program_title'] ?? '';
@@ -138,15 +138,14 @@ if ($action === 'create_allocation') {
     
     $id = db_insert('budget_allocations', $data);
     if ($id) {
-        log_audit_action('create_allocation', 'budget_allocations', "Created budget allocation: $program_title for ₱" . number_format($approved_budget, 2));
-        $new_allocation = db_fetch_one("SELECT * FROM `budget_allocations` WHERE id = ?", [$id]);
-        json_response(true, $new_allocation, "Budget allocation created successfully.");
+        log_audit_action('create', 'budget_allocations', "Created allocation: $program_title (₱" . number_format($approved_budget, 2) . ")");
+        json_response(true, ['id' => $id], "Budget allocation created successfully.", 201);
     } else {
         json_response(false, null, "Failed to create budget allocation.");
     }
 }
 
-if ($action === 'update_allocation') {
+if ($action === 'update_allocation' || $action === 'update_budget') {
     $id = $input['id'] ?? null;
     if (!$id) json_response(false, null, "ID is required.");
     

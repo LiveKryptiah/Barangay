@@ -1148,7 +1148,6 @@ require_auth('login.php');
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/components/sidebar.js"></script>
-  <script src="js/components/header.js"></script>
 
   <script>
     // State management

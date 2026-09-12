@@ -9,13 +9,26 @@ class NavPill {
     if (!navPlaceholder) return;
 
     let userSession = null;
-    if (window.authService) {
+    if (window.barangayAuth && typeof window.barangayAuth.getUser === 'function') {
+      const u = window.barangayAuth.getUser();
+      if (u) userSession = { user: u };
+    }
+    if (!userSession && window.authService) {
       userSession = await window.authService.getCurrentSession();
     }
 
     const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
     const isLoggedIn = !!userSession;
     const user = userSession ? userSession.user : null;
+
+    if (!activePage) {
+      const p = window.location.pathname.toLowerCase();
+      if (p.includes('register')) activePage = 'register';
+      else if (p.includes('portal')) activePage = 'portal';
+      else if (p.includes('verify')) activePage = 'verify';
+      else if (p.includes('dashboard')) activePage = 'dashboard';
+      else activePage = 'login';
+    }
 
     let linksHtml = '';
     let actionsHtml = '';
@@ -33,7 +46,7 @@ class NavPill {
 
       actionsHtml = `
         <div class="nav-actions">
-          <span class="badge-neutral" title="${user.fullName}">${user.username} (${user.role})</span>
+          <span class="badge-neutral" title="${user.fullName || user.full_name || user.username}">${user.username || 'User'} (${user.role || 'Staff'})</span>
           <button id="nav-logout-btn" class="button-outline" style="height: 38px; padding: 0 16px; font-size: 0.875rem;">
             Sign out
           </button>
@@ -58,7 +71,7 @@ class NavPill {
         actionsHtml = `
           <div class="nav-actions">
             ${themeBtnHtml}
-            <a href="register.html" class="button-primary" style="height: 38px; padding: 0 16px; font-size: 0.875rem;">
+            <a href="register${ext}" class="button-primary" style="height: 38px; padding: 0 16px; font-size: 0.875rem;">
               New Account
             </a>
           </div>
@@ -67,7 +80,7 @@ class NavPill {
         actionsHtml = `
           <div class="nav-actions">
             ${themeBtnHtml}
-            <a href="login.html" class="button-primary" style="height: 38px; padding: 0 16px; font-size: 0.875rem;">
+            <a href="login${ext}" class="button-primary" style="height: 38px; padding: 0 16px; font-size: 0.875rem;">
               Sign in
             </a>
           </div>
@@ -78,7 +91,7 @@ class NavPill {
     navPlaceholder.innerHTML = `
       <div class="nav-pill-wrapper">
         <nav class="nav-pill" aria-label="Main Navigation">
-          <a href="${isLoggedIn ? 'dashboard.html' : 'login.html'}" class="nav-brand">
+          <a href="${isLoggedIn ? 'dashboard' + ext : 'login' + ext}" class="nav-brand">
             <div class="nav-brand-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -109,13 +122,16 @@ class NavPill {
     const logoutBtn = document.getElementById('nav-logout-btn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {
-        if (window.authService) {
+        if (window.barangayAuth && typeof window.barangayAuth.logout === 'function') {
+          await window.barangayAuth.logout();
+        } else if (window.authService) {
           await window.authService.logout();
-          window.location.href = 'login.html';
         }
+        window.location.href = `login${ext}`;
       });
     }
   }
 }
 
 window.NavPill = NavPill;
+window.AppNavbar = NavPill;

@@ -742,8 +742,22 @@
       const endpoint = storeEndpoints[storeName];
       if (!endpoint) throw new Error(`Unknown store: ${storeName}`);
 
-      const url = `${endpoint.split('?')[0]}?action=delete`;
-      return await apiRequest(url, 'POST', { id: id });
+      let action = 'delete';
+      let body = { id: id };
+
+      if (storeName === 'procurement_bids') action = 'delete_bid';
+      else if (storeName === 'disbursement_vouchers') body.type = 'voucher';
+      else if (storeName === 'revenue_collections') body.type = 'collection';
+      else if (storeName === 'budget_obligations') body.type = 'obligation';
+      else if (storeName === 'budget_allocations') body.type = 'allocation';
+      else if (storeName === 'financial_reports') body.type = 'report';
+      else if (storeName === 'drrm_evacuation_centers') body.type = 'center';
+      else if (storeName === 'drrm_evacuees') body.type = 'evacuee';
+      else if (storeName === 'drrm_relief_items') body.type = 'relief_item';
+      else if (storeName === 'drrm_relief_distributions') body.type = 'distribution';
+
+      const url = `${endpoint.split('?')[0]}?action=${action}`;
+      return await apiRequest(url, 'POST', body);
     },
 
     async count(storeName) {

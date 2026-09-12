@@ -8,6 +8,8 @@ class Footer {
     const footerPlaceholder = document.getElementById('footer-mount');
     if (!footerPlaceholder) return;
 
+    const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
+
     footerPlaceholder.innerHTML = `
       <footer class="footer-inverted">
         <div class="footer-inner">
@@ -20,10 +22,10 @@ class Footer {
               <div class="footer-column">
                 <h4>System Modules</h4>
                 <ul>
-                  <li><a href="dashboard.html">Executive Dashboard</a></li>
-                  <li><a href="residents.html">Resident Directory</a></li>
-                  <li><a href="certificates.html">Clearance Issuance</a></li>
-                  <li><a href="blotter.html">Blotter & Incident Records</a></li>
+                  <li><a href="dashboard${ext}">Executive Dashboard</a></li>
+                  <li><a href="residents${ext}">Resident Directory</a></li>
+                  <li><a href="certificates${ext}">Clearance Issuance</a></li>
+                  <li><a href="blotter${ext}">Blotter & Incident Records</a></li>
                 </ul>
               </div>
               <div class="footer-column">
