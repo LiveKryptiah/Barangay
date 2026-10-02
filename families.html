@@ -253,6 +253,59 @@
       }
     }
 
+    .mt-xs {
+      margin-top: var(--spacing-xs);
+    }
+
+    .member-table-wrap {
+      border: 1px solid var(--color-hairline-soft);
+      border-radius: var(--rounded-sm);
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+
+    .checkbox-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background-color: var(--color-canvas-soft);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--rounded-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .checkbox-card:hover {
+      border-color: var(--color-primary);
+      background-color: var(--color-canvas);
+    }
+
+    .checkbox-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .head-avatar-squircle {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 102, 255, 0.08);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(0, 102, 255, 0.2);
+    }
+
     /* Tab Switcher */
     .tab-nav {
       display: flex;
@@ -575,64 +628,49 @@
   <!-- ===================================================== -->
   <!-- MODAL 1: REGISTER / EDIT FAMILY PROFILE               -->
   <!-- ===================================================== -->
-  <dialog id="family-modal" class="modal-dialog" style="max-width: 720px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline); padding-bottom: 10px;">
+  <dialog id="family-modal" class="modal-dialog" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
       <div>
-        <h3 class="typography-heading-3" id="modal-family-title">Register Family Profile.</h3>
-        <p class="typography-caption" style="color: var(--color-text-muted);">Socio-economic profiling and kinship unit mapping.</p>
+        <h3 class="typography-heading-4" id="modal-family-title">Register Family Profile.</h3>
+        <p class="typography-caption">Kinship profiling, 4Ps beneficiary tracking, and socio-economic classification.</p>
       </div>
-      <button type="button" class="button-icon-soft" onclick="document.getElementById('family-modal').close();" aria-label="Close modal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('family-modal').close();" style="height: 32px; padding: 0 14px; font-size: 0.8125rem;">
+        Cancel
       </button>
     </div>
 
-    <form id="family-form" style="max-height: 75vh; overflow-y: auto; padding-right: 4px;">
+    <form id="family-form" novalidate>
       <input type="hidden" id="family-edit-id" value="">
 
-      <!-- Section: Identification & Head -->
-      <div style="background-color: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-md); margin-bottom: var(--spacing-sm);">
-        <div class="typography-label" style="margin-bottom: 8px; color: var(--color-primary); font-weight: 700;">1. FAMILY IDENTIFICATION &amp; HEAD OF FAMILY</div>
-        
-        <div class="form-grid-2">
+      <!-- Step 1: Identification & Dwelling Location -->
+      <div style="margin-bottom: var(--spacing-md);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          1. Family Identification &amp; Dwelling
+        </span>
+
+        <div class="form-grid-2 mt-xs">
           <div class="form-group">
-            <label class="form-label" for="fam-control-no">Family Control Number</label>
-            <input type="text" id="fam-control-no" class="form-input" readonly style="background-color: var(--color-field); font-family: monospace; font-weight: 700;">
+            <label class="form-label" for="fam-control-no">Family Reference Control # <span style="color: var(--color-primary);">*</span></label>
+            <input type="text" id="fam-control-no" class="text-input" style="font-family: monospace; font-weight: 700; height: 42px; background-color: var(--color-canvas-soft);" readonly required>
           </div>
+
           <div class="form-group">
-            <label class="form-label" for="fam-name">Family Name / Clan Title *</label>
-            <input type="text" id="fam-name" class="form-input" required placeholder="e.g. Santos Family">
+            <label class="form-label" for="fam-name">Family / Clan Title <span style="color: var(--color-primary);">*</span></label>
+            <input type="text" id="fam-name" class="text-input" style="height: 42px;" placeholder="e.g. Santos Family" required>
           </div>
         </div>
 
-        <div class="form-group" style="margin-top: 8px;">
-          <label class="form-label" for="select-head-resident">Designate Head of Family (Puno ng Pamilya) *</label>
-          <select id="select-head-resident" class="form-select" required onchange="handleHeadSelection(this.value)">
-            <option value="">-- Choose Registered Resident as Family Head --</option>
-          </select>
-        </div>
-
-        <div id="head-preview-card" style="display: none; margin-top: 8px; padding: 10px; background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm);">
-          <div style="font-weight: 700; color: var(--color-ink);" id="head-preview-name">—</div>
-          <div class="typography-caption" id="head-preview-meta" style="color: var(--color-text-muted);">—</div>
-        </div>
-      </div>
-
-      <!-- Section: Dwelling & Living Details -->
-      <div style="background-color: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-md); margin-bottom: var(--spacing-sm);">
-        <div class="typography-label" style="margin-bottom: 8px; color: var(--color-primary); font-weight: 700;">2. DWELLING &amp; TERRITORIAL LOCATION</div>
-        
-        <div class="form-grid-3">
+        <div class="form-grid-3 mt-xs">
           <div class="form-group">
-            <label class="form-label" for="select-household">Dwelling / Household Link</label>
-            <select id="select-household" class="form-select">
-              <option value="">-- Shared Structure / Select Household --</option>
+            <label class="form-label" for="select-household">Dwelling / Structure Link</label>
+            <select id="select-household" class="text-input" style="height: 42px;">
+              <option value="">-- No Shared Structure / Unlinked --</option>
             </select>
-            <span class="typography-caption" style="color: var(--color-text-muted);">Leave empty if unhoused/temporary</span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="fam-purok">Purok / Zone *</label>
-            <select id="fam-purok" class="form-select" required>
+            <label class="form-label" for="fam-purok">Purok / Zone <span style="color: var(--color-primary);">*</span></label>
+            <select id="fam-purok" class="text-input" style="height: 42px;" required>
               <option value="Purok 1">Purok 1</option>
               <option value="Purok 2">Purok 2</option>
               <option value="Purok 3">Purok 3</option>
@@ -644,10 +682,10 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="fam-type">Family Kinship Type</label>
-            <select id="fam-type" class="form-select">
+            <label class="form-label" for="fam-type">Kinship Structure</label>
+            <select id="fam-type" class="text-input" style="height: 42px;">
               <option value="Nuclear">Nuclear (Parents + Kids)</option>
-              <option value="Extended">Extended (Multi-Generation)</option>
+              <option value="Extended">Extended (Multi-Gen)</option>
               <option value="Solo Parent">Solo Parent</option>
               <option value="Childless Couple">Childless Couple</option>
               <option value="Blended">Blended / Reconstituted</option>
@@ -656,10 +694,10 @@
           </div>
         </div>
 
-        <div class="form-grid-2" style="margin-top: 8px;">
+        <div class="form-grid-2 mt-xs">
           <div class="form-group">
             <label class="form-label" for="fam-tenure">Housing Tenure</label>
-            <select id="fam-tenure" class="form-select">
+            <select id="fam-tenure" class="text-input" style="height: 42px;">
               <option value="Owner">Owner (House &amp; Lot)</option>
               <option value="Tenant / Renter">Tenant / Renter</option>
               <option value="Sharer with Relative">Sharer with Relative / Co-Living</option>
@@ -668,8 +706,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="fam-main-income">Primary Source of Livelihood</label>
-            <select id="fam-main-income" class="form-select">
+            <label class="form-label" for="fam-main-income">Primary Livelihood Source</label>
+            <select id="fam-main-income" class="text-input" style="height: 42px;">
               <option value="Employment / Wages">Employment / Wages</option>
               <option value="Informal / Daily Labor">Informal / Daily Labor</option>
               <option value="Small Business / Sari-Sari">Small Business / Sari-Sari Store</option>
@@ -682,80 +720,122 @@
         </div>
       </div>
 
-      <!-- Section: Socio-Economic & Social Welfare -->
-      <div style="background-color: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-md); margin-bottom: var(--spacing-sm);">
-        <div class="typography-label" style="margin-bottom: 8px; color: var(--color-primary); font-weight: 700;">3. SOCIO-ECONOMIC &amp; WELFARE CLASSIFICATION</div>
+      <!-- Step 2: Head of Family -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          2. Head of Family (Puno ng Pamilya)
+        </span>
 
-        <div class="form-grid-2">
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: 4px;">
+          <select id="select-head-resident" class="text-input" style="height: 42px; padding: 0 12px; flex: 1;" required onchange="handleHeadSelection(this.value)">
+            <option value="">-- Choose Registered Resident as Family Head --</option>
+          </select>
+          <a href="residents.html" target="_blank" class="button-outline" style="height: 42px; padding: 0 14px; font-size: 0.75rem; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" title="Register new resident">
+            + New Resident
+          </a>
+        </div>
+
+        <div id="head-preview-card" style="display: none; margin-top: var(--spacing-xs); padding: 12px 14px; background-color: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); font-size: 0.8125rem;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="head-avatar-squircle" id="head-preview-avatar">H</div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <strong style="color: var(--color-ink); font-size: 0.9375rem;" id="head-preview-name">-</strong>
+                <span class="badge-blue" style="font-size: 0.625rem;">HEAD OF FAMILY</span>
+              </div>
+              <div class="typography-caption" id="head-preview-meta" style="color: var(--color-text-muted); margin-top: 2px;">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Socio-Economic & Social Welfare -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          3. Socio-Economic Assessment &amp; Social Welfare
+        </span>
+
+        <div class="form-grid-2 mt-xs">
           <div class="form-group">
-            <label class="form-label" for="fam-monthly-income">Monthly Family Income (PHP) *</label>
-            <input type="number" id="fam-monthly-income" class="form-input" min="0" step="500" value="0" required oninput="updatePovertyPreview(this.value)">
+            <label class="form-label" for="fam-monthly-income">Monthly Family Income (PHP) <span style="color: var(--color-primary);">*</span></label>
+            <div style="position: relative;">
+              <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--color-text-muted);">₱</span>
+              <input type="number" id="fam-monthly-income" class="text-input" style="padding-left: 32px; height: 42px; font-weight: 700;" min="0" step="500" value="0" required oninput="updatePovertyPreview(this.value)">
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Classification Status</label>
-            <div id="poverty-badge-preview" style="padding: 8px 12px; background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); font-weight: 700; font-size: 0.8125rem;">
+            <label class="form-label">Classification Benchmark</label>
+            <div id="poverty-badge-preview" class="badge-amber" style="height: 42px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8125rem; font-weight: 700; padding: 0 16px; border-radius: var(--rounded-sm); width: 100%;">
               Indigent / Below Poverty Threshold
             </div>
           </div>
         </div>
 
-        <div class="form-grid-2" style="margin-top: 10px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="checkbox" id="fam-is-4ps" style="width: 18px; height: 18px;" onchange="toggleFourPsInput(this.checked)">
-            <label for="fam-is-4ps" style="font-weight: 600; font-size: 0.8125rem; cursor: pointer;">
-              4Ps Beneficiary (Pantawid Pamilyang Pilipino Program)
-            </label>
-          </div>
+        <div class="form-grid-2 mt-xs">
+          <label class="checkbox-card" for="fam-is-4ps">
+            <input type="checkbox" id="fam-is-4ps" onchange="toggleFourPsInput(this.checked)">
+            <div>
+              <div style="font-weight: 700; font-size: 0.8125rem; color: var(--color-ink);">4Ps Beneficiary Household</div>
+              <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 2px;">Enrolled in Pantawid Pamilyang Pilipino Program (DSWD)</div>
+            </div>
+          </label>
 
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="checkbox" id="fam-is-ayuda" style="width: 18px; height: 18px;">
-            <label for="fam-is-ayuda" style="font-weight: 600; font-size: 0.8125rem; cursor: pointer;">
-              Ayuda Priority / Vulnerable Household
-            </label>
-          </div>
+          <label class="checkbox-card" for="fam-is-ayuda">
+            <input type="checkbox" id="fam-is-ayuda">
+            <div>
+              <div style="font-weight: 700; font-size: 0.8125rem; color: var(--color-ink);">Ayuda Priority / Vulnerable Unit</div>
+              <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 2px;">Priority recipient for emergency relief, DAFAC packs, and food aid</div>
+            </div>
+          </label>
         </div>
 
-        <div class="form-group" id="group-4ps-no" style="display: none; margin-top: 8px;">
+        <div class="form-group mt-xs" id="group-4ps-no" style="display: none;">
           <label class="form-label" for="fam-4ps-number">DSWD 4Ps Household ID Number</label>
-          <input type="text" id="fam-4ps-number" class="form-input" placeholder="e.g. 4PS-042100-0012">
+          <input type="text" id="fam-4ps-number" class="text-input" style="height: 42px; font-family: monospace;" placeholder="e.g. 4PS-042100-0012">
         </div>
       </div>
 
-      <!-- Section: Initial Members Roster -->
-      <div style="background-color: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-md); margin-bottom: var(--spacing-sm);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <div class="typography-label" style="color: var(--color-primary); font-weight: 700;">4. ENLIST FAMILY MEMBERS</div>
-          <span class="badge-neutral" id="modal-member-counter">1 Member</span>
+      <!-- Step 4: Family Members & Kinship Composition -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            4. Family Members &amp; Kinship Composition
+          </span>
+          <span class="typography-caption" id="modal-member-counter">1 Member Profiled</span>
         </div>
 
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-          <select id="select-add-member" class="form-select" style="flex: 2; min-width: 200px;">
-            <option value="">-- Choose Resident to Add --</option>
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-xs); flex-wrap: wrap;">
+          <select id="select-add-member" class="text-input" style="height: 42px; padding: 0 12px; flex: 2; min-width: 220px;">
+            <option value="">-- Choose Resident to Add to Family --</option>
           </select>
-          <select id="select-member-relation" class="form-select" style="flex: 1; min-width: 120px;">
-            <option value="Spouse">Spouse / Asawa</option>
-            <option value="Son">Son / Anak na Lalaki</option>
-            <option value="Daughter">Daughter / Anak na Babae</option>
-            <option value="Parent">Parent / Magulang</option>
-            <option value="Sibling">Sibling / Kapatid</option>
-            <option value="Grandchild">Grandchild / Apo</option>
-            <option value="In-Law">In-Law / Biyanan o Manugang</option>
-            <option value="Dependent">Other Dependent</option>
+
+          <select id="select-member-relation" class="text-input" style="height: 42px; flex: 1; min-width: 160px;">
+            <option value="Spouse (Asawa)">Spouse (Asawa)</option>
+            <option value="Son / Daughter (Anak)">Son / Daughter (Anak)</option>
+            <option value="Parent (Magulang)">Parent (Magulang)</option>
+            <option value="Sibling (Kapatid)">Sibling (Kapatid)</option>
+            <option value="Grandchild (Apo)">Grandchild (Apo)</option>
+            <option value="Grandparent (Lolo / Lola)">Grandparent (Lolo / Lola)</option>
+            <option value="In-Law (Biyanan / Manugang)">In-Law (Biyanan / Manugang)</option>
+            <option value="Extended Relative (Kamag-anak)">Extended Relative (Kamag-anak)</option>
+            <option value="Dependent (Umaasa)">Other Dependent (Umaasa)</option>
           </select>
-          <button type="button" class="button-outline" onclick="addMemberToModalList()" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
-            + Add
+
+          <button type="button" class="button-outline" onclick="addMemberToModalList()" style="height: 42px; padding: 0 16px; font-size: 0.8125rem; flex-shrink: 0;">
+            + Add Member
           </button>
         </div>
 
-        <div style="border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); background: var(--color-canvas); overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+        <div class="member-table-wrap" style="margin-top: var(--spacing-xs);">
+          <table class="data-table" style="font-size: 0.8125rem;">
             <thead>
-              <tr style="background: var(--color-canvas-soft); border-bottom: 1px solid var(--color-hairline); text-align: left;">
-                <th style="padding: 6px 10px;">Name</th>
-                <th style="padding: 6px 10px;">Relationship</th>
-                <th style="padding: 6px 10px;">Age / Details</th>
-                <th style="padding: 6px 10px; text-align: right;">Action</th>
+              <tr>
+                <th>Resident Member</th>
+                <th>Relationship to Head</th>
+                <th>Age / Civil Status</th>
+                <th>Vulnerabilities</th>
+                <th style="text-align: right;">Action</th>
               </tr>
             </thead>
             <tbody id="modal-members-tbody"></tbody>
@@ -763,16 +843,22 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="fam-remarks">Remarks &amp; Welfare Notes</label>
-        <textarea id="fam-remarks" class="form-textarea" rows="2" placeholder="e.g. Beneficiary of DAFAC typhoon assistance; vulnerable senior residing."></textarea>
+      <!-- Step 5: Caseworker Notes & Remarks -->
+      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
+        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+          5. Caseworker Notes &amp; Welfare Remarks
+        </span>
+        <div class="form-group mt-xs" style="margin-bottom: 0;">
+          <textarea id="fam-remarks" class="text-input" style="height: 72px; padding: 10px 12px; resize: vertical;" placeholder="e.g. Living in shared dwelling; vulnerable senior citizen residing; beneficiary of typhoon relief."></textarea>
+        </div>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); margin-top: var(--spacing-md); border-top: 1px solid var(--color-hairline); padding-top: 12px;">
-        <button type="button" class="button-outline" onclick="document.getElementById('family-modal').close();" style="height: 38px; padding: 0 16px;">
+      <!-- Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
+        <button type="button" class="button-outline" onclick="document.getElementById('family-modal').close();" style="height: 42px; padding: 0 20px;">
           Cancel
         </button>
-        <button type="submit" class="button-primary" id="btn-save-family" style="height: 38px; padding: 0 20px;">
+        <button type="submit" class="button-primary" id="btn-save-family" style="height: 42px; padding: 0 24px;">
           Save Family Profile
         </button>
       </div>
@@ -1523,13 +1609,28 @@
         currentModalMembers = (fam.members || []).map(m => {
           const res = allResidentsMap.get(m.residentId || m.resident_id);
           const fullName = res ? [res.firstName, res.middleName, res.lastName, res.suffix].filter(Boolean).join(' ') : (m.fullName || m.full_name || 'Resident');
+          const age = res ? (res.age || 0) : (m.age || 0);
+          const civilStatus = res ? (res.civilStatus || res.civil_status || 'Single') : (m.civilStatus || m.civil_status || 'Single');
+          const occupation = res ? (res.occupation || '') : (m.occupation || '');
+          const isSenior = (age >= 60) || Boolean(res?.isSenior || res?.is_senior || m.isSenior || m.is_senior);
+          const isMinor = (age > 0 && age < 18);
+          const is4Ps = Boolean(res?.is4Ps || res?.is_4ps || m.is4Ps || m.is_4ps);
+          const isPwd = Boolean(res?.isPwd || res?.is_pwd || m.isPwd || m.is_pwd);
+          const isSoloParent = Boolean(res?.isSoloParent || res?.is_solo_parent || m.isSoloParent || m.is_solo_parent);
+          const rel = m.relationshipToHead || m.relationship_to_head || 'Member';
           return {
             residentId: m.residentId || m.resident_id,
             fullName: fullName,
-            relationship: m.relationshipToHead || m.relationship_to_head || 'Member',
-            isHead: (m.relationshipToHead || m.relationship_to_head) === 'Head',
-            age: res ? res.age : (m.age || 0),
-            civilStatus: res ? res.civilStatus : 'Single'
+            relationship: rel,
+            isHead: rel === 'Head',
+            age: age,
+            civilStatus: civilStatus,
+            occupation: occupation,
+            isSenior: isSenior,
+            isMinor: isMinor,
+            is4Ps: is4Ps,
+            isPwd: isPwd,
+            isSoloParent: isSoloParent
           };
         });
         renderModalMembersList();
@@ -1555,7 +1656,12 @@
       card.style.display = 'block';
       const fullName = [res.firstName, res.middleName, res.lastName, res.suffix].filter(Boolean).join(' ');
       document.getElementById('head-preview-name').textContent = fullName;
-      document.getElementById('head-preview-meta').textContent = `${res.purok || 'Purok 1'} • Age: ${res.age || '—'} • ${res.civilStatus || 'Single'} • Phone: ${res.contactNo || res.phone || 'N/A'}`;
+      const initial = (res.firstName || res.lastName || 'H').charAt(0).toUpperCase();
+      const avatarElem = document.getElementById('head-preview-avatar');
+      if (avatarElem) avatarElem.textContent = initial;
+
+      const occText = res.occupation ? ` • ${res.occupation}` : '';
+      document.getElementById('head-preview-meta').textContent = `${res.purok || 'Purok 1'} • Age: ${res.age || '—'} • ${res.civilStatus || res.civil_status || 'Single'}${occText}`;
 
       if (!famNameInput.value.trim() || !editingFamilyId) {
         famNameInput.value = `${res.lastName || 'Santos'} Family`;
@@ -1566,6 +1672,13 @@
         document.getElementById('fam-purok').value = res.purok;
       }
 
+      const age = res.age || 0;
+      const isSenior = (age >= 60) || Boolean(res.isSenior || res.is_senior);
+      const isMinor = (age > 0 && age < 18);
+      const is4Ps = Boolean(res.is4Ps || res.is_4ps);
+      const isPwd = Boolean(res.isPwd || res.is_pwd);
+      const isSoloParent = Boolean(res.isSoloParent || res.is_solo_parent);
+
       // Insert or update Head in currentModalMembers
       const headIdx = currentModalMembers.findIndex(m => m.isHead);
       const headObj = {
@@ -1573,8 +1686,14 @@
         fullName: fullName,
         relationship: 'Head',
         isHead: true,
-        age: res.age || 0,
-        civilStatus: res.civilStatus || 'Single'
+        age: age,
+        civilStatus: res.civilStatus || res.civil_status || 'Single',
+        occupation: res.occupation || '',
+        isSenior: isSenior,
+        isMinor: isMinor,
+        is4Ps: is4Ps,
+        isPwd: isPwd,
+        isSoloParent: isSoloParent
       };
 
       if (headIdx >= 0) {
@@ -1604,14 +1723,28 @@
 
       const res = allResidentsMap.get(resId);
       const fullName = res ? [res.firstName, res.middleName, res.lastName, res.suffix].filter(Boolean).join(' ') : 'Resident';
+      const age = res ? (res.age || 0) : 0;
+      const civilStatus = res ? (res.civilStatus || res.civil_status || 'Single') : 'Single';
+      const occupation = res ? (res.occupation || '') : '';
+      const isSenior = (age >= 60) || Boolean(res?.isSenior || res?.is_senior);
+      const isMinor = (age > 0 && age < 18);
+      const is4Ps = Boolean(res?.is4Ps || res?.is_4ps);
+      const isPwd = Boolean(res?.isPwd || res?.is_pwd);
+      const isSoloParent = Boolean(res?.isSoloParent || res?.is_solo_parent);
 
       currentModalMembers.push({
         residentId: resId,
         fullName: fullName,
         relationship: relation,
         isHead: relation === 'Head',
-        age: res ? res.age : 0,
-        civilStatus: res ? res.civilStatus : 'Single'
+        age: age,
+        civilStatus: civilStatus,
+        occupation: occupation,
+        isSenior: isSenior,
+        isMinor: isMinor,
+        is4Ps: is4Ps,
+        isPwd: isPwd,
+        isSoloParent: isSoloParent
       });
 
       select.value = '';
@@ -1631,25 +1764,47 @@
     // Render Modal Members List
     function renderModalMembersList() {
       const tbody = document.getElementById('modal-members-tbody');
-      document.getElementById('modal-member-counter').textContent = `${currentModalMembers.length} ${currentModalMembers.length === 1 ? 'Member' : 'Members'}`;
+      const count = currentModalMembers.length;
+      document.getElementById('modal-member-counter').textContent = `${count} ${count === 1 ? 'Member Profiled' : 'Members Profiled'}`;
 
-      if (currentModalMembers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--color-text-muted); padding: 12px;">No members enlisted yet. Select a Head of Family above.</td></tr>`;
+      if (count === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 18px;">No members enlisted yet. Select a Head of Family above.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = currentModalMembers.map((m, idx) => `
-        <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-          <td style="padding: 6px 10px; font-weight: 600;">${m.fullName}</td>
-          <td style="padding: 6px 10px;"><span class="${m.isHead ? 'badge-blue' : 'badge-neutral'}">${m.relationship}</span></td>
-          <td style="padding: 6px 10px;">${m.age} yrs &bull; ${m.civilStatus}</td>
-          <td style="padding: 6px 10px; text-align: right;">
-            ${m.isHead ? '<span class="typography-caption" style="color: var(--color-primary); font-weight: 700;">HEAD</span>' : `
-              <button type="button" class="table-action-btn danger" onclick="removeModalMember(${idx})" style="padding: 2px 6px;">Remove</button>
-            `}
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = currentModalMembers.map((m, idx) => {
+        const badges = [];
+        if (m.isSenior) badges.push('<span class="badge-amber" style="font-size: 0.625rem;">Senior</span>');
+        if (m.isMinor) badges.push('<span class="badge-blue" style="font-size: 0.625rem;">Minor</span>');
+        if (m.is4Ps) badges.push('<span class="badge-emerald" style="font-size: 0.625rem;">4Ps</span>');
+        if (m.isPwd) badges.push('<span class="badge-purple" style="font-size: 0.625rem;">PWD</span>');
+        if (m.isSoloParent) badges.push('<span class="badge-neutral" style="font-size: 0.625rem;">Solo Parent</span>');
+        const badgeHtml = badges.length > 0 ? `<div style="display: flex; gap: 4px; flex-wrap: wrap;">${badges.join('')}</div>` : '<span class="typography-caption" style="color: var(--color-text-muted);">None</span>';
+
+        return `
+          <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+            <td style="padding: 10px 12px;">
+              <div style="font-weight: 700; color: var(--color-ink);">${m.fullName}</div>
+              ${m.occupation ? `<div class="typography-caption" style="color: var(--color-text-muted);">${m.occupation}</div>` : ''}
+            </td>
+            <td style="padding: 10px 12px;">
+              <span class="${m.isHead ? 'badge-blue' : 'badge-neutral'}">${m.relationship}</span>
+            </td>
+            <td style="padding: 10px 12px;">
+              <div style="font-weight: 600;">${m.age > 0 ? `${m.age} yrs` : '—'}</div>
+              <div class="typography-caption" style="color: var(--color-text-muted);">${m.civilStatus}</div>
+            </td>
+            <td style="padding: 10px 12px;">
+              ${badgeHtml}
+            </td>
+            <td style="padding: 10px 12px; text-align: right;">
+              ${m.isHead ? '<span class="typography-caption" style="color: var(--color-primary); font-weight: 700; letter-spacing: 0.5px;">HEAD</span>' : `
+                <button type="button" class="table-action-btn danger" onclick="removeModalMember(${idx})" style="padding: 4px 8px; font-size: 0.75rem;">Remove</button>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // Toggle 4Ps input field
@@ -1661,28 +1816,39 @@
     window.updatePovertyPreview = function(income) {
       const inc = parseFloat(income) || 0;
       let status = 'Indigent / Below Poverty Threshold';
-      let color = '#ef4444';
+      let badgeClass = 'badge-amber';
 
       if (inc < 10000) {
         status = 'Indigent / Below Poverty Threshold';
-        color = '#ef4444';
+        badgeClass = 'badge-amber';
       } else if (inc <= 20000) {
         status = 'Low Income / Subsistence';
-        color = '#f59e0b';
+        badgeClass = 'badge-amber';
       } else if (inc <= 40000) {
         status = 'Lower Middle Class';
-        color = '#3b82f6';
+        badgeClass = 'badge-blue';
       } else if (inc <= 70000) {
         status = 'Middle Class';
-        color = '#10b981';
+        badgeClass = 'badge-emerald';
       } else {
-        status = 'Above Average';
-        color = '#8b5cf6';
+        status = 'Above Average / High Income';
+        badgeClass = 'badge-purple';
       }
 
       const badge = document.getElementById('poverty-badge-preview');
-      badge.textContent = status;
-      badge.style.color = color;
+      if (badge) {
+        badge.textContent = status;
+        badge.className = badgeClass;
+        badge.style.height = '42px';
+        badge.style.display = 'inline-flex';
+        badge.style.alignItems = 'center';
+        badge.style.justifyContent = 'center';
+        badge.style.fontSize = '0.8125rem';
+        badge.style.fontWeight = '700';
+        badge.style.padding = '0 16px';
+        badge.style.borderRadius = 'var(--rounded-sm)';
+        badge.style.width = '100%';
+      }
     };
 
     // Fetch Full Family Dossier (IndexedDB offline version)
