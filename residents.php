@@ -241,7 +241,7 @@ require_auth('login.php');
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-xs); flex-wrap: wrap;">
-              <button class="button-outline" id="btn-export-csv" title="Export current records to CSV spreadsheet" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
+              <button class="button-pill-soft" id="btn-export-csv" title="Export current records to CSV spreadsheet" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
@@ -604,14 +604,14 @@ require_auth('login.php');
 
       <!-- Wizard Actions Footer -->
       <div class="modal-wizard-footer">
-        <button type="button" class="button-outline" onclick="document.getElementById('resident-modal').close();" style="height: 42px; padding: 0 18px;">
+        <button type="button" class="button-pill-soft" onclick="document.getElementById('resident-modal').close();" style="height: 42px; padding: 0 18px;">
           Cancel
         </button>
         <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
-          <button type="button" class="button-outline" id="btn-resident-prev" onclick="prevResidentStep()" style="height: 42px; padding: 0 16px; display: none;">
+          <button type="button" class="button-pill-soft" id="btn-resident-prev" onclick="prevResidentStep()" style="height: 42px; padding: 0 16px; display: none;">
             &larr; Back
           </button>
-          <button type="button" class="button-outline" id="btn-resident-next" onclick="nextResidentStep()" style="height: 42px; padding: 0 16px;">
+          <button type="button" class="button-pill-soft" id="btn-resident-next" onclick="nextResidentStep()" style="height: 42px; padding: 0 16px;">
             Next &rarr;
           </button>
           <button type="submit" class="button-primary" id="btn-save-resident" style="height: 42px; padding: 0 22px;">
@@ -692,20 +692,20 @@ require_auth('login.php');
 
     <!-- Quick Action Footer -->
     <div class="drawer-footer">
-      <button type="button" class="button-outline" id="dossier-btn-issue-id" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+      <button type="button" class="button-pill-soft" id="dossier-btn-issue-id" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect width="20" height="14" x="2" y="5" rx="2"/>
           <line x1="2" y1="10" x2="22" y2="10"/>
         </svg>
         <span>ID Card</span>
       </button>
-      <a href="health.php" class="button-outline" id="dossier-btn-health" style="height: 36px; padding: 0 12px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
+      <a href="health.php" class="button-pill-soft" id="dossier-btn-health" style="height: 36px; padding: 0 12px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
         </svg>
         <span>Health</span>
       </a>
-      <button type="button" class="button-outline" id="dossier-btn-issue-cert" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+      <button type="button" class="button-pill-soft" id="dossier-btn-issue-cert" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
@@ -731,7 +731,7 @@ require_auth('login.php');
       Are you sure you want to remove <strong id="delete-resident-name" style="color: var(--color-ink);"></strong> from the active resident database? This action will be logged in the security audit trail.
     </p>
     <div style="display: flex; justify-content: center; gap: var(--spacing-sm); margin-top: var(--spacing-lg);">
-      <button type="button" class="button-outline" onclick="document.getElementById('delete-modal').close();" style="height: 38px; padding: 0 18px;">
+      <button type="button" class="button-pill-soft" onclick="document.getElementById('delete-modal').close();" style="height: 38px; padding: 0 18px;">
         Cancel
       </button>
       <button type="button" class="button-primary" id="btn-confirm-delete" style="background-color: #ef4444; height: 38px; padding: 0 18px;">
