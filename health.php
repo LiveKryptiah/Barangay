@@ -794,105 +794,143 @@ require_auth('login.php');
       </button>
     </div>
 
-    <form id="intake-form" onsubmit="handleIntakeSubmit(event);" style="padding: var(--spacing-md); max-height: 75vh; overflow-y: auto;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: 12px;">
-        <div>
-          <label class="form-label" for="intake-resident-id">Patient / Resident *</label>
-          <select id="intake-resident-id" class="text-input" required onchange="onIntakeResidentSelect();">
-            <option value="">-- Select Resident --</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label" for="intake-service-type">Service Type *</label>
-          <select id="intake-service-type" class="text-input" required>
-            <option value="General Consultation">General Consultation</option>
-            <option value="Prenatal Checkup">Prenatal Checkup</option>
-            <option value="Postnatal Care">Postnatal Care</option>
-            <option value="Child Immunization">Child Immunization</option>
-            <option value="Nutrition OPT Plus">Nutrition OPT Plus</option>
-            <option value="Senior Maintenance">Senior Maintenance</option>
-            <option value="Animal Bite / Rabies">Animal Bite / Rabies</option>
-            <option value="First Aid / Wound Care">First Aid / Wound Care</option>
-          </select>
-        </div>
-      </div>
+    <!-- Wizard Section Navigation Tabs -->
+    <div class="modal-section-tabs" id="intake-wizard-tabs" style="border-radius: 0; border-left: none; border-right: none;">
+      <button type="button" class="section-tab-btn active" data-step="1" onclick="switchIntakeStep(1)">
+        <span class="step-num">1</span>
+        <span class="step-title">1. Patient &amp; Vitals</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="2" onclick="switchIntakeStep(2)">
+        <span class="step-num">2</span>
+        <span class="step-title">2. Symptoms &amp; Findings</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="3" onclick="switchIntakeStep(3)">
+        <span class="step-num">3</span>
+        <span class="step-title">3. Treatment &amp; Status</span>
+      </button>
+    </div>
 
-      <!-- Vitals Capture Section -->
-      <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); margin-bottom: 14px; border: 1px solid var(--color-hairline-soft);">
-        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 8px;">
-          Patient Vital Signs &amp; Anthropometrics
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+    <form id="intake-form" onsubmit="handleIntakeSubmit(event);" style="padding: var(--spacing-md);" novalidate>
+      <!-- Step 1: Patient & Vital Signs -->
+      <div class="modal-step-pane active" id="intake-step-1">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: 12px;">
           <div>
-            <label class="form-label" style="font-size: 0.6875rem;" for="intake-bp">Blood Pressure</label>
-            <input type="text" id="intake-bp" placeholder="e.g. 120/80" class="text-input" style="height: 34px;">
+            <label class="form-label" for="intake-resident-id">Patient / Resident *</label>
+            <select id="intake-resident-id" class="text-input" required onchange="onIntakeResidentSelect();" style="height: 40px;">
+              <option value="">-- Select Resident --</option>
+            </select>
           </div>
           <div>
-            <label class="form-label" style="font-size: 0.6875rem;" for="intake-temp">Temp (&deg;C)</label>
-            <input type="number" step="0.1" id="intake-temp" placeholder="e.g. 36.6" class="text-input" style="height: 34px;">
+            <label class="form-label" for="intake-service-type">Service Type *</label>
+            <select id="intake-service-type" class="text-input" required style="height: 40px;">
+              <option value="General Consultation">General Consultation</option>
+              <option value="Prenatal Checkup">Prenatal Checkup</option>
+              <option value="Postnatal Care">Postnatal Care</option>
+              <option value="Child Immunization">Child Immunization</option>
+              <option value="Nutrition OPT Plus">Nutrition OPT Plus</option>
+              <option value="Senior Maintenance">Senior Maintenance</option>
+              <option value="Animal Bite / Rabies">Animal Bite / Rabies</option>
+              <option value="First Aid / Wound Care">First Aid / Wound Care</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Vitals Capture Section -->
+        <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+          <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 8px;">
+            Patient Vital Signs &amp; Anthropometrics
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+            <div>
+              <label class="form-label" style="font-size: 0.6875rem;" for="intake-bp">Blood Pressure</label>
+              <input type="text" id="intake-bp" placeholder="e.g. 120/80" class="text-input" style="height: 36px;">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.6875rem;" for="intake-temp">Temp (&deg;C)</label>
+              <input type="number" step="0.1" id="intake-temp" placeholder="e.g. 36.6" class="text-input" style="height: 36px;">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.6875rem;" for="intake-weight">Weight (kg)</label>
+              <input type="number" step="0.1" id="intake-weight" placeholder="e.g. 62.5" class="text-input" style="height: 36px;" oninput="updateIntakeBmi();">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.6875rem;" for="intake-height">Height (cm)</label>
+              <input type="number" step="0.1" id="intake-height" placeholder="e.g. 165" class="text-input" style="height: 36px;" oninput="updateIntakeBmi();">
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--color-hairline-soft);">
+            <div style="font-size: 0.75rem; color: var(--color-text-muted);">
+              Auto-calculated BMI: <strong id="intake-bmi-val" style="color: var(--color-ink);">--</strong>
+            </div>
+            <span id="intake-bmi-badge" class="badge-neutral" style="font-size: 0.6875rem;">Awaiting inputs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Symptoms & Findings -->
+      <div class="modal-step-pane" id="intake-step-2">
+        <div style="margin-bottom: 12px;">
+          <label class="form-label" for="intake-complaint">Chief Complaint / Symptoms *</label>
+          <textarea id="intake-complaint" class="text-input" rows="3" placeholder="e.g. High fever for 2 days, persistent cough, headache..." required></textarea>
+        </div>
+
+        <div>
+          <label class="form-label" for="intake-notes">Clinical Assessment &amp; Findings</label>
+          <textarea id="intake-notes" class="text-input" rows="3" placeholder="e.g. Pharyngeal erythema, clear breath sounds, advised hydration and rest..."></textarea>
+        </div>
+      </div>
+
+      <!-- Step 3: Dispensation & Status -->
+      <div class="modal-step-pane" id="intake-step-3">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: 12px;">
+          <div>
+            <label class="form-label" for="intake-medicines">Medicines Dispensed</label>
+            <input type="text" id="intake-medicines" placeholder="e.g. Paracetamol 500mg (10 tabs)" class="text-input" style="height: 40px;">
           </div>
           <div>
-            <label class="form-label" style="font-size: 0.6875rem;" for="intake-weight">Weight (kg)</label>
-            <input type="number" step="0.1" id="intake-weight" placeholder="e.g. 62.5" class="text-input" style="height: 34px;" oninput="updateIntakeBmi();">
+            <label class="form-label" for="intake-staff">Attending Staff / BHW *</label>
+            <input type="text" id="intake-staff" value="Barangay Health Worker" class="text-input" required style="height: 40px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: 12px;">
+          <div>
+            <label class="form-label" for="intake-status">Clinical Status *</label>
+            <select id="intake-status" class="text-input" required onchange="toggleReferralInput();" style="height: 40px;">
+              <option value="Completed">Completed / Discharged</option>
+              <option value="Follow-Up Needed">Follow-Up Needed</option>
+              <option value="Referred to RHU / Hospital">Referred to RHU / Hospital</option>
+            </select>
           </div>
           <div>
-            <label class="form-label" style="font-size: 0.6875rem;" for="intake-height">Height (cm)</label>
-            <input type="number" step="0.1" id="intake-height" placeholder="e.g. 165" class="text-input" style="height: 34px;" oninput="updateIntakeBmi();">
+            <label class="form-label" for="intake-followup">Follow-Up Date</label>
+            <input type="date" id="intake-followup" class="text-input" style="height: 40px;">
           </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--color-hairline-soft);">
-          <div style="font-size: 0.75rem; color: var(--color-text-muted);">
-            Auto-calculated BMI: <strong id="intake-bmi-val" style="color: var(--color-ink);">--</strong>
-          </div>
-          <span id="intake-bmi-badge" class="badge-neutral" style="font-size: 0.6875rem;">Awaiting inputs</span>
+        <div id="referral-field-group" style="display: none; margin-bottom: 4px; background: #eff6ff; padding: 10px; border-radius: var(--rounded-sm); border: 1px solid #bfdbfe;">
+          <label class="form-label" for="intake-referral" style="color: #1e40af;">Referral Target Facility / Hospital</label>
+          <input type="text" id="intake-referral" placeholder="e.g. Rodriguez Rural Health Unit / Casimiro A. Ynares Memorial Hospital" class="text-input" style="height: 40px;">
         </div>
       </div>
 
-      <div style="margin-bottom: 12px;">
-        <label class="form-label" for="intake-complaint">Chief Complaint / Symptoms *</label>
-        <textarea id="intake-complaint" class="text-input" rows="2" placeholder="e.g. High fever for 2 days, persistent cough, headache..." required></textarea>
-      </div>
-
-      <div style="margin-bottom: 12px;">
-        <label class="form-label" for="intake-notes">Clinical Assessment &amp; Findings</label>
-        <textarea id="intake-notes" class="text-input" rows="2" placeholder="e.g. Pharyngeal erythema, clear breath sounds, advised hydration and rest..."></textarea>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: 12px;">
-        <div>
-          <label class="form-label" for="intake-medicines">Medicines Dispensed</label>
-          <input type="text" id="intake-medicines" placeholder="e.g. Paracetamol 500mg (10 tabs)" class="text-input">
+      <!-- Wizard Actions Footer -->
+      <div class="modal-wizard-footer" style="padding: 12px 0 0; margin-top: 16px; border-top: 1px solid var(--color-hairline-soft);">
+        <button type="button" class="button-outline" onclick="document.getElementById('intake-modal').close();" style="height: 40px; padding: 0 16px;">
+          Cancel
+        </button>
+        <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
+          <button type="button" class="button-outline" id="btn-intake-prev" onclick="prevIntakeStep()" style="height: 40px; padding: 0 16px; display: none;">
+            &larr; Back
+          </button>
+          <button type="button" class="button-outline" id="btn-intake-next" onclick="nextIntakeStep()" style="height: 40px; padding: 0 16px;">
+            Next &rarr;
+          </button>
+          <button type="submit" class="button-primary" id="btn-save-intake" style="height: 40px; padding: 0 20px;">
+            Save Clinical Record
+          </button>
         </div>
-        <div>
-          <label class="form-label" for="intake-staff">Attending Staff / BHW *</label>
-          <input type="text" id="intake-staff" value="Barangay Health Worker" class="text-input" required>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: 12px;">
-        <div>
-          <label class="form-label" for="intake-status">Clinical Status *</label>
-          <select id="intake-status" class="text-input" required onchange="toggleReferralInput();">
-            <option value="Completed">Completed / Discharged</option>
-            <option value="Follow-Up Needed">Follow-Up Needed</option>
-            <option value="Referred to RHU / Hospital">Referred to RHU / Hospital</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label" for="intake-followup">Follow-Up Date</label>
-          <input type="date" id="intake-followup" class="text-input">
-        </div>
-      </div>
-
-      <div id="referral-field-group" style="display: none; margin-bottom: 14px; background: #eff6ff; padding: 10px; border-radius: var(--rounded-sm); border: 1px solid #bfdbfe;">
-        <label class="form-label" for="intake-referral" style="color: #1e40af;">Referral Target Facility / Hospital</label>
-        <input type="text" id="intake-referral" placeholder="e.g. Rodriguez Rural Health Unit / Casimiro A. Ynares Memorial Hospital" class="text-input">
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); margin-top: 16px;">
-        <button type="button" class="button-outline" onclick="document.getElementById('intake-modal').close();">Cancel</button>
-        <button type="submit" class="button-primary" id="btn-save-intake">Save Clinical Record</button>
       </div>
     </form>
   </dialog>
@@ -1552,11 +1590,59 @@ require_auth('login.php');
       }
     };
 
+    // Wizard Navigation State for Clinical Intake Modal
+    let currentIntakeStep = 1;
+
+    window.switchIntakeStep = function(step) {
+      currentIntakeStep = Math.max(1, Math.min(3, step));
+
+      for (let i = 1; i <= 3; i++) {
+        const pane = document.getElementById(`intake-step-${i}`);
+        if (pane) {
+          pane.style.display = (i === currentIntakeStep) ? 'block' : 'none';
+        }
+      }
+
+      document.querySelectorAll('#intake-wizard-tabs .section-tab-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        btn.classList.toggle('active', s === currentIntakeStep);
+      });
+
+      const prevBtn = document.getElementById('btn-intake-prev');
+      const nextBtn = document.getElementById('btn-intake-next');
+      if (prevBtn) prevBtn.style.display = (currentIntakeStep > 1) ? 'inline-flex' : 'none';
+      if (nextBtn) nextBtn.style.display = (currentIntakeStep < 3) ? 'inline-flex' : 'none';
+    };
+
+    window.nextIntakeStep = function() {
+      if (currentIntakeStep === 1) {
+        const resId = document.getElementById('intake-resident-id').value;
+        if (!resId) {
+          alert('Please select a Patient / Resident to proceed.');
+          document.getElementById('intake-resident-id').focus();
+          return;
+        }
+      } else if (currentIntakeStep === 2) {
+        const complaint = document.getElementById('intake-complaint').value.trim();
+        if (!complaint) {
+          alert('Please enter Chief Complaint / Symptoms to proceed.');
+          document.getElementById('intake-complaint').focus();
+          return;
+        }
+      }
+      switchIntakeStep(currentIntakeStep + 1);
+    };
+
+    window.prevIntakeStep = function() {
+      switchIntakeStep(currentIntakeStep - 1);
+    };
+
     // Open Intake Modal
     window.openIntakeModal = function() {
       document.getElementById('intake-form').reset();
       updateIntakeBmi();
       toggleReferralInput();
+      switchIntakeStep(1);
       document.getElementById('intake-modal').showModal();
     };
 
@@ -1564,12 +1650,24 @@ require_auth('login.php');
     window.handleIntakeSubmit = async function(e) {
       e.preventDefault();
       const residentId = parseInt(document.getElementById('intake-resident-id').value);
+      if (!residentId) {
+        alert('Please choose a registered resident.');
+        switchIntakeStep(1);
+        return;
+      }
+      const complaint = document.getElementById('intake-complaint').value.trim();
+      if (!complaint) {
+        alert('Please enter Chief Complaint / Symptoms.');
+        switchIntakeStep(2);
+        document.getElementById('intake-complaint').focus();
+        return;
+      }
+
       const serviceType = document.getElementById('intake-service-type').value;
       const bp = document.getElementById('intake-bp').value.trim();
       const temp = parseFloat(document.getElementById('intake-temp').value) || null;
       const weight = parseFloat(document.getElementById('intake-weight').value) || null;
       const height = parseFloat(document.getElementById('intake-height').value) || null;
-      const complaint = document.getElementById('intake-complaint').value.trim();
       const notes = document.getElementById('intake-notes').value.trim();
       const dispensed = document.getElementById('intake-medicines').value.trim();
       const staff = document.getElementById('intake-staff').value.trim() || 'Barangay Health Worker';

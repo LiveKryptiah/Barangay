@@ -420,8 +420,8 @@ require_auth('login.php');
   </div>
 
   <!-- Resident Registration / Edit Modal -->
-  <dialog id="resident-modal" class="modal-dialog" style="max-width: 700px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+  <dialog id="resident-modal" class="modal-dialog" style="max-width: 720px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
       <div>
         <h3 class="typography-heading-4" id="modal-title">Register Resident Profile.</h3>
         <p class="typography-caption">Enter official civil and demographic information.</p>
@@ -431,12 +431,30 @@ require_auth('login.php');
       </button>
     </div>
 
+    <!-- Wizard Section Navigation Tabs -->
+    <div class="modal-section-tabs" id="resident-wizard-tabs">
+      <button type="button" class="section-tab-btn active" data-step="1" onclick="switchResidentStep(1)">
+        <span class="step-num">1</span>
+        <span class="step-title">1. Personal Details</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="2" onclick="switchResidentStep(2)">
+        <span class="step-num">2</span>
+        <span class="step-title">2. Residency &amp; Contact</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="3" onclick="switchResidentStep(3)">
+        <span class="step-num">3</span>
+        <span class="step-title">3. Classifications &amp; Welfare</span>
+      </button>
+    </div>
+
     <form id="resident-form" novalidate>
       <input type="hidden" id="form-resident-id" value="">
 
-      <!-- Section: Personal Details -->
-      <div style="margin-bottom: var(--spacing-md);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">1. Personal Information</span>
+      <!-- Step 1: Personal Details -->
+      <div class="modal-step-pane active" id="resident-step-1">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">1. Personal Information</span>
+        </div>
         
         <div class="form-grid-3 mt-xs">
           <div class="form-group" style="margin-bottom: var(--spacing-xs);">
@@ -506,9 +524,11 @@ require_auth('login.php');
         </div>
       </div>
 
-      <!-- Section: Residency & Address -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">2. Barangay Residency & Address</span>
+      <!-- Step 2: Residency & Address -->
+      <div class="modal-step-pane" id="resident-step-2">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">2. Barangay Residency &amp; Address</span>
+        </div>
 
         <div class="form-grid-2 mt-xs">
           <div class="form-group" style="margin-bottom: var(--spacing-xs);">
@@ -538,15 +558,17 @@ require_auth('login.php');
           </div>
 
           <div class="form-group" style="margin-bottom: var(--spacing-xs);">
-            <label class="form-label" for="res-emergency">Emergency Contact (Name & Phone)</label>
+            <label class="form-label" for="res-emergency">Emergency Contact (Name &amp; Phone)</label>
             <input type="text" id="res-emergency" class="text-input" style="height: 42px;" placeholder="e.g. Maria Dela Cruz (0918-987-6543)">
           </div>
         </div>
       </div>
 
-      <!-- Section: Special Classifications & Welfare -->
-      <div style="margin-bottom: var(--spacing-lg); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">3. Classifications & Government Assistance</span>
+      <!-- Step 3: Special Classifications & Welfare -->
+      <div class="modal-step-pane" id="resident-step-3">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">3. Classifications &amp; Government Assistance</span>
+        </div>
 
         <div class="checkbox-pill-grid mt-xs">
           <label class="checkbox-pill-label">
@@ -586,14 +608,22 @@ require_auth('login.php');
         </div>
       </div>
 
-      <!-- Form Actions -->
-      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
-        <button type="button" class="button-outline" onclick="document.getElementById('resident-modal').close();" style="height: 42px; padding: 0 20px;">
+      <!-- Wizard Actions Footer -->
+      <div class="modal-wizard-footer">
+        <button type="button" class="button-outline" onclick="document.getElementById('resident-modal').close();" style="height: 42px; padding: 0 18px;">
           Cancel
         </button>
-        <button type="submit" class="button-primary" id="btn-save-resident" style="height: 42px; padding: 0 24px;">
-          Save Resident Profile
-        </button>
+        <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
+          <button type="button" class="button-outline" id="btn-resident-prev" onclick="prevResidentStep()" style="height: 42px; padding: 0 16px; display: none;">
+            &larr; Back
+          </button>
+          <button type="button" class="button-outline" id="btn-resident-next" onclick="nextResidentStep()" style="height: 42px; padding: 0 16px;">
+            Next &rarr;
+          </button>
+          <button type="submit" class="button-primary" id="btn-save-resident" style="height: 42px; padding: 0 22px;">
+            Save Resident Profile
+          </button>
+        </div>
       </div>
     </form>
   </dialog>
@@ -940,6 +970,65 @@ require_auth('login.php');
       applyFiltersAndRender();
     };
 
+    // Wizard Navigation State for Resident Modal
+    let currentResidentStep = 1;
+
+    window.switchResidentStep = function(step) {
+      currentResidentStep = Math.max(1, Math.min(3, step));
+
+      for (let i = 1; i <= 3; i++) {
+        const pane = document.getElementById(`resident-step-${i}`);
+        if (pane) {
+          pane.style.display = (i === currentResidentStep) ? 'block' : 'none';
+        }
+      }
+
+      document.querySelectorAll('#resident-wizard-tabs .section-tab-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        btn.classList.toggle('active', s === currentResidentStep);
+      });
+
+      const prevBtn = document.getElementById('btn-resident-prev');
+      const nextBtn = document.getElementById('btn-resident-next');
+      if (prevBtn) prevBtn.style.display = (currentResidentStep > 1) ? 'inline-flex' : 'none';
+      if (nextBtn) nextBtn.style.display = (currentResidentStep < 3) ? 'inline-flex' : 'none';
+    };
+
+    window.nextResidentStep = function() {
+      if (currentResidentStep === 1) {
+        const firstName = document.getElementById('res-first-name').value.trim();
+        const lastName = document.getElementById('res-last-name').value.trim();
+        const birthdate = document.getElementById('res-birthdate').value;
+        if (!firstName) {
+          Toast.warning('Please enter First Name to proceed.');
+          document.getElementById('res-first-name').focus();
+          return;
+        }
+        if (!lastName) {
+          Toast.warning('Please enter Last Name to proceed.');
+          document.getElementById('res-last-name').focus();
+          return;
+        }
+        if (!birthdate) {
+          Toast.warning('Please select Date of Birth to proceed.');
+          document.getElementById('res-birthdate').focus();
+          return;
+        }
+      } else if (currentResidentStep === 2) {
+        const purok = document.getElementById('res-purok').value;
+        if (!purok) {
+          Toast.warning('Please select Purok / Zone to proceed.');
+          document.getElementById('res-purok').focus();
+          return;
+        }
+      }
+      switchResidentStep(currentResidentStep + 1);
+    };
+
+    window.prevResidentStep = function() {
+      switchResidentStep(currentResidentStep - 1);
+    };
+
     // Open Registration Modal for New Resident
     function openAddModal() {
       document.getElementById('resident-form').reset();
@@ -948,6 +1037,7 @@ require_auth('login.php');
       document.getElementById('btn-save-resident').textContent = 'Save Resident Profile';
       document.getElementById('res-age').value = '';
       document.getElementById('precinct-wrap').style.display = 'none';
+      switchResidentStep(1);
       document.getElementById('resident-modal').showModal();
     }
 
@@ -993,6 +1083,7 @@ require_auth('login.php');
           document.getElementById('res-age').value = `${age} years old`;
         }
 
+        switchResidentStep(1);
         document.getElementById('resident-modal').showModal();
       } catch (e) {
         console.error(e);
@@ -1181,8 +1272,22 @@ require_auth('login.php');
         const lastName = document.getElementById('res-last-name').value.trim();
         const birthdate = document.getElementById('res-birthdate').value;
 
-        if (!firstName || !lastName || !birthdate) {
-          Toast.error('Please fill in required fields: First Name, Last Name, and Date of Birth.');
+        if (!firstName) {
+          Toast.warning('Please enter First Name.');
+          switchResidentStep(1);
+          document.getElementById('res-first-name').focus();
+          return;
+        }
+        if (!lastName) {
+          Toast.warning('Please enter Last Name.');
+          switchResidentStep(1);
+          document.getElementById('res-last-name').focus();
+          return;
+        }
+        if (!birthdate) {
+          Toast.warning('Please select Date of Birth.');
+          switchResidentStep(1);
+          document.getElementById('res-birthdate').focus();
           return;
         }
 

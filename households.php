@@ -538,9 +538,8 @@ require_auth('login.php');
     </div>
   </div>
 
-  <!-- MODAL 1: REGISTER / EDIT HOUSEHOLD PROFILE -->
-  <dialog id="household-modal" class="modal-dialog" style="max-width: 780px; width: 95%; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+  <dialog id="household-modal" class="modal-dialog" style="max-width: 800px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
       <div>
         <h3 class="typography-heading-4" id="modal-household-title">Create Household Profile.</h3>
         <p class="typography-caption">Organize residents into a physical dwelling unit with living condition metrics.</p>
@@ -550,17 +549,39 @@ require_auth('login.php');
       </button>
     </div>
 
+    <!-- Wizard Section Navigation Tabs -->
+    <div class="modal-section-tabs" id="household-wizard-tabs">
+      <button type="button" class="section-tab-btn active" data-step="1" onclick="switchHouseholdStep(1)">
+        <span class="step-num">1</span>
+        <span class="step-title">1. Location &amp; Dwelling</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="2" onclick="switchHouseholdStep(2)">
+        <span class="step-num">2</span>
+        <span class="step-title">2. Head of Family</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="3" onclick="switchHouseholdStep(3)">
+        <span class="step-num">3</span>
+        <span class="step-title">3. Enlisted Members</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="4" onclick="switchHouseholdStep(4)">
+        <span class="step-num">4</span>
+        <span class="step-title">4. Utilities &amp; Conditions</span>
+      </button>
+    </div>
+
     <form id="household-form" novalidate>
       <!-- Step 1: Location & Dwelling Identification -->
-      <div style="margin-bottom: var(--spacing-md);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          1. Location &amp; Dwelling Identification
-        </span>
+      <div class="modal-step-pane active" id="household-step-1">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            1. Location &amp; Dwelling Identification
+          </span>
+        </div>
 
         <div class="form-grid-3 mt-xs">
           <div class="form-group">
             <label class="form-label" for="hh-control-no">Household Reference # <span style="color: var(--color-primary);">*</span></label>
-            <input type="text" id="hh-control-no" class="text-input" style="font-family: monospace; font-weight: 700;" readonly required>
+            <input type="text" id="hh-control-no" class="text-input" style="font-family: monospace; font-weight: 700; height: 42px;" readonly required>
           </div>
 
           <div class="form-group">
@@ -578,7 +599,7 @@ require_auth('login.php');
 
           <div class="form-group">
             <label class="form-label" for="hh-address">House / Street Address <span style="color: var(--color-primary);">*</span></label>
-            <input type="text" id="hh-address" class="text-input" placeholder="e.g. 142 Rizal St." required>
+            <input type="text" id="hh-address" class="text-input" style="height: 42px;" placeholder="e.g. 142 Rizal St." required>
           </div>
         </div>
 
@@ -606,12 +627,15 @@ require_auth('login.php');
       </div>
 
       <!-- Step 2: Head of Household -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          2. Head of Family (Puno ng Pamilya)
-        </span>
+      <div class="modal-step-pane" id="household-step-2">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            2. Head of Family (Puno ng Pamilya)
+          </span>
+          <p class="typography-caption" style="color: var(--color-text-muted); margin-top: 2px;">Designate the primary household authority.</p>
+        </div>
 
-        <div style="display: flex; gap: var(--spacing-xs); margin-top: 4px;">
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: 8px;">
           <select id="select-head-resident" class="text-input" style="height: 42px; padding: 0 12px; flex: 1;" required>
             <option value="">-- Select Registered Resident as Family Head --</option>
           </select>
@@ -620,27 +644,27 @@ require_auth('login.php');
           </a>
         </div>
 
-        <div id="head-preview-card" style="display: none; margin-top: var(--spacing-xs); padding: 10px 14px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.8125rem;">
+        <div id="head-preview-card" style="display: none; margin-top: var(--spacing-sm); padding: 12px 14px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.8125rem;">
           <div style="font-weight: 700;" id="head-preview-name">-</div>
           <div class="typography-caption" id="head-preview-meta">-</div>
         </div>
       </div>
 
       <!-- Step 3: Family Members & Relationship Tree Mapping -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="modal-step-pane" id="household-step-3">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs);">
           <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
             3. Family Members &amp; Household Tree
           </span>
           <span class="typography-caption" id="member-counter-chip">1 Member Total</span>
         </div>
 
-        <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-xs); flex-wrap: wrap;">
-          <select id="select-add-member" class="text-input" style="height: 40px; padding: 0 12px; flex: 2; min-width: 220px;">
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: 4px; flex-wrap: wrap;">
+          <select id="select-add-member" class="text-input" style="height: 40px; padding: 0 12px; flex: 2; min-width: 200px;">
             <option value="">-- Choose Resident to Add to Family --</option>
           </select>
 
-          <select id="select-member-relation" class="filter-select" style="height: 40px; flex: 1; min-width: 180px; border-radius: var(--rounded-sm);">
+          <select id="select-member-relation" class="filter-select" style="height: 40px; flex: 1; min-width: 160px; border-radius: var(--rounded-sm);">
             <option value="Spouse (Asawa)">Spouse (Asawa)</option>
             <option value="Son / Daughter (Anak)">Son / Daughter (Anak)</option>
             <option value="Parent / Father / Mother (Magulang)">Parent (Magulang)</option>
@@ -659,8 +683,8 @@ require_auth('login.php');
         </div>
 
         <!-- Live Member Table -->
-        <div class="member-table-wrap">
-          <table class="data-table" style="font-size: 0.8125rem;">
+        <div class="member-table-wrap" style="max-height: 180px; overflow-y: auto; margin-top: var(--spacing-xs);">
+          <table class="data-table" style="font-size: 0.8125rem; width: 100%;">
             <thead>
               <tr>
                 <th>Resident Member</th>
@@ -676,10 +700,12 @@ require_auth('login.php');
       </div>
 
       <!-- Step 4: Utilities, Socio-Economic & Living Conditions -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          4. Utilities &amp; Living Conditions
-        </span>
+      <div class="modal-step-pane" id="household-step-4">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            4. Utilities &amp; Living Conditions
+          </span>
+        </div>
 
         <div class="form-grid-3 mt-xs">
           <div class="form-group">
@@ -736,14 +762,22 @@ require_auth('login.php');
         </div>
       </div>
 
-      <!-- Actions -->
-      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
-        <button type="button" class="button-outline" onclick="document.getElementById('household-modal').close();" style="height: 42px; padding: 0 20px;">
+      <!-- Wizard Actions Footer -->
+      <div class="modal-wizard-footer">
+        <button type="button" class="button-outline" onclick="document.getElementById('household-modal').close();" style="height: 42px; padding: 0 18px;">
           Cancel
         </button>
-        <button type="submit" class="button-primary" id="btn-save-household" style="height: 42px; padding: 0 24px;">
-          Save Household Profile
-        </button>
+        <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
+          <button type="button" class="button-outline" id="btn-household-prev" onclick="prevHouseholdStep()" style="height: 42px; padding: 0 16px; display: none;">
+            &larr; Back
+          </button>
+          <button type="button" class="button-outline" id="btn-household-next" onclick="nextHouseholdStep()" style="height: 42px; padding: 0 16px;">
+            Next &rarr;
+          </button>
+          <button type="submit" class="button-primary" id="btn-save-household" style="height: 42px; padding: 0 22px;">
+            Save Household Profile
+          </button>
+        </div>
       </div>
     </form>
   </dialog>
@@ -1276,6 +1310,52 @@ require_auth('login.php');
       document.getElementById('btn-view-density').classList.toggle('active', !isCards);
     };
 
+    // Wizard Navigation State for Household Modal
+    let currentHouseholdStep = 1;
+
+    window.switchHouseholdStep = function(step) {
+      currentHouseholdStep = Math.max(1, Math.min(4, step));
+
+      for (let i = 1; i <= 4; i++) {
+        const pane = document.getElementById(`household-step-${i}`);
+        if (pane) {
+          pane.style.display = (i === currentHouseholdStep) ? 'block' : 'none';
+        }
+      }
+
+      document.querySelectorAll('#household-wizard-tabs .section-tab-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        btn.classList.toggle('active', s === currentHouseholdStep);
+      });
+
+      const prevBtn = document.getElementById('btn-household-prev');
+      const nextBtn = document.getElementById('btn-household-next');
+      if (prevBtn) prevBtn.style.display = (currentHouseholdStep > 1) ? 'inline-flex' : 'none';
+      if (nextBtn) nextBtn.style.display = (currentHouseholdStep < 4) ? 'inline-flex' : 'none';
+    };
+
+    window.nextHouseholdStep = function() {
+      if (currentHouseholdStep === 1) {
+        const addr = document.getElementById('hh-address').value.trim();
+        if (!addr) {
+          Toast.warning('Please enter a House / Street Address to proceed.');
+          document.getElementById('hh-address').focus();
+          return;
+        }
+      } else if (currentHouseholdStep === 2) {
+        const head = document.getElementById('select-head-resident').value;
+        if (!head) {
+          Toast.warning('Please designate a Head of Family to proceed.');
+          return;
+        }
+      }
+      switchHouseholdStep(currentHouseholdStep + 1);
+    };
+
+    window.prevHouseholdStep = function() {
+      switchHouseholdStep(currentHouseholdStep - 1);
+    };
+
     // Open Household Modal (Create)
     window.openHouseholdModal = function() {
       editingHouseholdId = null;
@@ -1292,6 +1372,7 @@ require_auth('login.php');
       renderModalMembersTable();
       document.getElementById('head-preview-card').style.display = 'none';
 
+      switchHouseholdStep(1);
       document.getElementById('household-modal').showModal();
     };
 
@@ -1325,6 +1406,7 @@ require_auth('login.php');
       currentHouseholdMembers = JSON.parse(JSON.stringify(h.members || []));
       renderModalMembersTable();
 
+      switchHouseholdStep(1);
       document.getElementById('household-modal').showModal();
     };
 
@@ -1771,23 +1853,32 @@ require_auth('login.php');
       document.getElementById('household-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const controlNo = document.getElementById('hh-control-no').value.trim();
+        const address = document.getElementById('hh-address').value.trim();
+        if (!address) {
+          Toast.warning('Please enter the House / Street Address.');
+          switchHouseholdStep(1);
+          document.getElementById('hh-address').focus();
+          return;
+        }
+
         const headIdVal = document.getElementById('select-head-resident').value;
         if (!headIdVal) {
-          Toast.error('Please choose a Head of Family for this household.');
+          Toast.warning('Please choose a Head of Family for this household.');
+          switchHouseholdStep(2);
           return;
         }
 
         const headResident = allResidentsMap.get(parseInt(headIdVal, 10));
         if (!headResident) {
           Toast.error('Selected head resident could not be found.');
+          switchHouseholdStep(2);
           return;
         }
 
         const headFullName = [headResident.firstName, headResident.middleName, headResident.lastName, headResident.suffix].filter(Boolean).join(' ');
 
-        const controlNo = document.getElementById('hh-control-no').value.trim();
         const purok = document.getElementById('hh-purok').value;
-        const address = document.getElementById('hh-address').value.trim();
         const structure = document.getElementById('hh-structure').value;
         const tenure = document.getElementById('hh-tenure').value;
 
@@ -1796,11 +1887,6 @@ require_auth('login.php');
         const power = document.getElementById('hh-power').value;
         const income = document.getElementById('hh-income').value;
         const hazard = document.getElementById('hh-hazard').value;
-
-        if (!controlNo || !address) {
-          Toast.error('Please fill in all required household fields.');
-          return;
-        }
 
         // Ensure head is present in members array
         if (!currentHouseholdMembers.some(m => m.isHead)) {

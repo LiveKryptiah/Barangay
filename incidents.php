@@ -535,8 +535,8 @@ require_auth('login.php');
   </div>
 
   <!-- MODAL 1: EMERGENCY INCIDENT INTAKE -->
-  <dialog id="incident-modal" class="modal-dialog" style="max-width: 760px; width: 95%; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+  <dialog id="incident-modal" class="modal-dialog" style="max-width: 760px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
       <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
         <span class="badge-rose" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-weight: 700;">EMERGENCY INTAKE</span>
         <h3 class="typography-heading-4">Log Community Incident.</h3>
@@ -546,17 +546,35 @@ require_auth('login.php');
       </button>
     </div>
 
+    <!-- Wizard Section Navigation Tabs -->
+    <div class="modal-section-tabs" id="incident-wizard-tabs">
+      <button type="button" class="section-tab-btn active" data-step="1" onclick="switchIncidentStep(1)">
+        <span class="step-num">1</span>
+        <span class="step-title">1. Category &amp; Severity</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="2" onclick="switchIncidentStep(2)">
+        <span class="step-num">2</span>
+        <span class="step-title">2. Location &amp; Caller</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="3" onclick="switchIncidentStep(3)">
+        <span class="step-num">3</span>
+        <span class="step-title">3. Dispatch &amp; Narrative</span>
+      </button>
+    </div>
+
     <form id="incident-form" novalidate>
       <!-- Step 1: Incident Classification & Priority -->
-      <div style="margin-bottom: var(--spacing-md);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          1. Classification &amp; Severity Level
-        </span>
+      <div class="modal-step-pane active" id="incident-step-1">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            1. Classification &amp; Severity Level
+          </span>
+        </div>
 
         <div class="form-grid-3 mt-xs">
           <div class="form-group">
             <label class="form-label" for="inc-control-no">Incident Tracking # <span style="color: var(--color-primary);">*</span></label>
-            <input type="text" id="inc-control-no" class="text-input" style="font-family: monospace; font-weight: 700;" readonly required>
+            <input type="text" id="inc-control-no" class="text-input" style="font-family: monospace; font-weight: 700; height: 42px;" readonly required>
           </div>
 
           <div class="form-group">
@@ -586,10 +604,12 @@ require_auth('login.php');
       </div>
 
       <!-- Step 2: Location & Reporter Details -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          2. Incident Location &amp; Caller Information
-        </span>
+      <div class="modal-step-pane" id="incident-step-2">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            2. Incident Location &amp; Caller Information
+          </span>
+        </div>
 
         <div class="form-grid-3 mt-xs">
           <div class="form-group">
@@ -607,26 +627,28 @@ require_auth('login.php');
 
           <div class="form-group">
             <label class="form-label" for="inc-address">Street / Specific Landmark <span style="color: var(--color-primary);">*</span></label>
-            <input type="text" id="inc-address" class="text-input" placeholder="e.g. Near Basketball Court, Rizal St." required>
+            <input type="text" id="inc-address" class="text-input" style="height: 42px;" placeholder="e.g. Near Basketball Court, Rizal St." required>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="inc-reporter-phone">Reporter Contact Number</label>
-            <input type="tel" id="inc-reporter-phone" class="text-input" placeholder="09XXXXXXXXX">
+            <input type="tel" id="inc-reporter-phone" class="text-input" style="height: 42px;" placeholder="09XXXXXXXXX">
           </div>
         </div>
 
         <div class="form-group mt-xs">
           <label class="form-label" for="inc-reporter-name">Caller / Reporter Name</label>
-          <input type="text" id="inc-reporter-name" class="text-input" placeholder="e.g. Concerned Citizen / Juan Dela Cruz">
+          <input type="text" id="inc-reporter-name" class="text-input" style="height: 42px;" placeholder="e.g. Concerned Citizen / Juan Dela Cruz">
         </div>
       </div>
 
       <!-- Step 3: Responder Dispatch Assignment -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          3. Responder Dispatch Assignment
-        </span>
+      <div class="modal-step-pane" id="incident-step-3">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            3. Responder Dispatch Assignment
+          </span>
+        </div>
 
         <div class="form-grid-2 mt-xs">
           <div class="form-group">
@@ -653,14 +675,22 @@ require_auth('login.php');
         </div>
       </div>
 
-      <!-- Actions -->
-      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
-        <button type="button" class="button-outline" onclick="document.getElementById('incident-modal').close();" style="height: 42px; padding: 0 20px;">
+      <!-- Wizard Actions Footer -->
+      <div class="modal-wizard-footer">
+        <button type="button" class="button-outline" onclick="document.getElementById('incident-modal').close();" style="height: 42px; padding: 0 18px;">
           Cancel
         </button>
-        <button type="submit" class="button-primary" id="btn-save-incident" style="height: 42px; padding: 0 24px; background-color: #ef4444;">
-          Dispatch Responder Unit
-        </button>
+        <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
+          <button type="button" class="button-outline" id="btn-incident-prev" onclick="prevIncidentStep()" style="height: 42px; padding: 0 16px; display: none;">
+            &larr; Back
+          </button>
+          <button type="button" class="button-outline" id="btn-incident-next" onclick="nextIncidentStep()" style="height: 42px; padding: 0 16px;">
+            Next &rarr;
+          </button>
+          <button type="submit" class="button-primary" id="btn-save-incident" style="height: 42px; padding: 0 22px; background-color: #ef4444;">
+            Dispatch Responder Unit
+          </button>
+        </div>
       </div>
     </form>
   </dialog>
@@ -1345,12 +1375,59 @@ require_auth('login.php');
       document.getElementById('btn-view-curfew').classList.toggle('active', !isDispatch);
     };
 
+    // Wizard Navigation State for Incident Modal
+    let currentIncidentStep = 1;
+
+    window.switchIncidentStep = function(step) {
+      currentIncidentStep = Math.max(1, Math.min(3, step));
+
+      for (let i = 1; i <= 3; i++) {
+        const pane = document.getElementById(`incident-step-${i}`);
+        if (pane) {
+          pane.style.display = (i === currentIncidentStep) ? 'block' : 'none';
+        }
+      }
+
+      document.querySelectorAll('#incident-wizard-tabs .section-tab-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        btn.classList.toggle('active', s === currentIncidentStep);
+      });
+
+      const prevBtn = document.getElementById('btn-incident-prev');
+      const nextBtn = document.getElementById('btn-incident-next');
+      if (prevBtn) prevBtn.style.display = (currentIncidentStep > 1) ? 'inline-flex' : 'none';
+      if (nextBtn) nextBtn.style.display = (currentIncidentStep < 3) ? 'inline-flex' : 'none';
+    };
+
+    window.nextIncidentStep = function() {
+      if (currentIncidentStep === 1) {
+        const cat = document.getElementById('inc-category').value;
+        if (!cat) {
+          Toast.warning('Please select an Incident Category.');
+          return;
+        }
+      } else if (currentIncidentStep === 2) {
+        const addr = document.getElementById('inc-address').value.trim();
+        if (!addr) {
+          Toast.warning('Please enter Street / Specific Landmark.');
+          document.getElementById('inc-address').focus();
+          return;
+        }
+      }
+      switchIncidentStep(currentIncidentStep + 1);
+    };
+
+    window.prevIncidentStep = function() {
+      switchIncidentStep(currentIncidentStep - 1);
+    };
+
     // Open Incident Modal
     window.openIncidentModal = function() {
       document.getElementById('incident-form').reset();
       const year = new Date().getFullYear();
       const sequence = String(allIncidents.length + 1).padStart(5, '0');
       document.getElementById('inc-control-no').value = `INC-${year}-${sequence}`;
+      switchIncidentStep(1);
       document.getElementById('incident-modal').showModal();
     };
 
@@ -1615,8 +1692,20 @@ require_auth('login.php');
         const unit = document.getElementById('inc-unit').value;
         const narrative = document.getElementById('inc-narrative').value.trim();
 
-        if (!controlNo || !address || !narrative) {
-          Toast.error('Please fill in all required fields.');
+        if (!controlNo) {
+          switchIncidentStep(1);
+          return;
+        }
+        if (!address) {
+          Toast.warning('Please enter Street / Specific Landmark.');
+          switchIncidentStep(2);
+          document.getElementById('inc-address').focus();
+          return;
+        }
+        if (!narrative) {
+          Toast.warning('Please enter Initial Situation Report / Narrative.');
+          switchIncidentStep(3);
+          document.getElementById('inc-narrative').focus();
           return;
         }
 

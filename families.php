@@ -639,8 +639,8 @@ require_auth('login.php');
   <!-- ===================================================== -->
   <!-- MODAL 1: REGISTER / EDIT FAMILY PROFILE               -->
   <!-- ===================================================== -->
-  <dialog id="family-modal" class="modal-dialog" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
+  <dialog id="family-modal" class="modal-dialog" style="max-width: 820px; width: 95%;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
       <div>
         <h3 class="typography-heading-4" id="modal-family-title">Register Family Profile.</h3>
         <p class="typography-caption">Kinship profiling, 4Ps beneficiary tracking, and socio-economic classification.</p>
@@ -650,14 +650,40 @@ require_auth('login.php');
       </button>
     </div>
 
+    <!-- Wizard Section Navigation Tabs -->
+    <div class="modal-section-tabs" id="family-wizard-tabs">
+      <button type="button" class="section-tab-btn active" data-step="1" onclick="switchFamilyStep(1)">
+        <span class="step-num">1</span>
+        <span class="step-title">1. Identification &amp; Dwelling</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="2" onclick="switchFamilyStep(2)">
+        <span class="step-num">2</span>
+        <span class="step-title">2. Family Head</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="3" onclick="switchFamilyStep(3)">
+        <span class="step-num">3</span>
+        <span class="step-title">3. Welfare &amp; Income</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="4" onclick="switchFamilyStep(4)">
+        <span class="step-num">4</span>
+        <span class="step-title">4. Members Roster</span>
+      </button>
+      <button type="button" class="section-tab-btn" data-step="5" onclick="switchFamilyStep(5)">
+        <span class="step-num">5</span>
+        <span class="step-title">5. Notes &amp; Review</span>
+      </button>
+    </div>
+
     <form id="family-form" novalidate>
       <input type="hidden" id="family-edit-id" value="">
 
       <!-- Step 1: Identification & Dwelling Location -->
-      <div style="margin-bottom: var(--spacing-md);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          1. Family Identification &amp; Dwelling
-        </span>
+      <div class="modal-step-pane active" id="family-step-1">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            1. Family Identification &amp; Dwelling Location
+          </span>
+        </div>
 
         <div class="form-grid-2 mt-xs">
           <div class="form-group">
@@ -732,12 +758,15 @@ require_auth('login.php');
       </div>
 
       <!-- Step 2: Head of Family -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          2. Head of Family (Puno ng Pamilya)
-        </span>
+      <div class="modal-step-pane" id="family-step-2">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            2. Head of Family (Puno ng Pamilya)
+          </span>
+          <p class="typography-caption" style="color: var(--color-text-muted); margin-top: 2px;">Designate the primary household authority and financial decision-maker.</p>
+        </div>
 
-        <div style="display: flex; gap: var(--spacing-xs); margin-top: 4px;">
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: 8px;">
           <select id="select-head-resident" class="text-input" style="height: 42px; padding: 0 12px; flex: 1;" required onchange="handleHeadSelection(this.value)">
             <option value="">-- Choose Registered Resident as Family Head --</option>
           </select>
@@ -746,8 +775,8 @@ require_auth('login.php');
           </a>
         </div>
 
-        <div id="head-preview-card" style="display: none; margin-top: var(--spacing-xs); padding: 12px 14px; background-color: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); font-size: 0.8125rem;">
-          <div style="display: flex; align-items: center; gap: 12px;">
+        <div id="head-preview-card" style="display: none; margin-top: var(--spacing-sm); padding: 14px 16px; background-color: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); font-size: 0.8125rem;">
+          <div style="display: flex; align-items: center; gap: 14px;">
             <div class="head-avatar-squircle" id="head-preview-avatar">H</div>
             <div style="flex: 1;">
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -761,10 +790,13 @@ require_auth('login.php');
       </div>
 
       <!-- Step 3: Socio-Economic & Social Welfare -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          3. Socio-Economic Assessment &amp; Social Welfare
-        </span>
+      <div class="modal-step-pane" id="family-step-3">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            3. Socio-Economic Assessment &amp; Social Welfare
+          </span>
+          <p class="typography-caption" style="color: var(--color-text-muted); margin-top: 2px;">Income threshold classification and government aid eligibility.</p>
+        </div>
 
         <div class="form-grid-2 mt-xs">
           <div class="form-group">
@@ -808,20 +840,20 @@ require_auth('login.php');
       </div>
 
       <!-- Step 4: Family Members & Kinship Composition -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="modal-step-pane" id="family-step-4">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs);">
           <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
             4. Family Members &amp; Kinship Composition
           </span>
           <span class="typography-caption" id="modal-member-counter">1 Member Profiled</span>
         </div>
 
-        <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-xs); flex-wrap: wrap;">
-          <select id="select-add-member" class="text-input" style="height: 42px; padding: 0 12px; flex: 2; min-width: 220px;">
+        <div style="display: flex; gap: var(--spacing-xs); margin-top: 4px; flex-wrap: wrap;">
+          <select id="select-add-member" class="text-input" style="height: 42px; padding: 0 12px; flex: 2; min-width: 200px;">
             <option value="">-- Choose Resident to Add to Family --</option>
           </select>
 
-          <select id="select-member-relation" class="text-input" style="height: 42px; flex: 1; min-width: 160px;">
+          <select id="select-member-relation" class="text-input" style="height: 42px; flex: 1; min-width: 150px;">
             <option value="Spouse (Asawa)">Spouse (Asawa)</option>
             <option value="Son / Daughter (Anak)">Son / Daughter (Anak)</option>
             <option value="Parent (Magulang)">Parent (Magulang)</option>
@@ -838,8 +870,8 @@ require_auth('login.php');
           </button>
         </div>
 
-        <div class="member-table-wrap" style="margin-top: var(--spacing-xs);">
-          <table class="data-table" style="font-size: 0.8125rem;">
+        <div class="member-table-wrap" style="margin-top: var(--spacing-xs); max-height: 180px; overflow-y: auto;">
+          <table class="data-table" style="font-size: 0.8125rem; width: 100%;">
             <thead>
               <tr>
                 <th>Resident Member</th>
@@ -855,23 +887,38 @@ require_auth('login.php');
       </div>
 
       <!-- Step 5: Caseworker Notes & Remarks -->
-      <div style="margin-bottom: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
-          5. Caseworker Notes &amp; Welfare Remarks
-        </span>
-        <div class="form-group mt-xs" style="margin-bottom: 0;">
-          <textarea id="fam-remarks" class="text-input" style="height: 72px; padding: 10px 12px; resize: vertical;" placeholder="e.g. Living in shared dwelling; vulnerable senior citizen residing; beneficiary of typhoon relief."></textarea>
+      <div class="modal-step-pane" id="family-step-5">
+        <div style="margin-bottom: var(--spacing-xs);">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase;">
+            5. Caseworker Notes &amp; Welfare Remarks
+          </span>
+          <p class="typography-caption" style="color: var(--color-text-muted); margin-top: 2px;">Record social worker observations, special vulnerability notes, or relief histories.</p>
+        </div>
+
+        <div id="family-step5-summary" style="margin-bottom: var(--spacing-xs);"></div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="fam-remarks">Caseworker Notes</label>
+          <textarea id="fam-remarks" class="text-input" style="height: 68px; padding: 10px 12px; resize: none;" placeholder="e.g. Living in shared dwelling; vulnerable senior citizen residing; beneficiary of typhoon relief."></textarea>
         </div>
       </div>
 
-      <!-- Actions -->
-      <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
-        <button type="button" class="button-outline" onclick="document.getElementById('family-modal').close();" style="height: 42px; padding: 0 20px;">
+      <!-- Wizard Actions Footer -->
+      <div class="modal-wizard-footer">
+        <button type="button" class="button-outline" onclick="document.getElementById('family-modal').close();" style="height: 42px; padding: 0 18px;">
           Cancel
         </button>
-        <button type="submit" class="button-primary" id="btn-save-family" style="height: 42px; padding: 0 24px;">
-          Save Family Profile
-        </button>
+        <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
+          <button type="button" class="button-outline" id="btn-family-prev" onclick="prevFamilyStep()" style="height: 42px; padding: 0 16px; display: none;">
+            &larr; Back
+          </button>
+          <button type="button" class="button-outline" id="btn-family-next" onclick="nextFamilyStep()" style="height: 42px; padding: 0 16px;">
+            Next &rarr;
+          </button>
+          <button type="submit" class="button-primary" id="btn-save-family" style="height: 42px; padding: 0 22px;">
+            Save Family Profile
+          </button>
+        </div>
       </div>
     </form>
   </dialog>
@@ -1557,6 +1604,81 @@ require_auth('login.php');
       document.getElementById('btn-view-table').classList.toggle('active', !isCards);
     };
 
+    // Wizard Navigation State
+    let currentFamilyStep = 1;
+
+    window.switchFamilyStep = function(step) {
+      currentFamilyStep = Math.max(1, Math.min(5, step));
+
+      for (let i = 1; i <= 5; i++) {
+        const pane = document.getElementById(`family-step-${i}`);
+        if (pane) {
+          pane.style.display = (i === currentFamilyStep) ? 'block' : 'none';
+        }
+      }
+
+      document.querySelectorAll('#family-wizard-tabs .section-tab-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        btn.classList.toggle('active', s === currentFamilyStep);
+      });
+
+      const prevBtn = document.getElementById('btn-family-prev');
+      const nextBtn = document.getElementById('btn-family-next');
+      if (prevBtn) prevBtn.style.display = (currentFamilyStep > 1) ? 'inline-flex' : 'none';
+      if (nextBtn) nextBtn.style.display = (currentFamilyStep < 5) ? 'inline-flex' : 'none';
+
+      if (currentFamilyStep === 5) {
+        updateFamilySummaryReview();
+      }
+    };
+
+    window.nextFamilyStep = function() {
+      if (currentFamilyStep === 1) {
+        const name = document.getElementById('fam-name').value.trim();
+        if (!name) {
+          Toast.warning('Please enter a Family / Clan Title to proceed.');
+          document.getElementById('fam-name').focus();
+          return;
+        }
+      } else if (currentFamilyStep === 2) {
+        const head = document.getElementById('select-head-resident').value;
+        if (!head) {
+          Toast.warning('Please designate a Head of Family to proceed.');
+          return;
+        }
+      }
+      switchFamilyStep(currentFamilyStep + 1);
+    };
+
+    window.prevFamilyStep = function() {
+      switchFamilyStep(currentFamilyStep - 1);
+    };
+
+    function updateFamilySummaryReview() {
+      const summaryMount = document.getElementById('family-step5-summary');
+      if (!summaryMount) return;
+      const famName = document.getElementById('fam-name').value.trim() || 'Untitled Family';
+      const headName = document.getElementById('head-preview-name').textContent || 'Unassigned Head';
+      const purok = document.getElementById('fam-purok').value || 'Purok 1';
+      const dwelling = document.getElementById('select-household').selectedOptions[0]?.text || 'No Dwelling Link';
+      const income = parseFloat(document.getElementById('fam-monthly-income').value) || 0;
+      const memberCount = currentModalMembers.length;
+
+      summaryMount.innerHTML = `
+        <div style="background-color: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); padding: 12px 14px; font-size: 0.8125rem;">
+          <div style="font-weight: 700; color: var(--color-primary); font-size: 0.6875rem; text-transform: uppercase; margin-bottom: 6px;">Profile Verification Summary</div>
+          <div class="form-grid-3" style="gap: 8px;">
+            <div><span style="color: var(--color-text-muted);">Clan Title:</span> <strong>${famName}</strong></div>
+            <div><span style="color: var(--color-text-muted);">Family Head:</span> <strong>${headName}</strong></div>
+            <div><span style="color: var(--color-text-muted);">Barangay Purok:</span> <strong>${purok}</strong></div>
+            <div><span style="color: var(--color-text-muted);">Physical Dwelling:</span> <strong>${dwelling}</strong></div>
+            <div><span style="color: var(--color-text-muted);">Monthly Income:</span> <strong>₱${income.toLocaleString('en-US', { minimumFractionDigits: 2 })}</strong></div>
+            <div><span style="color: var(--color-text-muted);">Enlisted Members:</span> <strong>${memberCount} Profiled</strong></div>
+          </div>
+        </div>
+      `;
+    }
+
     // Open Family Registration Modal
     window.openFamilyModal = function() {
       editingFamilyId = null;
@@ -1575,6 +1697,7 @@ require_auth('login.php');
       document.getElementById('group-4ps-no').style.display = 'none';
       updatePovertyPreview(0);
 
+      switchFamilyStep(1);
       document.getElementById('family-modal').showModal();
     };
 
@@ -1643,6 +1766,7 @@ require_auth('login.php');
         });
         renderModalMembersList();
 
+        switchFamilyStep(1);
         document.getElementById('family-modal').showModal();
       } catch (err) {
         console.error('Error opening edit modal:', err);
@@ -2252,9 +2376,18 @@ require_auth('login.php');
       document.getElementById('family-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const famName = document.getElementById('fam-name').value.trim();
+        if (!famName) {
+          Toast.warning('Please enter a Family / Clan Title.');
+          switchFamilyStep(1);
+          document.getElementById('fam-name').focus();
+          return;
+        }
+
         const headId = parseInt(document.getElementById('select-head-resident').value, 10);
         if (!headId) {
           Toast.warning('Please designate a Head of Family.');
+          switchFamilyStep(2);
           return;
         }
 
