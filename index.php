@@ -20,11 +20,6 @@ try {
     exit;
 }
 
-// Redirect according to authentication state
-if (is_logged_in()) {
-    header('Location: dashboard.php');
-    exit;
-} else {
-    header('Location: portal.php');
-    exit;
-}
+// Redirect to dashboard operations console
+header('Location: dashboard.php');
+exit;

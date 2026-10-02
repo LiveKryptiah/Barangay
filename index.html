@@ -23,19 +23,8 @@
   <script src="js/db.js"></script>
   <script src="js/auth.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const session = await authService.getCurrentSession();
-        if (session) {
-          window.location.replace('dashboard.html');
-          return;
-        }
-
-        window.location.replace('portal.html');
-      } catch (e) {
-        console.error('Initialization error:', e);
-        window.location.replace('portal.html');
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      window.location.replace('dashboard.html');
     });
   </script>
 </body>

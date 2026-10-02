@@ -385,7 +385,7 @@
       </div>
       <div class="egov-appbar-titles">
         <span class="egov-appbar-main" id="mobile-bar-brgy">Barangay San Isidro</span>
-        <span class="egov-appbar-sub">Official Citizen eServices</span>
+        <span class="egov-appbar-sub">Community Portal Demonstration</span>
       </div>
     </div>
     <div class="egov-appbar-actions">
@@ -407,8 +407,15 @@
 
   <!-- Main Content Body -->
   <main class="portal-main">
+    <!-- Academic Prototype Notice Banner -->
+    <div style="background: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--rounded-md); padding: 10px 16px; margin: 16px auto; max-width: 780px; text-align: center;">
+      <p class="typography-caption" style="color: var(--color-text-muted); margin: 0; font-size: 0.78125rem; line-height: 1.4;">
+        <strong>Open-Source Architecture Demonstration:</strong> This community portal is an educational prototype and portfolio showcase (BarangayOS). Not affiliated with any official government agency. Do not submit sensitive real-world personal information.
+      </p>
+    </div>
+
     <!-- Desktop-Only Hero Banner -->
-    <section class="portal-hero desktop-only-block">
+    <section class="portal-hero desktop-only-block" style="padding-top: var(--spacing-md);">
       <div class="portal-hero-badge">
         <span class="status-dot-green"></span>
         <span id="portal-hero-jurisdiction">City of San Isidro &bull; Online Services Active</span>
@@ -1011,6 +1018,10 @@
     <form id="online-request-form">
       <input type="hidden" id="req-doc-type" value="Barangay Clearance">
 
+      <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 12px; background: var(--color-canvas-soft); padding: 8px 12px; border-radius: var(--rounded-sm);">
+        Demonstration Mode: Records are processed locally in your browser sandbox. Do not submit sensitive data.
+      </div>
+
       <!-- Citizen Name -->
       <div class="form-group" style="margin-bottom: var(--spacing-sm);">
         <label class="form-label" for="req-name">Full Legal Name <span style="color: var(--color-primary);">*</span></label>
@@ -1042,7 +1053,7 @@
       <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
         <div class="form-group">
           <label class="form-label" for="req-phone">Mobile Phone Number <span style="color: var(--color-primary);">*</span></label>
-          <input type="tel" id="req-phone" class="text-input" placeholder="09XXXXXXXXX" required>
+          <input type="tel" id="req-phone" class="text-input" placeholder="0917-000-0000 (Sample Demo)" required>
         </div>
 
         <div class="form-group">

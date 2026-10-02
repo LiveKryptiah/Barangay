@@ -816,7 +816,7 @@ require_auth('login.php');
 
                   <div class="form-group" style="margin-bottom: var(--spacing-sm);">
                     <label class="form-label" for="gw-api-key">API Secret Key / Auth Token</label>
-                    <input type="password" id="gw-api-key" class="text-input" style="height: 40px;" value="••••••••••••••••••••••••••••••••">
+                    <input type="text" id="gw-api-key" class="text-input" style="height: 40px; font-family: monospace;" value="tok_demo_sms_carrier_live_2026" readonly autocomplete="off">
                   </div>
                 </div>
 

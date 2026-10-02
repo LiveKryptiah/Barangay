@@ -341,7 +341,7 @@ require_once __DIR__ . '/config/database.php';
   <!-- Floating Public Navigation Pill -->
   <div class="public-nav-wrapper">
     <nav class="public-nav-pill" aria-label="Citizen Navigation">
-      <a href="portal.php" class="nav-brand" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-ink);">
+      <a href="portal.html" class="nav-brand" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-ink);">
         <div id="portal-seal-icon" class="nav-brand-icon" style="width: 34px; height: 34px; border-radius: 30%; font-size: 1rem; flex-shrink: 0;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -357,7 +357,7 @@ require_once __DIR__ . '/config/database.php';
       <ul class="public-nav-links">
         <li><a href="#services" class="public-nav-link">Clearances</a></li>
         <li><a href="#track" class="public-nav-link">Track Request</a></li>
-        <li><a href="verify.php" class="public-nav-link" style="font-weight: 600; color: var(--color-primary);">Verify Document</a></li>
+        <li><a href="verify.html" class="public-nav-link" style="font-weight: 600; color: var(--color-primary);">Verify Document</a></li>
         <li><a href="#directory" class="public-nav-link">Officials</a></li>
         <li><a href="#procurement-disclosures" class="public-nav-link">Procurement</a></li>
         <li><a href="#ordinances-legal" class="public-nav-link">Ordinances</a></li>
@@ -371,7 +371,7 @@ require_once __DIR__ . '/config/database.php';
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
           </svg>
         </button>
-        <a href="dashboard.php" class="button-pill-soft" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
+        <a href="dashboard.html" class="button-pill-soft" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
           Staff Dashboard &rarr;
         </a>
       </div>
@@ -388,7 +388,7 @@ require_once __DIR__ . '/config/database.php';
       </div>
       <div class="egov-appbar-titles">
         <span class="egov-appbar-main" id="mobile-bar-brgy">Barangay San Isidro</span>
-        <span class="egov-appbar-sub">Official Citizen eServices</span>
+        <span class="egov-appbar-sub">Community Portal Demonstration</span>
       </div>
     </div>
     <div class="egov-appbar-actions">
@@ -410,8 +410,15 @@ require_once __DIR__ . '/config/database.php';
 
   <!-- Main Content Body -->
   <main class="portal-main">
+    <!-- Academic Prototype Notice Banner -->
+    <div style="background: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--rounded-md); padding: 10px 16px; margin: 16px auto; max-width: 780px; text-align: center;">
+      <p class="typography-caption" style="color: var(--color-text-muted); margin: 0; font-size: 0.78125rem; line-height: 1.4;">
+        <strong>Open-Source Architecture Demonstration:</strong> This community portal is an educational prototype and portfolio showcase (BarangayOS). Not affiliated with any official government agency. Do not submit sensitive real-world personal information.
+      </p>
+    </div>
+
     <!-- Desktop-Only Hero Banner -->
-    <section class="portal-hero desktop-only-block">
+    <section class="portal-hero desktop-only-block" style="padding-top: var(--spacing-md);">
       <div class="portal-hero-badge">
         <span class="status-dot-green"></span>
         <span id="portal-hero-jurisdiction">City of San Isidro &bull; Online Services Active</span>
@@ -430,7 +437,7 @@ require_once __DIR__ . '/config/database.php';
         <a href="#track" class="button-outline" style="height: 44px; padding: 0 20px; font-size: 0.9375rem;">
           Track Application
         </a>
-        <a href="verify.php" class="button-outline" style="height: 44px; padding: 0 20px; font-size: 0.9375rem; display: inline-flex; align-items: center; gap: 8px;">
+        <a href="verify.html" class="button-outline" style="height: 44px; padding: 0 20px; font-size: 0.9375rem; display: inline-flex; align-items: center; gap: 8px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
           Verify Document (QR)
         </a>
@@ -509,7 +516,7 @@ require_once __DIR__ . '/config/database.php';
           <div class="egov-service-desc">Commercial License</div>
         </button>
 
-        <a href="verify.php" class="egov-service-btn">
+        <a href="verify.html" class="egov-service-btn">
           <div class="egov-service-icon-wrap" style="background: rgba(5, 150, 105, 0.1); color: #059669;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M7 12h10M12 7v10"/></svg>
           </div>
@@ -551,6 +558,7 @@ require_once __DIR__ . '/config/database.php';
       </div>
 
       <div id="mobile-requests-list">
+        <!-- Sample/Real Request Cards Injected Dynamically -->
         <div class="egov-request-card" onclick="quickTrackSample('BC-2026-00001')">
           <div class="egov-request-left">
             <div class="egov-request-icon" style="background: rgba(0, 56, 168, 0.08); color: #0038a8;">
@@ -993,7 +1001,7 @@ require_once __DIR__ . '/config/database.php';
         <a href="#services">Clearances</a>
         <a href="#track">Track Status</a>
         <a href="#directory">Council</a>
-        <a href="dashboard.php" style="font-weight: 700; color: #ffffff;">Staff Administration Dashboard &rarr;</a>
+        <a href="dashboard.html" style="font-weight: 700; color: #ffffff;">Staff Administration Dashboard &rarr;</a>
       </div>
     </div>
   </footer>
@@ -1012,6 +1020,10 @@ require_once __DIR__ . '/config/database.php';
 
     <form id="online-request-form">
       <input type="hidden" id="req-doc-type" value="Barangay Clearance">
+
+      <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 12px; background: var(--color-canvas-soft); padding: 8px 12px; border-radius: var(--rounded-sm);">
+        Demonstration Mode: Records are processed locally in your browser sandbox. Do not submit sensitive data.
+      </div>
 
       <!-- Citizen Name -->
       <div class="form-group" style="margin-bottom: var(--spacing-sm);">
@@ -1044,7 +1056,7 @@ require_once __DIR__ . '/config/database.php';
       <div class="form-grid-2" style="margin-bottom: var(--spacing-sm);">
         <div class="form-group">
           <label class="form-label" for="req-phone">Mobile Phone Number <span style="color: var(--color-primary);">*</span></label>
-          <input type="tel" id="req-phone" class="text-input" placeholder="09XXXXXXXXX" required>
+          <input type="tel" id="req-phone" class="text-input" placeholder="0917-000-0000 (Sample Demo)" required>
         </div>
 
         <div class="form-group">
@@ -1136,8 +1148,8 @@ require_once __DIR__ . '/config/database.php';
     </button>
   </dialog>
 
-  <!-- MODAL: ANNOUNCEMENT DETAILS (eGov Bottom Sheet Style) -->
-  <dialog id="announce-modal" class="modal-dialog" style="width: 90%; max-width: 500px;">
+  <!-- MODAL: ANNOUNCEMENT DETAILS (eGov Style) -->
+  <dialog id="announce-modal" class="modal-dialog" style="width: 90%; max-width: 520px;">
     <div class="bottom-sheet-handle mobile-only-block"></div>
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
       <span class="egov-announce-badge" id="ann-modal-badge">OFFICIAL NOTICE</span>
@@ -1187,12 +1199,12 @@ require_once __DIR__ . '/config/database.php';
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 8px;">
-      <a href="verify.php" class="button-outline" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
+      <a href="verify.html" class="button-outline" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M7 12h10M12 7v10"/></svg>
         <span>Open QR Document Verifier</span>
       </a>
 
-      <a href="dashboard.php" class="button-primary" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
+      <a href="dashboard.html" class="button-primary" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
         <span>Open Staff Dashboard</span>
       </a>
@@ -1231,8 +1243,8 @@ require_once __DIR__ . '/config/database.php';
   </nav>
 
   <!-- Scripts -->
-  <script src="js/api.js"></script>
-  
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/components/toast.js"></script>
 
   <script>
@@ -1360,7 +1372,7 @@ require_once __DIR__ . '/config/database.php';
       // Check current session for resident personalized greeting
       if (window.barangayAuth || window.authService) {
         try {
-          const auth = window.barangayAuth && typeof window.barangayAuth.getUser === 'function' ? window.barangayAuth.getUser() : null;
+          const auth = window.barangayAuth ? window.barangayAuth.getUser() : null;
           if (auth && auth.full_name) {
             const firstName = auth.full_name.split(' ')[0];
             if (greetEl) greetEl.textContent = `${greeting}, ${firstName}!`;
@@ -1831,20 +1843,6 @@ require_once __DIR__ . '/config/database.php';
 
       async function loadPublicOrdinances() {
         try {
-          // In PHP/REST API mode or IndexedDB mode:
-          // Try public unauthenticated endpoint first or fall back to barangayDB
-          try {
-            const res = await fetch('api/legislative.php?action=public_registry');
-            if (res.ok) {
-              const json = await res.json();
-              if (json && json.data && Array.isArray(json.data.documents)) {
-                publicOrdinances = json.data.documents;
-                filterPublicOrdinances();
-                return;
-              }
-            }
-          } catch (netErr) {}
-
           if (window.barangayDB) {
             const allDocs = await window.barangayDB.getAll('legislative_documents');
             publicOrdinances = (allDocs || []).filter(d => (d.readingStage || d.reading_stage) === 'Enacted' && (d.cityCouncilReviewStatus || d.city_council_review_status) !== 'Disapproved');
