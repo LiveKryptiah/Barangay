@@ -127,7 +127,7 @@ class NavPill {
         } else if (window.authService) {
           await window.authService.logout();
         }
-        window.location.href = `login${ext}`;
+        window.location.href = `dashboard${ext}`;
       });
     }
   }

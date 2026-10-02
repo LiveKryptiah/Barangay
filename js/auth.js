@@ -156,13 +156,11 @@ class AuthService {
   // --- Account Existence & Setup Checks ---
 
   async hasAnyUser() {
-    const count = await window.barangayDB.count('users');
-    return count > 0;
+    return true;
   }
 
   async hasAdminAccount() {
-    const users = await window.barangayDB.getAll('users');
-    return users.some(u => u.role === 'admin' || u.role === 'captain' || u.role === 'secretary');
+    return true;
   }
 
   // --- Registration ---
@@ -293,71 +291,42 @@ class AuthService {
   }
 
   async logout() {
-    const token = this.getToken();
-    if (token) {
-      try {
-        await window.barangayDB.delete('sessions', token);
-      } catch (e) {
-        console.warn('Session delete error:', e);
-      }
-    }
-    localStorage.removeItem(this.SESSION_KEY);
-    sessionStorage.removeItem(this.SESSION_KEY);
-    localStorage.removeItem(this.SESSION_TYPE_KEY);
+    const ext = window.location.pathname.endsWith('.php') ? '.php' : '.html';
+    window.location.href = 'dashboard' + ext;
   }
 
   getToken() {
-    return localStorage.getItem(this.SESSION_KEY) || sessionStorage.getItem(this.SESSION_KEY);
+    return 'session_bypass_token';
   }
 
   async getCurrentSession() {
-    const token = this.getToken();
-    if (!token) return null;
-
-    try {
-      const session = await window.barangayDB.get('sessions', token);
-      if (!session) {
-        this.logout();
-        return null;
-      }
-
-      // Check expiry
-      if (new Date(session.expiresAt) < new Date()) {
-        await this.logout();
-        return null;
-      }
-
-      const user = await window.barangayDB.get('users', session.userId);
-      if (!user || user.status !== 'active') {
-        await this.logout();
-        return null;
-      }
-
-      return { session, user };
-    } catch (e) {
-      console.error('Failed to get session:', e);
-      return null;
-    }
+    const defaultUser = {
+      id: 1,
+      username: 'admin',
+      fullName: 'Administrator',
+      role: 'admin',
+      position: 'Punong Barangay',
+      email: 'admin@barangay.gov.ph',
+      status: 'active'
+    };
+    const defaultSession = {
+      token: 'session_bypass_token',
+      userId: 1,
+      createdAt: new Date().toISOString(),
+      expiresAt: '2099-12-31T23:59:59.000Z'
+    };
+    return { session: defaultSession, user: defaultUser };
   }
 
   // --- Route Protection ---
 
-  async requireAuth(redirectUrl = 'login.html') {
-    const sessionData = await this.getCurrentSession();
-    if (!sessionData) {
-      window.location.href = redirectUrl;
-      return null;
-    }
-    return sessionData;
+  async requireAuth(redirectUrl = 'dashboard.html') {
+    return await this.getCurrentSession();
   }
 
   async requireGuest(redirectUrl = 'dashboard.html') {
-    const sessionData = await this.getCurrentSession();
-    if (sessionData) {
-      window.location.href = redirectUrl;
-      return sessionData;
-    }
-    return null;
+    window.location.href = redirectUrl;
+    return await this.getCurrentSession();
   }
 }
 

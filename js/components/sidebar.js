@@ -556,10 +556,8 @@ class AppSidebar {
           await window.barangayAuth.logout();
         } else if (window.authService) {
           await window.authService.logout();
-          window.location.href = 'login' + ext;
-        } else {
-          window.location.href = 'login' + ext;
         }
+        window.location.href = 'dashboard' + ext;
       });
     }
   }

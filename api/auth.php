@@ -57,7 +57,7 @@ switch ($action) {
     // ----------------------------------------------------
     case 'logout':
         logout_user();
-        json_response(true, ['redirect' => 'login.php'], 'Signed out successfully.');
+        json_response(true, ['redirect' => 'dashboard.php'], 'Session retained on dashboard.');
         break;
 
     // ----------------------------------------------------

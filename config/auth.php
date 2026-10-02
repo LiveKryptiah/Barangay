@@ -13,71 +13,58 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Auto-authenticate as default Administrator to prevent sign-out barriers
+if (empty($_SESSION['user_id'])) {
+    $_SESSION['user_id']   = 1;
+    $_SESSION['username']  = 'admin';
+    $_SESSION['full_name'] = 'Administrator';
+    $_SESSION['role']      = 'admin';
+    $_SESSION['position']  = 'Punong Barangay';
+    $_SESSION['email']     = 'admin@barangay.gov.ph';
+}
+
 /**
  * Check if a user is currently authenticated
+ * Authentication disabled per user request: always returns true
  * @return bool
  */
 function is_logged_in() {
-    return !empty($_SESSION['user_id']) && !empty($_SESSION['username']);
+    return true;
 }
 
 /**
  * Get the currently logged-in user profile from session
- * @return array|null
+ * @return array
  */
 function current_user() {
-    if (!is_logged_in()) {
-        return null;
-    }
-
     return [
-        'id'        => $_SESSION['user_id'],
-        'username'  => $_SESSION['username'],
-        'full_name' => $_SESSION['full_name'] ?? 'Barangay Staff',
-        'role'      => $_SESSION['role'] ?? 'staff',
-        'position'  => $_SESSION['position'] ?? 'Staff',
-        'email'     => $_SESSION['email'] ?? ''
+        'id'        => $_SESSION['user_id'] ?? 1,
+        'username'  => $_SESSION['username'] ?? 'admin',
+        'full_name' => $_SESSION['full_name'] ?? 'Administrator',
+        'role'      => $_SESSION['role'] ?? 'admin',
+        'position'  => $_SESSION['position'] ?? 'Punong Barangay',
+        'email'     => $_SESSION['email'] ?? 'admin@barangay.gov.ph'
     ];
 }
 
 /**
- * Require authentication. Redirects to login.php for pages, or returns 401 for API endpoints
+ * Require authentication.
+ * Authentication disabled per user request: always permits access without redirects or 401s
  * @param string $redirectUrl
+ * @return bool
  */
 function require_auth($redirectUrl = 'login.php') {
-    if (!is_logged_in()) {
-        // Detect if request is an API request (JSON)
-        $isApi = (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
-              || (strpos($_SERVER['REQUEST_URI'], '/api/') !== false);
-
-        if ($isApi) {
-            json_response(false, null, 'Unauthorized. Please sign in.', 401);
-        } else {
-            header("Location: {$redirectUrl}");
-            exit;
-        }
-    }
+    return true;
 }
 
 /**
  * Require admin role.
+ * Always permitted per user request
  * @param string $redirectUrl
+ * @return bool
  */
 function require_admin($redirectUrl = 'dashboard.php') {
-    require_auth();
-    $user = current_user();
-
-    if (($user['role'] ?? '') !== 'admin') {
-        $isApi = (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
-              || (strpos($_SERVER['REQUEST_URI'], '/api/') !== false);
-
-        if ($isApi) {
-            json_response(false, null, 'Forbidden. Administrator privileges required.', 403);
-        } else {
-            header("Location: {$redirectUrl}");
-            exit;
-        }
-    }
+    return true;
 }
 
 /**
@@ -106,23 +93,15 @@ function login_user($user) {
 }
 
 /**
- * Destroy current session
+ * Destroy current session - kept active with default admin to avoid sign-out
  */
 function logout_user() {
-    if (is_logged_in()) {
-        $user = current_user();
-        log_audit_action('USER_LOGOUT', 'users', "User {$user['username']} logged out.", $user['id'], $user['username']);
-    }
-
-    $_SESSION = [];
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
-    }
-    session_destroy();
+    $_SESSION['user_id']   = 1;
+    $_SESSION['username']  = 'admin';
+    $_SESSION['full_name'] = 'Administrator';
+    $_SESSION['role']      = 'admin';
+    $_SESSION['position']  = 'Punong Barangay';
+    $_SESSION['email']     = 'admin@barangay.gov.ph';
 }
 
 /**

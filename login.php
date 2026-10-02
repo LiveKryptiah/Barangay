@@ -7,11 +7,9 @@
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/auth.php';
 
-// If already logged in, redirect directly to dashboard
-if (is_logged_in()) {
-    header('Location: dashboard.php');
-    exit;
-}
+// Authentication disabled per user request: automatically redirect to dashboard
+header('Location: dashboard.php');
+exit;
 ?>
 <!DOCTYPE html>
 <html lang="en">

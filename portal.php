@@ -371,8 +371,8 @@ require_once __DIR__ . '/config/database.php';
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
           </svg>
         </button>
-        <a href="login.php" class="button-pill-soft" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
-          Staff Portal &rarr;
+        <a href="dashboard.php" class="button-pill-soft" style="height: 36px; padding: 0 14px; font-size: 0.8125rem;">
+          Staff Dashboard &rarr;
         </a>
       </div>
     </nav>
@@ -993,7 +993,7 @@ require_once __DIR__ . '/config/database.php';
         <a href="#services">Clearances</a>
         <a href="#track">Track Status</a>
         <a href="#directory">Council</a>
-        <a href="login.php" style="font-weight: 700; color: #ffffff;">Staff Administration Portal &rarr;</a>
+        <a href="dashboard.php" style="font-weight: 700; color: #ffffff;">Staff Administration Dashboard &rarr;</a>
       </div>
     </div>
   </footer>
@@ -1192,9 +1192,9 @@ require_once __DIR__ . '/config/database.php';
         <span>Open QR Document Verifier</span>
       </a>
 
-      <a href="login.php" class="button-primary" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        <span>Barangay Official / Staff Login</span>
+      <a href="dashboard.php" class="button-primary" style="height: 42px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; border-radius: 9999px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>Open Staff Dashboard</span>
       </a>
     </div>
   </dialog>

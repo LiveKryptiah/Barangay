@@ -634,9 +634,6 @@
       const json = await response.json();
 
       if (!response.ok) {
-        if (response.status === 401 && !endpoint.includes('auth.php')) {
-          window.location.href = 'login.php';
-        }
         throw new Error(json.message || 'API request failed');
       }
 
@@ -858,16 +855,27 @@
     },
 
     async logout() {
-      sessionStorage.removeItem('barangay_user');
-      try {
-        await apiRequest('api/auth.php?action=logout', 'POST');
-      } catch (e) {}
-      window.location.href = 'login.php';
+      // Kept on dashboard to avoid signing out
+      const ext = window.location.pathname.endsWith('.php') ? '.php' : '.html';
+      window.location.href = 'dashboard' + ext;
     },
 
     getUser() {
       const stored = sessionStorage.getItem('barangay_user');
-      return stored ? JSON.parse(stored) : null;
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      const defaultUser = {
+        id: 1,
+        username: 'admin',
+        fullName: 'Administrator',
+        full_name: 'Administrator',
+        role: 'admin',
+        position: 'Punong Barangay',
+        email: 'admin@barangay.gov.ph'
+      };
+      sessionStorage.setItem('barangay_user', JSON.stringify(defaultUser));
+      return defaultUser;
     },
 
     async checkSession() {
@@ -877,18 +885,24 @@
           sessionStorage.setItem('barangay_user', JSON.stringify(res.user));
           return res.user;
         }
-      } catch (e) {
-        sessionStorage.removeItem('barangay_user');
-      }
-      return null;
+      } catch (e) {}
+
+      const defaultUser = {
+        id: 1,
+        username: 'admin',
+        fullName: 'Administrator',
+        full_name: 'Administrator',
+        role: 'admin',
+        position: 'Punong Barangay',
+        email: 'admin@barangay.gov.ph'
+      };
+      sessionStorage.setItem('barangay_user', JSON.stringify(defaultUser));
+      return defaultUser;
     },
 
-    async requireAuth(redirectUrl = 'login.php') {
+    async requireAuth(redirectUrl = 'dashboard.php') {
+      // Always authenticated to avoid signing out
       const user = await this.checkSession();
-      if (!user) {
-        window.location.href = redirectUrl;
-        return null;
-      }
       return { user };
     },
 
@@ -901,10 +915,14 @@
   window.authService = {
     async getCurrentSession() {
       const user = await barangayAuth.checkSession();
-      return user ? { user } : null;
+      return { user, session: { token: 'session_bypass', userId: user.id } };
     },
-    async requireAuth(url = 'login.php') {
-      return await barangayAuth.requireAuth(url);
+    async requireAuth(url = 'dashboard.php') {
+      return await this.getCurrentSession();
+    },
+    async requireGuest(url = 'dashboard.php') {
+      window.location.href = url;
+      return await this.getCurrentSession();
     },
     async logout() {
       return await barangayAuth.logout();
@@ -913,8 +931,10 @@
       return await barangayDB.logAudit(action, 'system', details);
     },
     async hasAdminAccount() {
-      const fr = await barangayAuth.checkFirstRun();
-      return fr && fr.has_admin;
+      return true;
+    },
+    async hasAnyUser() {
+      return true;
     }
   };
 
