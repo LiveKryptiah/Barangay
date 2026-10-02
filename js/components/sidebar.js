@@ -168,6 +168,19 @@ class AppSidebar {
             </li>
 
             <li>
+              <a href="permits${ext}" class="ex-app-shell-row ${activePage === 'permits' ? 'active' : ''}" title="Business Clearances & Local Permits Hub (RA 7160)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                  <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                  <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                  <path d="M2 7h20"/>
+                </svg>
+                <span>Business Permits</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">BPLO</span>
+              </a>
+            </li>
+
+            <li>
               <a href="blotter${ext}" class="ex-app-shell-row ${activePage === 'blotter' ? 'active' : ''}" title="Blotter Records">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -405,6 +418,7 @@ class AppSidebar {
       households: 'Household Profiling & Family Tree',
       'geo-profiling': 'Purok Geo-Profiling & Heatmap',
       certificates: 'Clearances & Certifications',
+      permits: 'Business Permits & Licensing',
       blotter: 'Peace & Order Blotter',
       lupon: 'Lupong Tagapamayapa & KP Studio',
       incidents: 'Incident Dispatch & Patrol',
@@ -522,7 +536,7 @@ class AppSidebar {
             ${activePage === 'incidents' ? '<div class="egov-nav-pill-active"></div>' : ''}
           </a>
 
-          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','budget','drrm','geo-profiling','resident-id','households','families','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
+          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['permits','lupon','legislation','notifications','health','procurement','budget','drrm','geo-profiling','resident-id','households','families','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             <span>More</span>
           </button>

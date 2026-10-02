@@ -5,7 +5,7 @@
  */
 
 const DB_NAME = 'BarangayManagementDB';
-const DB_VERSION = 12;
+const DB_VERSION = 13;
 
 class BarangayDB {
   constructor() {
@@ -331,6 +331,21 @@ class BarangayDB {
           faStore.createIndex('familyId', 'familyId', { unique: false });
           faStore.createIndex('dateProvided', 'dateProvided', { unique: false });
           faStore.createIndex('assistanceType', 'assistanceType', { unique: false });
+        }
+
+        // 35. Business Clearances & Local Permits Store
+        if (!db.objectStoreNames.contains('business_clearances')) {
+          const bcStore = db.createObjectStore('business_clearances', { keyPath: 'id', autoIncrement: true });
+          bcStore.createIndex('clearanceNo', 'clearanceNo', { unique: true });
+          bcStore.createIndex('businessName', 'businessName', { unique: false });
+          bcStore.createIndex('ownerResidentId', 'ownerResidentId', { unique: false });
+          bcStore.createIndex('purok', 'purok', { unique: false });
+          bcStore.createIndex('businessNature', 'businessNature', { unique: false });
+          bcStore.createIndex('status', 'status', { unique: false });
+          bcStore.createIndex('paymentStatus', 'paymentStatus', { unique: false });
+          bcStore.createIndex('inspectionStatus', 'inspectionStatus', { unique: false });
+          bcStore.createIndex('validityYear', 'validityYear', { unique: false });
+          bcStore.createIndex('qrToken', 'qrToken', { unique: true });
         }
       };
 

@@ -345,6 +345,39 @@
     if (rec.disbursed_by !== undefined && rec.disbursedBy === undefined) rec.disbursedBy = rec.disbursed_by;
     if (rec.dafac_no !== undefined && rec.dafacNo === undefined) rec.dafacNo = rec.dafac_no;
 
+    // Business Clearances & Permits
+    if (rec.clearance_no !== undefined && rec.clearanceNo === undefined) rec.clearanceNo = rec.clearance_no;
+    if (rec.business_name !== undefined && rec.businessName === undefined) rec.businessName = rec.business_name;
+    if (rec.trade_name !== undefined && rec.tradeName === undefined) rec.tradeName = rec.trade_name;
+    if (rec.owner_resident_id !== undefined && rec.ownerResidentId === undefined) rec.ownerResidentId = rec.owner_resident_id;
+    if (rec.owner_name !== undefined && rec.ownerName === undefined) rec.ownerName = rec.owner_name;
+    if (rec.owner_contact !== undefined && rec.ownerContact === undefined) rec.ownerContact = rec.owner_contact;
+    if (rec.owner_address !== undefined && rec.ownerAddress === undefined) rec.ownerAddress = rec.owner_address;
+    if (rec.business_nature !== undefined && rec.businessNature === undefined) rec.businessNature = rec.business_nature;
+    if (rec.ownership_type !== undefined && rec.ownershipType === undefined) rec.ownershipType = rec.ownership_type;
+    if (rec.business_address !== undefined && rec.businessAddress === undefined) rec.businessAddress = rec.business_address;
+    if (rec.capital_investment !== undefined && rec.capitalInvestment === undefined) rec.capitalInvestment = rec.capital_investment;
+    if (rec.gross_sales_tier !== undefined && rec.grossSalesTier === undefined) rec.grossSalesTier = rec.gross_sales_tier;
+    if (rec.application_type !== undefined && rec.applicationType === undefined) rec.applicationType = rec.application_type;
+    if (rec.clearance_fee !== undefined && rec.clearanceFee === undefined) rec.clearanceFee = rec.clearance_fee;
+    if (rec.garbage_fee !== undefined && rec.garbageFee === undefined) rec.garbageFee = rec.garbage_fee;
+    if (rec.inspection_fee !== undefined && rec.inspectionFee === undefined) rec.inspectionFee = rec.inspection_fee;
+    if (rec.total_fee !== undefined && rec.totalFee === undefined) rec.totalFee = rec.total_fee;
+    if (rec.or_number !== undefined && rec.orNumber === undefined) rec.orNumber = rec.or_number;
+    if (rec.payment_status !== undefined && rec.paymentStatus === undefined) rec.paymentStatus = rec.payment_status;
+    if (rec.payment_date !== undefined && rec.paymentDate === undefined) rec.paymentDate = rec.payment_date;
+    if (rec.inspection_status !== undefined && rec.inspectionStatus === undefined) rec.inspectionStatus = rec.inspection_status;
+    if (rec.inspected_by !== undefined && rec.inspectedBy === undefined) rec.inspectedBy = rec.inspected_by;
+    if (rec.inspection_date !== undefined && rec.inspectionDate === undefined) rec.inspectionDate = rec.inspection_date;
+    if (rec.inspection_notes !== undefined && rec.inspectionNotes === undefined) rec.inspectionNotes = rec.inspection_notes;
+    if (rec.plate_sticker_no !== undefined && rec.plateStickerNo === undefined) rec.plateStickerNo = rec.plate_sticker_no;
+    if (rec.qr_token !== undefined && rec.qrToken === undefined) rec.qrToken = rec.qr_token;
+    if (rec.validity_year !== undefined && rec.validityYear === undefined) rec.validityYear = rec.validity_year;
+    if (rec.issue_date !== undefined && rec.issueDate === undefined) rec.issueDate = rec.issue_date;
+    if (rec.expiry_date !== undefined && rec.expiryDate === undefined) rec.expiryDate = rec.expiry_date;
+    if (rec.issued_by !== undefined && rec.issuedBy === undefined) rec.issuedBy = rec.issued_by;
+    if (rec.approved_by !== undefined && rec.approvedBy === undefined) rec.approvedBy = rec.approved_by;
+
     return rec;
   }
 
@@ -612,6 +645,69 @@
     if (out.distributedBy !== undefined && out.distributed_by === undefined) out.distributed_by = out.distributedBy;
     if (out.distributedAt !== undefined && out.distributed_at === undefined) out.distributed_at = out.distributedAt;
 
+    // Families Master Roster
+    if (out.familyCode !== undefined && out.family_code === undefined) out.family_code = out.familyCode;
+    if (out.familyName !== undefined && out.family_name === undefined) out.family_name = out.familyName;
+    if (out.householdId !== undefined && out.household_id === undefined) out.household_id = out.householdId;
+    if (out.headResidentId !== undefined && out.head_resident_id === undefined) out.head_resident_id = out.headResidentId;
+    if (out.familyType !== undefined && out.family_type === undefined) out.family_type = out.familyType;
+    if (out.incomeBracket !== undefined && out.income_bracket === undefined) out.income_bracket = out.incomeBracket;
+    if (out.povertyStatus !== undefined && out.poverty_status === undefined) out.poverty_status = out.povertyStatus;
+    if (out.is4psBeneficiary !== undefined && out.is_4ps_beneficiary === undefined) out.is_4ps_beneficiary = out.is4psBeneficiary ? 1 : 0;
+    if (out.fourPsNumber !== undefined && out.four_ps_number === undefined) out.four_ps_number = out.fourPsNumber;
+    if (out.isAyudaPriority !== undefined && out.is_ayuda_priority === undefined) out.is_ayuda_priority = out.isAyudaPriority ? 1 : 0;
+    if (out.housingTenure !== undefined && out.housing_tenure === undefined) out.housing_tenure = out.housingTenure;
+    if (out.mainSourceOfIncome !== undefined && out.main_source_of_income === undefined) out.main_source_of_income = out.mainSourceOfIncome;
+
+    // Family Members
+    if (out.familyId !== undefined && out.family_id === undefined) out.family_id = out.familyId;
+    if (out.relationshipToHead !== undefined && out.relationship_to_head === undefined) out.relationship_to_head = out.relationshipToHead;
+    if (out.isIncomeEarner !== undefined && out.is_income_earner === undefined) out.is_income_earner = out.isIncomeEarner ? 1 : 0;
+    if (out.educationLevel !== undefined && out.education_level === undefined) out.education_level = out.educationLevel;
+    if (out.isDependent !== undefined && out.is_dependent === undefined) out.is_dependent = out.isDependent ? 1 : 0;
+
+    // Family Assistance Records
+    if (out.programName !== undefined && out.program_name === undefined) out.program_name = out.programName;
+    if (out.assistanceType !== undefined && out.assistance_type === undefined) out.assistance_type = out.assistanceType;
+    if (out.amountValue !== undefined && out.amount_value === undefined) out.amount_value = out.amountValue;
+    if (out.itemsDescription !== undefined && out.items_description === undefined) out.items_description = out.itemsDescription;
+    if (out.dateProvided !== undefined && out.date_provided === undefined) out.date_provided = out.dateProvided;
+    if (out.disbursedBy !== undefined && out.disbursed_by === undefined) out.disbursed_by = out.disbursedBy;
+    if (out.dafacNo !== undefined && out.dafac_no === undefined) out.dafac_no = out.dafacNo;
+
+    // Business Clearances & Permits
+    if (out.clearanceNo !== undefined && out.clearance_no === undefined) out.clearance_no = out.clearanceNo;
+    if (out.businessName !== undefined && out.business_name === undefined) out.business_name = out.businessName;
+    if (out.tradeName !== undefined && out.trade_name === undefined) out.trade_name = out.tradeName;
+    if (out.ownerResidentId !== undefined && out.owner_resident_id === undefined) out.owner_resident_id = out.ownerResidentId;
+    if (out.ownerName !== undefined && out.owner_name === undefined) out.owner_name = out.ownerName;
+    if (out.ownerContact !== undefined && out.owner_contact === undefined) out.owner_contact = out.ownerContact;
+    if (out.ownerAddress !== undefined && out.owner_address === undefined) out.owner_address = out.ownerAddress;
+    if (out.businessNature !== undefined && out.business_nature === undefined) out.business_nature = out.businessNature;
+    if (out.ownershipType !== undefined && out.ownership_type === undefined) out.ownership_type = out.ownershipType;
+    if (out.businessAddress !== undefined && out.business_address === undefined) out.business_address = out.businessAddress;
+    if (out.capitalInvestment !== undefined && out.capital_investment === undefined) out.capital_investment = out.capitalInvestment;
+    if (out.grossSalesTier !== undefined && out.gross_sales_tier === undefined) out.gross_sales_tier = out.grossSalesTier;
+    if (out.applicationType !== undefined && out.application_type === undefined) out.application_type = out.applicationType;
+    if (out.clearanceFee !== undefined && out.clearance_fee === undefined) out.clearance_fee = out.clearanceFee;
+    if (out.garbageFee !== undefined && out.garbage_fee === undefined) out.garbage_fee = out.garbageFee;
+    if (out.inspectionFee !== undefined && out.inspection_fee === undefined) out.inspection_fee = out.inspectionFee;
+    if (out.totalFee !== undefined && out.total_fee === undefined) out.total_fee = out.totalFee;
+    if (out.orNumber !== undefined && out.or_number === undefined) out.or_number = out.orNumber;
+    if (out.paymentStatus !== undefined && out.payment_status === undefined) out.payment_status = out.paymentStatus;
+    if (out.paymentDate !== undefined && out.payment_date === undefined) out.payment_date = out.paymentDate;
+    if (out.inspectionStatus !== undefined && out.inspection_status === undefined) out.inspection_status = out.inspectionStatus;
+    if (out.inspectedBy !== undefined && out.inspected_by === undefined) out.inspected_by = out.inspectedBy;
+    if (out.inspectionDate !== undefined && out.inspection_date === undefined) out.inspection_date = out.inspectionDate;
+    if (out.inspectionNotes !== undefined && out.inspection_notes === undefined) out.inspection_notes = out.inspectionNotes;
+    if (out.plateStickerNo !== undefined && out.plate_sticker_no === undefined) out.plate_sticker_no = out.plateStickerNo;
+    if (out.qrToken !== undefined && out.qr_token === undefined) out.qr_token = out.qrToken;
+    if (out.validityYear !== undefined && out.validity_year === undefined) out.validity_year = out.validityYear;
+    if (out.issueDate !== undefined && out.issue_date === undefined) out.issue_date = out.issueDate;
+    if (out.expiryDate !== undefined && out.expiry_date === undefined) out.expiry_date = out.expiryDate;
+    if (out.issuedBy !== undefined && out.issued_by === undefined) out.issued_by = out.issuedBy;
+    if (out.approvedBy !== undefined && out.approved_by === undefined) out.approved_by = out.approvedBy;
+
     return out;
   }
 
@@ -683,7 +779,8 @@
     drrm_relief_distributions:'api/drrm.php?action=distributions',
     families:               'api/families.php',
     family_members:         'api/families.php?action=members',
-    family_assistance:      'api/families.php?action=assistance'
+    family_assistance:      'api/families.php?action=assistance',
+    business_clearances:    'api/permits.php'
   };
 
   // Barangay DB Client
@@ -736,6 +833,7 @@
       if (storeName === 'families') action = 'create';
       if (storeName === 'family_members') action = 'add_member';
       if (storeName === 'family_assistance') action = 'record_assistance';
+      if (storeName === 'business_clearances') action = 'create';
       if (storeName === 'incidents' && (record.type === 'Curfew Violation' || record.minor_age)) {
         action = 'create_curfew';
       }
@@ -765,6 +863,7 @@
       if (storeName === 'drrm_evacuees') action = 'update_evacuee';
       if (storeName === 'drrm_relief_items') action = 'update_relief_item';
       if (storeName === 'families') action = 'update';
+      if (storeName === 'business_clearances') action = 'update';
 
       const url = `${endpoint.split('?')[0]}?action=${action}`;
       return await apiRequest(url, 'POST', record);

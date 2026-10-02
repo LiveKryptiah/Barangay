@@ -952,7 +952,6 @@ CREATE TABLE IF NOT EXISTS `family_assistance_records` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX `idx_far_family` (`family_id`),
   INDEX `idx_far_date` (`date_provided`),
-  INDEX `idx_far_type` (`assistance_type`),
   CONSTRAINT `fk_far_family` FOREIGN KEY (`family_id`) REFERENCES `families` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -974,6 +973,66 @@ INSERT INTO `family_assistance_records` (`family_id`, `program_name`, `assistanc
 (1, 'BDRRMC Emergency Calamity Family Food Pack', 'Food Pack / In-Kind', 1120.00, '2x 6kg Rice, 12 canned goods, instant coffee, mineral water', '2026-09-09', 'BDRRMC Relief Operations Team', 'DAFAC-2026-0001', 'Received', 'Habagat 2026 Emergency Assistance'),
 (2, 'Barangay Indigent Senior Social Assistance & Medical Voucher', 'Medical Assistance', 2500.00, 'Hypertension & Diabetic Maintenance Medication Voucher', '2026-07-20', 'Barangay Health & Social Welfare Committee', 'AICS-2026-0412', 'Received', 'Endorsed to Barangay Health Station'),
 (2, 'BDRRMC Family Food Pack & Hygiene Set', 'Food Pack / In-Kind', 910.00, '1x Family Food Pack, 1x Emergency Family Hygiene Kit', '2026-09-09', 'BDRRMC Relief Operations Team', 'DAFAC-2026-0003', 'Received', 'Evacuation Shelter Distribution');
+
+-- ------------------------------------------------------------
+-- 34. BARANGAY BUSINESS CLEARANCES & LOCAL PERMITS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `business_clearances` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `clearance_no` VARCHAR(40) NOT NULL UNIQUE,
+  `business_name` VARCHAR(200) NOT NULL,
+  `trade_name` VARCHAR(200) DEFAULT NULL,
+  `owner_resident_id` INT DEFAULT NULL,
+  `owner_name` VARCHAR(150) NOT NULL,
+  `owner_contact` VARCHAR(50) DEFAULT NULL,
+  `owner_address` VARCHAR(255) DEFAULT NULL,
+  `business_nature` ENUM('Retail / Sari-Sari Store', 'Eatery / Carenderia / Food Stall', 'Service / Repair Shop', 'Personal Care (Salon / Barber)', 'Wholesale / Grocery / Trading', 'Transport / Tricycle / Pedicab', 'Real Estate / Rental / Boarding', 'Bakery / Light Manufacturing', 'Professional Services / Clinic', 'Others') NOT NULL DEFAULT 'Retail / Sari-Sari Store',
+  `ownership_type` ENUM('Sole Proprietorship', 'Partnership', 'Corporation', 'Cooperative') NOT NULL DEFAULT 'Sole Proprietorship',
+  `purok` VARCHAR(50) NOT NULL DEFAULT 'Purok 1',
+  `business_address` VARCHAR(255) NOT NULL,
+  `capital_investment` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `gross_sales_tier` ENUM('Micro (Below ₱150,000)', 'Small (₱150,001 - ₱1,500,000)', 'Medium (₱1,500,001 - ₱5,000,000)', 'Large (Above ₱5,000,000)') NOT NULL DEFAULT 'Micro (Below ₱150,000)',
+  `application_type` ENUM('New', 'Renewal', 'Retirement / Closure', 'Change of Location') NOT NULL DEFAULT 'New',
+  `clearance_fee` DECIMAL(10, 2) NOT NULL DEFAULT 300.00,
+  `garbage_fee` DECIMAL(10, 2) NOT NULL DEFAULT 150.00,
+  `inspection_fee` DECIMAL(10, 2) NOT NULL DEFAULT 100.00,
+  `total_fee` DECIMAL(10, 2) NOT NULL DEFAULT 550.00,
+  `or_number` VARCHAR(50) DEFAULT NULL,
+  `payment_status` ENUM('Unpaid', 'Paid', 'Exempt') NOT NULL DEFAULT 'Unpaid',
+  `payment_date` DATE DEFAULT NULL,
+  `inspection_status` ENUM('Pending Inspection', 'Compliant', 'Deficient') NOT NULL DEFAULT 'Pending Inspection',
+  `inspected_by` VARCHAR(150) DEFAULT NULL,
+  `inspection_date` DATE DEFAULT NULL,
+  `inspection_notes` TEXT DEFAULT NULL,
+  `status` ENUM('Pending Review', 'Under Inspection', 'Approved & Issued', 'Expired', 'Revoked') NOT NULL DEFAULT 'Pending Review',
+  `plate_sticker_no` VARCHAR(50) DEFAULT NULL,
+  `qr_token` VARCHAR(64) NOT NULL UNIQUE,
+  `validity_year` YEAR NOT NULL DEFAULT '2026',
+  `issue_date` DATE DEFAULT NULL,
+  `expiry_date` DATE DEFAULT NULL,
+  `issued_by` VARCHAR(150) NOT NULL DEFAULT 'Maria Santos - Barangay Treasurer',
+  `approved_by` VARCHAR(150) NOT NULL DEFAULT 'Hon. Antonio S. Valdez - Punong Barangay',
+  `remarks` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_bc_clearance` (`clearance_no`),
+  INDEX `idx_bc_name` (`business_name`),
+  INDEX `idx_bc_nature` (`business_nature`),
+  INDEX `idx_bc_purok` (`purok`),
+  INDEX `idx_bc_status` (`status`),
+  INDEX `idx_bc_payment` (`payment_status`),
+  INDEX `idx_bc_qr` (`qr_token`),
+  CONSTRAINT `fk_bc_resident` FOREIGN KEY (`owner_resident_id`) REFERENCES `residents` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT BUSINESS CLEARANCES & LOCAL PERMITS SEED DATA
+-- ------------------------------------------------------------
+INSERT INTO `business_clearances` (`clearance_no`, `business_name`, `trade_name`, `owner_resident_id`, `owner_name`, `owner_contact`, `owner_address`, `business_nature`, `ownership_type`, `purok`, `business_address`, `capital_investment`, `gross_sales_tier`, `application_type`, `clearance_fee`, `garbage_fee`, `inspection_fee`, `total_fee`, `or_number`, `payment_status`, `payment_date`, `inspection_status`, `inspected_by`, `inspection_date`, `inspection_notes`, `status`, `plate_sticker_no`, `qr_token`, `validity_year`, `issue_date`, `expiry_date`, `issued_by`, `approved_by`, `remarks`) VALUES
+('BBC-2026-00001', 'Aling Nena Variety & Sari-Sari Store', 'Nena Store', 2, 'Rosa De Castro', '0917-111-2233', 'Block 4 Lot 12, Purok 1', 'Retail / Sari-Sari Store', 'Sole Proprietorship', 'Purok 1', 'Block 4 Lot 12, San Isidro Main Road, Purok 1', 45000.00, 'Micro (Below ₱150,000)', 'Renewal', 300.00, 150.00, 100.00, 550.00, 'OR-2026-0101', 'Paid', '2026-01-14', 'Compliant', 'Tanod Insp. Roberto Diaz', '2026-01-12', 'Clean premises, fire extinguisher present and valid', 'Approved & Issued', 'BP-2026-0001', 'b4a8e29d71c356f9012a45b8e90c12d345f67a89b012c345d678e901f234a56b', 2026, '2026-01-15', '2026-12-31', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Annual renewal compliant with barangay sanitation ordinance'),
+('BBC-2026-00002', 'San Isidro Vulcanizing & Motor Works', 'San Isidro Motors', 1, 'Eduardo Mendoza', '0918-222-3344', 'Corner Rizal Ave, Purok 1', 'Service / Repair Shop', 'Sole Proprietorship', 'Purok 1', 'Corner Rizal Ave, Purok 1, Taytay', 95000.00, 'Micro (Below ₱150,000)', 'Renewal', 500.00, 200.00, 150.00, 850.00, 'OR-2026-0102', 'Paid', '2026-01-20', 'Compliant', 'Tanod Insp. Roberto Diaz', '2026-01-18', 'Proper waste oil collection barrels inspected', 'Approved & Issued', 'BP-2026-0002', 'c5b9f30e82d467a0123b56c9f01d23e456a78b90c123d456e789f012a345b67c', 2026, '2026-01-22', '2026-12-31', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Complied with environmental waste management standard'),
+('BBC-2026-00003', 'Valdez Lugawan, Silog & BBQ Grill', 'Valdez Grill', 3, 'Danilo Bautista', '0919-333-4455', 'Purok 6 Highway Commercial Area', 'Eatery / Carenderia / Food Stall', 'Sole Proprietorship', 'Purok 6', 'Unit 2, Purok 6 Commercial strip', 160000.00, 'Small (₱150,001 - ₱1,500,000)', 'New', 700.00, 250.00, 200.00, 1150.00, 'OR-2026-0205', 'Paid', '2026-02-10', 'Compliant', 'Sanitary Officer Elena Gomez', '2026-02-08', 'Food handler health cards inspected; grease trap installed', 'Approved & Issued', 'BP-2026-0003', 'd6ca041f93e578b1234c67da012e34f567b89c01d234e567f890a123b456c78d', 2026, '2026-02-12', '2026-12-31', 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Endorsed for Municipal Mayor Health and Sanitary Permit'),
+('BBC-2026-00004', 'Santos Glamour Hair & Beauty Studio', 'Santos Glamour', NULL, 'Gemma Cruz', '0920-444-5566', 'Purok 2 Plaza', 'Personal Care (Salon / Barber)', 'Sole Proprietorship', 'Purok 2', '2nd Floor, Plaza Mall, Purok 2', 80000.00, 'Micro (Below ₱150,000)', 'New', 400.00, 150.00, 150.00, 700.00, NULL, 'Unpaid', NULL, 'Pending Inspection', NULL, NULL, 'Inspection scheduled for next business week', 'Pending Review', NULL, 'e7db152004f689c2345d78eb123f45a678c90d12e345f678a901b234c567d89e', 2026, NULL, NULL, 'Maria Santos - Barangay Treasurer', 'Hon. Antonio S. Valdez - Punong Barangay', 'Application submitted; awaiting inspection');
 
 SET FOREIGN_KEY_CHECKS = 1;
 

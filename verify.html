@@ -511,6 +511,7 @@
         <button type="button" class="verify-chip" onclick="quickVerify('IND-2026-00002')">IND-2026-00002</button>
         <button type="button" class="verify-chip" onclick="quickVerify('BLTR-2026-00001')">BLTR-2026-00001</button>
         <button type="button" class="verify-chip" onclick="quickVerify('INC-2026-00001')">INC-2026-00001</button>
+        <button type="button" class="verify-chip" onclick="quickVerify('BBC-2026-00001')">BBC-2026-00001</button>
       </div>
 
       <!-- Optional QR Scanner Button -->
@@ -901,6 +902,56 @@
         console.warn('Error querying resident_ids in verify:', err);
       }
 
+      // Check Business Clearances & Local Permits
+      try {
+        const clearances = await window.barangayDB.getAll('business_clearances');
+        const bizMatch = clearances.find(b => 
+          (b.clearanceNo && b.clearanceNo.toUpperCase() === code.toUpperCase()) ||
+          (b.qrToken && b.qrToken === code) ||
+          (b.plateStickerNo && b.plateStickerNo.toUpperCase() === code.toUpperCase())
+        );
+
+        if (bizMatch) {
+          const isValid = (bizMatch.status === 'Approved & Issued' && bizMatch.paymentStatus === 'Paid');
+          return {
+            document_category: 'Barangay Business Clearance',
+            document_title: `Barangay Business Clearance (${bizMatch.validityYear || 2026})`,
+            tracking_no: bizMatch.clearanceNo,
+            status: bizMatch.status,
+            is_valid: isValid,
+            issued_to: {
+              business_name: bizMatch.businessName,
+              trade_name: bizMatch.tradeName || bizMatch.businessName,
+              owner_name: bizMatch.ownerName,
+              ownership_type: bizMatch.ownershipType,
+              business_nature: bizMatch.businessNature,
+              address: bizMatch.businessAddress,
+              purok: bizMatch.purok
+            },
+            issuance_details: {
+              permit_plate_no: bizMatch.plateStickerNo || 'Pending Plate',
+              gross_sales_tier: bizMatch.grossSalesTier,
+              total_fee_paid: `₱${parseFloat(bizMatch.totalFee || 0).toFixed(2)}`,
+              or_number: bizMatch.orNumber || 'Unpaid / Pending O.R.',
+              payment_status: bizMatch.paymentStatus,
+              inspection: bizMatch.inspectionStatus,
+              inspected_by: bizMatch.inspectedBy || 'N/A',
+              issue_date: bizMatch.issueDate || 'Under Process',
+              valid_until: bizMatch.expiryDate || `December 31, ${bizMatch.validityYear || 2026}`,
+              signatory: bizMatch.approvedBy || 'HON. ANTONIO S. VALDEZ',
+              issued_by: bizMatch.issuedBy || 'Maria Santos - Barangay Treasurer'
+            },
+            security_seal: {
+              digital_hash: 'LOCAL-BPLO-' + Math.random().toString(36).substring(2, 15).toUpperCase(),
+              verified_at: new Date().toLocaleString(),
+              authority: 'Barangay Business Permits & Licensing Office (BPLO)'
+            }
+          };
+        }
+      } catch (err) {
+        console.warn('Error querying business_clearances in verify:', err);
+      }
+
       return null;
     }
 
@@ -1029,6 +1080,49 @@
           <div class="result-field">
             <span class="result-field-label">Issuing Desk</span>
             <span class="result-field-val">${doc.issuance_details.issued_by}</span>
+          </div>
+        `;
+      } else if (doc.document_category === 'Barangay Business Clearance') {
+        gridHtml = `
+          <div class="result-field">
+            <span class="result-field-label">Business / Commercial Title</span>
+            <span class="result-field-val">${doc.issued_to.business_name}</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Trade Name</span>
+            <span class="result-field-val">${doc.issued_to.trade_name}</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Proprietor / Owner</span>
+            <span class="result-field-val">${doc.issued_to.owner_name} (${doc.issued_to.ownership_type})</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Business Nature &amp; Location</span>
+            <span class="result-field-val">${doc.issued_to.business_nature} &bull; ${doc.issued_to.purok}</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Establishment Address</span>
+            <span class="result-field-val">${doc.issued_to.address}</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Local Permit Plate / Sticker</span>
+            <span class="result-field-val">${doc.issuance_details.permit_plate_no}</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Payment &amp; Official Receipt</span>
+            <span class="result-field-val">O.R. #${doc.issuance_details.or_number} (${doc.issuance_details.total_fee_paid} &bull; ${doc.issuance_details.payment_status})</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Sanitary &amp; Safety Inspection</span>
+            <span class="result-field-val">${doc.issuance_details.inspection} (by ${doc.issuance_details.inspected_by})</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Validity Term</span>
+            <span class="result-field-val">Valid until ${doc.issuance_details.valid_until}</span>
+          </div>
+          <div class="result-field">
+            <span class="result-field-label">Punong Barangay Signatory</span>
+            <span class="result-field-val">${doc.issuance_details.signatory}</span>
           </div>
         `;
       } else {

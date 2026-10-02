@@ -164,7 +164,55 @@ if (!empty($code)) {
                         ]
                     ];
                 } else {
-                    $errorMsg = "Control Code \"{$code}\" not found in official registry.";
+                    // 5. Check Business Clearances & Local Permits
+                    $biz = db_fetch_one("
+                        SELECT bc.*, 
+                               r.first_name, r.middle_name, r.last_name, r.suffix, r.resident_code
+                        FROM `business_clearances` bc
+                        LEFT JOIN `residents` r ON bc.owner_resident_id = r.id
+                        WHERE bc.clearance_no = ? OR bc.qr_token = ? OR bc.plate_sticker_no = ?
+                    ", [$code, $code, $code]);
+
+                    if ($biz) {
+                        $isValid = ($biz['status'] === 'Approved & Issued' && $biz['payment_status'] === 'Paid');
+                        $serverResult = [
+                            'document_category' => 'Barangay Business Clearance',
+                            'document_title'    => "Barangay Business Clearance & Local Permit ({$biz['validity_year']})",
+                            'tracking_no'       => $biz['clearance_no'],
+                            'status'            => $biz['status'],
+                            'is_valid'          => $isValid,
+                            'issued_to'         => [
+                                'business_name'   => $biz['business_name'],
+                                'trade_name'      => $biz['trade_name'] ?: $biz['business_name'],
+                                'owner_name'      => $biz['owner_name'],
+                                'ownership_type'  => $biz['ownership_type'],
+                                'business_nature' => $biz['business_nature'],
+                                'address'         => $biz['business_address'],
+                                'purok'           => $biz['purok']
+                            ],
+                            'issuance_details'  => [
+                                'permit_plate_no' => $biz['plate_sticker_no'] ?: 'Pending Plate Issuance',
+                                'gross_sales_tier'=> $biz['gross_sales_tier'],
+                                'capital_inv'     => '₱' . number_format($biz['capital_investment'], 2),
+                                'total_fee_paid'  => '₱' . number_format($biz['total_fee'], 2),
+                                'or_number'       => $biz['or_number'] ?: 'Unpaid / Pending O.R.',
+                                'payment_status'  => $biz['payment_status'],
+                                'inspection'      => $biz['inspection_status'],
+                                'inspected_by'    => $biz['inspected_by'] ?: 'N/A',
+                                'issue_date'      => $biz['issue_date'] ?: 'Under Process',
+                                'valid_until'     => $biz['expiry_date'] ?: "December 31, {$biz['validity_year']}",
+                                'signatory'       => $biz['approved_by'] ?: 'HON. ANTONIO S. VALDEZ',
+                                'issued_by'       => $biz['issued_by'] ?: 'Maria Santos - Barangay Treasurer'
+                            ],
+                            'security_seal'     => [
+                                'digital_hash'    => hash('sha256', $biz['clearance_no'] . $biz['qr_token'] . 'BarangayOS_BPLO_Seal'),
+                                'verified_at'     => date('F j, Y, g:i A'),
+                                'authority'       => 'Barangay Business Permits & Licensing Office (BPLO)'
+                            ]
+                        ];
+                    } else {
+                        $errorMsg = "Control Code \"{$code}\" not found in official registry.";
+                    }
                 }
             }
         }
@@ -644,6 +692,7 @@ if (!empty($code)) {
         <a href="verify.php?code=IND-2026-00002" class="verify-chip">IND-2026-00002</a>
         <a href="verify.php?code=BLTR-2026-00001" class="verify-chip">BLTR-2026-00001</a>
         <a href="verify.php?code=INC-2026-00001" class="verify-chip">INC-2026-00001</a>
+        <a href="verify.php?code=BBC-2026-00001" class="verify-chip">BBC-2026-00001</a>
       </div>
     </section>
 
@@ -751,6 +800,47 @@ if (!empty($code)) {
             <div class="result-field">
               <span class="result-field-label">Issuing Desk</span>
               <span class="result-field-val"><?= htmlspecialchars($serverResult['issuance_details']['issued_by']) ?></span>
+            </div>
+          <?php elseif ($serverResult['document_category'] === 'Barangay Business Clearance'): ?>
+            <div class="result-field">
+              <span class="result-field-label">Business / Commercial Title</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issued_to']['business_name']) ?></span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Trade Name</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issued_to']['trade_name']) ?></span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Proprietor / Owner</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issued_to']['owner_name']) ?> (<?= htmlspecialchars($serverResult['issued_to']['ownership_type']) ?>)</span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Business Nature &amp; Location</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issued_to']['business_nature']) ?> &bull; <?= htmlspecialchars($serverResult['issued_to']['purok']) ?></span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Establishment Address</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issued_to']['address']) ?></span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Local Permit Plate / Sticker</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issuance_details']['permit_plate_no']) ?></span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Payment &amp; Official Receipt</span>
+              <span class="result-field-val">O.R. #<?= htmlspecialchars($serverResult['issuance_details']['or_number']) ?> (<?= htmlspecialchars($serverResult['issuance_details']['total_fee_paid']) ?> &bull; <?= htmlspecialchars($serverResult['issuance_details']['payment_status']) ?>)</span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Sanitary &amp; Safety Inspection</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issuance_details']['inspection']) ?> (by <?= htmlspecialchars($serverResult['issuance_details']['inspected_by']) ?>)</span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Validity Term</span>
+              <span class="result-field-val">Valid until <?= htmlspecialchars($serverResult['issuance_details']['valid_until']) ?></span>
+            </div>
+            <div class="result-field">
+              <span class="result-field-label">Punong Barangay Signatory</span>
+              <span class="result-field-val"><?= htmlspecialchars($serverResult['issuance_details']['signatory']) ?></span>
             </div>
           <?php else: ?>
             <div class="result-field">
