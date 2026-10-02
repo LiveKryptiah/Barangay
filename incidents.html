@@ -332,6 +332,7 @@
             <div>
               <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
                 <h1 class="typography-heading-2">Emergency Dispatch &amp; Tanod Patrol.</h1>
+                <button type="button" class="info-trigger" id="btn-incident-info" onclick="toggleIncidentInfoPopover(event)" aria-label="Incident Information" title="About Incident Dispatch &amp; Response Telemetry">i</button>
                 <span class="badge-rose" id="active-dispatches-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-weight: 700;">
                   0 Active Dispatches
                 </span>
@@ -359,103 +360,83 @@
           </div>
         </section>
 
-        <!-- Operations Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL INCIDENTS</span>
-                <span class="badge-neutral">Database</span>
-              </div>
-              <div class="stat-number" id="stat-total-incidents">0</div>
-              <div class="typography-caption" id="stat-sub-incidents">0 emergency calls recorded</div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="incident-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Emergency Operations &amp; Dispatch Guide</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleIncidentInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            This module coordinates emergency call intake, real-time Tanod mobile dispatch, on-scene telemetry, and child curfew protection in accordance with local safety ordinances.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #ef4444;">Critical (Code Red):</strong> Immediate life or property danger. Dispatches units in &lt;5 mins with sirens.
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: #ef4444;">ACTIVE DISPATCHES</span>
-                <span class="badge-rose" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">On-Scene</span>
-              </div>
-              <div class="stat-number" id="stat-active-dispatches" style="color: #ef4444;">0</div>
-              <div class="typography-caption" id="stat-sub-dispatches">Units currently responding</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-amber-600, #d97706);">High &amp; Moderate:</strong> Escalating disputes or traffic blockages requiring on-site mediation.
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">AVG RESPONSE TIME</span>
-                <span class="badge-blue">Telemetry</span>
-              </div>
-              <div class="stat-number" id="stat-avg-response">0m</div>
-              <div class="typography-caption" id="stat-sub-response">Call to on-scene arrival</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">Routine (Green):</strong> Noise complaints, barking dogs, or minor public assistance requests.
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">CURFEW VIOLATIONS</span>
-                <span class="badge-amber">Ordinance</span>
-              </div>
-              <div class="stat-number" id="stat-total-curfew">0</div>
-              <div class="typography-caption" id="stat-sub-curfew">Minors turned over to guardians</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Curfew Ordinance:</strong> Minors out past 10:00 PM are logged and returned safely to guardians.
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- Operations Toolbar -->
-        <div class="filter-toolbar">
-          <div class="filter-group">
-            <div class="search-input-wrap">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input type="text" id="search-incidents" class="text-input" placeholder="Search by Code #, Location, Reporter...">
-            </div>
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-incidents">0</span>
+            <span class="metric-strip-lbl">Total Incidents</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-active-dispatches" style="color: #ef4444;">0</span>
+            <span class="metric-strip-lbl">Active Dispatches</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-avg-response">0m</span>
+            <span class="metric-strip-lbl">Avg Response</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-curfew">0</span>
+            <span class="metric-strip-lbl">Curfew Sweeps</span>
+          </div>
+        </div>
 
-            <select id="filter-category" class="filter-select">
-              <option value="">All Incident Categories</option>
-              <option value="Medical Emergency">Medical Emergency / Ambulance</option>
-              <option value="Fire Incident">Fire Incident / Smoke</option>
-              <option value="Vehicular Accident">Vehicular Accident / Collision</option>
-              <option value="Public Disturbance">Public Disturbance / Noise</option>
-              <option value="Physical Altercation">Physical Altercation / Scuffle</option>
-              <option value="Curfew Violation">Curfew Violation (Minor)</option>
-              <option value="Suspicious Activity">Suspicious Activity / Prowler</option>
-              <option value="Utility / Weather Hazard">Utility / Weather Hazard</option>
-            </select>
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <span id="stat-sub-incidents" style="display: none;"></span>
+        <span id="stat-sub-dispatches" style="display: none;"></span>
+        <span id="stat-sub-response" style="display: none;"></span>
+        <span id="stat-sub-curfew" style="display: none;"></span>
 
-            <select id="filter-priority" class="filter-select">
-              <option value="">All Priorities</option>
-              <option value="Critical (Code Red)">Critical (Code Red)</option>
-              <option value="High (Code Orange)">High (Code Orange)</option>
-              <option value="Moderate (Code Yellow)">Moderate (Code Yellow)</option>
-              <option value="Routine (Code Green)">Routine (Code Green)</option>
-            </select>
-
-            <select id="filter-status" class="filter-select">
-              <option value="">All Statuses</option>
-              <option value="Active / Dispatched">Active / Dispatched</option>
-              <option value="On-Scene / Responding">On-Scene / Responding</option>
-              <option value="Resolved / Closed">Resolved / Closed</option>
-              <option value="Referred to Agency">Referred to Agency (PNP/BFP)</option>
-            </select>
-
-            <select id="filter-purok" class="filter-select">
-              <option value="">All Puroks</option>
-              <option value="Purok 1">Purok 1</option>
-              <option value="Purok 2">Purok 2</option>
-              <option value="Purok 3">Purok 3</option>
-              <option value="Purok 4">Purok 4</option>
-              <option value="Purok 5">Purok 5</option>
-              <option value="Purok 6">Purok 6</option>
-              <option value="Purok 7">Purok 7</option>
-            </select>
-
-            <button type="button" class="button-pill-soft" id="btn-clear-filters" style="display: none; height: 38px; padding: 0 12px; font-size: 0.75rem;">
-              Clear Filters
-            </button>
+        <!-- Level 2: Progressive Minimal Filter Bar -->
+        <div class="filter-bar-minimal">
+          <div class="search-input-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="search-incidents" class="text-input" placeholder="Search by Code #, Location, Reporter...">
           </div>
 
-          <div class="view-toggle-wrap">
+          <button type="button" class="filter-toggle-btn" id="incident-filter-toggle-btn" onclick="toggleIncidentFilterPanel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>Filters</span>
+            <span class="filter-count-badge" id="incident-filter-badge" style="display: none;">0</span>
+          </button>
+
+          <button type="button" class="button-pill-soft" id="btn-clear-filters" style="display: none; height: 38px; padding: 0 12px; font-size: 0.75rem;">
+            Clear Filters
+          </button>
+
+          <div class="view-toggle-wrap" style="margin-left: auto;">
             <button type="button" class="view-toggle-btn active" id="btn-view-dispatch" onclick="switchIncidentView('dispatch')">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -468,6 +449,74 @@
               </svg>
               <span>Tanod Patrol &amp; Curfew Log</span>
             </button>
+          </div>
+        </div>
+
+        <!-- Expandable Filter Panel -->
+        <div class="filter-expanded-panel" id="incident-filter-panel" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Incident Category</label>
+              <select id="filter-category" class="filter-select" style="width: 100%;">
+                <option value="">All Incident Categories</option>
+                <option value="Medical Emergency">Medical Emergency / Ambulance</option>
+                <option value="Fire Incident">Fire Incident / Smoke</option>
+                <option value="Vehicular Accident">Vehicular Accident / Collision</option>
+                <option value="Public Disturbance">Public Disturbance / Noise</option>
+                <option value="Physical Altercation">Physical Altercation / Scuffle</option>
+                <option value="Curfew Violation">Curfew Violation (Minor)</option>
+                <option value="Suspicious Activity">Suspicious Activity / Prowler</option>
+                <option value="Utility / Weather Hazard">Utility / Weather Hazard</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Priority Severity</label>
+              <select id="filter-priority" class="filter-select" style="width: 100%;">
+                <option value="">All Priorities</option>
+                <option value="Critical (Code Red)">Critical (Code Red)</option>
+                <option value="High (Code Orange)">High (Code Orange)</option>
+                <option value="Moderate (Code Yellow)">Moderate (Code Yellow)</option>
+                <option value="Routine (Code Green)">Routine (Code Green)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Operational Status</label>
+              <select id="filter-status" class="filter-select" style="width: 100%;">
+                <option value="">All Statuses</option>
+                <option value="Active / Dispatched">Active / Dispatched</option>
+                <option value="On-Scene / Responding">On-Scene / Responding</option>
+                <option value="Resolved / Closed">Resolved / Closed</option>
+                <option value="Referred to Agency">Referred to Agency (PNP/BFP)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Purok / Sector</label>
+              <select id="filter-purok" class="filter-select" style="width: 100%;">
+                <option value="">All Puroks</option>
+                <option value="Purok 1">Purok 1</option>
+                <option value="Purok 2">Purok 2</option>
+                <option value="Purok 3">Purok 3</option>
+                <option value="Purok 4">Purok 4</option>
+                <option value="Purok 5">Purok 5</option>
+                <option value="Purok 6">Purok 6</option>
+                <option value="Purok 7">Purok 7</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Category Chips -->
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--color-hairline-soft);">
+            <span class="typography-caption" style="font-weight: 600; margin-right: 4px;">Quick Category:</span>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('')" style="font-size: 0.6875rem; padding: 2px 10px;">All</button>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('Medical Emergency')" style="font-size: 0.6875rem; padding: 2px 10px;">Medical</button>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('Fire Incident')" style="font-size: 0.6875rem; padding: 2px 10px;">Fire</button>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('Vehicular Accident')" style="font-size: 0.6875rem; padding: 2px 10px;">Accident</button>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('Public Disturbance')" style="font-size: 0.6875rem; padding: 2px 10px;">Disturbance</button>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('Curfew Violation')" style="font-size: 0.6875rem; padding: 2px 10px;">Curfew</button>
+            <button type="button" class="button-pill-soft" onclick="quickFilterIncidentCategory('Suspicious Activity')" style="font-size: 0.6875rem; padding: 2px 10px;">Suspicious</button>
           </div>
         </div>
 
@@ -833,57 +882,78 @@
     </form>
   </dialog>
 
-  <!-- MODAL 4: INCIDENT DOSSIER & TIMELINE -->
-  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 720px; width: 95%; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
-      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+  <!-- LEVEL 3: INCIDENT DOSSIER & TIMELINE DRAWER -->
+  <div class="app-drawer-backdrop" id="dossier-drawer-backdrop" onclick="closeIncidentDrawer()"></div>
+  <aside class="app-drawer" id="dossier-drawer" aria-label="Incident Dossier &amp; Operational Timeline">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
         <span class="badge-rose" id="dossier-code">INC-2026-00001</span>
-        <span class="typography-heading-4" id="dossier-cat-title">Medical Emergency</span>
+        <h3 class="drawer-title" id="dossier-cat-title" style="margin: 0; font-size: 1rem;">Medical Emergency</h3>
       </div>
-      <div style="display: flex; gap: var(--spacing-xs);">
-        <button type="button" class="button-primary" id="btn-dossier-print" style="height: 34px; padding: 0 14px; font-size: 0.75rem;">
-          Print Spot Report
-        </button>
-        <button type="button" class="button-pill-soft" onclick="document.getElementById('dossier-modal').close();" style="height: 34px; padding: 0 12px; font-size: 0.75rem;">
-          Close
-        </button>
+      <button type="button" class="drawer-close-btn" onclick="closeIncidentDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchIncidentDrawerTab('timeline', this)">Timeline &amp; Telemetry</button>
+      <button type="button" class="drawer-tab" onclick="switchIncidentDrawerTab('narrative', this)">Narrative &amp; Actions</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Timeline & Telemetry -->
+      <div id="drawer-sec-timeline" class="drawer-section active">
+        <!-- Telemetry Cards -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">PRIORITY SEVERITY</div>
+            <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-priority">-</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">RESPONSE TIME</div>
+            <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px; color: var(--color-primary);" id="dossier-elapsed">-</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">CURRENT STATUS</div>
+            <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-status">-</div>
+          </div>
+        </div>
+
+        <div>
+          <span class="typography-label" style="color: var(--color-primary); display: block; margin-bottom: 8px;">INCIDENT OPERATIONAL TIMELINE</span>
+          <div class="timeline-container" id="dossier-timeline-mount"></div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Narrative & Actions -->
+      <div id="drawer-sec-narrative" class="drawer-section" style="display: none;">
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); margin-bottom: var(--spacing-sm);">
+          <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 4px; font-weight: 600;">OFFICIAL NARRATIVE &amp; OBSERVATIONS:</div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="dossier-narrative">-</p>
+        </div>
+
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);" id="dossier-action-box">
+          <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 4px; font-weight: 600;">ACTIONS TAKEN / RESOLUTION SUMMARY:</div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="dossier-action-text">-</p>
+        </div>
       </div>
     </div>
 
-    <!-- Telemetry Cards -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">PRIORITY SEVERITY</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-priority">-</div>
-      </div>
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">RESPONSE TIME</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px; color: var(--color-primary);" id="dossier-elapsed">-</div>
-      </div>
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">CURRENT STATUS</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-status">-</div>
-      </div>
+    <!-- Drawer Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="closeIncidentDrawer()" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        Close
+      </button>
+      <button type="button" class="button-primary" id="btn-dossier-print" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect width="12" height="8" x="6" y="14"/>
+        </svg>
+        <span>Print Spot Report</span>
+      </button>
     </div>
-
-    <!-- Timeline Progress -->
-    <div>
-      <span class="typography-label" style="color: var(--color-primary);">INCIDENT OPERATIONAL TIMELINE</span>
-      <div class="timeline-container" id="dossier-timeline-mount"></div>
-    </div>
-
-    <!-- Narrative & Details -->
-    <div style="margin-top: var(--spacing-sm); padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-      <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 4px;">OFFICIAL NARRATIVE &amp; OBSERVATIONS:</div>
-      <p style="font-size: 0.8125rem; line-height: 1.5;" id="dossier-narrative">-</p>
-    </div>
-
-    <!-- Action Taken Box -->
-    <div style="margin-top: var(--spacing-xs); padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);" id="dossier-action-box">
-      <div class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 4px;">ACTIONS TAKEN / RESOLUTION SUMMARY:</div>
-      <p style="font-size: 0.8125rem; line-height: 1.5;" id="dossier-action-text">-</p>
-    </div>
-  </dialog>
+  </aside>
+  <dialog id="dossier-modal" style="display:none;"></dialog>
 
   <!-- MODAL 5: PRINTABLE BARANGAY INCIDENT SPOT REPORT (BISR) -->
   <dialog id="print-modal" class="modal-dialog" style="max-width: 860px; width: 95%; max-height: 90vh; overflow-y: auto;">
@@ -994,7 +1064,7 @@
           <div id="print-incident-qr" style="width: 60px; height: 60px; background: #ffffff; border: 1px solid #ccc; padding: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
           <div style="font-size: 0.6875rem; line-height: 1.35; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #555;">
             <strong style="display: block; color: #111; font-size: 0.75rem; text-transform: uppercase;">Official BISR Verification</strong>
-            Scan QR badge to verify spot report &bull; <span id="print-incident-verify-url" style="color: #0066ff;">verify.html</span>
+            Scan QR badge to verify spot report &bull; <span id="print-incident-verify-url" style="color: #0066ff;">verify.php</span>
           </div>
         </div>
         <div style="text-align: right; font-size: 0.7rem; color: #666; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
@@ -1027,9 +1097,8 @@
   </dialog>
 
   <!-- Scripts -->
-  <script src="js/db.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/lib/qrcode.js"></script>
-  <script src="js/auth.js"></script>
   <script src="js/components/toast.js"></script>
   <script src="js/components/sidebar.js"></script>
 
@@ -1041,7 +1110,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Guard route: require authenticated official session
-      const auth = await authService.requireAuth('login.html');
+      const auth = await authService.requireAuth('login.php');
       if (!auth) return;
       currentAuthUser = auth.user;
 
@@ -1182,6 +1251,17 @@
 
       const hasActive = search || cat || priority || status || purok;
       document.getElementById('btn-clear-filters').style.display = hasActive ? 'inline-flex' : 'none';
+
+      let activeCount = 0;
+      if (cat) activeCount++;
+      if (priority) activeCount++;
+      if (status) activeCount++;
+      if (purok) activeCount++;
+      const filterBadge = document.getElementById('incident-filter-badge');
+      if (filterBadge) {
+        filterBadge.textContent = activeCount;
+        filterBadge.style.display = activeCount > 0 ? 'inline-flex' : 'none';
+      }
 
       const filtered = allIncidents.filter(i => {
         if (search) {
@@ -1506,7 +1586,56 @@
         </div>
       `;
 
-      document.getElementById('dossier-modal').showModal();
+      // Activate slide-over drawer and backdrop
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('dossier-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
+    };
+
+    // Close Incident Drawer
+    window.closeIncidentDrawer = function() {
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('dossier-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    // Switch Incident Drawer Tabs
+    window.switchIncidentDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#dossier-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const secTimeline = document.getElementById('drawer-sec-timeline');
+      const secNarrative = document.getElementById('drawer-sec-narrative');
+      if (secTimeline) secTimeline.style.display = tabName === 'timeline' ? 'block' : 'none';
+      if (secNarrative) secNarrative.style.display = tabName === 'narrative' ? 'block' : 'none';
+    };
+
+    // Progressive Filter Panel Toggle
+    window.toggleIncidentFilterPanel = function() {
+      const panel = document.getElementById('incident-filter-panel');
+      const btn = document.getElementById('incident-filter-toggle-btn');
+      if (!panel) return;
+      const isOpen = panel.style.display === 'block';
+      panel.style.display = isOpen ? 'none' : 'block';
+      if (btn) btn.classList.toggle('active', !isOpen);
+    };
+
+    // Contextual Info Popover Toggle
+    window.toggleIncidentInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('incident-info-popover');
+      if (!popover) return;
+      const isOpen = popover.style.display === 'block';
+      popover.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // Quick Category Filter
+    window.quickFilterIncidentCategory = function(cat) {
+      document.getElementById('filter-category').value = cat;
+      renderFilteredIncidents();
     };
 
     // Open Print Modal
@@ -1644,9 +1773,29 @@
 
       // Dossier Print button
       document.getElementById('btn-dossier-print').addEventListener('click', () => {
-        document.getElementById('dossier-modal').close();
+        closeIncidentDrawer();
         if (activeIncidentForAction) {
           openPrintModal(activeIncidentForAction.id);
+        }
+      });
+
+      // Escape key to close drawer & popovers
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeIncidentDrawer();
+          const popover = document.getElementById('incident-info-popover');
+          if (popover && popover.style.display === 'block') popover.style.display = 'none';
+        }
+      });
+
+      // Outside click to close popover
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('incident-info-popover');
+        const trigger = document.getElementById('btn-incident-info');
+        if (popover && popover.style.display === 'block') {
+          if (!popover.contains(e.target) && e.target !== trigger) {
+            popover.style.display = 'none';
+          }
         }
       });
 

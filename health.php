@@ -299,13 +299,14 @@ require_auth('login.php');
             <div>
               <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
                 <h1 class="typography-heading-2">Barangay Health Station &amp; Nutrition Hub.</h1>
+                <button type="button" class="info-trigger" id="btn-health-info" onclick="toggleHealthInfoPopover(event)" aria-label="Health Station Information" title="About Primary Healthcare &amp; DOH Protocols">i</button>
                 <span class="badge-neutral" style="display: inline-flex; align-items: center; gap: 6px;">
                   <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
-                  DOH Primary Care Station (Live MySQL)
+                  DOH Primary Care Station
                 </span>
               </div>
               <p class="typography-body-lg">
-                Comprehensive primary healthcare intake, Expanded Program on Immunization (EPI), Operation Timbang Plus child nutrition monitoring, and senior maintenance medicine dispensary.
+                Primary healthcare intake, EPI child immunization, Operation Timbang Plus nutrition, and senior medicine dispensary.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -326,46 +327,65 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Executive Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">CLINICAL INTAKES</span>
-                <span class="badge-neutral" id="badge-intake-period">Live DB</span>
-              </div>
-              <div class="stat-number" id="stat-total-consultations">0</div>
-              <div class="typography-caption" id="stat-sub-consultations">Total consultations logged</div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="health-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Barangay Health Station &amp; Clinical Operations</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleHealthInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Operated under DOH Universal Health Care guidelines in coordination with the Rural Health Unit (RHU), providing primary healthcare consultations, national immunization programs, and child growth monitoring.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Primary Consultations:</strong>
+              <div>General medical triage, vital signs monitoring (BP, Temp, BMI), and urgent RHU referral routing.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">PROFILED PATIENTS</span>
-                <span class="badge-neutral" style="color: #10b981;">BHW Registry</span>
-              </div>
-              <div class="stat-number" id="stat-total-patients">0</div>
-              <div class="typography-caption" id="stat-sub-patients">Unique resident dossiers</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">EPI Immunization Matrix:</strong>
+              <div>Scheduled routine vaccines from birth through 12 months (BCG, HepB, Pentavalent, OPV, IPV, PCV, MMR).</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">OPT+ MALNUTRITION CASES</span>
-                <span class="badge-neutral" style="color: #f59e0b;">WHO Standards</span>
-              </div>
-              <div class="stat-number" id="stat-opt-malnourished">0</div>
-              <div class="typography-caption" id="stat-sub-opt">Children on feeding plan</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-amber-600, #d97706);">Operation Timbang Plus (OPT+):</strong>
+              <div>Annual anthropometric measurement of 0-59 month olds to detect wasting, stunting, and underweight.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">PHARMACY STOCK</span>
-                <span class="badge-neutral" id="stat-low-stock-badge">Normal</span>
-              </div>
-              <div class="stat-number" id="stat-total-medicines">0</div>
-              <div class="typography-caption" id="stat-sub-medicines">Units available &bull; 0 low stock</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #6366f1;">Pharmacy Dispensary:</strong>
+              <div>Free maintenance medication inventory tracking for hypertension, diabetes, and essential vitamins.</div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-consultations">0</span>
+            <span class="metric-strip-lbl">Consultations</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-patients">0</span>
+            <span class="metric-strip-lbl">Profiled Patients</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-opt-malnourished">0</span>
+            <span class="metric-strip-lbl">Malnutrition Cases</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-medicines">0</span>
+            <span class="metric-strip-lbl">Pharmacy Inventory</span>
+          </div>
+        </div>
+
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <span id="badge-intake-period" style="display: none;"></span>
+        <span id="stat-sub-consultations" style="display: none;"></span>
+        <span id="stat-sub-patients" style="display: none;"></span>
+        <span id="stat-sub-opt" style="display: none;"></span>
+        <span id="stat-low-stock-badge" style="display: none;"></span>
+        <span id="stat-sub-medicines" style="display: none;"></span>
 
         <!-- Main Tab Navigation -->
         <nav class="health-tab-nav" aria-label="Health Station Views">
@@ -958,15 +978,21 @@ require_auth('login.php');
       <div class="referral-slip" id="print-referral-slip">
         <!-- Official Header -->
         <div class="doh-header">
-          <div class="doh-seal-row">
-            <div style="font-size: 1.5rem;">🇵🇭</div>
+            <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
             <div>
               <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: #444;">Republic of the Philippines &bull; Department of Health</div>
               <div style="font-size: 1.125rem; font-weight: 800; text-transform: uppercase; color: #000; letter-spacing: 0.05em; margin: 2px 0;">Barangay Health Station</div>
               <div style="font-size: 0.75rem; color: #333;">Barangay San Isidro, Rodriguez (Montalban), Rizal</div>
             </div>
-            <div style="font-size: 1.5rem;">🏥</div>
-          </div>
+            <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
           <div style="font-size: 0.875rem; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-decoration: underline; letter-spacing: 0.05em;">
             PATIENT CLINICAL REFERRAL FORM
           </div>
@@ -1182,6 +1208,119 @@ require_auth('login.php');
     </form>
   </dialog>
 
+  <!-- LEVEL 3: CLINICAL CONSULTATION & PATIENT DOSSIER DRAWER -->
+  <div class="app-drawer-backdrop" id="health-drawer-backdrop" onclick="closeHealthDrawer()"></div>
+  <aside class="app-drawer" id="consultation-detail-drawer" aria-label="Clinical Consultation Dossier">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge-neutral" id="drawer-health-rec" style="font-family: monospace; font-weight: 700;">REC-0000</span>
+        <h3 class="drawer-title" id="drawer-health-patient" style="margin: 0; font-size: 1rem;">Patient Full Name</h3>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeHealthDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchHealthDrawerTab('assessment', this)">Assessment &amp; Vitals</button>
+      <button type="button" class="drawer-tab" onclick="switchHealthDrawerTab('treatment', this)">Treatment &amp; Referral</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Assessment & Vitals -->
+      <div id="health-drawer-sec-assessment" class="drawer-section active">
+        <!-- Vitals Grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">BLOOD PRESSURE</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;" id="drawer-health-bp">120/80</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">TEMPERATURE</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;" id="drawer-health-temp">36.5°C</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">PULSE / HR</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 2px; color: var(--color-primary);" id="drawer-health-pulse">75 bpm</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+          <div style="padding: 8px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">WEIGHT</div>
+            <div style="font-weight: 600; font-size: 0.875rem;" id="drawer-health-weight">-- kg</div>
+          </div>
+          <div style="padding: 8px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">HEIGHT</div>
+            <div style="font-weight: 600; font-size: 0.875rem;" id="drawer-health-height">-- cm</div>
+          </div>
+          <div style="padding: 8px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">BMI CLASSIFICATION</div>
+            <div style="font-weight: 600; font-size: 0.875rem;" id="drawer-health-bmi">Normal</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-weight: 600; margin-bottom: 4px;">CHIEF COMPLAINT:</div>
+            <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-complaint">--</p>
+          </div>
+
+          <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-weight: 600; margin-bottom: 4px;">CLINICAL DIAGNOSIS &amp; ASSESSMENT:</div>
+            <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-diagnosis">--</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Treatment & Referral -->
+      <div id="health-drawer-sec-treatment" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Service Type</span>
+            <span class="drawer-item-val" id="drawer-health-service" style="font-weight: 600;">General Consultation</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Attending Healthcare Staff</span>
+            <span class="drawer-item-val" id="drawer-health-staff">BHW</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Consultation Status</span>
+            <span class="drawer-item-val" id="drawer-health-status">Completed</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Follow-up Schedule</span>
+            <span class="drawer-item-val" id="drawer-health-followup">None scheduled</span>
+          </div>
+        </div>
+
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); margin-bottom: 12px;">
+          <div class="typography-caption" style="color: var(--color-primary); font-weight: 600; margin-bottom: 4px;">TREATMENT &amp; PRESCRIBED MEDICATIONS:</div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-treatment">No medications prescribed.</p>
+        </div>
+
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);" id="drawer-health-referral-box">
+          <div class="typography-caption" style="color: var(--color-amber-600, #d97706); font-weight: 600; margin-bottom: 4px;">EXTERNAL REFERRAL FACILITY:</div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-referral">Not referred.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="closeHealthDrawer()" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        Close
+      </button>
+      <button type="button" class="button-primary" id="btn-drawer-referral" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect width="12" height="8" x="6" y="14"/>
+        </svg>
+        <span>Print Referral Slip</span>
+      </button>
+    </div>
+  </aside>
+
   <!-- Script dependencies: REST API Bridge first for PHP/MySQL parity -->
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
@@ -1394,6 +1533,9 @@ require_auth('login.php');
               </span>
             </td>
             <td style="text-align: right; white-space: nowrap;">
+              <button class="button-outline" onclick="openConsultationDrawer(${rec.id});" style="height: 28px; padding: 0 8px; font-size: 0.6875rem; margin-right: 4px;" title="View Clinical Dossier">
+                View
+              </button>
               <button class="button-outline" onclick="openReferralSlipModal(${rec.id});" style="height: 28px; padding: 0 8px; font-size: 0.6875rem; margin-right: 4px;" title="View &amp; Print Official Referral Slip">
                 Referral Slip
               </button>
@@ -1999,6 +2141,107 @@ require_auth('login.php');
         btn.textContent = 'Send SMS Alert';
       }
     };
+
+    // Contextual Info Popover Toggle
+    window.toggleHealthInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('health-info-popover');
+      if (!popover) return;
+      const isOpen = popover.style.display === 'block';
+      popover.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // Close Health Drawer
+    window.closeHealthDrawer = function() {
+      const drawer = document.getElementById('consultation-detail-drawer');
+      const backdrop = document.getElementById('health-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    // Switch Health Drawer Tabs
+    window.switchHealthDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#consultation-detail-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const secAssess = document.getElementById('health-drawer-sec-assessment');
+      const secTreat = document.getElementById('health-drawer-sec-treatment');
+      if (secAssess) secAssess.style.display = tabName === 'assessment' ? 'block' : 'none';
+      if (secTreat) secTreat.style.display = tabName === 'treatment' ? 'block' : 'none';
+    };
+
+    // Open Consultation Detail Drawer
+    window.openConsultationDrawer = function(id) {
+      const rec = allConsultations.find(c => c.id == id);
+      if (!rec) return;
+
+      const res = allResidents.find(r => r.id === (rec.residentId || rec.resident_id)) || {};
+      const patientName = `${res.firstName || res.first_name || rec.first_name || ''} ${res.lastName || res.last_name || rec.last_name || ''}`.trim() || 'Resident Patient';
+      const purok = res.purok || rec.purok || 'Barangay San Isidro';
+
+      document.getElementById('drawer-health-rec').textContent = rec.recordNo || rec.record_no || 'HLTH-' + rec.id;
+      document.getElementById('drawer-health-patient').textContent = `${patientName} (${purok})`;
+
+      document.getElementById('drawer-health-bp').textContent = rec.bloodPressure || rec.blood_pressure || '--/--';
+      document.getElementById('drawer-health-temp').textContent = rec.temperature ? `${rec.temperature}°C` : '--°C';
+      document.getElementById('drawer-health-pulse').textContent = rec.heartRate || rec.pulse_rate ? `${rec.heartRate || rec.pulse_rate} bpm` : '-- bpm';
+
+      document.getElementById('drawer-health-weight').textContent = rec.weightKg || rec.weight_kg ? `${rec.weightKg || rec.weight_kg} kg` : '-- kg';
+      document.getElementById('drawer-health-height').textContent = rec.heightCm || rec.height_cm ? `${rec.heightCm || rec.height_cm} cm` : '-- cm';
+      document.getElementById('drawer-health-bmi').textContent = rec.bmiCategory || rec.bmi_category || 'Normal';
+
+      document.getElementById('drawer-health-complaint').textContent = rec.chiefComplaint || rec.chief_complaint || 'No complaint details recorded.';
+      document.getElementById('drawer-health-diagnosis').textContent = rec.clinicalNotes || rec.clinical_notes || rec.diagnosis || 'Standard clinical observations.';
+
+      document.getElementById('drawer-health-service').textContent = rec.serviceType || rec.service_type || 'General Consultation';
+      document.getElementById('drawer-health-staff').textContent = rec.attendingStaff || rec.attending_staff || 'Duty Health Worker';
+      document.getElementById('drawer-health-status').textContent = rec.status || 'Completed';
+      document.getElementById('drawer-health-followup').textContent = rec.followUpDate || rec.follow_up_date || 'No scheduled follow-up';
+
+      document.getElementById('drawer-health-treatment').textContent = rec.treatmentPlan || rec.treatment_plan || rec.prescribedMedicines || rec.prescribed_medicines || 'No medications prescribed.';
+
+      const referralBox = document.getElementById('drawer-health-referral-box');
+      const referralDest = rec.referralFacility || rec.referral_facility || rec.referredTo || rec.referred_to;
+      if (referralDest || (rec.status || '').includes('Referred')) {
+        referralBox.style.display = 'block';
+        document.getElementById('drawer-health-referral').textContent = referralDest || 'Referred to RHU / District Hospital';
+      } else {
+        referralBox.style.display = 'none';
+      }
+
+      const referralBtn = document.getElementById('btn-drawer-referral');
+      if (referralBtn) {
+        referralBtn.onclick = function() {
+          closeHealthDrawer();
+          openReferralSlipModal(rec.id);
+        };
+      }
+
+      const drawer = document.getElementById('consultation-detail-drawer');
+      const backdrop = document.getElementById('health-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
+    };
+
+    // Global keyboard and click listeners
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeHealthDrawer();
+        const popover = document.getElementById('health-info-popover');
+        if (popover && popover.style.display === 'block') popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('health-info-popover');
+      const trigger = document.getElementById('btn-health-info');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
+    });
   </script>
 </body>
 </html>

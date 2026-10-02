@@ -971,7 +971,7 @@
         full_name: 'Administrator',
         role: 'admin',
         position: 'Punong Barangay',
-        email: 'admin@barangay.gov.ph'
+        email: 'admin@barangayos.local'
       };
       sessionStorage.setItem('barangay_user', JSON.stringify(defaultUser));
       return defaultUser;
@@ -993,7 +993,7 @@
         full_name: 'Administrator',
         role: 'admin',
         position: 'Punong Barangay',
-        email: 'admin@barangay.gov.ph'
+        email: 'admin@barangayos.local'
       };
       sessionStorage.setItem('barangay_user', JSON.stringify(defaultUser));
       return defaultUser;

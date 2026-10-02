@@ -337,18 +337,32 @@
 
     <div class="app-container" style="max-width: 1360px; padding: var(--spacing-sm) var(--spacing-md) var(--spacing-xl);">
 
-      <!-- Hero Header -->
+      <!-- Level 1 Primary: Quiet Hero -->
       <section class="page-hero">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--spacing-sm);">
-          <div>
+          <div style="position: relative;">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="badge-neutral" style="font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; background: #e0e7ff; color: #4338ca;">RA 7160 SEC. 399-422</span>
-              <span class="typography-caption" id="live-date-caption">Barangay San Isidro Mediation Court</span>
+              <h1 class="typography-heading-2" style="font-size: 1.5rem; margin: 0;">Katarungang Pambarangay.</h1>
+              <button type="button" class="info-trigger" onclick="toggleLuponInfoPopover()" title="KP Statutory Guidelines">i</button>
+              <span class="typography-caption" id="live-date-caption" style="margin-left: 4px;">Barangay San Isidro Mediation Court</span>
             </div>
-            <h1 class="typography-heading-2 mt-xs" style="font-size: 1.5rem;">Katarungang Pambarangay Studio.</h1>
-            <p class="typography-body mt-xs" style="color: var(--color-text-muted); max-width: 720px; font-size: 0.84rem;">
-              Statutory dispute conciliation and arbitration suite. Tracks strict 15-day Punong Barangay mediation deadlines, Pangkat ng Tagapagkasundo panels, amicable settlements (KP Form 16), and Certificates to File Action (KP Form 20).
+            <p class="typography-body-lg" style="margin-top: 4px;">
+              Statutory dispute conciliation, mediation deadlines, Pangkat panels, and amicable settlement registry.
             </p>
+
+            <!-- Contextual Info Popover Card -->
+            <div class="info-popover-card" id="lupon-info-popover" style="display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px; font-size: 0.875rem;">Katarungang Pambarangay Rules (RA 7160 Sec. 399&ndash;422)</div>
+              <p style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+                Statutory dispute resolution and conciliation proceedings:
+              </p>
+              <ul style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; padding-left: 16px; margin: 0;">
+                <li><strong>PB Mediation (KP Form 7/8):</strong> Punong Barangay has 15 statutory days to mediate before constituting Pangkat.</li>
+                <li><strong>Pangkat Conciliation:</strong> 3-member panel has 15 days (extendable by 15 days) to effect amicable settlement.</li>
+                <li><strong>Kasunduan (KP Form 16):</strong> Amicable settlement has force and effect of a final court judgment after 10 days.</li>
+                <li><strong>Certificate to File Action (KP Form 20):</strong> Issued only upon failure of personal confrontation or settlement.</li>
+              </ul>
+            </div>
           </div>
 
           <!-- Studio Actions -->
@@ -365,64 +379,44 @@
                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-              + Schedule Hearing (KP Form 8)
+              + Schedule Hearing
             </button>
             <button type="button" class="button-primary" id="btn-file-case" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
-              + File New KP Case (KP Form 7)
+              + File New Case (KP Form 7)
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Executive Telemetry Ladder (4 Cards) -->
-      <section class="stats-ladder">
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Active Disputes</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #e0e7ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="m3 7 9-4 9 4"/><path d="M6 7v6a6 6 0 0 0 12 0V7"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-active-cases">0</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-active">0 in mediation / conciliation</div>
+      <!-- Level 1 Minimal Borderless Metrics Strip -->
+      <div class="metrics-strip">
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-active-cases">0</div>
+          <div class="metric-strip-lbl">Active Disputes</div>
+          <span id="stat-sub-active" style="display: none;"></span>
         </div>
-
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Hearings This Week</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #fef3c7; display: flex; align-items: center; justify-content: center; color: #d97706;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-hearings-week">0</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-hearings">Scheduled in Lupon Room</div>
+        <div class="metric-strip-divider"></div>
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-hearings-week">0</div>
+          <div class="metric-strip-lbl">Hearings This Week</div>
+          <span id="stat-sub-hearings" style="display: none;"></span>
         </div>
-
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Settlement Rate</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #d1fae5; display: flex; align-items: center; justify-content: center; color: #059669;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-settlement-rate">0%</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-settlement">Amicable Kasunduan achieved</div>
+        <div class="metric-strip-divider"></div>
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-settlement-rate">0%</div>
+          <div class="metric-strip-lbl">Settlement Rate</div>
+          <span id="stat-sub-settlement" style="display: none;"></span>
         </div>
-
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">CFA Court Referrals</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-cfa-count">0</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-cfa">Sec. 412 certificates issued</div>
+        <div class="metric-strip-divider"></div>
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-cfa-count">0</div>
+          <div class="metric-strip-lbl">CFA Court Referrals</div>
+          <span id="stat-sub-cfa" style="display: none;"></span>
         </div>
-      </section>
+      </div>
 
       <!-- 4-Tab Navigation Strip -->
       <nav class="kp-tab-nav" aria-label="Lupon Studio Modules">
@@ -452,44 +446,62 @@
       <!-- TAB 1: KP CASE DOCKET & PIPELINE -->
       <!-- ======================================================== -->
       <div id="tab-docket" class="tab-pane active">
-        <!-- Filter Toolbar -->
-        <div class="filter-toolbar">
-          <div class="filter-group">
-            <div class="search-input-wrap">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input type="search" id="search-kp-cases" placeholder="Search case #, parties, facts..." aria-label="Search cases">
-            </div>
-
-            <select id="filter-stage" class="filter-select" aria-label="Filter by statutory stage">
-              <option value="">All Stages</option>
-              <option value="PB Mediation">PB Mediation (15-day PB Window)</option>
-              <option value="Pangkat Conciliation">Pangkat Conciliation (30-day Panel)</option>
-              <option value="Amicably Settled">Amicably Settled (Kasunduan)</option>
-              <option value="CFA Issued">CFA Issued (Court Escalation)</option>
-              <option value="Arbitrated">Arbitrated Award</option>
-              <option value="Dismissed">Dismissed / Withdrawn</option>
-            </select>
-
-            <select id="filter-dispute-type" class="filter-select" aria-label="Filter by dispute type">
-              <option value="">All Dispute Types</option>
-              <option value="Property & Boundary Dispute">Property &amp; Boundary Dispute</option>
-              <option value="Unpaid Debt & Financial Conflict">Unpaid Debt &amp; Financial Conflict</option>
-              <option value="Physical Altercation / Slight Physical Injury">Physical Altercation</option>
-              <option value="Verbal Defamation & Threat">Verbal Defamation &amp; Threat</option>
-              <option value="Tenancy & Lease Conflict">Tenancy &amp; Lease Conflict</option>
-              <option value="Neighborhood Noise & Nuisance">Noise &amp; Community Nuisance</option>
-              <option value="Other Civil / Compound Dispute">Other Civil / Compound Dispute</option>
-            </select>
-
-            <button type="button" class="button-pill-soft" id="btn-clear-filters" style="height: 34px; padding: 0 12px; display: none;">
-              Reset Filters
-            </button>
+        <!-- Level 2 Progressive Minimal Filter Bar -->
+        <div class="filter-bar-minimal" style="margin-bottom: var(--spacing-sm);">
+          <div class="search-input-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" id="search-kp-cases" class="text-input" placeholder="Search case #, parties, facts..." aria-label="Search cases" autocomplete="off">
           </div>
 
-          <div style="font-size: 0.75rem; color: var(--color-text-muted);">
+          <button type="button" class="filter-toggle-btn" id="kp-filter-toggle-btn" onclick="toggleLuponFilterPanel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>Filters</span>
+            <span class="filter-count-badge" id="kp-filter-badge" style="display: none;">0</span>
+          </button>
+
+          <button type="button" class="button-pill-soft" id="btn-clear-filters" style="height: 34px; padding: 0 12px; display: none;">
+            Reset Filters
+          </button>
+
+          <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-left: auto;">
             Showing <strong id="shown-cases-count">0</strong> cases
+          </div>
+        </div>
+
+        <!-- Expandable Filter Panel -->
+        <div class="filter-expanded-panel" id="kp-filter-panel" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; width: 100%;">
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Statutory Stage</label>
+              <select id="filter-stage" class="filter-select" aria-label="Filter by statutory stage" style="width: 100%;">
+                <option value="">All Stages</option>
+                <option value="PB Mediation">PB Mediation (15-day PB Window)</option>
+                <option value="Pangkat Conciliation">Pangkat Conciliation (30-day Panel)</option>
+                <option value="Amicably Settled">Amicably Settled (Kasunduan)</option>
+                <option value="CFA Issued">CFA Issued (Court Escalation)</option>
+                <option value="Arbitrated">Arbitrated Award</option>
+                <option value="Dismissed">Dismissed / Withdrawn</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Dispute Type</label>
+              <select id="filter-dispute-type" class="filter-select" aria-label="Filter by dispute type" style="width: 100%;">
+                <option value="">All Dispute Types</option>
+                <option value="Property & Boundary Dispute">Property &amp; Boundary Dispute</option>
+                <option value="Unpaid Debt & Financial Conflict">Unpaid Debt &amp; Financial Conflict</option>
+                <option value="Physical Altercation / Slight Physical Injury">Physical Altercation</option>
+                <option value="Verbal Defamation & Threat">Verbal Defamation &amp; Threat</option>
+                <option value="Tenancy & Lease Conflict">Tenancy &amp; Lease Conflict</option>
+                <option value="Neighborhood Noise & Nuisance">Noise &amp; Community Nuisance</option>
+                <option value="Other Civil / Compound Dispute">Other Civil / Compound Dispute</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -733,98 +745,121 @@
   </dialog>
 
   <!-- ======================================================== -->
-  <!-- MODAL: CASE DOSSIER BRIEFING -->
+  <!-- SLIDE-OVER DRAWER: CASE DOSSIER BRIEFING -->
   <!-- ======================================================== -->
-  <dialog id="case-dossier-modal" class="modal-dialog" style="max-width: 720px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+  <div class="app-drawer-backdrop" id="lupon-drawer-backdrop" onclick="closeLuponDrawer()"></div>
+  <aside class="app-drawer" id="lupon-case-drawer" aria-label="Lupon Case Dossier">
+    <div class="drawer-header">
       <div>
         <div style="display: flex; align-items: center; gap: 8px;">
           <span class="badge-neutral" id="dossier-case-number" style="font-weight: 700; font-family: monospace;">KP-2026-0001</span>
           <span id="dossier-stage-badge" class="badge-blue">PB Mediation</span>
         </div>
-        <h3 class="typography-heading-4 mt-xs" id="dossier-dispute-title">Property &amp; Boundary Dispute</h3>
+        <h3 class="drawer-title" id="dossier-dispute-title" style="margin-top: 4px; font-size: 1rem;">Property &amp; Boundary Dispute</h3>
       </div>
-      <button type="button" class="button-pill-soft" onclick="document.getElementById('case-dossier-modal').close();" style="height: 28px; padding: 0 10px;">
-        Close
+      <button type="button" class="drawer-close-btn" onclick="closeLuponDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchLuponDrawerTab('overview', this)">Overview &amp; Parties</button>
+      <button type="button" class="drawer-tab" onclick="switchLuponDrawerTab('proceedings', this)">Proceedings &amp; Outcome</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Section 1: Overview & Parties -->
+      <div id="lupon-drawer-sec-overview" class="drawer-section">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Parties Card -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #4338ca;">
+              <span class="typography-label" style="color: #4338ca; font-size: 0.6875rem;">NAGSUSUMBONG (COMPLAINANT)</span>
+              <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-comp-name">Juan Dela Cruz</div>
+              <div class="typography-caption" id="dossier-comp-address">Purok 1, Barangay San Isidro &bull; 0917-123-4567</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #dc2626;">
+              <span class="typography-label" style="color: #dc2626; font-size: 0.6875rem;">IPINAGSUSUMBONG (RESPONDENT)</span>
+              <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-resp-name">Pedro Santos</div>
+              <div class="typography-caption" id="dossier-resp-address">Purok 2, Barangay San Isidro &bull; 0918-765-4321</div>
+            </div>
+          </div>
+
+          <!-- Statutory Timeline Progress Banner -->
+          <div id="dossier-timer-banner" style="padding: 10px 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--rounded-sm); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.8125rem; color: #4338ca;" id="dossier-timer-label">Statutory Punong Barangay 15-Day Mediation Timer</div>
+              <div class="typography-caption" id="dossier-timer-sub">Filed on Jan 15, 2026 &bull; Mediation Deadline: Jan 30, 2026</div>
+            </div>
+            <span class="statutory-countdown-badge countdown-urgent" id="dossier-countdown-chip">Day 6 of 15</span>
+          </div>
+
+          <!-- Facts and Relief -->
+          <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <span class="typography-label" style="font-size: 0.6875rem; color: var(--color-text-muted);">COMPLAINT STATEMENT / SALAYSAY NG SUMBONG:</span>
+            <p style="font-size: 0.8125rem; color: var(--color-ink); margin-top: 4px; line-height: 1.5; white-space: pre-wrap;" id="dossier-facts">-</p>
+            <div style="margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
+              Lunas na Hinihiling: <strong style="color: var(--color-ink);" id="dossier-relief">-</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Proceedings & Outcome -->
+      <div id="lupon-drawer-sec-proceedings" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Pangkat Panel if constituted -->
+          <div id="dossier-pangkat-box" style="display: none; padding: 10px 12px; background: #faf5ff; border: 1px solid #d8b4fe; border-radius: var(--rounded-sm);">
+            <span class="typography-label" style="color: #7e22ce; font-size: 0.6875rem;">CONSTITUTED PANGKAT NG TAGAPAGKASUNDO PANEL:</span>
+            <div class="form-grid-3 mt-xs" style="font-size: 0.8125rem;">
+              <div><strong>Chairman:</strong> <span id="dossier-pangkat-chair">-</span></div>
+              <div><strong>Secretary:</strong> <span id="dossier-pangkat-sec">-</span></div>
+              <div><strong>Member:</strong> <span id="dossier-pangkat-member">-</span></div>
+            </div>
+          </div>
+
+          <!-- Settlement terms if settled -->
+          <div id="dossier-settlement-box" style="display: none; padding: 10px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--rounded-sm);">
+            <span class="typography-label" style="color: #065f46; font-size: 0.6875rem;">EXECUTED AMICABLE SETTLEMENT (KASUNDUANG PAG-AAYOS):</span>
+            <div style="font-size: 0.8125rem; margin-top: 4px; color: #064e3b;" id="dossier-settlement-terms">-</div>
+            <div class="typography-caption mt-xs" id="dossier-settlement-meta">Amount: PHP 0.00 &bull; Compliance Due: -</div>
+          </div>
+
+          <!-- CFA Details if issued -->
+          <div id="dossier-cfa-box" style="display: none; padding: 10px 12px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--rounded-sm);">
+            <span class="typography-label" style="color: #9f1239; font-size: 0.6875rem;">CERTIFICATE TO FILE ACTION (CFA) ENDORSEMENT:</span>
+            <div style="font-size: 0.8125rem; margin-top: 4px; color: #881337;" id="dossier-cfa-reason">-</div>
+            <div class="typography-caption mt-xs" id="dossier-cfa-meta">Certified for court action pursuant to RA 7160 Sec. 412</div>
+          </div>
+
+          <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.75rem; color: var(--color-text-muted);">
+            KP proceedings adhere to Sections 399-422 of the Local Government Code of 1991. Settlements not repudiated within 10 days possess the force of court execution.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-xs); width: 100%;">
+      <button type="button" class="button-outline" id="dossier-btn-print" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        Print Forms (KP 7-20) &rarr;
       </button>
-    </div>
-
-    <!-- Parties Card -->
-    <div class="form-grid-2 mb-xs">
-      <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #4338ca;">
-        <span class="typography-label" style="color: #4338ca; font-size: 0.6875rem;">NAGSUSUMBONG (COMPLAINANT)</span>
-        <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-comp-name">Juan Dela Cruz</div>
-        <div class="typography-caption" id="dossier-comp-address">Purok 1, Barangay San Isidro &bull; 0917-123-4567</div>
-      </div>
-      <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #dc2626;">
-        <span class="typography-label" style="color: #dc2626; font-size: 0.6875rem;">IPINAGSUSUMBONG (RESPONDENT)</span>
-        <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-resp-name">Pedro Santos</div>
-        <div class="typography-caption" id="dossier-resp-address">Purok 2, Barangay San Isidro &bull; 0918-765-4321</div>
-      </div>
-    </div>
-
-    <!-- Statutory Timeline Progress Banner -->
-    <div id="dossier-timer-banner" style="padding: 10px 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs); display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <div style="font-weight: 600; font-size: 0.8125rem; color: #4338ca;" id="dossier-timer-label">Statutory Punong Barangay 15-Day Mediation Timer</div>
-        <div class="typography-caption" id="dossier-timer-sub">Filed on Jan 15, 2026 &bull; Mediation Deadline: Jan 30, 2026</div>
-      </div>
-      <span class="statutory-countdown-badge countdown-urgent" id="dossier-countdown-chip">Day 6 of 15</span>
-    </div>
-
-    <!-- Facts and Relief -->
-    <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs); border: 1px solid var(--color-hairline-soft);">
-      <span class="typography-label" style="font-size: 0.6875rem; color: var(--color-text-muted);">COMPLAINT STATEMENT / SALAYSAY NG SUMBONG:</span>
-      <p style="font-size: 0.8125rem; color: var(--color-ink); margin-top: 4px; line-height: 1.5; white-space: pre-wrap;" id="dossier-facts">-</p>
-      <div style="margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
-        Lunas na Hinihiling: <strong style="color: var(--color-ink);" id="dossier-relief">-</strong>
-      </div>
-    </div>
-
-    <!-- Pangkat Panel if constituted -->
-    <div id="dossier-pangkat-box" style="display: none; padding: 10px 12px; background: #faf5ff; border: 1px solid #d8b4fe; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs);">
-      <span class="typography-label" style="color: #7e22ce; font-size: 0.6875rem;">CONSTITUTED PANGKAT NG TAGAPAGKASUNDO PANEL:</span>
-      <div class="form-grid-3 mt-xs" style="font-size: 0.8125rem;">
-        <div><strong>Chairman:</strong> <span id="dossier-pangkat-chair">-</span></div>
-        <div><strong>Secretary:</strong> <span id="dossier-pangkat-sec">-</span></div>
-        <div><strong>Member:</strong> <span id="dossier-pangkat-member">-</span></div>
-      </div>
-    </div>
-
-    <!-- Settlement terms if settled -->
-    <div id="dossier-settlement-box" style="display: none; padding: 10px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs);">
-      <span class="typography-label" style="color: #065f46; font-size: 0.6875rem;">EXECUTED AMICABLE SETTLEMENT (KASUNDUANG PAG-AAYOS):</span>
-      <div style="font-size: 0.8125rem; margin-top: 4px; color: #064e3b;" id="dossier-settlement-terms">-</div>
-      <div class="typography-caption mt-xs" id="dossier-settlement-meta">Amount: PHP 0.00 &bull; Compliance Due: -</div>
-    </div>
-
-    <!-- CFA Details if issued -->
-    <div id="dossier-cfa-box" style="display: none; padding: 10px 12px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs);">
-      <span class="typography-label" style="color: #9f1239; font-size: 0.6875rem;">CERTIFICATE TO FILE ACTION (CFA) ENDORSEMENT:</span>
-      <div style="font-size: 0.8125rem; margin-top: 4px; color: #881337;" id="dossier-cfa-reason">-</div>
-      <div class="typography-caption mt-xs" id="dossier-cfa-meta">Certified for court action pursuant to RA 7160 Sec. 412</div>
-    </div>
-
-    <!-- Action Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-xs); margin-top: var(--spacing-sm); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="button-outline" id="dossier-btn-print" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
-          Print Official Forms (KP 7-20) &rarr;
-        </button>
-      </div>
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="button-outline" id="dossier-btn-pangkat" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="button-outline" id="dossier-btn-pangkat" style="height: 36px; padding: 0 10px; font-size: 0.75rem;">
           Constitute Pangkat
         </button>
-        <button type="button" class="button-outline" id="dossier-btn-settle" style="height: 36px; padding: 0 12px; font-size: 0.75rem; color: #059669; border-color: #a7f3d0;">
-          Execute Kasunduan
+        <button type="button" class="button-outline" id="dossier-btn-settle" style="height: 36px; padding: 0 10px; font-size: 0.75rem; color: #059669; border-color: #a7f3d0;">
+          Kasunduan
         </button>
-        <button type="button" class="button-outline" id="dossier-btn-cfa" style="height: 36px; padding: 0 12px; font-size: 0.75rem; color: #dc2626; border-color: #fecdd3;">
+        <button type="button" class="button-outline" id="dossier-btn-cfa" style="height: 36px; padding: 0 10px; font-size: 0.75rem; color: #dc2626; border-color: #fecdd3;">
           Issue CFA
         </button>
+        <button type="button" class="button-pill-soft" onclick="closeLuponDrawer()" style="height: 36px; padding: 0 12px;">Close</button>
       </div>
     </div>
-  </dialog>
+  </aside>
+
+  <!-- Dummy fallback for legacy references -->
+  <dialog id="case-dossier-modal" style="display: none;"></dialog>
 
   <!-- ======================================================== -->
   <!-- MODAL: SCHEDULE SUMMONS / HEARING (KP FORM 8) -->
@@ -1057,9 +1092,11 @@
         </select>
       </div>
 
-      <div class="form-group" style="margin-bottom: var(--spacing-xs);">
-        <label class="form-label" for="cfa-date">Date of Issuance <span style="color: var(--color-primary);">*</span></label>
-        <input type="date" id="cfa-date" class="text-input" style="height: 38px;" required>
+      <div class="form-grid-2">
+        <div class="form-group" style="margin-bottom: var(--spacing-xs);">
+          <label class="form-label" for="cfa-date">Date of Issuance <span style="color: var(--color-primary);">*</span></label>
+          <input type="date" id="cfa-date" class="text-input" style="height: 38px;" required>
+        </div>
       </div>
 
       <div class="form-group" style="margin-bottom: var(--spacing-xs);">
@@ -1234,7 +1271,7 @@
           <div id="print-kp-qr" style="width: 58px; height: 58px; background: #fff; border: 1px solid #ccc; padding: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
           <div style="font-size: 7.5pt; line-height: 1.3; font-family: sans-serif; color: #444;">
             <strong style="display: block; color: #111; font-size: 8.5pt; text-transform: uppercase;">Official KP Case Verification</strong>
-            Scan to inspect certified resolution status &bull; <span>verify.html</span>
+            Scan to inspect certified resolution status &bull; <span>verify.php</span>
           </div>
         </div>
         <div style="text-align: right; font-size: 8pt; font-family: sans-serif; color: #666;">
@@ -1245,8 +1282,8 @@
     </div>
   </dialog>
 
-  <!-- Client-Side Database & QR Libs -->
-  <script src="js/db.js"></script>
+  <!-- REST API Client Bridge for PHP/MySQL Parity -->
+  <script src="js/api.js"></script>
   <script src="js/lib/qrcode.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/components/toast.js"></script>
@@ -1260,201 +1297,28 @@
     let selectedCaseForAction = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Guard route: require authenticated official session
-      const auth = await authService.requireAuth('login.html');
-      if (!auth) return;
-      currentAuthUser = auth.user;
+      // 1. App Shell Sidebar
+      if (window.AppSidebar) {
+        await AppSidebar.render('lupon');
+      }
 
-      // 2. Render App Shell Sidebar & Topbar
-      await AppSidebar.render('lupon');
-
-      // 3. Set Live Date caption
+      // 2. Set Live Date caption
       const now = new Date();
       document.getElementById('live-date-caption').textContent = now.toLocaleDateString('en-PH', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      // 4. Initialize seed data if IndexedDB is empty
-      await ensureSeedData();
-
-      // 5. Load All Data and Render
+      // 3. Load All Data via MySQL REST API
       await refreshAllData();
 
-      // 6. Bind Events
+      // 4. Bind Events
       bindEventListeners();
 
-      // 7. Check Blotter Escalation payload in sessionStorage
+      // 5. Check Blotter Escalation payload in sessionStorage
       checkBlotterEscalation();
     });
 
-    // Seed default Lupon data if store is empty
-    async function ensureSeedData() {
-      try {
-        const memberCount = await window.barangayDB.count('lupon_members');
-        if (memberCount === 0) {
-          const defaultMembers = [
-            { fullName: 'Hon. Benjamin Alcantara', committeeAssignment: 'Conciliation Panel', professionBackground: 'Barangay Kagawad on Laws', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 14 },
-            { fullName: 'Gng. Corazon De Leon', committeeAssignment: 'Conciliation Panel', professionBackground: 'Retired Public School Principal', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 12 },
-            { fullName: 'Engr. Dominador Santos', committeeAssignment: 'Property & Boundary Panel', professionBackground: 'Civil Engineer & Elder', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 9 },
-            { fullName: 'Atty. Rodolfo Manalo', committeeAssignment: 'Arbitration Panel', professionBackground: 'Legal Consultant & Arbiter', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 8 },
-            { fullName: 'G. Ernesto Villanueva', committeeAssignment: 'Conciliation Panel', professionBackground: 'Purok 3 Elder & Former Kagawad', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 11 },
-            { fullName: 'Gng. Elena Ramos', committeeAssignment: 'Family & Tenancy Panel', professionBackground: 'Barangay Kagawad on Health', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 7 },
-            { fullName: 'G. Mateo Gutierrez', committeeAssignment: 'Conciliation Panel', professionBackground: 'Senior Citizens Association Officer', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 6 },
-            { fullName: 'Gng. Teresa B. Morales', committeeAssignment: 'Family & Tenancy Panel', professionBackground: 'Women & Child Advocate', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 10 },
-            { fullName: 'G. Rolando Cruz', committeeAssignment: 'Property & Boundary Panel', professionBackground: 'Geodetic Surveyor & Elder', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 5 },
-            { fullName: 'G. Fidel Hernandez', committeeAssignment: 'Conciliation Panel', professionBackground: 'Church Lector & Community Leader', appointmentDate: '2025-07-01', status: 'Active', casesHandledCount: 4 }
-          ];
-          for (const m of defaultMembers) {
-            await window.barangayDB.add('lupon_members', m);
-          }
-        }
-
-        const caseCount = await window.barangayDB.count('lupon_cases');
-        if (caseCount === 0) {
-          const defaultCases = [
-            {
-              caseNumber: 'KP-2026-0001',
-              complainantName: 'Juan Dela Cruz',
-              complainantAddress: 'Purok 1, Barangay San Isidro, Cabuyao City',
-              complainantContact: '0917-123-4567',
-              respondentName: 'Pedro Santos',
-              respondentAddress: 'Purok 2, Barangay San Isidro, Cabuyao City',
-              respondentContact: '0918-765-4321',
-              disputeType: 'Unpaid Debt & Financial Conflict',
-              complaintDetails: 'Hindi pagbabayad ng inutang na halagang PHP 25,000 na ipinangakong babayaran noong Disyembre 2025.',
-              reliefSought: 'Pagbabayad ng kabuuang halaga nang hulugan o buo sa loob ng 60 araw.',
-              dateFiled: '2026-01-15',
-              stage: 'Amicably Settled',
-              pangkatChairman: 'Gng. Corazon De Leon',
-              pangkatSecretary: 'Hon. Benjamin Alcantara',
-              pangkatMember: 'G. Ernesto Villanueva',
-              settlementTerms: 'Ang ipinagsusumbong ay pumayag na magbayad ng PHP 12,500 sa Pebrero 15, 2026 at ang nalalabing PHP 12,500 sa Marso 15, 2026.',
-              settlementDate: '2026-01-28',
-              settlementAmount: 25000,
-              complianceDueDate: '2026-03-15'
-            },
-            {
-              caseNumber: 'KP-2026-0002',
-              complainantName: 'Maria Victoria Garcia',
-              complainantAddress: 'Purok 3, Barangay San Isidro, Cabuyao City',
-              complainantContact: '0920-555-1234',
-              respondentName: 'Carlos M. Mercado',
-              respondentAddress: 'Purok 3, Barangay San Isidro, Cabuyao City',
-              respondentContact: '0921-999-8877',
-              disputeType: 'Property & Boundary Dispute',
-              complaintDetails: 'Pagtatayo ng pader at overhang ng bubong na lumalagpas sa boundary line ng lupa nang humigit-kumulang 35 sentimetro.',
-              reliefSought: 'Pagsasaayos at pagwawasto ng boundary wall alinsunod sa relocation survey.',
-              dateFiled: '2026-02-01',
-              stage: 'Pangkat Conciliation',
-              pangkatChairman: 'Engr. Dominador Santos',
-              pangkatSecretary: 'G. Rolando Cruz',
-              pangkatMember: 'Gng. Corazon De Leon',
-              pbDeadline: '2026-02-16',
-              pangkatDeadline: '2026-03-03'
-            },
-            {
-              caseNumber: 'KP-2026-0003',
-              complainantName: 'Ramon S. Bautista',
-              complainantAddress: 'Purok 4, Barangay San Isidro, Cabuyao City',
-              complainantContact: '0919-444-3322',
-              respondentName: 'Danilo E. Ramos',
-              respondentAddress: 'Purok 4, Barangay San Isidro, Cabuyao City',
-              respondentContact: '0917-888-2211',
-              disputeType: 'Verbal Defamation & Threat',
-              complaintDetails: 'Paninirang-puri sa harap ng mga kapitbahay at pagbabanta sa pamilya dulot ng alitan sa paradahan ng sasakyan.',
-              reliefSought: 'Pormal na paghingi ng tawad sa harap ng Lupon at panunumpa na hindi na uulitin ang paninirang-puri.',
-              dateFiled: '2026-08-20',
-              stage: 'PB Mediation',
-              pbDeadline: '2026-09-04'
-            },
-            {
-              caseNumber: 'KP-2026-0004',
-              complainantName: 'Lourdes C. Perez',
-              complainantAddress: 'Purok 6, Barangay San Isidro, Cabuyao City',
-              complainantContact: '0922-111-9988',
-              respondentName: 'Antonio G. Reyes',
-              respondentAddress: 'Purok 6, Barangay San Isidro, Cabuyao City',
-              respondentContact: '0915-333-7766',
-              disputeType: 'Neighborhood Noise & Nuisance',
-              complaintDetails: 'Patuloy na pagpapatugtog ng videoke at ingay lampas hatinggabi sa kabila ng paulit-ulit na pagsaway.',
-              reliefSought: 'Pagpapatupad ng curfew sa ingay alinsunod sa ordinansa.',
-              dateFiled: '2026-07-10',
-              stage: 'CFA Issued',
-              cfaReason: 'Respondent willfully and deliberately failed or refused to appear without justifiable cause despite due summons.',
-              cfaDate: '2026-08-05'
-            }
-          ];
-          for (const c of defaultCases) {
-            await window.barangayDB.add('lupon_cases', c);
-          }
-        }
-
-        const hearingCount = await window.barangayDB.count('lupon_hearings');
-        if (hearingCount === 0) {
-          const defaultHearings = [
-            {
-              caseId: 1,
-              hearingNumber: '1st Hearing',
-              hearingType: 'PB Mediation Hearing',
-              scheduledDate: '2026-01-20',
-              scheduledTime: '14:00:00',
-              venue: 'Barangay Hall Mediation Room',
-              presidingOfficer: 'Hon. Antonio S. Valdez',
-              complainantPresent: 1,
-              respondentPresent: 1,
-              proceedingsSummary: 'Nagkasundo ang dalawang panig na magbayad ng hulugan.',
-              nextAction: 'Pirmahan ng Kasunduang Pag-aayos (KP Form 16)'
-            },
-            {
-              caseId: 2,
-              hearingNumber: '2nd Hearing',
-              hearingType: 'Pangkat Conciliation Hearing',
-              scheduledDate: '2026-02-25',
-              scheduledTime: '15:00:00',
-              venue: 'Barangay Hall Mediation Room',
-              presidingOfficer: 'Engr. Dominador Santos',
-              complainantPresent: 1,
-              respondentPresent: 1,
-              proceedingsSummary: 'Isinagawa ang ocular inspection sa boundary line.',
-              nextAction: 'Final conciliation hearing'
-            },
-            {
-              caseId: 3,
-              hearingNumber: '1st Hearing',
-              hearingType: 'PB Mediation Hearing',
-              scheduledDate: '2026-08-28',
-              scheduledTime: '14:30:00',
-              venue: 'Barangay Hall Mediation Room',
-              presidingOfficer: 'Hon. Antonio S. Valdez',
-              complainantPresent: 1,
-              respondentPresent: 1,
-              proceedingsSummary: 'Unang paghaharap para sa paliwanagan.',
-              nextAction: 'Follow-up confrontation'
-            },
-            {
-              caseId: 4,
-              hearingNumber: '3rd Hearing',
-              hearingType: 'PB Mediation Hearing',
-              scheduledDate: '2026-08-01',
-              scheduledTime: '14:00:00',
-              venue: 'Barangay Hall Mediation Room',
-              presidingOfficer: 'Hon. Antonio S. Valdez',
-              complainantPresent: 1,
-              respondentPresent: 0,
-              proceedingsSummary: 'Hindi muling sumipot ang ipinagsusumbong nang walang abiso.',
-              nextAction: 'Ipalabas ang Certificate to File Action (KP Form 20)'
-            }
-          ];
-          for (const h of defaultHearings) {
-            await window.barangayDB.add('lupon_hearings', h);
-          }
-        }
-      } catch (e) {
-        console.warn('Error during seed data check:', e);
-      }
-    }
-
-    // Refresh all data stores & telemetry
+    // Refresh all data stores & telemetry via API
     async function refreshAllData() {
       try {
         allCases = await window.barangayDB.getAll('lupon_cases');
@@ -1491,7 +1355,7 @@
       sunday.setHours(23, 59, 59, 999);
 
       const hearingsThisWeek = allHearings.filter(h => {
-        const d = new Date(h.scheduledDate);
+        const d = new Date(h.scheduledDate || h.scheduled_date);
         return d >= monday && d <= sunday;
       }).length;
 
@@ -1522,7 +1386,7 @@
         return '<span class="statutory-countdown-badge countdown-urgent">&#9888; CFA Issued</span>';
       }
 
-      const filed = new Date(c.dateFiled);
+      const filed = new Date(c.dateFiled || c.date_filed);
       const today = new Date();
       const diffTime = today - filed;
       const diffDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
@@ -1556,14 +1420,29 @@
       const hasFilters = search || stageFilter || typeFilter;
       document.getElementById('btn-clear-filters').style.display = hasFilters ? 'inline-flex' : 'none';
 
+      let filterCount = 0;
+      if (stageFilter) filterCount++;
+      if (typeFilter) filterCount++;
+      const badge = document.getElementById('kp-filter-badge');
+      if (badge) {
+        if (filterCount > 0) {
+          badge.textContent = filterCount;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
       const filtered = allCases.filter(c => {
-        if (stageFilter && c.stage !== stageFilter) return false;
-        if (typeFilter && c.disputeType !== typeFilter) return false;
+        const stage = c.stage;
+        const disputeType = c.disputeType || c.dispute_type;
+        if (stageFilter && stage !== stageFilter) return false;
+        if (typeFilter && disputeType !== typeFilter) return false;
         if (search) {
-          const num = (c.caseNumber || '').toLowerCase();
-          const comp = (c.complainantName || '').toLowerCase();
-          const resp = (c.respondentName || '').toLowerCase();
-          const details = (c.complaintDetails || '').toLowerCase();
+          const num = (c.caseNumber || c.case_number || '').toLowerCase();
+          const comp = (c.complainantName || c.complainant_name || '').toLowerCase();
+          const resp = (c.respondentName || c.respondent_name || '').toLowerCase();
+          const details = (c.complaintDetails || c.complaint_details || '').toLowerCase();
           if (!num.includes(search) && !comp.includes(search) && !resp.includes(search) && !details.includes(search)) {
             return false;
           }
@@ -1583,35 +1462,45 @@
       document.getElementById('cases-empty-state').style.display = 'none';
 
       tbody.innerHTML = filtered.map(c => {
+        const caseNumber = c.caseNumber || c.case_number;
+        const dateFiled = c.dateFiled || c.date_filed;
+        const compName = c.complainantName || c.complainant_name;
+        const respName = c.respondentName || c.respondent_name;
+        const disputeType = c.disputeType || c.dispute_type;
+        const details = c.complaintDetails || c.complaint_details || '';
+        const stage = c.stage;
+        const pbDeadline = c.pbDeadline || c.pb_deadline || '15 Days';
+        const settleAmount = c.settlementAmount || c.settlement_amount || 0;
+
         let stageBadge = '<span class="badge-blue">PB Mediation</span>';
-        if (c.stage === 'Pangkat Conciliation') stageBadge = '<span class="badge-amber">Pangkat Conciliation</span>';
-        else if (c.stage === 'Amicably Settled') stageBadge = '<span class="badge-emerald">&#10003; Settled</span>';
-        else if (c.stage === 'CFA Issued') stageBadge = '<span class="badge-rose">CFA Issued</span>';
+        if (stage === 'Pangkat Conciliation') stageBadge = '<span class="badge-amber">Pangkat Conciliation</span>';
+        else if (stage === 'Amicably Settled') stageBadge = '<span class="badge-emerald">&#10003; Settled</span>';
+        else if (stage === 'CFA Issued') stageBadge = '<span class="badge-rose">CFA Issued</span>';
 
         const timerBadge = getStatutoryCountdownBadge(c);
 
-        let resolutionInfo = `<span style="color: var(--color-text-muted);">Deadline: ${c.pbDeadline || '15 Days'}</span>`;
-        if (c.stage === 'Amicably Settled') {
-          resolutionInfo = `<strong style="color: #059669;">Settled PHP ${(c.settlementAmount || 0).toLocaleString()}</strong>`;
-        } else if (c.stage === 'CFA Issued') {
+        let resolutionInfo = `<span style="color: var(--color-text-muted);">Deadline: ${pbDeadline}</span>`;
+        if (stage === 'Amicably Settled') {
+          resolutionInfo = `<strong style="color: #059669;">Settled PHP ${parseFloat(settleAmount).toLocaleString()}</strong>`;
+        } else if (stage === 'CFA Issued') {
           resolutionInfo = `<span style="color: #dc2626; font-size: 0.75rem;">Referred to Court</span>`;
         }
 
         return `
           <tr>
             <td>
-              <div style="font-family: monospace; font-weight: 700; color: #4338ca; font-size: 0.8125rem;">${c.caseNumber}</div>
-              <div class="typography-caption">Filed: ${c.dateFiled}</div>
+              <div style="font-family: monospace; font-weight: 700; color: #4338ca; font-size: 0.8125rem;">${caseNumber}</div>
+              <div class="typography-caption">Filed: ${dateFiled}</div>
             </td>
             <td>
-              <div style="font-weight: 600; font-size: 0.8125rem;">${c.complainantName} <span class="typography-caption" style="color: #4338ca;">(Complainant)</span></div>
+              <div style="font-weight: 600; font-size: 0.8125rem;">${compName} <span class="typography-caption" style="color: #4338ca;">(Complainant)</span></div>
               <div class="typography-caption" style="color: var(--color-text-faint); margin: 1px 0;">vs.</div>
-              <div style="font-weight: 600; font-size: 0.8125rem;">${c.respondentName} <span class="typography-caption" style="color: #dc2626;">(Respondent)</span></div>
+              <div style="font-weight: 600; font-size: 0.8125rem;">${respName} <span class="typography-caption" style="color: #dc2626;">(Respondent)</span></div>
             </td>
             <td>
-              <div style="font-weight: 600; font-size: 0.8125rem;">${c.disputeType}</div>
+              <div style="font-weight: 600; font-size: 0.8125rem;">${disputeType}</div>
               <div class="typography-caption" style="max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                ${c.complaintDetails || '-'}
+                ${details || '-'}
               </div>
             </td>
             <td>
@@ -1645,32 +1534,42 @@
       }
 
       tbody.innerHTML = allHearings.map(h => {
-        const matchingCase = allCases.find(c => c.id === h.caseId || c.caseNumber === h.caseNumber) || {
-          caseNumber: 'KP-CASE',
-          complainantName: 'Complainant',
-          respondentName: 'Respondent'
+        const caseId = h.caseId || h.case_id;
+        const matchingCase = allCases.find(c => c.id === caseId) || {
+          caseNumber: h.case_number || 'KP-CASE',
+          complainantName: h.complainant_name || 'Complainant',
+          respondentName: h.respondent_name || 'Respondent'
         };
 
-        const compBadge = h.complainantPresent ? '<span class="badge-emerald" style="font-size: 0.625rem;">Comp: Present</span>' : '<span class="badge-rose" style="font-size: 0.625rem;">Comp: Absent</span>';
-        const respBadge = h.respondentPresent ? '<span class="badge-emerald" style="font-size: 0.625rem;">Resp: Present</span>' : '<span class="badge-rose" style="font-size: 0.625rem;">Resp: Absent</span>';
+        const schedDate = h.scheduledDate || h.scheduled_date;
+        const schedTime = h.scheduledTime || h.scheduled_time || '14:00';
+        const hearingNum = h.hearingNumber || h.hearing_number;
+        const hearingType = h.hearingType || h.hearing_type;
+        const officer = h.presidingOfficer || h.presiding_officer;
+        const venue = h.venue;
+        const compPresent = (h.complainantPresent !== undefined) ? h.complainantPresent : h.complainant_present;
+        const respPresent = (h.respondentPresent !== undefined) ? h.respondentPresent : h.respondent_present;
+
+        const compBadge = compPresent ? '<span class="badge-emerald" style="font-size: 0.625rem;">Comp: Present</span>' : '<span class="badge-rose" style="font-size: 0.625rem;">Comp: Absent</span>';
+        const respBadge = respPresent ? '<span class="badge-emerald" style="font-size: 0.625rem;">Resp: Present</span>' : '<span class="badge-rose" style="font-size: 0.625rem;">Resp: Absent</span>';
 
         return `
           <tr>
             <td>
-              <div style="font-weight: 700; font-size: 0.8125rem;">${h.scheduledDate}</div>
-              <div class="typography-caption">${h.scheduledTime || '14:00'}</div>
+              <div style="font-weight: 700; font-size: 0.8125rem;">${schedDate}</div>
+              <div class="typography-caption">${schedTime}</div>
             </td>
             <td>
-              <span class="badge-neutral" style="font-size: 0.6875rem;">${h.hearingNumber}</span>
-              <div class="typography-caption" style="margin-top: 2px;">${h.hearingType}</div>
+              <span class="badge-neutral" style="font-size: 0.6875rem;">${hearingNum}</span>
+              <div class="typography-caption" style="margin-top: 2px;">${hearingType}</div>
             </td>
             <td>
-              <div style="font-family: monospace; font-weight: 700; color: #4338ca; font-size: 0.75rem;">${matchingCase.caseNumber}</div>
-              <div style="font-size: 0.8125rem;">${matchingCase.complainantName} vs. ${matchingCase.respondentName}</div>
+              <div style="font-family: monospace; font-weight: 700; color: #4338ca; font-size: 0.75rem;">${matchingCase.caseNumber || matchingCase.case_number}</div>
+              <div style="font-size: 0.8125rem;">${matchingCase.complainantName || matchingCase.complainant_name} vs. ${matchingCase.respondentName || matchingCase.respondent_name}</div>
             </td>
             <td>
-              <div style="font-size: 0.8125rem; font-weight: 600;">${h.presidingOfficer}</div>
-              <div class="typography-caption">${h.venue}</div>
+              <div style="font-size: 0.8125rem; font-weight: 600;">${officer}</div>
+              <div class="typography-caption">${venue}</div>
             </td>
             <td>
               <div style="display: flex; flex-direction: column; gap: 2px;">
@@ -1702,7 +1601,13 @@
       }
 
       container.innerHTML = allMembers.map(m => {
-        const initials = m.fullName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        const fullName = m.fullName || m.full_name;
+        const committee = m.committeeAssignment || m.committee_assignment;
+        const profession = m.professionBackground || m.profession_background;
+        const appDate = m.appointmentDate || m.appointment_date;
+        const casesCount = m.casesHandledCount !== undefined ? m.casesHandledCount : (m.cases_handled_count || 0);
+
+        const initials = fullName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
         const statusBadge = m.status === 'Active' 
           ? '<span class="badge-emerald" style="font-size: 0.625rem;">Active Member</span>' 
           : '<span class="badge-neutral" style="font-size: 0.625rem;">' + m.status + '</span>';
@@ -1712,15 +1617,15 @@
             <div style="display: flex; align-items: center; gap: 12px;">
               <div class="member-avatar">${initials}</div>
               <div>
-                <div style="font-weight: 700; font-size: 0.9375rem; color: var(--color-ink);">${m.fullName}</div>
-                <div class="typography-caption" style="color: #4338ca; font-weight: 600;">${m.committeeAssignment}</div>
+                <div style="font-weight: 700; font-size: 0.9375rem; color: var(--color-ink);">${fullName}</div>
+                <div class="typography-caption" style="color: #4338ca; font-weight: 600;">${committee}</div>
               </div>
             </div>
 
             <div style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.4;">
-              <div><strong>Background:</strong> ${m.professionBackground || 'Community Arbiter'}</div>
-              <div><strong>Appointed:</strong> ${m.appointmentDate}</div>
-              <div><strong>Disputes Mediated:</strong> ${m.casesHandledCount || 0} cases</div>
+              <div><strong>Background:</strong> ${profession || 'Community Arbiter'}</div>
+              <div><strong>Appointed:</strong> ${appDate}</div>
+              <div><strong>Disputes Mediated:</strong> ${casesCount} cases</div>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-hairline-soft); padding-top: 8px;">
@@ -1745,7 +1650,16 @@
       }
 
       tbody.innerHTML = settledCases.map(c => {
-        const settleDate = new Date(c.settlementDate || c.dateFiled);
+        const caseNumber = c.caseNumber || c.case_number;
+        const compName = c.complainantName || c.complainant_name;
+        const respName = c.respondentName || c.respondent_name;
+        const disputeType = c.disputeType || c.dispute_type;
+        const settleAmount = c.settlementAmount || c.settlement_amount || 0;
+        const settleTerms = c.settlementTerms || c.settlement_terms || '-';
+        const settleDateStr = c.settlementDate || c.settlement_date || c.dateFiled || c.date_filed;
+        const complianceDate = c.complianceDueDate || c.compliance_due_date || 'Per Agreement';
+
+        const settleDate = new Date(settleDateStr);
         const today = new Date();
         const daysSinceSettle = Math.floor((today - settleDate) / (1000 * 60 * 60 * 24));
 
@@ -1757,7 +1671,6 @@
           repudiationStatus = `<span class="statutory-countdown-badge countdown-settled">&#10003; Final &amp; Executory (Sec. 416)</span>`;
         }
 
-        // 6 months execution window
         let executionStatus = '';
         const monthsSince = daysSinceSettle / 30;
         if (monthsSince <= 6) {
@@ -1769,22 +1682,22 @@
         return `
           <tr>
             <td>
-              <div style="font-family: monospace; font-weight: 700; color: #059669; font-size: 0.8125rem;">${c.caseNumber}</div>
-              <div class="typography-caption">Settled: ${c.settlementDate || '-'}</div>
+              <div style="font-family: monospace; font-weight: 700; color: #059669; font-size: 0.8125rem;">${caseNumber}</div>
+              <div class="typography-caption">Settled: ${settleDateStr}</div>
             </td>
             <td>
-              <div style="font-weight: 600; font-size: 0.8125rem;">${c.complainantName} vs. ${c.respondentName}</div>
-              <div class="typography-caption">${c.disputeType}</div>
+              <div style="font-weight: 600; font-size: 0.8125rem;">${compName} vs. ${respName}</div>
+              <div class="typography-caption">${disputeType}</div>
             </td>
             <td>
-              <div style="font-size: 0.8125rem; font-weight: 600; color: #059669;">PHP ${(c.settlementAmount || 0).toLocaleString()}</div>
-              <div class="typography-caption" style="max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.settlementTerms || '-'}</div>
+              <div style="font-size: 0.8125rem; font-weight: 600; color: #059669;">PHP ${parseFloat(settleAmount).toLocaleString()}</div>
+              <div class="typography-caption" style="max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${settleTerms}</div>
             </td>
             <td>
               ${repudiationStatus}
             </td>
             <td>
-              <div style="font-size: 0.8125rem;">${c.complianceDueDate || 'Per Agreement'}</div>
+              <div style="font-size: 0.8125rem;">${complianceDate}</div>
             </td>
             <td>
               ${executionStatus}
@@ -1804,22 +1717,22 @@
       // Hearing case picker
       const hearingSelect = document.getElementById('hearing-case-select');
       const activeCases = allCases.filter(c => c.stage !== 'Amicably Settled' && c.stage !== 'CFA Issued' && c.stage !== 'Dismissed');
-      hearingSelect.innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber}: ${c.complainantName} vs. ${c.respondentName}</option>`).join('');
+      hearingSelect.innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber || c.case_number}: ${c.complainantName || c.complainant_name} vs. ${c.respondentName || c.respondent_name}</option>`).join('');
 
       // Pangkat modal pickers
       const pangkatCaseSelect = document.getElementById('pangkat-case-select');
-      pangkatCaseSelect.innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber}: ${c.complainantName} vs. ${c.respondentName} (${c.stage})</option>`).join('');
+      pangkatCaseSelect.innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber || c.case_number}: ${c.complainantName || c.complainant_name} vs. ${c.respondentName || c.respondent_name} (${c.stage})</option>`).join('');
 
       const activeMembers = allMembers.filter(m => m.status === 'Active');
-      const memberOptions = activeMembers.map(m => `<option value="${m.fullName}">${m.fullName} (${m.committeeAssignment})</option>`).join('');
+      const memberOptions = activeMembers.map(m => `<option value="${m.fullName || m.full_name}">${m.fullName || m.full_name} (${m.committeeAssignment || m.committee_assignment})</option>`).join('');
 
       document.getElementById('pangkat-chair-select').innerHTML = memberOptions;
       document.getElementById('pangkat-sec-select').innerHTML = memberOptions;
       document.getElementById('pangkat-mem-select').innerHTML = memberOptions;
 
       // Settlement and CFA case pickers
-      document.getElementById('settle-case-select').innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber}: ${c.complainantName} vs. ${c.respondentName}</option>`).join('');
-      document.getElementById('cfa-case-select').innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber}: ${c.complainantName} vs. ${c.respondentName}</option>`).join('');
+      document.getElementById('settle-case-select').innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber || c.case_number}: ${c.complainantName || c.complainant_name} vs. ${c.respondentName || c.respondent_name}</option>`).join('');
+      document.getElementById('cfa-case-select').innerHTML = activeCases.map(c => `<option value="${c.id}">${c.caseNumber || c.case_number}: ${c.complainantName || c.complainant_name} vs. ${c.respondentName || c.respondent_name}</option>`).join('');
     }
 
     // Bind All User Interaction Events
@@ -1902,7 +1815,6 @@
         const relief = document.getElementById('file-relief').value.trim();
         const blotterId = document.getElementById('file-blotter-id').value;
 
-        // Calculate 15-day PB Deadline
         const d = new Date(dateFiled);
         d.setDate(d.getDate() + 15);
         const pbDeadline = d.toISOString().split('T')[0];
@@ -1925,25 +1837,7 @@
         };
 
         try {
-          const insertedId = await window.barangayDB.add('lupon_cases', newCase);
-
-          // Auto-schedule initial summons hearing within 3 days (KP Form 8)
-          const schedDate = new Date(dateFiled);
-          schedDate.setDate(schedDate.getDate() + 3);
-          await window.barangayDB.add('lupon_hearings', {
-            caseId: insertedId,
-            caseNumber,
-            hearingNumber: '1st Hearing',
-            hearingType: 'PB Mediation Hearing',
-            scheduledDate: schedDate.toISOString().split('T')[0],
-            scheduledTime: '14:00:00',
-            venue: 'Barangay Hall Mediation Room',
-            presidingOfficer: 'Hon. Antonio S. Valdez',
-            complainantPresent: 1,
-            respondentPresent: 1,
-            proceedingsSummary: 'Summons notice issued for preliminary confrontation.',
-            nextAction: 'First mediation confrontation'
-          });
+          await window.barangayDB.add('lupon_cases', newCase);
 
           document.getElementById('file-case-modal').close();
           Toast.success(`Case ${caseNumber} filed! 15-day PB mediation window initiated.`);
@@ -1971,7 +1865,7 @@
         try {
           await window.barangayDB.add('lupon_hearings', {
             caseId,
-            caseNumber: targetCase ? targetCase.caseNumber : '',
+            caseNumber: targetCase ? (targetCase.caseNumber || targetCase.case_number) : '',
             hearingNumber,
             hearingType,
             scheduledDate,
@@ -1985,14 +1879,13 @@
           });
 
           if (sendSMS && targetCase) {
-            // Dispatch SMS Notification
             await window.barangayDB.add('notifications', {
               dispatchCode: `KP-SMS-${Date.now()}`,
-              recipientName: targetCase.respondentName,
-              recipientContact: targetCase.respondentContact || '0918-000-0000',
+              recipientName: targetCase.respondentName || targetCase.respondent_name,
+              recipientContact: targetCase.respondentContact || targetCase.respondent_contact || '0918-000-0000',
               channel: 'SMS',
               category: 'KP Summons',
-              message: `PATAWAG: Kayo ay inaatasan na humarap sa Lupon Tagapamayapa para sa Kaso ${targetCase.caseNumber} sa darating na ${scheduledDate} sa ganap na ika-${scheduledTime}.`,
+              message: `PATAWAG: Kayo ay inaatasan na humarap sa Lupon Tagapamayapa para sa Kaso ${targetCase.caseNumber || targetCase.case_number} sa darating na ${scheduledDate} sa ganap na ika-${scheduledTime}.`,
               status: 'Delivered',
               createdAt: new Date().toISOString()
             });
@@ -2036,7 +1929,7 @@
           await window.barangayDB.update('lupon_cases', targetCase);
 
           document.getElementById('pangkat-modal').close();
-          Toast.success(`Pangkat constituted for Case ${targetCase.caseNumber}! 15-day conciliation timer initiated.`);
+          Toast.success(`Pangkat constituted for Case ${targetCase.caseNumber || targetCase.case_number}! 15-day conciliation timer initiated.`);
           await refreshAllData();
         } catch (err) {
           console.error(err);
@@ -2066,7 +1959,7 @@
           await window.barangayDB.update('lupon_cases', targetCase);
 
           document.getElementById('settlement-modal').close();
-          Toast.success(`Amicable settlement executed for Case ${targetCase.caseNumber}! 10-day repudiation window active.`);
+          Toast.success(`Amicable settlement executed for Case ${targetCase.caseNumber || targetCase.case_number}! 10-day repudiation window active.`);
           await refreshAllData();
         } catch (err) {
           console.error(err);
@@ -2092,7 +1985,7 @@
           await window.barangayDB.update('lupon_cases', targetCase);
 
           document.getElementById('cfa-modal').close();
-          Toast.success(`Certificate to File Action (CFA) issued for Case ${targetCase.caseNumber}.`);
+          Toast.success(`Certificate to File Action (CFA) issued for Case ${targetCase.caseNumber || targetCase.case_number}.`);
           await refreshAllData();
         } catch (err) {
           console.error(err);
@@ -2157,14 +2050,32 @@
       if (!c) return;
       selectedCaseForAction = c;
 
-      document.getElementById('dossier-case-number').textContent = c.caseNumber;
-      document.getElementById('dossier-dispute-title').textContent = c.disputeType;
-      document.getElementById('dossier-comp-name').textContent = c.complainantName;
-      document.getElementById('dossier-comp-address').textContent = `${c.complainantAddress || 'Barangay San Isidro'} • ${c.complainantContact || 'No contact'}`;
-      document.getElementById('dossier-resp-name').textContent = c.respondentName;
-      document.getElementById('dossier-resp-address').textContent = `${c.respondentAddress || 'Barangay San Isidro'} • ${c.respondentContact || 'No contact'}`;
-      document.getElementById('dossier-facts').textContent = c.complaintDetails || 'No facts stated.';
-      document.getElementById('dossier-relief').textContent = c.reliefSought || 'None indicated.';
+      const caseNumber = c.caseNumber || c.case_number;
+      const disputeType = c.disputeType || c.dispute_type;
+      const compName = c.complainantName || c.complainant_name;
+      const compAddr = c.complainantAddress || c.complainant_address;
+      const compContact = c.complainantContact || c.complainant_contact;
+      const respName = c.respondentName || c.respondent_name;
+      const respAddr = c.respondentAddress || c.respondent_address;
+      const respContact = c.respondentContact || c.respondent_contact;
+      const details = c.complaintDetails || c.complaint_details;
+      const relief = c.reliefSought || c.relief_sought;
+      const chair = c.pangkatChairman || c.pangkat_chairman;
+      const sec = c.pangkatSecretary || c.pangkat_secretary;
+      const mem = c.pangkatMember || c.pangkat_member;
+      const settleTerms = c.settlementTerms || c.settlement_terms;
+      const settleAmount = c.settlementAmount || c.settlement_amount || 0;
+      const complianceDueDate = c.complianceDueDate || c.compliance_due_date;
+      const cfaReason = c.cfaReason || c.cfa_reason;
+
+      document.getElementById('dossier-case-number').textContent = caseNumber;
+      document.getElementById('dossier-dispute-title').textContent = disputeType;
+      document.getElementById('dossier-comp-name').textContent = compName;
+      document.getElementById('dossier-comp-address').textContent = `${compAddr || 'Barangay San Isidro'} • ${compContact || 'No contact'}`;
+      document.getElementById('dossier-resp-name').textContent = respName;
+      document.getElementById('dossier-resp-address').textContent = `${respAddr || 'Barangay San Isidro'} • ${respContact || 'No contact'}`;
+      document.getElementById('dossier-facts').textContent = details || 'No facts stated.';
+      document.getElementById('dossier-relief').textContent = relief || 'None indicated.';
 
       const badgeEl = document.getElementById('dossier-stage-badge');
       badgeEl.textContent = c.stage;
@@ -2176,11 +2087,11 @@
 
       // Pangkat section
       const pBox = document.getElementById('dossier-pangkat-box');
-      if (c.pangkatChairman) {
+      if (chair) {
         pBox.style.display = 'block';
-        document.getElementById('dossier-pangkat-chair').textContent = c.pangkatChairman;
-        document.getElementById('dossier-pangkat-sec').textContent = c.pangkatSecretary;
-        document.getElementById('dossier-pangkat-member').textContent = c.pangkatMember;
+        document.getElementById('dossier-pangkat-chair').textContent = chair;
+        document.getElementById('dossier-pangkat-sec').textContent = sec;
+        document.getElementById('dossier-pangkat-member').textContent = mem;
       } else {
         pBox.style.display = 'none';
       }
@@ -2189,8 +2100,8 @@
       const sBox = document.getElementById('dossier-settlement-box');
       if (c.stage === 'Amicably Settled') {
         sBox.style.display = 'block';
-        document.getElementById('dossier-settlement-terms').textContent = c.settlementTerms || 'Agreed terms registered.';
-        document.getElementById('dossier-settlement-meta').textContent = `Amount: PHP ${(c.settlementAmount || 0).toLocaleString()} • Compliance Due: ${c.complianceDueDate || 'N/A'}`;
+        document.getElementById('dossier-settlement-terms').textContent = settleTerms || 'Agreed terms registered.';
+        document.getElementById('dossier-settlement-meta').textContent = `Amount: PHP ${parseFloat(settleAmount).toLocaleString()} • Compliance Due: ${complianceDueDate || 'N/A'}`;
       } else {
         sBox.style.display = 'none';
       }
@@ -2199,39 +2110,101 @@
       const cfaBox = document.getElementById('dossier-cfa-box');
       if (c.stage === 'CFA Issued') {
         cfaBox.style.display = 'block';
-        document.getElementById('dossier-cfa-reason').textContent = c.cfaReason || 'Personal confrontation failed.';
+        document.getElementById('dossier-cfa-reason').textContent = cfaReason || 'Personal confrontation failed.';
       } else {
         cfaBox.style.display = 'none';
       }
 
       // Action buttons
       document.getElementById('dossier-btn-print').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         openPrintSuite(c.id);
       };
 
       document.getElementById('dossier-btn-pangkat').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         document.getElementById('pangkat-case-select').value = c.id;
         document.getElementById('pangkat-modal').showModal();
       };
 
       document.getElementById('dossier-btn-settle').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         document.getElementById('settle-case-select').value = c.id;
         document.getElementById('settle-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('settlement-modal').showModal();
       };
 
       document.getElementById('dossier-btn-cfa').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         document.getElementById('cfa-case-select').value = c.id;
         document.getElementById('cfa-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('cfa-modal').showModal();
       };
 
-      document.getElementById('case-dossier-modal').showModal();
+      switchLuponDrawerTab('overview');
+      const drawer = document.getElementById('lupon-case-drawer');
+      const backdrop = document.getElementById('lupon-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
     };
+
+    window.closeLuponDrawer = function() {
+      const drawer = document.getElementById('lupon-case-drawer');
+      const backdrop = document.getElementById('lupon-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchLuponDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#lupon-case-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const firstTab = document.querySelector('#lupon-case-drawer .drawer-tab');
+        if (firstTab) firstTab.classList.add('active');
+      }
+      document.querySelectorAll('#lupon-case-drawer .drawer-section').forEach(s => s.style.display = 'none');
+      const sec = document.getElementById(`lupon-drawer-sec-${tabName}`);
+      if (sec) sec.style.display = 'block';
+    };
+
+    window.toggleLuponInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('lupon-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    };
+
+    window.toggleLuponFilterPanel = function() {
+      const panel = document.getElementById('kp-filter-panel');
+      const btn = document.getElementById('kp-filter-toggle-btn');
+      if (panel) {
+        const isOpen = panel.style.display === 'none';
+        panel.style.display = isOpen ? 'block' : 'none';
+        panel.classList.toggle('open', isOpen);
+        if (btn) btn.classList.toggle('active', isOpen);
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLuponDrawer();
+        const popover = document.getElementById('lupon-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('lupon-info-popover');
+      const trigger = document.querySelector('.info-trigger');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
+    });
 
     // Open Edit Member Modal
     window.openEditMember = function(id) {
@@ -2240,11 +2213,11 @@
 
       document.getElementById('member-id').value = m.id;
       document.getElementById('member-modal-title').textContent = 'Edit Lupon Member.';
-      document.getElementById('member-name').value = m.fullName;
-      document.getElementById('member-committee').value = m.committeeAssignment;
-      document.getElementById('member-profession').value = m.professionBackground || '';
-      document.getElementById('member-appointment-date').value = m.appointmentDate || '';
-      document.getElementById('member-contact').value = m.contactNo || '';
+      document.getElementById('member-name').value = m.fullName || m.full_name;
+      document.getElementById('member-committee').value = m.committeeAssignment || m.committee_assignment;
+      document.getElementById('member-profession').value = m.professionBackground || m.profession_background || '';
+      document.getElementById('member-appointment-date').value = m.appointmentDate || m.appointment_date || '';
+      document.getElementById('member-contact').value = m.contactNo || m.contact_no || '';
       document.getElementById('member-status').value = m.status || 'Active';
 
       document.getElementById('member-modal').showModal();
@@ -2255,24 +2228,32 @@
       const h = allHearings.find(item => item.id === hearingId);
       if (!h) return;
 
-      const c = allCases.find(item => item.id === h.caseId);
+      const caseId = h.caseId || h.case_id;
+      const c = allCases.find(item => item.id === caseId);
       if (!c) return;
 
-      if (!confirm(`Dispatch SMS Notice of Hearing (KP Form 8) to:\n• Complainant: ${c.complainantName}\n• Respondent: ${c.respondentName}?`)) return;
+      const compName = c.complainantName || c.complainant_name;
+      const respName = c.respondentName || c.respondent_name;
+      const respContact = c.respondentContact || c.respondent_contact;
+      const caseNumber = c.caseNumber || c.case_number;
+      const schedDate = h.scheduledDate || h.scheduled_date;
+      const schedTime = h.scheduledTime || h.scheduled_time;
+
+      if (!confirm(`Dispatch SMS Notice of Hearing (KP Form 8) to:\n• Complainant: ${compName}\n• Respondent: ${respName}?`)) return;
 
       try {
         await window.barangayDB.add('notifications', {
           dispatchCode: `SMS-KP-${Date.now()}`,
-          recipientName: c.respondentName,
-          recipientContact: c.respondentContact || '0918-000-0000',
+          recipientName: respName,
+          recipientContact: respContact || '0918-000-0000',
           channel: 'SMS',
           category: 'KP Summons',
-          message: `PATAWAG (SUMMONS): Kayo ay inaatasan na humarap sa Lupon Tagapamayapa para sa Kaso ${c.caseNumber} sa darating na ${h.scheduledDate} sa ganap na ika-${h.scheduledTime} sa Barangay Hall.`,
+          message: `PATAWAG (SUMMONS): Kayo ay inaatasan na humarap sa Lupon Tagapamayapa para sa Kaso ${caseNumber} sa darating na ${schedDate} sa ganap na ika-${schedTime} sa Barangay Hall.`,
           status: 'Delivered',
           costCredits: 1,
           createdAt: new Date().toISOString()
         });
-        Toast.success(`Summons SMS successfully dispatched to ${c.respondentName}!`);
+        Toast.success(`Summons SMS successfully dispatched to ${respName}!`);
       } catch (err) {
         Toast.error('Failed to dispatch SMS.');
       }
@@ -2284,25 +2265,30 @@
       if (!c) return;
       selectedCaseForAction = c;
 
-      document.getElementById('print-modal-badge').textContent = c.caseNumber;
-      document.getElementById('print-case-num').textContent = c.caseNumber;
-      document.getElementById('print-comp-name').textContent = c.complainantName.toUpperCase();
-      document.getElementById('print-comp-addr').textContent = c.complainantAddress || 'Barangay San Isidro, Cabuyao City';
-      document.getElementById('print-resp-name').textContent = c.respondentName.toUpperCase();
-      document.getElementById('print-resp-addr').textContent = c.respondentAddress || 'Barangay San Isidro, Cabuyao City';
-      document.getElementById('print-dispute-type').textContent = c.disputeType;
-      document.getElementById('print-date-filed').textContent = c.dateFiled;
+      const caseNumber = c.caseNumber || c.case_number;
+      const compName = c.complainantName || c.complainant_name;
+      const compAddr = c.complainantAddress || c.complainant_address;
+      const respName = c.respondentName || c.respondent_name;
+      const respAddr = c.respondentAddress || c.respondent_address;
+      const disputeType = c.disputeType || c.dispute_type;
+      const dateFiled = c.dateFiled || c.date_filed;
 
-      // Select form in dropdown
+      document.getElementById('print-modal-badge').textContent = caseNumber;
+      document.getElementById('print-case-num').textContent = caseNumber;
+      document.getElementById('print-comp-name').textContent = compName.toUpperCase();
+      document.getElementById('print-comp-addr').textContent = compAddr || 'Barangay San Isidro, Cabuyao City';
+      document.getElementById('print-resp-name').textContent = respName.toUpperCase();
+      document.getElementById('print-resp-addr').textContent = respAddr || 'Barangay San Isidro, Cabuyao City';
+      document.getElementById('print-dispute-type').textContent = disputeType;
+      document.getElementById('print-date-filed').textContent = dateFiled;
+
       document.getElementById('print-form-selector').value = preselectedForm;
       renderPrintDocument(preselectedForm);
 
-      // Render Scannable QR Code
       const qrEl = document.getElementById('print-kp-qr');
       if (qrEl && window.QRCode) {
         qrEl.innerHTML = '';
-        const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
-        const verifyUrl = `${window.location.origin}/verify${ext}?code=${encodeURIComponent(c.caseNumber)}`;
+        const verifyUrl = `${window.location.origin}/verify.php?code=${encodeURIComponent(caseNumber)}`;
         QRCode.render(qrEl, verifyUrl, { size: 54, margin: 1 });
       }
 
@@ -2314,6 +2300,20 @@
       const c = selectedCaseForAction;
       if (!c) return;
 
+      const compName = c.complainantName || c.complainant_name;
+      const respName = c.respondentName || c.respondent_name;
+      const details = c.complaintDetails || c.complaint_details;
+      const relief = c.reliefSought || c.relief_sought;
+      const disputeType = c.disputeType || c.dispute_type;
+      const dateFiled = c.dateFiled || c.date_filed;
+      const chair = c.pangkatChairman || c.pangkat_chairman;
+      const sec = c.pangkatSecretary || c.pangkat_secretary;
+      const mem = c.pangkatMember || c.pangkat_member;
+      const settleTerms = c.settlementTerms || c.settlement_terms;
+      const settleAmount = c.settlementAmount || c.settlement_amount || 0;
+      const complianceDueDate = c.complianceDueDate || c.compliance_due_date;
+      const cfaReason = c.cfaReason || c.cfa_reason;
+
       const titleEl = document.getElementById('print-form-title');
       const bodyEl = document.getElementById('print-form-body');
       const sigEl = document.getElementById('print-signatures-row');
@@ -2323,18 +2323,18 @@
         bodyEl.innerHTML = `
           <p>AKO/KAMI ay nagrereklamo laban sa ipinagsusumbong na binanggit sa itaas dahil sa paglabag sa aking/aming mga karapatan at kapakanan sa sumusunod na paraan:</p>
           <div style="padding: 12px 16px; background: #fafafa; border: 1px solid #ddd; margin: 12px 0; font-style: italic;">
-            "${c.complaintDetails || 'Walang nakatalang detalye.'}"
+            "${details || 'Walang nakatalang detalye.'}"
           </div>
           <p>DAHIL DITO, AKO/KAMI ay magalang na humihiling na igawad ang sumusunod na lunas:</p>
           <div style="padding: 12px 16px; background: #fafafa; border: 1px solid #ddd; margin: 12px 0; font-weight: bold;">
-            "${c.reliefSought || 'Makatarungang pag-aayos at pagbabayad alinsunod sa batas.'}"
+            "${relief || 'Makatarungang pag-aayos at pagbabayad alinsunod sa batas.'}"
           </div>
-          <p>Ginawa ngayong ika-<strong>${new Date(c.dateFiled).getDate()}</strong> araw ng <strong>${new Date(c.dateFiled).toLocaleDateString('fil-PH', { month: 'long', year: 'numeric' })}</strong>.</p>
+          <p>Ginawa ngayong ika-<strong>${new Date(dateFiled).getDate()}</strong> araw ng <strong>${new Date(dateFiled).toLocaleDateString('fil-PH', { month: 'long', year: 'numeric' })}</strong>.</p>
         `;
         sigEl.innerHTML = `
           <div style="width: 240px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.complainantName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${compName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">May-sumbong / Complainant</div>
           </div>
           <div style="width: 240px;">
@@ -2346,8 +2346,8 @@
       } else if (formType === 'kp8') {
         titleEl.textContent = 'KP FORM 8: PATAWAG (SUMMONS)';
         bodyEl.innerHTML = `
-          <p>KAY G./GNG. <strong>${c.respondentName.toUpperCase()}</strong>:</p>
-          <p>Kayo ay tinatawagan at inaatasan na humarap sa akin nang personal, kasama ang inyong mga saksi, sa darating na araw ng pagdinig sa ganap na ika-<strong>2:00 ng hapon</strong> sa Bulwagan ng Barangay San Isidro, Cabuyao City, upang sagutin ang sumbong na inihain laban sa inyo ni <strong>${c.complainantName}</strong> ukol sa <em>${c.disputeType}</em>.</p>
+          <p>KAY G./GNG. <strong>${respName.toUpperCase()}</strong>:</p>
+          <p>Kayo ay tinatawagan at inaatasan na humarap sa akin nang personal, kasama ang inyong mga saksi, sa darating na araw ng pagdinig sa ganap na ika-<strong>2:00 ng hapon</strong> sa Bulwagan ng Barangay San Isidro, Cabuyao City, upang sagutin ang sumbong na inihain laban sa inyo ni <strong>${compName}</strong> ukol sa <em>${disputeType}</em>.</p>
           <p>Kayo ay binababalaan na ang inyong pagtanggi o pagkabigong humarap nang walang makatwirang dahilan ay magiging sanhi upang kayo ay mapatawan ng parusang hindi makapaghain ng kontra-habla o pagkakaloob ng Katunayan Upang Makadulog sa Hukuman (CFA) pabor sa may-sumbong alinsunod sa Seksyon 412 ng Batas Republika Blg. 7160.</p>
           <p>PINATUTUNAYAN ngayong ika-<strong>${new Date().getDate()}</strong> ng <strong>${new Date().toLocaleDateString('fil-PH', { month: 'long', year: 'numeric' })}</strong>.</p>
         `;
@@ -2367,7 +2367,7 @@
         titleEl.textContent = 'KP FORM 9: SUBPOENA SA SAKSI (WITNESS SUBPOENA)';
         bodyEl.innerHTML = `
           <p>KAY: __________________________________________________ (Pangalan ng Saksi)</p>
-          <p>Sa ngalan ng Katarungang Pambarangay, kayo ay inaatasan na humarap sa Tanggapan ng Lupong Tagapamayapa ng Barangay San Isidro upang magbigay ng inyong testimonya at patotoo bilang saksi sa usaping namamagitan kina <strong>${c.complainantName}</strong> at <strong>${c.respondentName}</strong>.</p>
+          <p>Sa ngalan ng Katarungang Pambarangay, kayo ay inaatasan na humarap sa Tanggapan ng Lupong Tagapamayapa ng Barangay San Isidro upang magbigay ng inyong testimonya at patotoo bilang saksi sa usaping namamagitan kina <strong>${compName}</strong> at <strong>${respName}</strong>.</p>
           <p>Ang inyong pagkabigo na tumugon ay ipapataw alinsunod sa batas at kapangyarihan ng Lupong Tagapamayapa (Sec. 410b).</p>
         `;
         sigEl.innerHTML = `
@@ -2383,21 +2383,21 @@
         bodyEl.innerHTML = `
           <p>Yamang hindi nagkasundo ang mga panig sa pamamagitan ng pamamagitan ng Punong Barangay, ang mga panig ay pormal na pinagpasiyahang bumuo ng <strong>Pangkat ng Tagapagkasundo</strong> alinsunod sa Seksyon 404 ng Batas Republika Blg. 7160:</p>
           <div style="margin: 16px 0; padding: 12px; border: 1px solid #ccc;">
-            <div>1. <strong>Tagapangulo (Chairman):</strong> ${c.pangkatChairman || 'Gng. Corazon De Leon'}</div>
-            <div style="margin: 6px 0;">2. <strong>Kalihim (Secretary):</strong> ${c.pangkatSecretary || 'Hon. Benjamin Alcantara'}</div>
-            <div>3. <strong>Kasapi (Member):</strong> ${c.pangkatMember || 'Engr. Dominador Santos'}</div>
+            <div>1. <strong>Tagapangulo (Chairman):</strong> ${chair || 'Gng. Corazon De Leon'}</div>
+            <div style="margin: 6px 0;">2. <strong>Kalihim (Secretary):</strong> ${sec || 'Hon. Benjamin Alcantara'}</div>
+            <div>3. <strong>Kasapi (Member):</strong> ${mem || 'Engr. Dominador Santos'}</div>
           </div>
           <p>Ang naturang Pangkat ay mayroong labing-limang (15) araw na palugit upang magsagawa ng pagdinig at ayusin ang alitan.</p>
         `;
         sigEl.innerHTML = `
           <div style="width: 220px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.complainantName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${compName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">May-sumbong</div>
           </div>
           <div style="width: 220px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.respondentName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${respName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">Ipinagsusumbong</div>
           </div>
           <div style="width: 220px;">
@@ -2415,12 +2415,12 @@
         sigEl.innerHTML = `
           <div style="width: 240px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.complainantName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${compName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">May-sumbong</div>
           </div>
           <div style="width: 240px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.respondentName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${respName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">Ipinagsusumbong</div>
           </div>
         `;
@@ -2429,9 +2429,9 @@
         bodyEl.innerHTML = `
           <p>KAMI, ang may-sumbong at ang ipinagsusumbong sa usaping ito, matapos ang masusing pagdinig at paliwanagan, ay buong pusong nagkakasundo sa sumusunod na mga kondisyon at pananagutan:</p>
           <div style="padding: 14px 18px; background: #fafafa; border: 1px solid #bbb; margin: 14px 0; font-weight: bold; line-height: 1.6;">
-            ${c.settlementTerms || 'Napagkasunduan ng mga panig ang buong kapayapaan at pagtupad sa mga napagkasunduang obligasyon.'}
+            ${settleTerms || 'Napagkasunduan ng mga panig ang buong kapayapaan at pagtupad sa mga napagkasunduang obligasyon.'}
           </div>
-          <p><strong>Halagang Napagkasunduan:</strong> PHP ${(c.settlementAmount || 0).toLocaleString()} &bull; <strong>Takdang Petsa ng Pagtupad:</strong> ${c.complianceDueDate || 'Kagyat / Agad'}.</p>
+          <p><strong>Halagang Napagkasunduan:</strong> PHP ${parseFloat(settleAmount).toLocaleString()} &bull; <strong>Takdang Petsa ng Pagtupad:</strong> ${complianceDueDate || 'Kagyat / Agad'}.</p>
           <p style="font-size: 9pt; color: #444; border-top: 1px solid #ccc; padding-top: 8px;">
             <strong>BABALA ALINSUNOD SA SEKSYON 416:</strong> Ang kasunduang ito ay may bisa at lakas ng isang pinal na hatol ng hukuman pagkalipas ng sampung (10) araw mula sa petsang ito, maliban kung ito ay itakwil sa ilalim ng sinumpaang salaysay dahil sa panlilinlang, karahasan o pananakot.
           </p>
@@ -2439,12 +2439,12 @@
         sigEl.innerHTML = `
           <div style="width: 220px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.complainantName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${compName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">May-sumbong / Complainant</div>
           </div>
           <div style="width: 220px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${c.respondentName.toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${respName.toUpperCase()}</div>
             <div style="font-size: 8.5pt;">Ipinagsusumbong / Respondent</div>
           </div>
           <div style="width: 220px;">
@@ -2464,14 +2464,14 @@
           </ol>
           <div style="padding: 12px 16px; background: #fff5f5; border: 1px solid #feb2b2; margin: 14px 0;">
             <strong>Tiyak na Batayan ng Pagpapatunay (Sec. 412 Ground):</strong><br>
-            <em>"${c.cfaReason || 'Personal confrontation occurred before Punong Barangay / Pangkat but no amicable settlement was reached.'}"</em>
+            <em>"${cfaReason || 'Personal confrontation occurred before Punong Barangay / Pangkat but no amicable settlement was reached.'}"</em>
           </div>
           <p>DAHIL DITO, ang kaukulang sumbong ukol sa alitang ito ay maaari nang ihain sa Kagalang-galang na Hukuman o Tanggapan ng Piskalya.</p>
         `;
         sigEl.innerHTML = `
           <div style="width: 240px;">
             <div style="height: 45px;"></div>
-            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${(c.pangkatSecretary || 'HON. BENJAMIN ALCANTARA').toUpperCase()}</div>
+            <div style="border-top: 1px solid #111; padding-top: 4px; font-weight: bold;">${(sec || 'HON. BENJAMIN ALCANTARA').toUpperCase()}</div>
             <div style="font-size: 8.5pt;">Kalihim ng Pangkat / Lupon Secretary</div>
           </div>
           <div style="width: 240px;">

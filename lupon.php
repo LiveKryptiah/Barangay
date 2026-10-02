@@ -342,18 +342,32 @@ require_auth('login.php');
 
     <div class="app-container" style="max-width: 1360px; padding: var(--spacing-sm) var(--spacing-md) var(--spacing-xl);">
 
-      <!-- Hero Header -->
+      <!-- Level 1 Primary: Quiet Hero -->
       <section class="page-hero">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--spacing-sm);">
-          <div>
+          <div style="position: relative;">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="badge-neutral" style="font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; background: #e0e7ff; color: #4338ca;">RA 7160 SEC. 399-422</span>
-              <span class="typography-caption" id="live-date-caption">Barangay San Isidro Mediation Court</span>
+              <h1 class="typography-heading-2" style="font-size: 1.5rem; margin: 0;">Katarungang Pambarangay.</h1>
+              <button type="button" class="info-trigger" onclick="toggleLuponInfoPopover()" title="KP Statutory Guidelines">i</button>
+              <span class="typography-caption" id="live-date-caption" style="margin-left: 4px;">Barangay San Isidro Mediation Court</span>
             </div>
-            <h1 class="typography-heading-2 mt-xs" style="font-size: 1.5rem;">Katarungang Pambarangay Studio.</h1>
-            <p class="typography-body mt-xs" style="color: var(--color-text-muted); max-width: 720px; font-size: 0.84rem;">
-              Statutory dispute conciliation and arbitration suite. Tracks strict 15-day Punong Barangay mediation deadlines, Pangkat ng Tagapagkasundo panels, amicable settlements (KP Form 16), and Certificates to File Action (KP Form 20).
+            <p class="typography-body-lg" style="margin-top: 4px;">
+              Statutory dispute conciliation, mediation deadlines, Pangkat panels, and amicable settlement registry.
             </p>
+
+            <!-- Contextual Info Popover Card -->
+            <div class="info-popover-card" id="lupon-info-popover" style="display: none;">
+              <div style="font-weight: 700; margin-bottom: 6px; font-size: 0.875rem;">Katarungang Pambarangay Rules (RA 7160 Sec. 399&ndash;422)</div>
+              <p style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+                Statutory dispute resolution and conciliation proceedings:
+              </p>
+              <ul style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; padding-left: 16px; margin: 0;">
+                <li><strong>PB Mediation (KP Form 7/8):</strong> Punong Barangay has 15 statutory days to mediate before constituting Pangkat.</li>
+                <li><strong>Pangkat Conciliation:</strong> 3-member panel has 15 days (extendable by 15 days) to effect amicable settlement.</li>
+                <li><strong>Kasunduan (KP Form 16):</strong> Amicable settlement has force and effect of a final court judgment after 10 days.</li>
+                <li><strong>Certificate to File Action (KP Form 20):</strong> Issued only upon failure of personal confrontation or settlement.</li>
+              </ul>
+            </div>
           </div>
 
           <!-- Studio Actions -->
@@ -370,64 +384,44 @@ require_auth('login.php');
                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-              + Schedule Hearing (KP Form 8)
+              + Schedule Hearing
             </button>
             <button type="button" class="button-primary" id="btn-file-case" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
-              + File New KP Case (KP Form 7)
+              + File New Case (KP Form 7)
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Executive Telemetry Ladder (4 Cards) -->
-      <section class="stats-ladder">
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Active Disputes</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #e0e7ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="m3 7 9-4 9 4"/><path d="M6 7v6a6 6 0 0 0 12 0V7"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-active-cases">0</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-active">0 in mediation / conciliation</div>
+      <!-- Level 1 Minimal Borderless Metrics Strip -->
+      <div class="metrics-strip">
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-active-cases">0</div>
+          <div class="metric-strip-lbl">Active Disputes</div>
+          <span id="stat-sub-active" style="display: none;"></span>
         </div>
-
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Hearings This Week</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #fef3c7; display: flex; align-items: center; justify-content: center; color: #d97706;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-hearings-week">0</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-hearings">Scheduled in Lupon Room</div>
+        <div class="metric-strip-divider"></div>
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-hearings-week">0</div>
+          <div class="metric-strip-lbl">Hearings This Week</div>
+          <span id="stat-sub-hearings" style="display: none;"></span>
         </div>
-
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Settlement Rate</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #d1fae5; display: flex; align-items: center; justify-content: center; color: #059669;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-settlement-rate">0%</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-settlement">Amicable Kasunduan achieved</div>
+        <div class="metric-strip-divider"></div>
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-settlement-rate">0%</div>
+          <div class="metric-strip-lbl">Settlement Rate</div>
+          <span id="stat-sub-settlement" style="display: none;"></span>
         </div>
-
-        <div class="studio-card" style="margin-bottom: 0; padding: 14px 18px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="typography-caption" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">CFA Court Referrals</span>
-            <div style="width: 28px; height: 28px; border-radius: 30%; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
-            </div>
-          </div>
-          <div class="typography-heading-3 mt-xs" style="font-size: 1.625rem; font-weight: 700;" id="stat-cfa-count">0</div>
-          <div class="typography-caption mt-xs" style="color: var(--color-text-muted);" id="stat-sub-cfa">Sec. 412 certificates issued</div>
+        <div class="metric-strip-divider"></div>
+        <div class="metric-strip-item">
+          <div class="metric-strip-val" id="stat-cfa-count">0</div>
+          <div class="metric-strip-lbl">CFA Court Referrals</div>
+          <span id="stat-sub-cfa" style="display: none;"></span>
         </div>
-      </section>
+      </div>
 
       <!-- 4-Tab Navigation Strip -->
       <nav class="kp-tab-nav" aria-label="Lupon Studio Modules">
@@ -457,44 +451,62 @@ require_auth('login.php');
       <!-- TAB 1: KP CASE DOCKET & PIPELINE -->
       <!-- ======================================================== -->
       <div id="tab-docket" class="tab-pane active">
-        <!-- Filter Toolbar -->
-        <div class="filter-toolbar">
-          <div class="filter-group">
-            <div class="search-input-wrap">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input type="search" id="search-kp-cases" placeholder="Search case #, parties, facts..." aria-label="Search cases">
-            </div>
-
-            <select id="filter-stage" class="filter-select" aria-label="Filter by statutory stage">
-              <option value="">All Stages</option>
-              <option value="PB Mediation">PB Mediation (15-day PB Window)</option>
-              <option value="Pangkat Conciliation">Pangkat Conciliation (30-day Panel)</option>
-              <option value="Amicably Settled">Amicably Settled (Kasunduan)</option>
-              <option value="CFA Issued">CFA Issued (Court Escalation)</option>
-              <option value="Arbitrated">Arbitrated Award</option>
-              <option value="Dismissed">Dismissed / Withdrawn</option>
-            </select>
-
-            <select id="filter-dispute-type" class="filter-select" aria-label="Filter by dispute type">
-              <option value="">All Dispute Types</option>
-              <option value="Property & Boundary Dispute">Property &amp; Boundary Dispute</option>
-              <option value="Unpaid Debt & Financial Conflict">Unpaid Debt &amp; Financial Conflict</option>
-              <option value="Physical Altercation / Slight Physical Injury">Physical Altercation</option>
-              <option value="Verbal Defamation & Threat">Verbal Defamation &amp; Threat</option>
-              <option value="Tenancy & Lease Conflict">Tenancy &amp; Lease Conflict</option>
-              <option value="Neighborhood Noise & Nuisance">Noise &amp; Community Nuisance</option>
-              <option value="Other Civil / Compound Dispute">Other Civil / Compound Dispute</option>
-            </select>
-
-            <button type="button" class="button-pill-soft" id="btn-clear-filters" style="height: 34px; padding: 0 12px; display: none;">
-              Reset Filters
-            </button>
+        <!-- Level 2 Progressive Minimal Filter Bar -->
+        <div class="filter-bar-minimal" style="margin-bottom: var(--spacing-sm);">
+          <div class="search-input-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" id="search-kp-cases" class="text-input" placeholder="Search case #, parties, facts..." aria-label="Search cases" autocomplete="off">
           </div>
 
-          <div style="font-size: 0.75rem; color: var(--color-text-muted);">
+          <button type="button" class="filter-toggle-btn" id="kp-filter-toggle-btn" onclick="toggleLuponFilterPanel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>Filters</span>
+            <span class="filter-count-badge" id="kp-filter-badge" style="display: none;">0</span>
+          </button>
+
+          <button type="button" class="button-pill-soft" id="btn-clear-filters" style="height: 34px; padding: 0 12px; display: none;">
+            Reset Filters
+          </button>
+
+          <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-left: auto;">
             Showing <strong id="shown-cases-count">0</strong> cases
+          </div>
+        </div>
+
+        <!-- Expandable Filter Panel -->
+        <div class="filter-expanded-panel" id="kp-filter-panel" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; width: 100%;">
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Statutory Stage</label>
+              <select id="filter-stage" class="filter-select" aria-label="Filter by statutory stage" style="width: 100%;">
+                <option value="">All Stages</option>
+                <option value="PB Mediation">PB Mediation (15-day PB Window)</option>
+                <option value="Pangkat Conciliation">Pangkat Conciliation (30-day Panel)</option>
+                <option value="Amicably Settled">Amicably Settled (Kasunduan)</option>
+                <option value="CFA Issued">CFA Issued (Court Escalation)</option>
+                <option value="Arbitrated">Arbitrated Award</option>
+                <option value="Dismissed">Dismissed / Withdrawn</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Dispute Type</label>
+              <select id="filter-dispute-type" class="filter-select" aria-label="Filter by dispute type" style="width: 100%;">
+                <option value="">All Dispute Types</option>
+                <option value="Property & Boundary Dispute">Property &amp; Boundary Dispute</option>
+                <option value="Unpaid Debt & Financial Conflict">Unpaid Debt &amp; Financial Conflict</option>
+                <option value="Physical Altercation / Slight Physical Injury">Physical Altercation</option>
+                <option value="Verbal Defamation & Threat">Verbal Defamation &amp; Threat</option>
+                <option value="Tenancy & Lease Conflict">Tenancy &amp; Lease Conflict</option>
+                <option value="Neighborhood Noise & Nuisance">Noise &amp; Community Nuisance</option>
+                <option value="Other Civil / Compound Dispute">Other Civil / Compound Dispute</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -738,98 +750,121 @@ require_auth('login.php');
   </dialog>
 
   <!-- ======================================================== -->
-  <!-- MODAL: CASE DOSSIER BRIEFING -->
+  <!-- SLIDE-OVER DRAWER: CASE DOSSIER BRIEFING -->
   <!-- ======================================================== -->
-  <dialog id="case-dossier-modal" class="modal-dialog" style="max-width: 720px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-xs);">
+  <div class="app-drawer-backdrop" id="lupon-drawer-backdrop" onclick="closeLuponDrawer()"></div>
+  <aside class="app-drawer" id="lupon-case-drawer" aria-label="Lupon Case Dossier">
+    <div class="drawer-header">
       <div>
         <div style="display: flex; align-items: center; gap: 8px;">
           <span class="badge-neutral" id="dossier-case-number" style="font-weight: 700; font-family: monospace;">KP-2026-0001</span>
           <span id="dossier-stage-badge" class="badge-blue">PB Mediation</span>
         </div>
-        <h3 class="typography-heading-4 mt-xs" id="dossier-dispute-title">Property &amp; Boundary Dispute</h3>
+        <h3 class="drawer-title" id="dossier-dispute-title" style="margin-top: 4px; font-size: 1rem;">Property &amp; Boundary Dispute</h3>
       </div>
-      <button type="button" class="button-pill-soft" onclick="document.getElementById('case-dossier-modal').close();" style="height: 28px; padding: 0 10px;">
-        Close
+      <button type="button" class="drawer-close-btn" onclick="closeLuponDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchLuponDrawerTab('overview', this)">Overview &amp; Parties</button>
+      <button type="button" class="drawer-tab" onclick="switchLuponDrawerTab('proceedings', this)">Proceedings &amp; Outcome</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Section 1: Overview & Parties -->
+      <div id="lupon-drawer-sec-overview" class="drawer-section">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Parties Card -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #4338ca;">
+              <span class="typography-label" style="color: #4338ca; font-size: 0.6875rem;">NAGSUSUMBONG (COMPLAINANT)</span>
+              <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-comp-name">Juan Dela Cruz</div>
+              <div class="typography-caption" id="dossier-comp-address">Purok 1, Barangay San Isidro &bull; 0917-123-4567</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #dc2626;">
+              <span class="typography-label" style="color: #dc2626; font-size: 0.6875rem;">IPINAGSUSUMBONG (RESPONDENT)</span>
+              <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-resp-name">Pedro Santos</div>
+              <div class="typography-caption" id="dossier-resp-address">Purok 2, Barangay San Isidro &bull; 0918-765-4321</div>
+            </div>
+          </div>
+
+          <!-- Statutory Timeline Progress Banner -->
+          <div id="dossier-timer-banner" style="padding: 10px 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--rounded-sm); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.8125rem; color: #4338ca;" id="dossier-timer-label">Statutory Punong Barangay 15-Day Mediation Timer</div>
+              <div class="typography-caption" id="dossier-timer-sub">Filed on Jan 15, 2026 &bull; Mediation Deadline: Jan 30, 2026</div>
+            </div>
+            <span class="statutory-countdown-badge countdown-urgent" id="dossier-countdown-chip">Day 6 of 15</span>
+          </div>
+
+          <!-- Facts and Relief -->
+          <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <span class="typography-label" style="font-size: 0.6875rem; color: var(--color-text-muted);">COMPLAINT STATEMENT / SALAYSAY NG SUMBONG:</span>
+            <p style="font-size: 0.8125rem; color: var(--color-ink); margin-top: 4px; line-height: 1.5; white-space: pre-wrap;" id="dossier-facts">-</p>
+            <div style="margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
+              Lunas na Hinihiling: <strong style="color: var(--color-ink);" id="dossier-relief">-</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Proceedings & Outcome -->
+      <div id="lupon-drawer-sec-proceedings" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Pangkat Panel if constituted -->
+          <div id="dossier-pangkat-box" style="display: none; padding: 10px 12px; background: #faf5ff; border: 1px solid #d8b4fe; border-radius: var(--rounded-sm);">
+            <span class="typography-label" style="color: #7e22ce; font-size: 0.6875rem;">CONSTITUTED PANGKAT NG TAGAPAGKASUNDO PANEL:</span>
+            <div class="form-grid-3 mt-xs" style="font-size: 0.8125rem;">
+              <div><strong>Chairman:</strong> <span id="dossier-pangkat-chair">-</span></div>
+              <div><strong>Secretary:</strong> <span id="dossier-pangkat-sec">-</span></div>
+              <div><strong>Member:</strong> <span id="dossier-pangkat-member">-</span></div>
+            </div>
+          </div>
+
+          <!-- Settlement terms if settled -->
+          <div id="dossier-settlement-box" style="display: none; padding: 10px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--rounded-sm);">
+            <span class="typography-label" style="color: #065f46; font-size: 0.6875rem;">EXECUTED AMICABLE SETTLEMENT (KASUNDUANG PAG-AAYOS):</span>
+            <div style="font-size: 0.8125rem; margin-top: 4px; color: #064e3b;" id="dossier-settlement-terms">-</div>
+            <div class="typography-caption mt-xs" id="dossier-settlement-meta">Amount: PHP 0.00 &bull; Compliance Due: -</div>
+          </div>
+
+          <!-- CFA Details if issued -->
+          <div id="dossier-cfa-box" style="display: none; padding: 10px 12px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--rounded-sm);">
+            <span class="typography-label" style="color: #9f1239; font-size: 0.6875rem;">CERTIFICATE TO FILE ACTION (CFA) ENDORSEMENT:</span>
+            <div style="font-size: 0.8125rem; margin-top: 4px; color: #881337;" id="dossier-cfa-reason">-</div>
+            <div class="typography-caption mt-xs" id="dossier-cfa-meta">Certified for court action pursuant to RA 7160 Sec. 412</div>
+          </div>
+
+          <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.75rem; color: var(--color-text-muted);">
+            KP proceedings adhere to Sections 399-422 of the Local Government Code of 1991. Settlements not repudiated within 10 days possess the force of court execution.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-xs); width: 100%;">
+      <button type="button" class="button-outline" id="dossier-btn-print" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        Print Forms (KP 7-20) &rarr;
       </button>
-    </div>
-
-    <!-- Parties Card -->
-    <div class="form-grid-2 mb-xs">
-      <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #4338ca;">
-        <span class="typography-label" style="color: #4338ca; font-size: 0.6875rem;">NAGSUSUMBONG (COMPLAINANT)</span>
-        <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-comp-name">Juan Dela Cruz</div>
-        <div class="typography-caption" id="dossier-comp-address">Purok 1, Barangay San Isidro &bull; 0917-123-4567</div>
-      </div>
-      <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border-left: 3px solid #dc2626;">
-        <span class="typography-label" style="color: #dc2626; font-size: 0.6875rem;">IPINAGSUSUMBONG (RESPONDENT)</span>
-        <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-resp-name">Pedro Santos</div>
-        <div class="typography-caption" id="dossier-resp-address">Purok 2, Barangay San Isidro &bull; 0918-765-4321</div>
-      </div>
-    </div>
-
-    <!-- Statutory Timeline Progress Banner -->
-    <div id="dossier-timer-banner" style="padding: 10px 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs); display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <div style="font-weight: 600; font-size: 0.8125rem; color: #4338ca;" id="dossier-timer-label">Statutory Punong Barangay 15-Day Mediation Timer</div>
-        <div class="typography-caption" id="dossier-timer-sub">Filed on Jan 15, 2026 &bull; Mediation Deadline: Jan 30, 2026</div>
-      </div>
-      <span class="statutory-countdown-badge countdown-urgent" id="dossier-countdown-chip">Day 6 of 15</span>
-    </div>
-
-    <!-- Facts and Relief -->
-    <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs); border: 1px solid var(--color-hairline-soft);">
-      <span class="typography-label" style="font-size: 0.6875rem; color: var(--color-text-muted);">COMPLAINT STATEMENT / SALAYSAY NG SUMBONG:</span>
-      <p style="font-size: 0.8125rem; color: var(--color-ink); margin-top: 4px; line-height: 1.5; white-space: pre-wrap;" id="dossier-facts">-</p>
-      <div style="margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
-        Lunas na Hinihiling: <strong style="color: var(--color-ink);" id="dossier-relief">-</strong>
-      </div>
-    </div>
-
-    <!-- Pangkat Panel if constituted -->
-    <div id="dossier-pangkat-box" style="display: none; padding: 10px 12px; background: #faf5ff; border: 1px solid #d8b4fe; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs);">
-      <span class="typography-label" style="color: #7e22ce; font-size: 0.6875rem;">CONSTITUTED PANGKAT NG TAGAPAGKASUNDO PANEL:</span>
-      <div class="form-grid-3 mt-xs" style="font-size: 0.8125rem;">
-        <div><strong>Chairman:</strong> <span id="dossier-pangkat-chair">-</span></div>
-        <div><strong>Secretary:</strong> <span id="dossier-pangkat-sec">-</span></div>
-        <div><strong>Member:</strong> <span id="dossier-pangkat-member">-</span></div>
-      </div>
-    </div>
-
-    <!-- Settlement terms if settled -->
-    <div id="dossier-settlement-box" style="display: none; padding: 10px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs);">
-      <span class="typography-label" style="color: #065f46; font-size: 0.6875rem;">EXECUTED AMICABLE SETTLEMENT (KASUNDUANG PAG-AAYOS):</span>
-      <div style="font-size: 0.8125rem; margin-top: 4px; color: #064e3b;" id="dossier-settlement-terms">-</div>
-      <div class="typography-caption mt-xs" id="dossier-settlement-meta">Amount: PHP 0.00 &bull; Compliance Due: -</div>
-    </div>
-
-    <!-- CFA Details if issued -->
-    <div id="dossier-cfa-box" style="display: none; padding: 10px 12px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--rounded-sm); margin-bottom: var(--spacing-xs);">
-      <span class="typography-label" style="color: #9f1239; font-size: 0.6875rem;">CERTIFICATE TO FILE ACTION (CFA) ENDORSEMENT:</span>
-      <div style="font-size: 0.8125rem; margin-top: 4px; color: #881337;" id="dossier-cfa-reason">-</div>
-      <div class="typography-caption mt-xs" id="dossier-cfa-meta">Certified for court action pursuant to RA 7160 Sec. 412</div>
-    </div>
-
-    <!-- Action Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-xs); margin-top: var(--spacing-sm); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm);">
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="button-outline" id="dossier-btn-print" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
-          Print Official Forms (KP 7-20) &rarr;
-        </button>
-      </div>
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="button-outline" id="dossier-btn-pangkat" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="button-outline" id="dossier-btn-pangkat" style="height: 36px; padding: 0 10px; font-size: 0.75rem;">
           Constitute Pangkat
         </button>
-        <button type="button" class="button-outline" id="dossier-btn-settle" style="height: 36px; padding: 0 12px; font-size: 0.75rem; color: #059669; border-color: #a7f3d0;">
-          Execute Kasunduan
+        <button type="button" class="button-outline" id="dossier-btn-settle" style="height: 36px; padding: 0 10px; font-size: 0.75rem; color: #059669; border-color: #a7f3d0;">
+          Kasunduan
         </button>
-        <button type="button" class="button-outline" id="dossier-btn-cfa" style="height: 36px; padding: 0 12px; font-size: 0.75rem; color: #dc2626; border-color: #fecdd3;">
+        <button type="button" class="button-outline" id="dossier-btn-cfa" style="height: 36px; padding: 0 10px; font-size: 0.75rem; color: #dc2626; border-color: #fecdd3;">
           Issue CFA
         </button>
+        <button type="button" class="button-pill-soft" onclick="closeLuponDrawer()" style="height: 36px; padding: 0 12px;">Close</button>
       </div>
     </div>
-  </dialog>
+  </aside>
+
+  <!-- Dummy fallback for legacy references -->
+  <dialog id="case-dossier-modal" style="display: none;"></dialog>
 
   <!-- ======================================================== -->
   <!-- MODAL: SCHEDULE SUMMONS / HEARING (KP FORM 8) -->
@@ -1389,6 +1424,19 @@ require_auth('login.php');
 
       const hasFilters = search || stageFilter || typeFilter;
       document.getElementById('btn-clear-filters').style.display = hasFilters ? 'inline-flex' : 'none';
+
+      let filterCount = 0;
+      if (stageFilter) filterCount++;
+      if (typeFilter) filterCount++;
+      const badge = document.getElementById('kp-filter-badge');
+      if (badge) {
+        if (filterCount > 0) {
+          badge.textContent = filterCount;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
 
       const filtered = allCases.filter(c => {
         const stage = c.stage;
@@ -2074,32 +2122,94 @@ require_auth('login.php');
 
       // Action buttons
       document.getElementById('dossier-btn-print').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         openPrintSuite(c.id);
       };
 
       document.getElementById('dossier-btn-pangkat').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         document.getElementById('pangkat-case-select').value = c.id;
         document.getElementById('pangkat-modal').showModal();
       };
 
       document.getElementById('dossier-btn-settle').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         document.getElementById('settle-case-select').value = c.id;
         document.getElementById('settle-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('settlement-modal').showModal();
       };
 
       document.getElementById('dossier-btn-cfa').onclick = () => {
-        document.getElementById('case-dossier-modal').close();
+        closeLuponDrawer();
         document.getElementById('cfa-case-select').value = c.id;
         document.getElementById('cfa-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('cfa-modal').showModal();
       };
 
-      document.getElementById('case-dossier-modal').showModal();
+      switchLuponDrawerTab('overview');
+      const drawer = document.getElementById('lupon-case-drawer');
+      const backdrop = document.getElementById('lupon-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
     };
+
+    window.closeLuponDrawer = function() {
+      const drawer = document.getElementById('lupon-case-drawer');
+      const backdrop = document.getElementById('lupon-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchLuponDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#lupon-case-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const firstTab = document.querySelector('#lupon-case-drawer .drawer-tab');
+        if (firstTab) firstTab.classList.add('active');
+      }
+      document.querySelectorAll('#lupon-case-drawer .drawer-section').forEach(s => s.style.display = 'none');
+      const sec = document.getElementById(`lupon-drawer-sec-${tabName}`);
+      if (sec) sec.style.display = 'block';
+    };
+
+    window.toggleLuponInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('lupon-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    };
+
+    window.toggleLuponFilterPanel = function() {
+      const panel = document.getElementById('kp-filter-panel');
+      const btn = document.getElementById('kp-filter-toggle-btn');
+      if (panel) {
+        const isOpen = panel.style.display === 'none';
+        panel.style.display = isOpen ? 'block' : 'none';
+        panel.classList.toggle('open', isOpen);
+        if (btn) btn.classList.toggle('active', isOpen);
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLuponDrawer();
+        const popover = document.getElementById('lupon-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('lupon-info-popover');
+      const trigger = document.querySelector('.info-trigger');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
+    });
 
     // Open Edit Member Modal
     window.openEditMember = function(id) {

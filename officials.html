@@ -319,6 +319,7 @@
             <div>
               <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
                 <h1 class="typography-heading-2">Barangay Officials &amp; Staff.</h1>
+                <button type="button" class="info-trigger" id="btn-officials-info" onclick="toggleOfficialsInfoPopover(event)" aria-label="Officials Roster Information" title="About Governance Hierarchy &amp; Appointments">i</button>
                 <span class="badge-neutral" id="officials-count-badge">0 Personnel</span>
               </div>
               <p class="typography-body-lg">
@@ -345,69 +346,121 @@
           </div>
         </section>
 
-        <!-- Personnel Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL PERSONNEL</span>
-                <span class="badge-neutral">Database Live</span>
-              </div>
-              <div class="stat-number" id="stat-total-officials">0</div>
-              <div class="typography-caption" id="stat-sub-total">0 registered in directory</div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="officials-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Barangay Governance &amp; Council Hierarchy</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleOfficialsInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Governed under the Local Government Code of 1991 (RA 7160). Defines the legislative council, mandatory appointive officers, standing committees, and authorized document signatories.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Elective Officials:</strong>
+              <div>Punong Barangay (Chief Executive) and seven (7) Sangguniang Barangay Kagawads plus SK Chairperson.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">ELECTIVE COUNCIL</span>
-                <span class="badge-blue">Sangguniang Brgy</span>
-              </div>
-              <div class="stat-number" id="stat-total-elective">0</div>
-              <div class="typography-caption" id="stat-sub-elective">Captain &amp; Kagawads</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">Appointive Civil Service:</strong>
+              <div>Barangay Secretary (custodian of records) and Barangay Treasurer (financial custodian).</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">APPOINTED STAFF</span>
-                <span class="badge-purple">Civil Service</span>
-              </div>
-              <div class="stat-number" id="stat-total-appointive">0</div>
-              <div class="typography-caption" id="stat-sub-appointive">Secretary, Treas, Tanods</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-amber-600, #d97706);">Legislative Committees:</strong>
+              <div>Appropriations, Peace &amp; Order, Health, Infrastructure, Laws &amp; Ethics, Environment, Education.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">ACTIVE SIGNATORY</span>
-                <span class="badge-emerald">Clearances</span>
-              </div>
-              <div class="stat-number" id="stat-signatory-name" style="font-size: 1.125rem; font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-top: 6px;">None Assigned</div>
-              <div class="typography-caption" id="stat-sub-signatory">Authorized for clearances</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #6366f1;">Signatory Mandates:</strong>
+              <div>Only authorized officers can sign legal certificates, financial vouchers, and permits.</div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- Dual View & Filter Toolbar -->
-        <section>
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <!-- Search Input -->
-              <div class="search-input-wrap">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input type="text" id="search-input" class="text-input" placeholder="Search by name, position, committee..." autocomplete="off">
-              </div>
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-officials">0</span>
+            <span class="metric-strip-lbl">Total Personnel</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-elective">0</span>
+            <span class="metric-strip-lbl">Elective Council</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-appointive">0</span>
+            <span class="metric-strip-lbl">Appointed Staff</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-signatory-name" style="font-size: 1.0625rem; font-weight: 600;">None Assigned</span>
+            <span class="metric-strip-lbl">Active Signatory</span>
+          </div>
+        </div>
 
-              <!-- Category Filter -->
-              <select id="filter-category" class="filter-select">
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <span id="stat-sub-total" style="display: none;"></span>
+        <span id="stat-sub-elective" style="display: none;"></span>
+        <span id="stat-sub-appointive" style="display: none;"></span>
+        <span id="stat-sub-signatory" style="display: none;"></span>
+
+        <!-- Level 2: Progressive Minimal Filter Bar -->
+        <div class="filter-bar-minimal">
+          <div class="search-input-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="search-input" class="text-input" placeholder="Search by name, position, committee..." autocomplete="off">
+          </div>
+
+          <button type="button" class="filter-toggle-btn" id="officials-filter-toggle-btn" onclick="toggleOfficialsFilterPanel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>Filters</span>
+            <span class="filter-count-badge" id="officials-filter-badge" style="display: none;">0</span>
+          </button>
+
+          <!-- View Switcher -->
+          <div class="view-switcher" style="margin-left: auto;">
+            <button id="view-btn-hierarchy" class="view-btn active" title="Organizational Hierarchy View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="6" height="6" x="9" y="3" rx="1"/>
+                <path d="M12 9v4"/>
+                <path d="M5 13h14"/>
+                <rect width="6" height="6" x="2" y="15" rx="1"/>
+                <rect width="6" height="6" x="16" y="15" rx="1"/>
+              </svg>
+              <span>Hierarchy</span>
+            </button>
+            <button id="view-btn-table" class="view-btn" title="Roster Data Table View">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3h18v18H3z"/>
+                <path d="M3 9h18"/>
+                <path d="M3 15h18"/>
+                <path d="M9 3v18"/>
+              </svg>
+              <span>Table</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Expandable Filter Panel -->
+        <div class="filter-expanded-panel" id="officials-filter-panel" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Category</label>
+              <select id="filter-category" class="filter-select" style="width: 100%;">
                 <option value="ALL">All Categories</option>
                 <option value="elective">Elective Council</option>
                 <option value="appointive">Appointed Staff</option>
               </select>
+            </div>
 
-              <!-- Committee Filter -->
-              <select id="filter-committee" class="filter-select">
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Standing Committee</label>
+              <select id="filter-committee" class="filter-select" style="width: 100%;">
                 <option value="ALL">All Committees</option>
                 <option value="Peace & Order">Peace &amp; Order</option>
                 <option value="Appropriations & Finance">Appropriations &amp; Finance</option>
@@ -419,40 +472,19 @@
                 <option value="Laws, Rules & Ethics">Laws, Rules &amp; Ethics</option>
                 <option value="Agriculture & Livelihood">Agriculture &amp; Livelihood</option>
               </select>
+            </div>
 
-              <!-- Status Filter -->
-              <select id="filter-status" class="filter-select">
+            <div>
+              <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Status</label>
+              <select id="filter-status" class="filter-select" style="width: 100%;">
                 <option value="ALL">All Status</option>
                 <option value="active">Active</option>
                 <option value="on_leave">On Leave</option>
                 <option value="inactive">Inactive / Concluded</option>
               </select>
             </div>
-
-            <!-- View Switcher -->
-            <div class="view-switcher">
-              <button id="view-btn-hierarchy" class="view-btn active" title="Organizational Hierarchy View">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="6" height="6" x="9" y="3" rx="1"/>
-                  <path d="M12 9v4"/>
-                  <path d="M5 13h14"/>
-                  <rect width="6" height="6" x="2" y="15" rx="1"/>
-                  <rect width="6" height="6" x="16" y="15" rx="1"/>
-                </svg>
-                <span>Hierarchy</span>
-              </button>
-              <button id="view-btn-table" class="view-btn" title="Roster Data Table View">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 3h18v18H3z"/>
-                  <path d="M3 9h18"/>
-                  <path d="M3 15h18"/>
-                  <path d="M9 3v18"/>
-                </svg>
-                <span>Table</span>
-              </button>
-            </div>
           </div>
-        </section>
+        </div>
 
         <!-- Main Roster Content Container -->
         <section id="roster-view-container">
@@ -608,74 +640,90 @@
     </form>
   </dialog>
 
-  <!-- Modal 2: Official Dossier Drawer / View Modal -->
-  <dialog id="official-dossier-modal" class="modal-dialog" style="width: 90%; max-width: 580px;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-md);">
+  <!-- LEVEL 3: OFFICIAL DOSSIER DRAWER -->
+  <div class="app-drawer-backdrop" id="official-drawer-backdrop" onclick="closeOfficialDrawer()"></div>
+  <aside class="app-drawer" id="official-dossier-drawer" aria-label="Official Profile Dossier">
+    <div class="drawer-header">
       <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-        <div id="dossier-avatar" class="official-avatar captain" style="width: 52px; height: 52px; font-size: 1.125rem;">
+        <div id="dossier-avatar" class="official-avatar captain" style="width: 44px; height: 44px; font-size: 1rem;">
           PB
         </div>
         <div>
-          <h3 class="typography-heading-4" id="dossier-name" style="margin-bottom: 2px;">Hon. Official Name</h3>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <span class="badge-blue" id="dossier-position-badge">Punong Barangay</span>
-            <span class="badge-emerald" id="dossier-status-badge">Active</span>
-            <span class="badge-amber" id="dossier-signatory-badge" style="display: none;">Signatory</span>
+          <h3 class="drawer-title" id="dossier-name" style="margin: 0; font-size: 1rem;">Hon. Official Name</h3>
+          <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+            <span class="badge-blue" id="dossier-position-badge" style="font-size: 0.6875rem;">Punong Barangay</span>
+            <span class="badge-emerald" id="dossier-status-badge" style="font-size: 0.6875rem;">Active</span>
+            <span class="badge-amber" id="dossier-signatory-badge" style="display: none; font-size: 0.6875rem;">Signatory</span>
           </div>
         </div>
       </div>
-      <button class="button-pill-soft" onclick="document.getElementById('official-dossier-modal').close();" style="height: 30px; padding: 0 10px; font-size: 0.75rem;">
-        Close
-      </button>
+      <button type="button" class="drawer-close-btn" onclick="closeOfficialDrawer()" aria-label="Close drawer">&times;</button>
     </div>
 
-    <div class="dossier-grid">
-      <div class="dossier-item">
-        <span class="dossier-label">Primary Committee</span>
-        <span class="dossier-val" id="dossier-committee">&mdash;</span>
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchOfficialDrawerTab('portfolio', this)">Committees &amp; Office</button>
+      <button type="button" class="drawer-tab" onclick="switchOfficialDrawerTab('contact', this)">Contact &amp; Term</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Committees & Office -->
+      <div id="official-drawer-sec-portfolio" class="drawer-section active">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Primary Committee</span>
+            <span class="drawer-item-val" id="dossier-committee">&mdash;</span>
+          </div>
+
+          <div class="drawer-item">
+            <span class="drawer-item-label">Secondary Committee</span>
+            <span class="drawer-item-val" id="dossier-secondary-committee">&mdash;</span>
+          </div>
+
+          <div class="drawer-item">
+            <span class="drawer-item-label">Office Hours</span>
+            <span class="drawer-item-val" id="dossier-hours">&mdash;</span>
+          </div>
+        </div>
       </div>
 
-      <div class="dossier-item">
-        <span class="dossier-label">Secondary Committee</span>
-        <span class="dossier-val" id="dossier-secondary-committee">&mdash;</span>
-      </div>
+      <!-- Tab 2: Contact & Term -->
+      <div id="official-drawer-sec-contact" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Term of Office</span>
+            <span class="drawer-item-val" id="dossier-term">&mdash;</span>
+          </div>
 
-      <div class="dossier-item">
-        <span class="dossier-label">Term of Office</span>
-        <span class="dossier-val" id="dossier-term">&mdash;</span>
-      </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Contact Number</span>
+            <span class="drawer-item-val" id="dossier-phone">&mdash;</span>
+          </div>
 
-      <div class="dossier-item">
-        <span class="dossier-label">Office Hours</span>
-        <span class="dossier-val" id="dossier-hours">&mdash;</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Contact Number</span>
-        <span class="dossier-val" id="dossier-phone">&mdash;</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Official Email</span>
-        <span class="dossier-val" id="dossier-email">&mdash;</span>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Official Email</span>
+            <span class="drawer-item-val" id="dossier-email">&mdash;</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Management Controls -->
-    <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-sm); border-top: 1px solid var(--color-hairline-soft); display: flex; justify-content: space-between; align-items: center;">
-      <button class="table-action-btn danger" id="btn-dossier-delete" style="height: 34px; padding: 0 14px;">
+    <!-- Drawer Footer -->
+    <div class="drawer-footer" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <button class="table-action-btn danger" id="btn-dossier-delete" style="height: 36px; padding: 0 14px;">
         Delete Official
       </button>
       <div style="display: flex; gap: var(--spacing-xs);">
-        <button class="button-outline" id="btn-dossier-signatory" style="height: 34px; padding: 0 14px; font-size: 0.75rem;">
+        <button class="button-outline" id="btn-dossier-signatory" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
           Set as Signatory
         </button>
-        <button class="button-primary" id="btn-dossier-edit" style="height: 34px; padding: 0 16px; font-size: 0.75rem;">
+        <button class="button-primary" id="btn-dossier-edit" style="height: 36px; padding: 0 16px; font-size: 0.75rem;">
           Edit Details
         </button>
       </div>
     </div>
-  </dialog>
+  </aside>
+  <dialog id="official-dossier-modal" style="display: none;"></dialog>
 
   <!-- Modal 3: Delete Confirmation Modal -->
   <dialog id="delete-confirm-modal" class="modal-dialog" style="width: 90%; max-width: 440px;">
@@ -729,15 +777,15 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/db.js"></script>
-  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  
   <script src="js/components/toast.js"></script>
   <script src="js/components/sidebar.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Guard route: require authentication
-      const authData = await authService.requireAuth('login.html');
+      const authData = await authService.requireAuth('login.php');
       if (!authData) return;
       const { user: currentAuthUser } = authData;
 
@@ -1221,16 +1269,37 @@
       });
 
       // Filter change listeners
+      function updateFilterBadge() {
+        const badge = document.getElementById('officials-filter-badge');
+        if (!badge) return;
+        let count = 0;
+        if (filterCategory && filterCategory.value !== 'ALL') count++;
+        if (filterCommittee && filterCommittee.value !== 'ALL') count++;
+        if (filterStatus && filterStatus.value !== 'ALL') count++;
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-flex' : 'none';
+      }
+
       searchInput.addEventListener('input', renderRoster);
-      filterCategory.addEventListener('change', renderRoster);
-      filterCommittee.addEventListener('change', renderRoster);
-      filterStatus.addEventListener('change', renderRoster);
+      filterCategory.addEventListener('change', () => {
+        updateFilterBadge();
+        renderRoster();
+      });
+      filterCommittee.addEventListener('change', () => {
+        updateFilterBadge();
+        renderRoster();
+      });
+      filterStatus.addEventListener('change', () => {
+        updateFilterBadge();
+        renderRoster();
+      });
 
       window.clearFilters = () => {
         searchInput.value = '';
         filterCategory.value = 'ALL';
         filterCommittee.value = 'ALL';
         filterStatus.value = 'ALL';
+        updateFilterBadge();
         renderRoster();
       };
 
@@ -1405,6 +1474,7 @@
         };
 
         document.getElementById('btn-dossier-edit').onclick = () => {
+          closeOfficialDrawer();
           openEditModal(official.id);
         };
 
@@ -1412,8 +1482,62 @@
           confirmDeleteOfficial(official.id);
         };
 
-        dossierModal.showModal();
+        const drawer = document.getElementById('official-dossier-drawer');
+        const backdrop = document.getElementById('official-drawer-backdrop');
+        if (drawer && backdrop) {
+          drawer.classList.add('active');
+          backdrop.classList.add('active');
+        }
       };
+
+      window.closeOfficialDrawer = () => {
+        const drawer = document.getElementById('official-dossier-drawer');
+        const backdrop = document.getElementById('official-drawer-backdrop');
+        if (drawer) drawer.classList.remove('active');
+        if (backdrop) backdrop.classList.remove('active');
+      };
+
+      window.switchOfficialDrawerTab = (tabName, btn) => {
+        document.querySelectorAll('#official-dossier-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.querySelectorAll('#official-dossier-drawer .drawer-section').forEach(s => s.style.display = 'none');
+        const sec = document.getElementById(`official-drawer-sec-${tabName}`);
+        if (sec) sec.style.display = 'block';
+      };
+
+      window.toggleOfficialsInfoPopover = function(e) {
+        if (e) e.stopPropagation();
+        const popover = document.getElementById('officials-info-popover');
+        if (popover) {
+          popover.classList.toggle('active');
+        }
+      };
+
+      window.toggleOfficialsFilterPanel = function() {
+        const panel = document.getElementById('officials-filter-panel');
+        const btn = document.getElementById('officials-filter-toggle-btn');
+        if (panel) {
+          const isOpen = panel.classList.toggle('open');
+          panel.classList.toggle('active', isOpen);
+          if (btn) btn.classList.toggle('active', isOpen);
+        }
+      };
+
+      // Close popover on outside click or Escape
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('officials-info-popover');
+        if (popover && popover.classList.contains('active') && !e.target.closest('#officials-info-popover') && !e.target.closest('.info-trigger')) {
+          popover.classList.remove('active');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeOfficialDrawer();
+          const popover = document.getElementById('officials-info-popover');
+          if (popover) popover.classList.remove('active');
+        }
+      });
 
       // 15. Toggle Signatory
       async function toggleSignatory(id) {
@@ -1475,7 +1599,8 @@
 
           showToast(`Official ${officialToDelete.fullName} removed`);
           deleteModal.close();
-          if (dossierModal.open) dossierModal.close();
+          closeOfficialDrawer();
+          if (dossierModal && dossierModal.open) dossierModal.close();
           officialToDelete = null;
           await loadOfficials();
         } catch (err) {

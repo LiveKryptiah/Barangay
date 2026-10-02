@@ -20,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_install'])) {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
-        $installationLog[] = "✓ Connected to MySQL server at " . DB_HOST . ":" . DB_PORT;
+        $installationLog[] = "[OK] Connected to MySQL server at " . DB_HOST . ":" . DB_PORT;
 
         // 2. Create database if not exists
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `" . DB_NAME . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        $installationLog[] = "✓ Database `" . DB_NAME . "` verified / created";
+        $installationLog[] = "[OK] Database `" . DB_NAME . "` verified / created";
 
         // 3. Switch to the database
         $pdo->exec("USE `" . DB_NAME . "`");
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_install'])) {
 
         $sql = file_get_contents($schemaFile);
         $pdo->exec($sql);
-        $installationLog[] = "✓ Relational schema executed successfully (10 tables established)";
+        $installationLog[] = "[OK] Relational schema executed successfully (10 tables established)";
 
         // 5. Check if default administrator exists
         $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `users` WHERE `role` = 'admin'");
@@ -50,9 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_install'])) {
                 VALUES (?, ?, ?, ?, 'admin', 'Punong Barangay / Administrator', 'active')
             ");
             $adminInsert->execute(['admin', $defaultPassHash, 'System Administrator', 'admin@barangay.local']);
-            $installationLog[] = "✓ Initial administrator account provisioned (username: 'admin', default pass: 'Password123!')";
+            $installationLog[] = "[OK] Initial administrator account provisioned (username: 'admin', default pass: 'Password123!')";
         } else {
-            $installationLog[] = "✓ Existing administrator account preserved";
+            $installationLog[] = "[OK] Existing administrator account preserved";
         }
 
         // 6. Record installation audit log
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_install'])) {
     } catch (Exception $e) {
         $message = "Installation failed: " . $e->getMessage();
         $messageType = "danger";
-        $installationLog[] = "✗ Error: " . $e->getMessage();
+        $installationLog[] = "[ERROR] Error: " . $e->getMessage();
     }
 }
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -132,7 +132,10 @@
                 <span class="badge-neutral" style="color: #ea580c; font-weight: 700; border-color: rgba(234, 88, 12, 0.3);">RA 10121 BDRRMC</span>
                 <span class="badge-neutral">NDRRMC &bull; DILG Camp Coordination</span>
               </div>
-              <h1 class="typography-heading-2">Disaster Risk Reduction &amp; Management</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                <h1 class="typography-heading-2">Disaster Risk Reduction &amp; Management</h1>
+                <button type="button" class="info-trigger" id="btn-drrm-info" onclick="toggleDrrmInfoPopover(event)" aria-label="DRRM Information" title="About BDRRMC Operations &amp; Calamity Protocols">i</button>
+              </div>
               <p class="typography-body-lg" style="color: var(--color-text-muted); max-width: 720px;">
                 Camp evacuation coordination, DAFAC relief distribution journal, spatial hazard monitoring, and 5% Calamity Fund tracking.
               </p>
@@ -161,42 +164,69 @@
           </div>
         </section>
 
-        <!-- Stats Ladder -->
-        <section class="stats-ladder" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-          <!-- Card 1: Sheltered Evacuees -->
-          <div class="studio-card">
-            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Sheltered Evacuees</span>
-            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0;" id="stat-evacuees">0 Fam / 0 Pax</div>
-            <div class="meter-wrap">
-              <div class="meter-bar" id="meter-evacuees-bar" style="width: 0%;"></div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="drrm-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Barangay DRRM Operations &amp; Calamity Framework</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleDrrmInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Pursuant to Republic Act No. 10121, this portal integrates pre-disaster risk assessments, automated evacuation camp management, DAFAC relief distribution accountability, and statutory 5% Calamity Fund disbursement controls.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Alert Level Escalation:</strong>
+              <div><strong>Normal:</strong> Readiness monitoring</div>
+              <div><strong>White Alert:</strong> Precautionary stand-by</div>
+              <div><strong>Blue Alert:</strong> 50% quick-response deployment</div>
+              <div><strong>Red Alert:</strong> 100% active camp operations</div>
             </div>
-            <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 4px;" id="stat-evacuees-sub">0% shelter occupancy</div>
-          </div>
-
-          <!-- Card 2: Evacuation Centers -->
-          <div class="studio-card">
-            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Evacuation Centers</span>
-            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0;" id="stat-centers">0 Active / 0 Total</div>
-            <div class="typography-caption" style="color: var(--color-text-muted);" id="stat-centers-sub">0 Standby facilities</div>
-          </div>
-
-          <!-- Card 3: Relief Stockpile -->
-          <div class="studio-card">
-            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Relief Stockpile</span>
-            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0;" id="stat-relief">0 Units</div>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span class="badge badge-neutral" id="stat-relief-valuation">â‚± 0.00 Val</span>
-              <span class="badge badge-rose" id="badge-low-stock" style="display:none;">Low Stock</span>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">DAFAC &amp; Relief Management:</strong>
+              <div>Disaster Assistance Family Access Cards ensure duplicate-free ration distribution per family head.</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-amber-600, #d97706);">5% BDRRM Calamity Fund:</strong>
+              <div>70% Pre-disaster Preparedness &amp; Mitigation</div>
+              <div>30% Quick Response Fund (QRF) for state of calamity</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #6366f1;">Early Warning Relays:</strong>
+              <div>Targeted SMS advisories broadcast to Purok hazard zone leaders.</div>
             </div>
           </div>
+        </div>
 
-          <!-- Card 4: 5% BDRRM Calamity Fund -->
-          <div class="studio-card">
-            <span class="typography-caption" style="color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em;">5% Calamity Fund</span>
-            <div style="font-size: 1.5rem; font-weight: 700; margin: 4px 0; color: var(--color-emerald);" id="stat-fund">â‚± 0.00</div>
-            <div class="typography-caption" style="color: var(--color-text-muted);" id="stat-fund-util">0% Utilized (70% QRF / 30% Prep)</div>
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-evacuees">0 Fam / 0 Pax</span>
+            <span class="metric-strip-lbl">Sheltered Evacuees</span>
           </div>
-        </section>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-centers">0 Active / 0 Total</span>
+            <span class="metric-strip-lbl">Shelter Sites</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-relief">0 Units</span>
+            <span class="metric-strip-lbl">Relief Stockpile</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-fund">₱ 0.00</span>
+            <span class="metric-strip-lbl">5% Calamity Fund</span>
+          </div>
+        </div>
+
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <div id="meter-evacuees-bar" style="display: none;"></div>
+        <span id="stat-evacuees-sub" style="display: none;"></span>
+        <span id="stat-centers-sub" style="display: none;"></span>
+        <span id="stat-relief-valuation" style="display: none;"></span>
+        <span id="badge-low-stock" style="display: none;"></span>
+        <span id="stat-fund-util" style="display: none;"></span>
 
         <!-- Tab Navigation -->
         <nav class="drrm-tab-nav" aria-label="DRRM Subsections">
@@ -577,7 +607,7 @@
             <input type="text" class="text-input" name="unit" value="packs" style="width:100%;">
           </div>
           <div>
-            <label class="typography-caption">Unit Cost (â‚±)</label>
+            <label class="typography-caption">Unit Cost (₱)</label>
             <input type="number" step="0.01" class="text-input" name="unit_cost" value="450.00" style="width:100%;">
           </div>
         </div>
@@ -674,6 +704,102 @@
       </form>
     </div>
   </dialog>
+
+  <!-- LEVEL 3: EVACUEE & CAMP DETAIL DRAWER -->
+  <div class="app-drawer-backdrop" id="drrm-drawer-backdrop" onclick="closeDrrmDrawer()"></div>
+  <aside class="app-drawer" id="drrm-detail-drawer" aria-label="Evacuee Family Dossier">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge-neutral" id="drawer-evac-code" style="font-family: monospace; font-weight: 700;">EVAC-0000</span>
+        <h3 class="drawer-title" id="drawer-evac-head" style="margin: 0; font-size: 1rem;">Family Head Name</h3>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeDrrmDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchDrrmDrawerTab('demographics', this)">Family &amp; Demographics</button>
+      <button type="button" class="drawer-tab" onclick="switchDrrmDrawerTab('shelter', this)">Shelter &amp; Special Needs</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Family & Demographics -->
+      <div id="drrm-drawer-sec-demographics" class="drawer-section active">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;">
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">TOTAL PAX</div>
+            <div style="font-weight: 700; font-size: 1.125rem; margin-top: 2px;" id="drawer-evac-pax">0</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">SENIORS</div>
+            <div style="font-weight: 700; font-size: 1.125rem; margin-top: 2px;" id="drawer-evac-seniors">0</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">CHILDREN</div>
+            <div style="font-weight: 700; font-size: 1.125rem; margin-top: 2px;" id="drawer-evac-children">0</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">PWD / SPEC</div>
+            <div style="font-weight: 700; font-size: 1.125rem; margin-top: 2px; color: var(--color-primary);" id="drawer-evac-pwd">0</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Origin Purok</span>
+            <span class="drawer-item-val" id="drawer-evac-purok">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Emergency Contact</span>
+            <span class="drawer-item-val" id="drawer-evac-contact">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Vulnerability Badges</span>
+            <span class="drawer-item-val" id="drawer-evac-vuln-badges">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Shelter & Special Needs -->
+      <div id="drrm-drawer-sec-shelter" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Evacuation Center</span>
+            <span class="drawer-item-val" id="drawer-evac-center" style="font-weight: 600;">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Tent / Modular Room</span>
+            <span class="drawer-item-val" id="drawer-evac-room">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Check-in Timestamp</span>
+            <span class="drawer-item-val" id="drawer-evac-date">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Current Camp Status</span>
+            <span class="drawer-item-val" id="drawer-evac-status">—</span>
+          </div>
+        </div>
+
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+          <div class="typography-caption" style="color: var(--color-rose); font-weight: 600; margin-bottom: 4px;">
+            SPECIAL MEDICAL &amp; MAINTENANCE NEEDS:
+          </div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-evac-medical">None reported.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="closeDrrmDrawer()" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        Close
+      </button>
+      <button type="button" class="button-primary" id="btn-drawer-decamp" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        Decamp Family
+      </button>
+    </div>
+  </aside>
 
   <!-- Printable Container -->
   <div id="print-statutory-container" style="display:none;"></div>
@@ -807,7 +933,7 @@
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--color-text-muted);">
-              <span>Gen: ${c.has_generator ? 'âš¡ Yes' : 'âŒ No'} | Water: ${c.has_water_supply ? 'ðŸ’§ Yes' : 'âŒ No'}</span>
+              <span>Gen: ${c.has_generator ? 'Yes' : 'No'} | Water: ${c.has_water_supply ? 'Yes' : 'No'}</span>
               <span>${c.contact_no || ''}</span>
             </div>
           </div>
@@ -843,17 +969,18 @@
             <td>${e.purok_origin || e.purok}</td>
             <td><strong>${e.members_count}</strong></td>
             <td>
-              ${vulnTags.length ? vulnTags.map(t => `<span class="badge-neutral" style="font-size:0.625rem;">${t}</span>`).join(' ') : '<span class="text-muted">â€”</span>'}
-              ${e.special_medical_needs ? `<div style="font-size:0.6875rem; color:var(--color-rose); margin-top:2px;">âš•ï¸ ${e.special_medical_needs}</div>` : ''}
+              ${vulnTags.length ? vulnTags.map(t => `<span class="badge-neutral" style="font-size:0.625rem;">${t}</span>`).join(' ') : '<span class="text-muted">—</span>'}
+              ${e.special_medical_needs ? `<div style="font-size:0.6875rem; color:var(--color-rose); margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:2px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> ${e.special_medical_needs}</div>` : ''}
             </td>
             <td>
               <div>${e.center_name || 'Shelter'}</div>
               <small class="typography-caption text-muted">${e.room_tent_no || 'Tent'}</small>
             </td>
-            <td>${e.date_in || e.check_in_date || 'â€”'}</td>
+            <td>${e.date_in || e.check_in_date || '—'}</td>
             <td><span class="badge ${isSheltered ? 'badge-amber' : 'badge-green'}">${e.status}</span></td>
-            <td style="text-align:right;">
-              ${isSheltered ? `<button class="button-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="openDecampModal(${e.id})">Decamp</button>` : 'â€”'}
+            <td style="text-align:right; white-space:nowrap;">
+              <button class="button-outline" style="padding:4px 8px; font-size:0.75rem; margin-right:4px;" onclick="openEvacueeDrawer(${e.id})" title="View Family Dossier">View</button>
+              ${isSheltered ? `<button class="button-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="openDecampModal(${e.id})">Decamp</button>` : '—'}
             </td>
           </tr>
         `;
@@ -1157,6 +1284,101 @@
     function printDAFAC() {
       window.print();
     }
+
+    // Contextual Info Popover Toggle
+    window.toggleDrrmInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('drrm-info-popover');
+      if (!popover) return;
+      const isOpen = popover.style.display === 'block';
+      popover.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // Close DRRM Detail Drawer
+    window.closeDrrmDrawer = function() {
+      const drawer = document.getElementById('drrm-detail-drawer');
+      const backdrop = document.getElementById('drrm-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    // Switch DRRM Drawer Tabs
+    window.switchDrrmDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#drrm-detail-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const secDemo = document.getElementById('drrm-drawer-sec-demographics');
+      const secShelter = document.getElementById('drrm-drawer-sec-shelter');
+      if (secDemo) secDemo.style.display = tabName === 'demographics' ? 'block' : 'none';
+      if (secShelter) secShelter.style.display = tabName === 'shelter' ? 'block' : 'none';
+    };
+
+    // Open Evacuee Detail Drawer
+    window.openEvacueeDrawer = function(id) {
+      const evac = currentEvacuees.find(e => e.id == id);
+      if (!evac) return;
+
+      document.getElementById('drawer-evac-code').textContent = evac.evacuee_code || 'EVAC-LOG';
+      document.getElementById('drawer-evac-head').textContent = evac.family_head_name || evac.family_head || 'Family Head';
+      document.getElementById('drawer-evac-pax').textContent = evac.members_count || 1;
+      document.getElementById('drawer-evac-seniors').textContent = evac.seniors_count || 0;
+      document.getElementById('drawer-evac-children').textContent = evac.children_count || 0;
+      document.getElementById('drawer-evac-pwd').textContent = evac.pwd_count || 0;
+
+      document.getElementById('drawer-evac-purok').textContent = evac.purok_origin || evac.purok || '—';
+      document.getElementById('drawer-evac-contact').textContent = evac.contact_no || 'None on record';
+
+      const vulnTags = [];
+      if (evac.seniors_count > 0) vulnTags.push(`${evac.seniors_count} Senior`);
+      if (evac.children_count > 0) vulnTags.push(`${evac.children_count} Child`);
+      if (evac.pwd_count > 0) vulnTags.push(`${evac.pwd_count} PWD`);
+      if (evac.pregnant_lactating_count > 0) vulnTags.push('Pregnant');
+      document.getElementById('drawer-evac-vuln-badges').innerHTML = vulnTags.length ? vulnTags.map(t => `<span class="badge-neutral" style="font-size:0.6875rem;">${t}</span>`).join(' ') : '<span class="text-muted">Standard Population</span>';
+
+      document.getElementById('drawer-evac-center').textContent = evac.center_name || 'Designated Shelter';
+      document.getElementById('drawer-evac-room').textContent = evac.room_tent_no || 'General Ward / Floor';
+      document.getElementById('drawer-evac-date').textContent = evac.date_in || evac.check_in_date || '—';
+      document.getElementById('drawer-evac-status').textContent = evac.status || 'Sheltered';
+      document.getElementById('drawer-evac-medical').textContent = evac.special_medical_needs || 'No special medical maintenance needs noted.';
+
+      const decampBtn = document.getElementById('btn-drawer-decamp');
+      if (decampBtn) {
+        if (evac.status === 'Sheltered') {
+          decampBtn.style.display = 'inline-block';
+          decampBtn.onclick = function() {
+            closeDrrmDrawer();
+            openDecampModal(evac.id);
+          };
+        } else {
+          decampBtn.style.display = 'none';
+        }
+      }
+
+      const drawer = document.getElementById('drrm-detail-drawer');
+      const backdrop = document.getElementById('drrm-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
+    };
+
+    // Global keyboard and click listeners
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDrrmDrawer();
+        const popover = document.getElementById('drrm-info-popover');
+        if (popover && popover.style.display === 'block') popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('drrm-info-popover');
+      const trigger = document.getElementById('btn-drrm-info');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', async () => {
       if (window.AppSidebar) await AppSidebar.render('drrm');

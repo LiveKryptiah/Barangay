@@ -215,33 +215,27 @@
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
-        <section class="page-hero">
+        <!-- Level 1: Page Hero Section (Quiet, Focused) -->
+        <section class="page-hero" style="padding-bottom: var(--spacing-sm);">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Resident Registry.</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: 4px; position: relative;">
+                <h1 class="typography-heading-2">Residents</h1>
                 <span class="badge-neutral" id="resident-count-badge">0 Records</span>
+                <button type="button" class="info-trigger" onclick="toggleResidentInfoPopover(event)" title="View Registry Guidelines" aria-label="View Registry Guidelines">i</button>
+                <div class="info-popover-card" id="resident-info-popover">
+                  <div style="font-weight: 700; margin-bottom: 4px; font-size: 0.8125rem;">Barangay Registry of Inhabitants (RBI)</div>
+                  <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0; line-height: 1.4;">
+                    Official community registry mandated by RA 7160. Records household profiling, voter eligibility, senior citizens, and welfare priority.
+                  </p>
+                </div>
               </div>
-              <p class="typography-body-lg">
-                Official barangay demographic profiling, voter eligibility, and household roster.
+              <p class="typography-body-sm" style="color: var(--color-text-muted); margin: 0;">
+                Demographic profiling, voter eligibility, and household roster management.
               </p>
             </div>
-            <div style="display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;">
-              <a href="households.html" class="button-outline" title="Manage Household Profiles & Family Trees" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <span>Households &rarr;</span>
-              </a>
-              <a href="health.html" class="button-outline" title="Barangay Health Station & Nutrition Information System" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                </svg>
-                <span>Health Station &rarr;</span>
-              </a>
-              <button class="button-outline" id="btn-export-csv" title="Export current records to CSV spreadsheet" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+            <div style="display: flex; align-items: center; gap: var(--spacing-xs); flex-wrap: wrap;">
+              <button class="button-outline" id="btn-export-csv" title="Export current records to CSV spreadsheet" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
@@ -249,7 +243,7 @@
                 </svg>
                 <span>Export CSV</span>
               </button>
-              <button class="button-primary" id="btn-open-add-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+              <button class="button-primary" id="btn-open-add-modal" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
@@ -260,51 +254,38 @@
           </div>
         </section>
 
-        <!-- Demographics Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL RESIDENTS</span>
-                <span class="badge-neutral">Roster</span>
-              </div>
-              <div class="stat-number" id="stat-total-residents">0</div>
-              <div class="typography-caption" id="stat-sub-residents">0 households recorded</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">REGISTERED VOTERS</span>
-                <span class="badge-blue">Electoral</span>
-              </div>
-              <div class="stat-number" id="stat-total-voters">0</div>
-              <div class="typography-caption" id="stat-sub-voters">0% voter participation</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">SENIOR CITIZENS</span>
-                <span class="badge-amber">60+ Years</span>
-              </div>
-              <div class="stat-number" id="stat-total-seniors">0</div>
-              <div class="typography-caption" id="stat-sub-seniors">Elderly care eligible</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">SPECIAL ASSISTANCE</span>
-                <span class="badge-emerald">PWD / 4Ps</span>
-              </div>
-              <div class="stat-number" id="stat-total-assistance">0</div>
-              <div class="typography-caption" id="stat-sub-assistance">Welfare beneficiaries</div>
-            </div>
+        <!-- Level 1/2: Minimal Metrics Strip (Quiet, Borderless, Interactive) -->
+        <section class="metrics-strip">
+          <div class="metric-strip-item" title="Click to view all residents" onclick="resetFilters()">
+            <span class="metric-strip-val" id="stat-total-residents">0</span>
+            <span class="metric-strip-lbl">Total Residents</span>
           </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter registered voters" onclick="filterByClassificationQuick('voter')">
+            <span class="metric-strip-val" id="stat-total-voters">0</span>
+            <span class="metric-strip-lbl">Voters</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter senior citizens" onclick="filterByClassificationQuick('senior')">
+            <span class="metric-strip-val" id="stat-total-seniors">0</span>
+            <span class="metric-strip-lbl">Seniors (60+)</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter welfare assistance beneficiaries" onclick="filterByClassificationQuick('pwd')">
+            <span class="metric-strip-val" id="stat-total-assistance">0</span>
+            <span class="metric-strip-lbl">Special Assistance</span>
+          </div>
+          <!-- Hidden telemetry helper text targets to preserve all existing JS code bindings -->
+          <span id="stat-sub-residents" style="display:none;"></span>
+          <span id="stat-sub-voters" style="display:none;"></span>
+          <span id="stat-sub-seniors" style="display:none;"></span>
+          <span id="stat-sub-assistance" style="display:none;"></span>
         </section>
 
-        <!-- Filter & Search Toolbar -->
+        <!-- Level 2: Progressive Minimal Filter Bar -->
         <section>
-          <div class="filter-toolbar">
-            <div class="filter-group">
+          <div class="filter-bar-minimal">
+            <div class="filter-bar-left">
               <div class="search-input-wrap">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="11" cy="11" r="8"/>
@@ -312,44 +293,56 @@
                 </svg>
                 <input type="text" id="search-residents" class="text-input" placeholder="Search by name, address, or phone..." autocomplete="off">
               </div>
-
-              <!-- Purok Filter -->
-              <select id="filter-purok" class="filter-select">
-                <option value="">All Puroks / Zones</option>
-                <option value="Purok 1">Purok 1</option>
-                <option value="Purok 2">Purok 2</option>
-                <option value="Purok 3">Purok 3</option>
-                <option value="Purok 4">Purok 4</option>
-                <option value="Purok 5">Purok 5</option>
-                <option value="Purok 6">Purok 6</option>
-                <option value="Purok 7">Purok 7</option>
-                <option value="Sitio Center">Sitio Center</option>
-              </select>
-
-              <!-- Classification Filter -->
-              <select id="filter-classification" class="filter-select">
-                <option value="">All Classifications</option>
-                <option value="voter">Registered Voters</option>
-                <option value="senior">Senior Citizens (60+)</option>
-                <option value="pwd">PWD (Disability)</option>
-                <option value="soloParent">Solo Parents</option>
-                <option value="fourPs">4Ps Beneficiaries</option>
-                <option value="indigent">Indigent Families</option>
-              </select>
-
-              <!-- Gender Filter -->
-              <select id="filter-gender" class="filter-select">
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
+              <button type="button" class="filter-toggle-btn" id="btn-toggle-filters" onclick="toggleResidentFilterPanel()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+                <span>Filters</span>
+                <span id="active-filter-badge" class="badge-neutral" style="display: none; font-size: 0.6875rem; padding: 2px 6px;">0</span>
+              </button>
               <button id="btn-clear-filters" class="button-pill-soft" style="height: 34px; padding: 0 12px; font-size: 0.75rem; display: none;">
-                Reset Filters
+                Reset
               </button>
             </div>
+          </div>
+
+          <!-- Progressive Expandable Filter Drawer Panel -->
+          <div class="filter-expanded-panel" id="resident-filter-panel">
+            <select id="filter-purok" class="filter-select">
+              <option value="">All Puroks / Zones</option>
+              <option value="Purok 1">Purok 1</option>
+              <option value="Purok 2">Purok 2</option>
+              <option value="Purok 3">Purok 3</option>
+              <option value="Purok 4">Purok 4</option>
+              <option value="Purok 5">Purok 5</option>
+              <option value="Purok 6">Purok 6</option>
+              <option value="Purok 7">Purok 7</option>
+              <option value="Sitio Center">Sitio Center</option>
+            </select>
+
+            <select id="filter-classification" class="filter-select">
+              <option value="">All Classifications</option>
+              <option value="voter">Registered Voters</option>
+              <option value="senior">Senior Citizens (60+)</option>
+              <option value="pwd">PWD (Disability)</option>
+              <option value="soloParent">Solo Parents</option>
+              <option value="fourPs">4Ps Beneficiaries</option>
+              <option value="indigent">Indigent Families</option>
+            </select>
+
+            <select id="filter-gender" class="filter-select">
+              <option value="">All Genders</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
           </div>
         </section>
 
@@ -624,87 +617,101 @@
   </dialog>
 
   <!-- Resident Dossier View Modal -->
-  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 620px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
-      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-        <div id="dossier-avatar" class="resident-avatar" style="width: 44px; height: 44px; font-size: 1.125rem;">JD</div>
-        <div>
-          <h3 class="typography-heading-4" id="dossier-name">Juan Dela Cruz</h3>
-          <p class="typography-caption" id="dossier-purok">Purok 4 &bull; Resident</p>
+  <!-- Backdrop for Right-Side Slide-Over Drawers -->
+  <div class="app-drawer-backdrop" id="drawer-backdrop" onclick="closeResidentDrawer()"></div>
+
+  <!-- Resident Detail Slide-Over Drawer (Level 3 Deep Detail) -->
+  <aside class="app-drawer" id="dossier-drawer" aria-label="Resident Profile Dossier">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm); min-width: 0;">
+        <div id="dossier-avatar" class="resident-avatar" style="width: 42px; height: 42px; font-size: 1.125rem; flex-shrink: 0;">JD</div>
+        <div class="drawer-header-info">
+          <h3 class="drawer-title" id="dossier-name">Juan Dela Cruz</h3>
+          <p class="drawer-subtitle" id="dossier-purok">Purok 4 &bull; Community Member</p>
         </div>
       </div>
-      <button type="button" class="button-pill-soft" onclick="document.getElementById('dossier-modal').close();" style="height: 30px; padding: 0 10px;">
-        Close
+      <button type="button" class="drawer-close-btn" onclick="closeResidentDrawer()" title="Close details (Esc)" aria-label="Close details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
       </button>
     </div>
 
-    <div id="dossier-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--spacing-md);">
-      <!-- Injected badges -->
+    <div class="drawer-body">
+      <!-- Injected Classification Badges -->
+      <div id="dossier-badges" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+
+      <!-- Core Demographics Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Demographics & Identity</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Age & Birthdate</span>
+            <span class="drawer-item-value" id="dossier-age-bday">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Gender & Civil Status</span>
+            <span class="drawer-item-value" id="dossier-gender-civil">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Occupation</span>
+            <span class="drawer-item-value" id="dossier-occupation">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Voter Status</span>
+            <span class="drawer-item-value" id="dossier-voter">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Residence & Contact Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Residence & Contact</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item" style="grid-column: span 2;">
+            <span class="drawer-item-label">Address</span>
+            <span class="drawer-item-value" id="dossier-address">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Contact Number</span>
+            <span class="drawer-item-value" id="dossier-contact">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Emergency Contact</span>
+            <span class="drawer-item-value" id="dossier-emergency">-</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="dossier-grid">
-      <div class="dossier-item">
-        <span class="dossier-label">Age & Birthdate</span>
-        <span class="dossier-val" id="dossier-age-bday">-</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Gender & Civil Status</span>
-        <span class="dossier-val" id="dossier-gender-civil">-</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Address</span>
-        <span class="dossier-val" id="dossier-address">-</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Contact Number</span>
-        <span class="dossier-val" id="dossier-contact">-</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Occupation</span>
-        <span class="dossier-val" id="dossier-occupation">-</span>
-      </div>
-
-      <div class="dossier-item">
-        <span class="dossier-label">Voter Status</span>
-        <span class="dossier-val" id="dossier-voter">-</span>
-      </div>
-
-      <div class="dossier-item" style="grid-column: span 2;">
-        <span class="dossier-label">Emergency Contact</span>
-        <span class="dossier-val" id="dossier-emergency">-</span>
-      </div>
-    </div>
-
-    <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); margin-top: var(--spacing-lg); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-md);">
-      <button type="button" class="button-outline" id="dossier-btn-issue-id" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Quick Action Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" id="dossier-btn-issue-id" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect width="20" height="14" x="2" y="5" rx="2"/>
           <line x1="2" y1="10" x2="22" y2="10"/>
         </svg>
-        <span>Generate ID Card &rarr;</span>
+        <span>ID Card</span>
       </button>
-      <a href="health.html" class="button-outline" id="dossier-btn-health" style="height: 38px; padding: 0 16px; font-size: 0.8125rem; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
+      <a href="health.html" class="button-outline" id="dossier-btn-health" style="height: 36px; padding: 0 12px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
         </svg>
-        <span>Health Record &rarr;</span>
+        <span>Health</span>
       </a>
-      <button type="button" class="button-outline" id="dossier-btn-issue-cert" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="button-outline" id="dossier-btn-issue-cert" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
         </svg>
-        <span>Issue Clearance &rarr;</span>
+        <span>Clearance</span>
       </button>
-      <button type="button" class="button-primary" id="dossier-btn-edit" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
-        Edit Record
+      <button type="button" class="button-primary" id="dossier-btn-edit" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        Edit
       </button>
     </div>
-  </dialog>
+  </aside>
 
   <!-- Delete Confirmation Modal -->
   <dialog id="delete-modal" class="modal-dialog" style="max-width: 440px; width: 90%; text-align: center;">
@@ -830,6 +837,16 @@
 
       const hasActiveFilters = searchTerm || purokFilter || classFilter || genderFilter;
       document.getElementById('btn-clear-filters').style.display = hasActiveFilters ? 'inline-flex' : 'none';
+
+      let activeFilterCount = 0;
+      if (purokFilter) activeFilterCount++;
+      if (classFilter) activeFilterCount++;
+      if (genderFilter) activeFilterCount++;
+      const filterBadge = document.getElementById('active-filter-badge');
+      if (filterBadge) {
+        filterBadge.style.display = activeFilterCount > 0 ? 'inline-block' : 'none';
+        filterBadge.textContent = activeFilterCount;
+      }
 
       const filtered = allResidents.filter(res => {
         // Search term filter
@@ -1092,7 +1109,15 @@
       }
     };
 
-    // Open View Dossier Modal
+    // Slide-Over Drawer Controls
+    window.closeResidentDrawer = function() {
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    // Open View Dossier Drawer
     window.openDossierModal = async function(id) {
       try {
         const res = await window.barangayDB.get('residents', id);
@@ -1139,21 +1164,73 @@
           };
         }
 
+        const healthBtn = document.getElementById('dossier-btn-health');
+        if (healthBtn) {
+          healthBtn.href = `health.html?residentId=${res.id}`;
+        }
+
         document.getElementById('dossier-btn-issue-cert').onclick = () => {
           window.location.href = `certificates.html?residentId=${res.id}&name=${encodeURIComponent(fullName)}`;
         };
 
         document.getElementById('dossier-btn-edit').onclick = () => {
-          document.getElementById('dossier-modal').close();
+          closeResidentDrawer();
           openEditModal(res.id);
         };
 
-        document.getElementById('dossier-modal').showModal();
+        const drawer = document.getElementById('dossier-drawer');
+        const backdrop = document.getElementById('drawer-backdrop');
+        if (drawer) drawer.classList.add('active');
+        if (backdrop) backdrop.classList.add('active');
       } catch (e) {
         console.error(e);
         Toast.error('Could not open resident dossier.');
       }
     };
+
+    // Contextual info popover toggle
+    window.toggleResidentInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('resident-info-popover');
+      if (popover) {
+        popover.classList.toggle('active');
+      }
+    };
+
+    // Progressive filter panel toggle
+    window.toggleResidentFilterPanel = function() {
+      const panel = document.getElementById('resident-filter-panel');
+      const btn = document.getElementById('btn-toggle-filters');
+      if (panel) {
+        const isOpen = panel.classList.toggle('active');
+        if (btn) btn.classList.toggle('active', isOpen);
+      }
+    };
+
+    // Quick filter from metrics strip
+    window.filterByClassificationQuick = function(classType) {
+      const select = document.getElementById('filter-classification');
+      if (select) {
+        select.value = (select.value === classType) ? '' : classType;
+        applyFiltersAndRender();
+      }
+    };
+
+    // Close popovers and drawers on outside click or Escape
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('resident-info-popover');
+      if (popover && popover.classList.contains('active') && !e.target.closest('#resident-info-popover') && !e.target.closest('.info-trigger')) {
+        popover.classList.remove('active');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeResidentDrawer();
+        const popover = document.getElementById('resident-info-popover');
+        if (popover) popover.classList.remove('active');
+      }
+    });
 
     // Open Delete Confirmation Modal
     window.openDeleteModal = async function(id) {

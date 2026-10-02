@@ -350,20 +350,36 @@
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
-        <section class="page-hero">
+        <!-- Level 1: Page Hero Section (Quiet, Focused) -->
+        <section class="page-hero" style="padding-bottom: var(--spacing-sm);">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Household Profiling &amp; Family Tree.</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: 4px; position: relative;">
+                <h1 class="typography-heading-2">Households</h1>
                 <span class="badge-neutral" id="household-count-badge">0 Households</span>
+                <button type="button" class="info-trigger" onclick="toggleHouseholdInfoPopover(event)" title="View Household Profiling Guidelines" aria-label="View Household Profiling Guidelines">i</button>
+                <div class="info-popover-card" id="household-info-popover">
+                  <div style="font-weight: 700; margin-bottom: 4px; font-size: 0.8125rem;">Household & Dwelling Profiling</div>
+                  <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0; line-height: 1.4;">
+                    Tracks physical dwellings, housing tenure, sanitation access, and disaster hazard vulnerability. Maps family units and member hierarchies within each structure.
+                  </p>
+                </div>
               </div>
-              <p class="typography-body-lg">
-                Demographic family unit mapping, dwelling structure conditions, utilities access, and disaster hazard vulnerability.
+              <p class="typography-body-sm" style="color: var(--color-text-muted); margin: 0;">
+                Demographic family unit mapping, dwelling structure conditions, utilities access, and hazard vulnerability.
               </p>
             </div>
-            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-              <button class="button-outline" id="btn-export-csv" title="Export household census to CSV" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+            <div style="display: flex; align-items: center; gap: var(--spacing-xs); flex-wrap: wrap;">
+              <a href="families.html" class="button-outline" title="Manage Residing Families" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Families &rarr;</span>
+              </a>
+              <button class="button-outline" id="btn-export-csv" title="Export household census to CSV" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
@@ -371,69 +387,99 @@
                 </svg>
                 <span>Export CSV</span>
               </button>
-              <button class="button-primary" id="btn-open-household-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+              <button class="button-primary" id="btn-open-household-modal" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                <span>+ New Household Profile</span>
+                <span>New Household</span>
               </button>
             </div>
           </div>
         </section>
 
-        <!-- Demographic Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL HOUSEHOLDS</span>
-                <span class="badge-blue">Dwellings</span>
-              </div>
-              <div class="stat-number" id="stat-total-households">0</div>
-              <div class="typography-caption" id="stat-sub-households">0 residents mapped</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">AVERAGE FAMILY SIZE</span>
-                <span class="badge-neutral">Persons / Unit</span>
-              </div>
-              <div class="stat-number" id="stat-avg-family-size">0.0</div>
-              <div class="typography-caption" id="stat-sub-family-size">Based on active family rosters</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">VULNERABLE UNITS</span>
-                <span class="badge-amber">4Ps &bull; Low Income</span>
-              </div>
-              <div class="stat-number" id="stat-total-vulnerable">0</div>
-              <div class="typography-caption" id="stat-sub-vulnerable">Indigent / makeshift housing</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">HAZARD-PRONE UNITS</span>
-                <span class="badge-rose" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">Risk Zones</span>
-              </div>
-              <div class="stat-number" id="stat-total-hazard" style="color: #ef4444;">0</div>
-              <div class="typography-caption" id="stat-sub-hazard">Flood or landslide exposed</div>
-            </div>
+        <!-- Level 1/2: Minimal Metrics Strip (Quiet, Borderless) -->
+        <section class="metrics-strip">
+          <div class="metric-strip-item" title="Total registered households" onclick="resetHouseholdFilters()">
+            <span class="metric-strip-val" id="stat-total-households">0</span>
+            <span class="metric-strip-lbl">Total Households</span>
           </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Average family size">
+            <span class="metric-strip-val" id="stat-avg-family-size">0.0</span>
+            <span class="metric-strip-lbl">Avg Family Size</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter vulnerable units" onclick="filterByTenureQuick('Informal Settler')">
+            <span class="metric-strip-val" id="stat-total-vulnerable">0</span>
+            <span class="metric-strip-lbl">Vulnerable Units</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter hazard-prone units" onclick="filterByHazardQuick('Flood-Prone Area')">
+            <span class="metric-strip-val" id="stat-total-hazard" style="color: var(--color-ink);">0</span>
+            <span class="metric-strip-lbl">Hazard Prone</span>
+          </div>
+          <!-- Hidden telemetry helper text targets to preserve all existing JS code bindings -->
+          <span id="stat-sub-households" style="display:none;"></span>
+          <span id="stat-sub-family-size" style="display:none;"></span>
+          <span id="stat-sub-vulnerable" style="display:none;"></span>
+          <span id="stat-sub-hazard" style="display:none;"></span>
         </section>
 
-        <!-- Filter & Search Toolbar -->
-        <div class="filter-toolbar">
-          <div class="filter-group">
-            <div class="search-input-wrap">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input type="text" id="search-households" class="text-input" placeholder="Search by HH #, Family Head, Street...">
+        <!-- Level 2: Progressive Minimal Filter Bar -->
+        <section>
+          <div class="filter-bar-minimal">
+            <div class="filter-bar-left">
+              <div class="search-input-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="search-households" class="text-input" placeholder="Search by HH #, Family Head, Street..." autocomplete="off">
+              </div>
+              <button type="button" class="filter-toggle-btn" id="btn-toggle-filters" onclick="toggleHouseholdFilterPanel()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+                <span>Filters</span>
+                <span id="active-filter-badge" class="badge-neutral" style="display: none; font-size: 0.6875rem; padding: 2px 6px;">0</span>
+              </button>
+              <button id="btn-clear-filters" class="button-pill-soft" style="height: 34px; padding: 0 12px; font-size: 0.75rem; display: none;">
+                Reset
+              </button>
             </div>
 
+            <div class="view-toggle-wrap">
+              <button type="button" class="view-toggle-btn active" id="btn-view-cards" onclick="switchView('cards')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="7" height="7" x="3" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="14" rx="1"/>
+                  <rect width="7" height="7" x="3" y="14" rx="1"/>
+                </svg>
+                <span>Roster</span>
+              </button>
+              <button type="button" class="view-toggle-btn" id="btn-view-density" onclick="switchView('density')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"/>
+                  <line x1="12" y1="20" x2="12" y2="4"/>
+                  <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+                <span>Density</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Progressive Expandable Filter Drawer Panel -->
+          <div class="filter-expanded-panel" id="household-filter-panel">
             <select id="filter-purok" class="filter-select">
               <option value="">All Puroks / Zones</option>
               <option value="Purok 1">Purok 1</option>
@@ -461,32 +507,8 @@
               <option value="Landslide Hazard Zone">Landslide Hazard Zone</option>
               <option value="Fire-Prone Cluster">Fire-Prone Cluster</option>
             </select>
-
-            <button type="button" class="button-pill-soft" id="btn-clear-filters" style="display: none; height: 38px; padding: 0 12px; font-size: 0.75rem;">
-              Clear Filters
-            </button>
           </div>
-
-          <div class="view-toggle-wrap">
-            <button type="button" class="view-toggle-btn active" id="btn-view-cards" onclick="switchView('cards')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="7" height="7" x="3" y="3" rx="1"/>
-                <rect width="7" height="7" x="14" y="3" rx="1"/>
-                <rect width="7" height="7" x="14" y="14" rx="1"/>
-                <rect width="7" height="7" x="3" y="14" rx="1"/>
-              </svg>
-              <span>Household Roster</span>
-            </button>
-            <button type="button" class="view-toggle-btn" id="btn-view-density" onclick="switchView('density')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10"/>
-                <line x1="12" y1="20" x2="12" y2="4"/>
-                <line x1="6" y1="20" x2="6" y2="14"/>
-              </svg>
-              <span>Purok Density</span>
-            </button>
-          </div>
-        </div>
+        </section>
 
         <!-- MAIN VIEW 1: HOUSEHOLD CARDS GRID -->
         <div id="view-cards-container">
@@ -778,102 +800,112 @@
     </form>
   </dialog>
 
-  <!-- MODAL 2: HOUSEHOLD DOSSIER & FAMILY TREE VISUALIZATION -->
-  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 840px; width: 95%; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
-      <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-        <span class="badge-blue" id="dossier-hh-no">HH-2026-00001</span>
-        <span class="typography-heading-4" id="dossier-head-name">Family Dossier</span>
+  <!-- Backdrop for Right-Side Slide-Over Drawers -->
+  <div class="app-drawer-backdrop" id="drawer-backdrop" onclick="closeHouseholdDrawer()"></div>
+
+  <!-- Household Detail Slide-Over Drawer (Level 3 Deep Detail) -->
+  <aside class="app-drawer" id="dossier-drawer" aria-label="Household Profile Dossier" style="max-width: 600px;">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm); min-width: 0;">
+        <span class="badge-blue" id="dossier-hh-no" style="font-family: monospace;">HH-2026-00001</span>
+        <div class="drawer-header-info">
+          <h3 class="drawer-title" id="dossier-head-name">Family Dossier</h3>
+          <p class="drawer-subtitle" id="dossier-meta-count">0 Members</p>
+        </div>
       </div>
-      <div style="display: flex; gap: var(--spacing-xs);">
-        <button type="button" class="button-primary" id="btn-dossier-print" style="height: 34px; padding: 0 16px; font-size: 0.75rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9"/>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-            <rect width="12" height="8" x="6" y="14"/>
-          </svg>
-          <span>Print Census Sheet</span>
-        </button>
-        <button type="button" class="button-pill-soft" onclick="document.getElementById('dossier-modal').close();" style="height: 34px; padding: 0 12px; font-size: 0.75rem;">
-          Close
-        </button>
+      <button type="button" class="drawer-close-btn" onclick="closeHouseholdDrawer()" title="Close details (Esc)" aria-label="Close details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" id="hh-tab-tree" onclick="switchHouseholdDrawerTab('tree')">Hierarchy Tree</button>
+      <button type="button" class="drawer-tab" id="hh-tab-scorecard" onclick="switchHouseholdDrawerTab('scorecard')">Dwelling Scorecard</button>
+      <button type="button" class="drawer-tab" id="hh-tab-roster" onclick="switchHouseholdDrawerTab('roster')">Roster &amp; Families</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Family Tree Visual Hierarchy -->
+      <div id="hh-pane-tree" class="drawer-section">
+        <div class="drawer-section-title">Family Hierarchy Tree</div>
+        <div class="tree-diagram-container" id="tree-diagram-mount"></div>
+      </div>
+
+      <!-- Tab 2: Dwelling Scorecard Grid -->
+      <div id="hh-pane-scorecard" class="drawer-section" style="display: none;">
+        <div class="drawer-section-title">Dwelling &amp; Living Condition Scorecard</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Structure</span>
+            <span class="drawer-item-value" id="dossier-score-structure">-</span>
+            <span style="font-size: 0.6875rem; color: var(--color-text-muted);" id="dossier-score-tenure">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Water Supply</span>
+            <span class="drawer-item-value" id="dossier-score-water">-</span>
+            <span style="font-size: 0.6875rem; color: #10b981;">&#10003; Safe Supply</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Sanitation Facility</span>
+            <span class="drawer-item-value" id="dossier-score-toilet">-</span>
+            <span style="font-size: 0.6875rem; color: var(--color-text-muted);" id="dossier-score-power">-</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Disaster Hazard Rating</span>
+            <span class="drawer-item-value" id="dossier-score-hazard">-</span>
+            <span style="font-size: 0.6875rem; color: var(--color-text-muted);" id="dossier-score-income">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Complete Member Roster & Residing Families -->
+      <div id="hh-pane-roster" class="drawer-section" style="display: none;">
+        <div class="drawer-section-title">Registered Residential Roster</div>
+        <div class="member-table-wrap">
+          <table class="data-table" style="font-size: 0.75rem;">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Relation</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>Assistance</th>
+              </tr>
+            </thead>
+            <tbody id="dossier-members-tbody"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div class="drawer-section-title" style="margin: 0;">Residing Families</div>
+            <a href="families.html" class="button-outline" style="height: 24px; padding: 0 8px; font-size: 0.6875rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+              <span>Families Module &rarr;</span>
+            </a>
+          </div>
+          <div id="dossier-families-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Family Tree Visual Hierarchy -->
-    <div style="margin-bottom: var(--spacing-md);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs);">
-        <span class="typography-label" style="color: var(--color-primary);">FAMILY HIERARCHY TREE</span>
-        <span class="typography-caption" id="dossier-meta-count">0 Members</span>
-      </div>
-
-      <div class="tree-diagram-container" id="tree-diagram-mount"></div>
+    <!-- Quick Action Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-primary" id="btn-dossier-print" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect width="12" height="8" x="6" y="14"/>
+        </svg>
+        <span>Print Census Sheet</span>
+      </button>
+      <button type="button" class="button-outline" onclick="closeHouseholdDrawer()" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        Close
+      </button>
     </div>
-
-    <!-- Dwelling Scorecard Grid -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">STRUCTURE &amp; TENURE</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-score-structure">-</div>
-        <div style="font-size: 0.6875rem; color: var(--color-text-muted);" id="dossier-score-tenure">-</div>
-      </div>
-
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">WATER SUPPLY</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-score-water">-</div>
-        <div style="font-size: 0.6875rem; color: #10b981;">&#10003; Safe Supply</div>
-      </div>
-
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">SANITATION FACILITY</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-score-toilet">-</div>
-        <div style="font-size: 0.6875rem; color: var(--color-text-muted);" id="dossier-score-power">-</div>
-      </div>
-
-      <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm);">
-        <div class="typography-caption" style="color: var(--color-text-muted);">DISASTER HAZARD RATING</div>
-        <div style="font-weight: 700; font-size: 0.8125rem; margin-top: 2px;" id="dossier-score-hazard">-</div>
-        <div style="font-size: 0.6875rem; color: var(--color-text-muted);" id="dossier-score-income">-</div>
-      </div>
-    </div>
-
-    <!-- Complete Member Roster Table -->
-    <div style="margin-bottom: var(--spacing-sm);">
-      <span class="typography-label" style="color: var(--color-text-muted); margin-bottom: 6px; display: block;">
-        REGISTERED RESIDENTIAL ROSTER
-      </span>
-      <div class="member-table-wrap">
-        <table class="data-table" style="font-size: 0.8125rem;">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Relation</th>
-              <th>Age</th>
-              <th>Civil Status</th>
-              <th>Voter</th>
-              <th>Special Assistance</th>
-            </tr>
-          </thead>
-          <tbody id="dossier-members-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Residing Families in this Physical Dwelling -->
-    <div style="margin-top: var(--spacing-sm); margin-bottom: var(--spacing-sm);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span class="typography-label" style="color: var(--color-primary); font-weight: 700;">
-          RESIDING FAMILIES (MGA PAMILYA SA SAMBAHAYAN)
-        </span>
-        <a href="families.html" class="button-outline" style="height: 26px; padding: 0 10px; font-size: 0.6875rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-          <span>Go to Families Module &rarr;</span>
-        </a>
-      </div>
-      <div id="dossier-families-list" style="display: flex; flex-direction: column; gap: 8px;">
-        <!-- Populated dynamically via JS -->
-      </div>
-    </div>
-  </dialog>
+  </aside>
 
   <!-- MODAL 3: PRINTABLE CERTIFICATE OF FAMILY COMPOSITION -->
   <dialog id="print-modal" class="modal-dialog" style="max-width: 860px; width: 95%; max-height: 90vh; overflow-y: auto;">
@@ -1150,6 +1182,16 @@
 
       const hasActive = search || purok || tenure || hazard;
       document.getElementById('btn-clear-filters').style.display = hasActive ? 'inline-flex' : 'none';
+
+      let activeCount = 0;
+      if (purok) activeCount++;
+      if (tenure) activeCount++;
+      if (hazard) activeCount++;
+      const filterBadge = document.getElementById('active-filter-badge');
+      if (filterBadge) {
+        filterBadge.style.display = activeCount > 0 ? 'inline-block' : 'none';
+        filterBadge.textContent = activeCount;
+      }
 
       const filtered = allHouseholds.filter(h => {
         if (search) {
@@ -1686,8 +1728,90 @@
         console.warn('Could not load linked families:', err);
       }
 
-      document.getElementById('dossier-modal').showModal();
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
+      switchHouseholdDrawerTab('tree');
     };
+
+    // Household Drawer Controls & Tab Switching
+    window.closeHouseholdDrawer = function() {
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchHouseholdDrawerTab = function(tabName) {
+      document.querySelectorAll('.drawer-tabs .drawer-tab').forEach(b => b.classList.remove('active'));
+      const tabBtn = document.getElementById(`hh-tab-${tabName}`);
+      if (tabBtn) tabBtn.classList.add('active');
+
+      const panes = ['tree', 'scorecard', 'roster'];
+      panes.forEach(p => {
+        const pane = document.getElementById(`hh-pane-${p}`);
+        if (pane) pane.style.display = (p === tabName) ? 'block' : 'none';
+      });
+    };
+
+    // Quick Metrics Strip Filters
+    window.resetHouseholdFilters = function() {
+      document.getElementById('search-households').value = '';
+      document.getElementById('filter-purok').value = '';
+      document.getElementById('filter-tenure').value = '';
+      document.getElementById('filter-hazard').value = '';
+      renderFilteredHouseholds();
+    };
+
+    window.filterByTenureQuick = function(tenureVal) {
+      const sel = document.getElementById('filter-tenure');
+      if (sel) {
+        sel.value = (sel.value === tenureVal) ? '' : tenureVal;
+        renderFilteredHouseholds();
+      }
+    };
+
+    window.filterByHazardQuick = function(hazardVal) {
+      const sel = document.getElementById('filter-hazard');
+      if (sel) {
+        sel.value = (sel.value === hazardVal) ? '' : hazardVal;
+        renderFilteredHouseholds();
+      }
+    };
+
+    // Contextual Info Popover
+    window.toggleHouseholdInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const pop = document.getElementById('household-info-popover');
+      if (pop) pop.classList.toggle('active');
+    };
+
+    // Progressive Filter Panel Toggle
+    window.toggleHouseholdFilterPanel = function() {
+      const panel = document.getElementById('household-filter-panel');
+      const btn = document.getElementById('btn-toggle-filters');
+      if (panel) {
+        const isOpen = panel.classList.toggle('active');
+        if (btn) btn.classList.toggle('active', isOpen);
+      }
+    };
+
+    // Close popovers and drawers on outside click or Escape
+    document.addEventListener('click', (e) => {
+      const pop = document.getElementById('household-info-popover');
+      if (pop && pop.classList.contains('active') && !e.target.closest('#household-info-popover') && !e.target.closest('.info-trigger')) {
+        pop.classList.remove('active');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeHouseholdDrawer();
+        const pop = document.getElementById('household-info-popover');
+        if (pop) pop.classList.remove('active');
+      }
+    });
 
     // Open Print Modal
     window.openPrintModal = function(id) {
@@ -1817,7 +1941,7 @@
 
       // Dossier print shortcut
       document.getElementById('btn-dossier-print').addEventListener('click', () => {
-        document.getElementById('dossier-modal').close();
+        closeHouseholdDrawer();
         if (activeHouseholdForAction) {
           openPrintModal(activeHouseholdForAction.id);
         }

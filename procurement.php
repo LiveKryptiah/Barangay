@@ -231,30 +231,42 @@ require_auth('login.php');
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
+        <!-- Level 1 Primary: Ultra-Quiet Hero Section -->
         <section class="page-hero">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
-            <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Bids, Awards &amp; Procurement Hub.</h1>
-                <span class="badge-neutral" style="display: inline-flex; align-items: center; gap: 6px;">
-                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #f59e0b;"></span>
-                  RA 9184 &bull; BAC Secretariat
-                </span>
-                <span class="badge-neutral" style="font-size: 0.6875rem;">DILG Full Disclosure</span>
+            <div style="position: relative;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h1 class="typography-heading-2">Bids &amp; Awards (BAC).</h1>
+                <button type="button" class="info-trigger" onclick="toggleProcInfoPopover(event)" title="View Procurement Guidelines" aria-label="View Procurement Guidelines">i</button>
+                <span class="badge-neutral" style="display: none;" id="stat-fy-badge">FY 2026</span>
+                <span class="badge-neutral" style="display: none;" id="stat-active-badge">Active</span>
               </div>
-              <p class="typography-body-lg">
-                Statutory procurement pipeline, sealed canvass quotation matrix, automated Lowest Calculated and Responsive Bid (LCRB) evaluation, and Annual Investment Program (AIP) budget tracking.
+              <p class="typography-body-lg" style="margin-top: 4px;">
+                Statutory procurement pipeline, sealed canvass quotation matrix, automated LCRB evaluation, and AIP budget tracking.
               </p>
+
+              <!-- Contextual Info Popover Card -->
+              <div class="info-popover-card" id="procurement-info-popover" style="display: none;">
+                <div style="font-weight: 700; margin-bottom: 6px; font-size: 0.875rem;">Procurement Governance (RA 9184)</div>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+                  Standard statutory procedures for the Barangay Bids and Awards Committee (BAC):
+                </p>
+                <ul style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; padding-left: 16px; margin: 0;">
+                  <li><strong>Purchase Request (PR):</strong> Formal requisition of goods/services matched to approved AIP budget appropriations.</li>
+                  <li><strong>Canvass &amp; RFQ:</strong> Minimum of three (3) price quotations for Small Value Procurement (SVP) or Shopping.</li>
+                  <li><strong>LCRB Evaluation:</strong> Automatic determination of Lowest Calculated and Responsive Bid for BAC award resolution.</li>
+                  <li><strong>Purchase Order &amp; IAR:</strong> Contract issuance, delivery inspection, and COA acceptance documentation.</li>
+                </ul>
+              </div>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-              <button class="button-outline" onclick="openNewBidModal();" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+              <button type="button" class="button-outline" onclick="openNewBidModal();" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 5v14M5 12h14"/>
                 </svg>
                 <span>Record Canvass Bid</span>
               </button>
-              <button class="button-primary" onclick="openNewPRModal();" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+              <button type="button" class="button-primary" onclick="openNewPRModal();" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
@@ -265,76 +277,34 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Telemetry Ladder (4 Metric Cards) -->
-        <section class="stats-ladder" aria-label="Procurement Telemetry">
-          <!-- Card 1: Total AIP Appropriations -->
-          <div class="card" style="padding: var(--spacing-md); border: 1px solid var(--color-hairline-soft);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption" style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--color-text-muted);">
-                AIP Budget Appropriations
-              </span>
-              <span class="badge-neutral" style="font-size: 0.625rem;" id="stat-fy-badge">FY 2026</span>
-            </div>
-            <div class="typography-heading-1" style="font-size: 1.625rem; font-weight: 800; margin-top: 6px;" id="stat-total-budget">
-              &#8369;0.00
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
-              <span id="stat-sub-budget">Across statutory funds</span>
-              <span style="font-weight: 600; color: var(--color-ink);" id="stat-budget-pct">0% Obligated</span>
-            </div>
+        <!-- Level 1 Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-total-budget">&#8369;0.00</div>
+            <div class="metric-strip-lbl">AIP Budget</div>
+            <span id="stat-sub-budget" style="display: none;"></span>
+            <span id="stat-budget-pct" style="display: none;"></span>
           </div>
-
-          <!-- Card 2: Contract Obligations -->
-          <div class="card" style="padding: var(--spacing-md); border: 1px solid var(--color-hairline-soft);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption" style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--color-text-muted);">
-                Obligated / Committed Funds
-              </span>
-              <span class="badge-neutral" style="font-size: 0.625rem; color: #3b82f6;">Committed</span>
-            </div>
-            <div class="typography-heading-1" style="font-size: 1.625rem; font-weight: 800; margin-top: 6px;" id="stat-total-obligated">
-              &#8369;0.00
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
-              <span>Unallocated Balance:</span>
-              <span style="font-weight: 600; color: #10b981;" id="stat-balance-remaining">&#8369;0.00</span>
-            </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-total-obligated">&#8369;0.00</div>
+            <div class="metric-strip-lbl">Committed Funds</div>
+            <span id="stat-balance-remaining" style="display: none;"></span>
           </div>
-
-          <!-- Card 3: Active Procurement Pipeline -->
-          <div class="card" style="padding: var(--spacing-md); border: 1px solid var(--color-hairline-soft);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption" style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--color-text-muted);">
-                Procurement Pipeline
-              </span>
-              <span class="badge-neutral" style="font-size: 0.625rem; color: #f59e0b;" id="stat-active-badge">Active</span>
-            </div>
-            <div class="typography-heading-1" style="font-size: 1.625rem; font-weight: 800; margin-top: 6px;" id="stat-active-projects">
-              0
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
-              <span id="stat-pipeline-sub">0 Canvass &bull; 0 Evaluated</span>
-              <span style="font-weight: 600; color: var(--color-ink);" id="stat-total-projects">0 Total</span>
-            </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-active-projects">0</div>
+            <div class="metric-strip-lbl">Active Pipeline</div>
+            <span id="stat-pipeline-sub" style="display: none;"></span>
+            <span id="stat-total-projects" style="display: none;"></span>
           </div>
-
-          <!-- Card 4: Statutory Fiscal Savings -->
-          <div class="card" style="padding: var(--spacing-md); border: 1px solid var(--color-hairline-soft);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption" style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--color-text-muted);">
-                Statutory Fiscal Savings
-              </span>
-              <span class="badge-neutral" style="font-size: 0.625rem; color: #10b981;">LCRB Gain</span>
-            </div>
-            <div class="typography-heading-1" style="font-size: 1.625rem; font-weight: 800; margin-top: 6px; color: #10b981;" id="stat-total-savings">
-              &#8369;0.00
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
-              <span>Savings vs ABC</span>
-              <span style="font-weight: 600; color: var(--color-ink);" id="stat-awarded-contracts">0 Contracts</span>
-            </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-total-savings" style="color: #10b981;">&#8369;0.00</div>
+            <div class="metric-strip-lbl">LCRB Fiscal Savings</div>
+            <span id="stat-awarded-contracts" style="display: none;"></span>
           </div>
-        </section>
+        </div>
 
         <!-- Studio Tab Navigation -->
         <nav class="proc-tab-nav" aria-label="Procurement Views">
@@ -358,14 +328,31 @@ require_auth('login.php');
         <!-- TAB 1: BAC PIPELINE & TRACKING VIEW                     -->
         <!-- ======================================================= -->
         <div id="view-pipeline" style="display: block;">
-          <!-- Filter Toolbar -->
-          <div class="studio-card" style="padding: 12px 16px; margin-bottom: var(--spacing-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-              <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 260px;">
-                <input type="text" id="pipeline-search" class="text-input" placeholder="Search PR No., PO No., Title, PhilGEPS Ref, Supplier..." oninput="filterPipeline();" style="font-size: 0.8125rem;">
-              </div>
-              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <select id="pipeline-status-filter" class="text-input" onchange="filterPipeline();" style="width: auto; font-size: 0.8125rem;">
+          <!-- Level 2 Progressive Minimal Filter Bar -->
+          <div class="filter-bar-minimal">
+            <div class="search-input-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="pipeline-search" class="text-input" placeholder="Search PR No., PO No., Title, PhilGEPS Ref, Supplier..." oninput="filterPipeline();" autocomplete="off">
+            </div>
+
+            <button type="button" class="filter-toggle-btn" id="pipeline-filter-toggle-btn" onclick="toggleProcFilterPanel()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              <span>Filters</span>
+              <span class="filter-count-badge" id="pipeline-filter-badge" style="display: none;">0</span>
+            </button>
+          </div>
+
+          <!-- Expandable Filter Panel -->
+          <div class="filter-expanded-panel" id="pipeline-filter-panel" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; width: 100%;">
+              <div>
+                <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Project Status</label>
+                <select id="pipeline-status-filter" class="filter-select" onchange="filterPipeline();" style="width: 100%;">
                   <option value="">All Project Statuses</option>
                   <option value="PR Draft">PR Draft</option>
                   <option value="Approved for Canvass">Approved for Canvass</option>
@@ -376,8 +363,11 @@ require_auth('login.php');
                   <option value="Completed">Completed</option>
                   <option value="Cancelled">Cancelled</option>
                 </select>
+              </div>
 
-                <select id="pipeline-mode-filter" class="text-input" onchange="filterPipeline();" style="width: auto; font-size: 0.8125rem;">
+              <div>
+                <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Procurement Mode</label>
+                <select id="pipeline-mode-filter" class="filter-select" onchange="filterPipeline();" style="width: 100%;">
                   <option value="">All Procurement Modes</option>
                   <option value="Small Value Procurement (SVP)">Small Value Procurement (SVP)</option>
                   <option value="Competitive Public Bidding">Competitive Public Bidding</option>
@@ -821,6 +811,124 @@ require_auth('login.php');
     </form>
   </dialog>
 
+  <!-- Slide-Over Detail Drawer: Project Dossier -->
+  <div class="app-drawer-backdrop" id="procurement-drawer-backdrop" onclick="closeProcDrawer()"></div>
+  <aside class="app-drawer" id="procurement-detail-drawer" aria-label="Procurement Project Dossier">
+    <div class="drawer-header">
+      <div>
+        <h3 class="drawer-title" id="drawer-proc-title">Procurement Dossier</h3>
+        <p class="typography-caption" id="drawer-proc-ref">PR Reference &bull; Status</p>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeProcDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchProcDrawerTab('summary', this)">Summary</button>
+      <button type="button" class="drawer-tab" onclick="switchProcDrawerTab('bids', this)">Canvass &amp; LCRB</button>
+      <button type="button" class="drawer-tab" onclick="switchProcDrawerTab('docs', this)">Documents</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Summary -->
+      <div id="proc-drawer-sec-summary" class="drawer-section">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Purchase Request (PR) No.</span>
+            <span class="drawer-item-val" id="drawer-proc-pr" style="font-family: monospace; font-weight: 700;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Purchase Order (PO) No.</span>
+            <span class="drawer-item-val" id="drawer-proc-po" style="font-family: monospace; font-weight: 700; color: #10b981;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Project Title</span>
+            <span class="drawer-item-val" id="drawer-proc-name" style="font-weight: 600;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Implementing / End-User Committee</span>
+            <span class="drawer-item-val" id="drawer-proc-committee">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Procurement Mode</span>
+            <span class="drawer-item-val" id="drawer-proc-mode">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Fund Source</span>
+            <span class="drawer-item-val" id="drawer-proc-fund">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Approved Budget for the Contract (ABC)</span>
+            <span class="drawer-item-val" id="drawer-proc-abc" style="font-weight: 700; font-size: 1rem;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Pipeline Status</span>
+            <span class="drawer-item-val" id="drawer-proc-status">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Canvass & LCRB -->
+      <div id="proc-drawer-sec-bids" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Winning / Awarded Bidder</span>
+            <span class="drawer-item-val" id="drawer-proc-bidder" style="font-weight: 700;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Contract / Awarded Amount</span>
+            <span class="drawer-item-val" id="drawer-proc-award-amt" style="font-weight: 700; color: #10b981;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Statutory Fiscal Savings (vs ABC)</span>
+            <span class="drawer-item-val" id="drawer-proc-savings" style="font-weight: 700; color: #10b981;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Total Sealed Bids Received</span>
+            <span class="drawer-item-val" id="drawer-proc-bid-count">&mdash;</span>
+          </div>
+          <div id="drawer-proc-bids-list" style="margin-top: 8px;">
+            <!-- Bid items list -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Documents & Statutory Forms -->
+      <div id="proc-drawer-sec-docs" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <p class="typography-caption" style="color: var(--color-text-muted);">
+            Generate and print official RA 9184 statutory documents for this procurement project:
+          </p>
+          <button type="button" class="button-outline" id="btn-drawer-print-pr" style="justify-content: flex-start; gap: 8px; height: 38px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Print Purchase Request (PR Form Annex A)</span>
+          </button>
+          <button type="button" class="button-outline" id="btn-drawer-eval-abstract" style="justify-content: flex-start; gap: 8px; height: 38px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Evaluate Abstract of Bids (Canvass Matrix)</span>
+          </button>
+          <button type="button" class="button-outline" id="btn-drawer-print-po" style="justify-content: flex-start; gap: 8px; height: 38px; color: #10b981;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            <span>Print Purchase Order (PO Contract)</span>
+          </button>
+          <button type="button" class="button-outline" id="btn-drawer-print-iar" style="justify-content: flex-start; gap: 8px; height: 38px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Print Inspection &amp; Acceptance Report (IAR)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <button type="button" class="table-action-btn danger" id="btn-drawer-delete-project" style="height: 36px; padding: 0 14px;">
+        Delete Project
+      </button>
+      <button type="button" class="button-pill-soft" onclick="closeProcDrawer()" style="height: 36px; padding: 0 16px;">
+        Close
+      </button>
+    </div>
+  </aside>
+
   <!-- ======================================================= -->
   <!-- STATUTORY PRINT CONTAINER (OFFICIAL RA 9184 FORMS)     -->
   <!-- ======================================================= -->
@@ -953,6 +1061,15 @@ require_auth('login.php');
       const statusFilter = document.getElementById('pipeline-status-filter').value;
       const modeFilter = document.getElementById('pipeline-mode-filter').value;
 
+      const badge = document.getElementById('pipeline-filter-badge');
+      if (badge) {
+        let count = 0;
+        if (statusFilter) count++;
+        if (modeFilter) count++;
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-flex' : 'none';
+      }
+
       const filtered = allProjects.filter(p => {
         const matchesQ = !q ||
           (p.prNumber || '').toLowerCase().includes(q) ||
@@ -968,6 +1085,17 @@ require_auth('login.php');
       });
 
       renderPipelineTable(filtered);
+    };
+
+    window.toggleProcFilterPanel = function() {
+      const panel = document.getElementById('pipeline-filter-panel');
+      const btn = document.getElementById('pipeline-filter-toggle-btn');
+      if (panel) {
+        const isOpen = panel.style.display === 'none';
+        panel.style.display = isOpen ? 'block' : 'none';
+        panel.classList.toggle('open', isOpen);
+        if (btn) btn.classList.toggle('active', isOpen);
+      }
     };
 
     // Render Pipeline Table
@@ -1001,11 +1129,11 @@ require_auth('login.php');
 
         return `
           <tr>
-            <td>
+            <td style="cursor: pointer;" onclick="openProcDrawer(${p.id});" title="Click to view project dossier">
               <strong style="color: var(--color-ink); font-family: monospace;">${p.prNumber || p.pr_number}</strong>
               ${p.poNumber ? `<br><span style="font-size: 0.6875rem; color: #10b981; font-family: monospace; font-weight: 600;">${p.poNumber}</span>` : ''}
             </td>
-            <td>
+            <td style="cursor: pointer;" onclick="openProcDrawer(${p.id});" title="Click to view project dossier">
               <div style="font-weight: 600; color: var(--color-ink);">${p.projectTitle || p.project_title}</div>
               <div style="font-size: 0.6875rem; color: var(--color-text-muted);">${p.endUserCommittee || p.end_user_committee || 'General'}</div>
             </td>
@@ -1026,6 +1154,9 @@ require_auth('login.php');
             </td>
             <td style="text-align: right; white-space: nowrap;">
               <div style="display: inline-flex; gap: 4px;">
+                <button type="button" class="button-outline" style="height: 28px; padding: 0 8px; font-size: 0.6875rem;" onclick="openProcDrawer(${p.id});" title="Open Project Dossier">
+                  Dossier
+                </button>
                 <button type="button" class="button-outline" style="height: 28px; padding: 0 8px; font-size: 0.6875rem;" onclick="openAbstractView(${p.id});" title="View &amp; Evaluate Abstract of Bids">
                   Abstract
                 </button>
@@ -1872,6 +2003,117 @@ require_auth('login.php');
 
       window.print();
     };
+
+    // Slide-Over Detail Drawer & Popover Handlers
+    window.openProcDrawer = function(id) {
+      const p = allProjects.find(x => x.id === Number(id));
+      if (!p) return;
+
+      selectedProjectId = p.id;
+      const bids = allBids.filter(b => b.projectId === p.id || b.project_id === p.id);
+
+      document.getElementById('drawer-proc-title').textContent = p.projectTitle || p.project_title || 'Procurement Dossier';
+      document.getElementById('drawer-proc-ref').textContent = `${p.prNumber || p.pr_number} • ${p.status}`;
+      document.getElementById('drawer-proc-pr').textContent = p.prNumber || p.pr_number;
+      document.getElementById('drawer-proc-po').textContent = p.poNumber || 'Not yet issued';
+      document.getElementById('drawer-proc-name').textContent = p.projectTitle || p.project_title;
+      document.getElementById('drawer-proc-committee').textContent = p.endUserCommittee || p.end_user_committee || 'General Administration';
+      document.getElementById('drawer-proc-mode').textContent = p.procurementMode || p.procurement_mode;
+      document.getElementById('drawer-proc-fund').textContent = p.fundSource || p.fund_source;
+      document.getElementById('drawer-proc-abc').innerHTML = formatCurrency(p.abcAmount || p.abc_amount);
+      document.getElementById('drawer-proc-status').innerHTML = `<span class="badge-neutral">${p.status}</span>`;
+
+      // Bids tab
+      document.getElementById('drawer-proc-bidder').textContent = p.winningBidder || 'None / Pending Evaluation';
+      document.getElementById('drawer-proc-award-amt').innerHTML = p.winningAmount ? formatCurrency(p.winningAmount) : '&mdash;';
+      const savings = (p.abcAmount && p.winningAmount) ? Math.max(0, parseFloat(p.abcAmount) - parseFloat(p.winningAmount)) : 0;
+      document.getElementById('drawer-proc-savings').innerHTML = savings > 0 ? formatCurrency(savings) : '&mdash;';
+      document.getElementById('drawer-proc-bid-count').textContent = `${bids.length} Canvass Quotation(s)`;
+
+      const bidsList = document.getElementById('drawer-proc-bids-list');
+      if (bidsList) {
+        if (bids.length === 0) {
+          bidsList.innerHTML = '<p class="typography-caption" style="color: var(--color-text-muted);">No sealed canvass bids recorded yet.</p>';
+        } else {
+          bidsList.innerHTML = bids.map(b => `
+            <div style="padding: 8px 10px; border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-sm); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="font-size: 0.8125rem;">${b.supplierName || b.supplier_name}</strong>
+                <div style="font-size: 0.6875rem; color: var(--color-text-muted);">${b.isResponsive ? 'Responsive' : 'Non-responsive'}</div>
+              </div>
+              <div style="font-weight: 700; font-size: 0.8125rem;">${formatCurrency(b.bidAmount || b.bid_amount)}</div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Actions in docs tab
+      document.getElementById('btn-drawer-print-pr').onclick = () => printPRDocument(p.id);
+      document.getElementById('btn-drawer-eval-abstract').onclick = () => {
+        closeProcDrawer();
+        openAbstractView(p.id);
+      };
+      const btnPo = document.getElementById('btn-drawer-print-po');
+      if (btnPo) {
+        btnPo.style.display = p.poNumber ? 'inline-flex' : 'none';
+        btnPo.onclick = () => printPODocument(p.id);
+      }
+      const btnIar = document.getElementById('btn-drawer-print-iar');
+      if (btnIar) {
+        btnIar.style.display = p.poNumber ? 'inline-flex' : 'none';
+        btnIar.onclick = () => printIARDocument(p.id);
+      }
+
+      document.getElementById('btn-drawer-delete-project').onclick = () => {
+        closeProcDrawer();
+        deleteProject(p.id);
+      };
+
+      const drawer = document.getElementById('procurement-detail-drawer');
+      const backdrop = document.getElementById('procurement-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
+    };
+
+    window.closeProcDrawer = function() {
+      const drawer = document.getElementById('procurement-detail-drawer');
+      const backdrop = document.getElementById('procurement-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchProcDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#procurement-detail-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('#procurement-detail-drawer .drawer-section').forEach(s => s.style.display = 'none');
+      const sec = document.getElementById(`proc-drawer-sec-${tabName}`);
+      if (sec) sec.style.display = 'block';
+    };
+
+    window.toggleProcInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('procurement-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    };
+
+    // Close drawer and popover on click outside or Escape
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('procurement-info-popover');
+      if (popover && popover.style.display === 'block' && !e.target.closest('#procurement-info-popover') && !e.target.closest('.info-trigger')) {
+        popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeProcDrawer();
+        const popover = document.getElementById('procurement-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>

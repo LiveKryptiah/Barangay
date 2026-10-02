@@ -51,140 +51,45 @@ exit;
   <!-- Main Content Area -->
   <main class="auth-page-container">
 
-    <div class="auth-card" style="max-width: 540px;">
+    <div class="auth-card" style="text-align: center; max-width: 500px;">
       <div class="mb-lg">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-xs);">
-          <h1 id="page-title" class="typography-heading-3">Create an account.</h1>
-          <span id="role-badge" class="badge-neutral" style="display: none;">Initial Setup</span>
+        <div class="nav-brand-icon" style="width: 48px; height: 48px; margin: 0 auto var(--spacing-sm); border-radius: var(--rounded-md);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
         </div>
-        <p id="page-subtitle" class="typography-body-lg">Register official credentials with persistent MySQL storage.</p>
+        <h1 class="typography-heading-3 mb-xs">BarangayOS Registration</h1>
+        <p class="typography-body-sm" style="color: var(--color-text-muted);">
+          Open-Source Local Government Administration System (PHP &amp; MySQL)
+        </p>
       </div>
 
-      <!-- Account Role Segmented Control -->
-      <div class="form-group mb-lg" id="role-selector-group">
-        <label class="form-label">Account Role</label>
-        <div class="segmented-control" role="tablist">
-          <button type="button" class="segmented-control-option active" data-role="admin">
-            Administrator
-          </button>
-          <button type="button" class="segmented-control-option" data-role="staff">
-            Barangay Staff
-          </button>
-          <button type="button" class="segmented-control-option" data-role="official">
-            Barangay Official
-          </button>
+      <div style="background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); text-align: left;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+          <span class="typography-label" style="color: var(--color-ink); font-weight: 700;">DEFAULT ADMIN PROVISIONED</span>
+          <span class="badge-emerald">Active</span>
         </div>
-        <input type="hidden" id="selected-role" value="admin">
+        <p class="typography-body-sm" style="color: var(--color-text-muted);">
+          An active administrator profile is automatically pre-configured. Manual account registration is bypassed in demo mode.
+        </p>
       </div>
 
-      <form id="register-form" autocomplete="off">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="full-name">Full Legal Name</label>
-            <div class="text-input-wrap">
-              <input 
-                type="text" 
-                id="full-name" 
-                class="text-input" 
-                placeholder="e.g. Hon. Juan Dela Cruz" 
-                required
-              >
-            </div>
-          </div>
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+        <a href="dashboard.php" class="button-primary w-full" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>Enter Operations Console</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
 
-          <div class="form-group">
-            <label class="form-label" for="position">Position / Designation</label>
-            <div class="text-input-wrap">
-              <select id="position" name="position" class="text-input" required>
-                <optgroup label="Elected Barangay Officials">
-                  <option value="Punong Barangay (Barangay Captain)" selected>Punong Barangay (Barangay Captain)</option>
-                  <option value="Barangay Kagawad (Councilor)">Barangay Kagawad (Councilor)</option>
-                  <option value="SK Chairperson (Youth Council)">SK Chairperson (Youth Council)</option>
-                </optgroup>
-                <optgroup label="Appointive Officials & Administrative Staff">
-                  <option value="Barangay Secretary">Barangay Secretary</option>
-                  <option value="Barangay Treasurer">Barangay Treasurer</option>
-                  <option value="Barangay Administrator">Barangay Administrator</option>
-                  <option value="Barangay Records Officer / Clerk">Barangay Records Officer / Clerk</option>
-                </optgroup>
-                <optgroup label="Peace, Order & Community Services">
-                  <option value="Barangay Tanod (Executive Officer)">Barangay Tanod (Executive Officer)</option>
-                  <option value="Lupong Tagapamayapa (Mediator)">Lupong Tagapamayapa (Mediator)</option>
-                  <option value="Barangay Health Worker (BHW)">Barangay Health Worker (BHW)</option>
-                  <option value="Barangay Nutrition Scholar (BNS)">Barangay Nutrition Scholar (BNS)</option>
-                </optgroup>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="username">Username</label>
-            <div class="text-input-wrap">
-              <input 
-                type="text" 
-                id="username" 
-                class="text-input" 
-                placeholder="e.g. brgy_admin" 
-                required
-              >
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="email">Official Email Address</label>
-            <div class="text-input-wrap">
-              <input 
-                type="email" 
-                id="email" 
-                class="text-input" 
-                placeholder="e.g. admin@barangay.local" 
-                required
-              >
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="password">Password</label>
-            <div class="text-input-wrap">
-              <input 
-                type="password" 
-                id="password" 
-                class="text-input" 
-                placeholder="Minimum 6 characters" 
-                required
-              >
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="confirm-password">Confirm Password</label>
-            <div class="text-input-wrap">
-              <input 
-                type="password" 
-                id="confirm-password" 
-                class="text-input" 
-                placeholder="Repeat password" 
-                required
-              >
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" id="submit-btn" class="button-primary w-full mt-md">
-          Create Account
-        </button>
-
-        <div class="mt-lg text-center">
-          <p class="typography-body-sm">
-            Already have an account? 
-            <a href="login.php" class="typography-link" style="font-size: 0.875rem; text-decoration: underline;">Sign in here</a>
-          </p>
-        </div>
-      </form>
+      <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); text-align: center;">
+        <p class="typography-caption" style="color: var(--color-text-muted); font-size: 0.75rem; line-height: 1.4;">
+          <strong>Educational &amp; Open-Source Software Project.</strong> Developed strictly for administrative research, software architecture demonstration, and academic review. Not affiliated with any official government entity.
+        </p>
+      </div>
     </div>
 
   </main>
@@ -196,60 +101,7 @@ exit;
       if (window.AppNavbar) {
         AppNavbar.render();
       }
-
-      // Role Segmented Controller
-      const roleButtons = document.querySelectorAll('.segmented-control-option');
-      const selectedRoleInput = document.getElementById('selected-role');
-
-      roleButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          roleButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          selectedRoleInput.value = btn.dataset.role;
-        });
-      });
-
-      // Form submission
-      const form = document.getElementById('register-form');
-      const submitBtn = document.getElementById('submit-btn');
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const fullName = document.getElementById('full-name').value.trim();
-        const position = document.getElementById('position').value;
-        const username = document.getElementById('username').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        const role = selectedRoleInput.value;
-
-        if (password !== confirmPassword) {
-          alert('Passwords do not match. Please verify.');
-          return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Registering credentials...';
-
-        try {
-          await window.barangayAuth.register({
-            full_name: fullName,
-            position: position,
-            username: username,
-            email: email,
-            password: password,
-            role: role
-          });
-
-          submitBtn.textContent = 'Account created! Redirecting...';
-          window.location.href = 'dashboard.php';
-        } catch (err) {
-          alert(err.message || 'Registration failed.');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Create Account';
-        }
-      });
+      window.location.replace('dashboard.php');
     });
   </script>
 </body>

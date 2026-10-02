@@ -306,7 +306,7 @@ class AuthService {
       fullName: 'Administrator',
       role: 'admin',
       position: 'Punong Barangay',
-      email: 'admin@barangay.gov.ph',
+      email: 'admin@barangayos.local',
       status: 'active'
     };
     const defaultSession = {

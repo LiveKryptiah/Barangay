@@ -274,89 +274,73 @@
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
+        <!-- Level 1 Primary: Quiet Hero -->
         <section class="page-hero">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
-            <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Sangguniang Barangay Legislative Tracking.</h1>
-                <span class="badge-neutral" style="display: inline-flex; align-items: center; gap: 6px;">
-                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #8b5cf6;"></span>
-                  RA 7160 &bull; Local Government Code
-                </span>
-                <span class="badge-neutral" style="font-size: 0.6875rem;">DILG Standards</span>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-sm);">
+            <div style="position: relative;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h1 class="typography-heading-2" style="font-size: 1.5rem; margin: 0;">Sangguniang Barangay Legislation.</h1>
+                <button type="button" class="info-trigger" onclick="toggleLegislationInfoPopover()" title="Statutory Mandate &amp; Guidelines">i</button>
               </div>
-              <p class="typography-caption" style="max-width: 780px;">
-                Legislative tracking and statutory ordinance management system. Administers the 3-Reading legislative process, Sangguniang Barangay session minutes, roll call quorum validation, 3-conspicuous-places posting gazettes (Sec. 59), and City Council 30-day review tracking (Sec. 57).
+              <p class="typography-body-lg" style="margin-top: 4px;">
+                Legislative tracking, 3-reading ordinances, session journals, roll call quorum, and statutory gazettes.
               </p>
+
+              <!-- Contextual Info Popover Card -->
+              <div class="info-popover-card" id="legislation-info-popover" style="display: none;">
+                <div style="font-weight: 700; margin-bottom: 6px; font-size: 0.875rem;">RA 7160 Statutory Legislative Mandate</div>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+                  The Sangguniang Barangay is the statutory legislative body of the barangay:
+                </p>
+                <ul style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; padding-left: 16px; margin: 0;">
+                  <li><strong>Quorum (Sec. 52):</strong> Requires a majority of all members (&ge; 5 out of 9) to conduct official business.</li>
+                  <li><strong>Enactment (Sec. 54):</strong> Follows mandatory 3-reading process with floor deliberation and roll-call voting.</li>
+                  <li><strong>Posting (Sec. 59):</strong> Ordinances take effect 10 days after copies are posted in at least 3 conspicuous places.</li>
+                  <li><strong>Review (Sec. 57):</strong> Must be transmitted within 8&ndash;10 days to the Sangguniang Panlungsod/Bayan.</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Global Action Controls -->
             <div style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap;">
-              <button type="button" class="button-outline" onclick="openNewSessionModal();" style="font-size: 0.8125rem;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                + Record Session &amp; Roll Call
+              <button type="button" class="button-outline" onclick="openNewSessionModal();" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                + Record Session
               </button>
-              <button type="button" class="button-primary" onclick="openNewDocModal();" style="font-size: 0.8125rem;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                + New Ordinance / Resolution
+              <button type="button" class="button-primary" onclick="openNewDocModal();" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                + New Measure
               </button>
             </div>
           </div>
         </section>
 
-        <!-- Statutory Callout -->
-        <div class="statutory-callout">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-          </svg>
-          <div>
-            <strong>RA 7160 Statutory Mandate:</strong> The Sangguniang Barangay is the legislative body of the barangay. Quorum requires a majority of all members (&ge; 5 out of 9). Ordinances take effect 10 days after copies are posted in at least three (3) conspicuous places (Barangay Hall, Market, Plaza/Health Center) and transmitted within 8&ndash;10 days to the Sangguniang Panlungsod/Bayan for review.
+        <!-- Level 1 Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-ordinances-count">0</div>
+            <div class="metric-strip-lbl">Enacted Ordinances</div>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-resolutions-count">0</div>
+            <div class="metric-strip-lbl">Adopted Resolutions</div>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-sessions-count">0</div>
+            <div class="metric-strip-lbl">Sangguniang Sessions (<span id="stat-quorum-rate">100% Quorum</span>)</div>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-city-review-count">0</div>
+            <div class="metric-strip-lbl">City Council Review</div>
           </div>
         </div>
-
-        <!-- Telemetry Stats Ladder -->
-        <section class="stats-ladder">
-          <!-- Stat 1: Enacted Ordinances -->
-          <div class="studio-card" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption">Enacted Ordinances</span>
-              <span class="badge-neutral" style="font-size: 0.625rem;">3 Readings</span>
-            </div>
-            <div class="typography-heading-2" style="margin: 6px 0 2px;" id="stat-ordinances-count">0</div>
-            <div class="typography-caption" style="font-size: 0.6875rem; color: var(--color-text-muted);">Local penal &amp; regulatory laws</div>
-          </div>
-
-          <!-- Stat 2: Passed Resolutions -->
-          <div class="studio-card" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption">Adopted Resolutions</span>
-              <span class="badge-neutral" style="font-size: 0.625rem;">Policy &amp; AIP</span>
-            </div>
-            <div class="typography-heading-2" style="margin: 6px 0 2px;" id="stat-resolutions-count">0</div>
-            <div class="typography-caption" style="font-size: 0.6875rem; color: var(--color-text-muted);">Official expressions &amp; actions</div>
-          </div>
-
-          <!-- Stat 3: Sessions Held & Quorum Rate -->
-          <div class="studio-card" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption">Sangguniang Sessions</span>
-              <span class="badge-neutral" style="font-size: 0.625rem;" id="stat-quorum-rate">100% Quorum</span>
-            </div>
-            <div class="typography-heading-2" style="margin: 6px 0 2px;" id="stat-sessions-count">0</div>
-            <div class="typography-caption" style="font-size: 0.6875rem; color: var(--color-text-muted);">Mandatory twice monthly (Sec. 52)</div>
-          </div>
-
-          <!-- Stat 4: City Council Review Status -->
-          <div class="studio-card" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span class="typography-caption">City Council Review</span>
-              <span class="badge-neutral" style="font-size: 0.625rem;">Sec. 57</span>
-            </div>
-            <div class="typography-heading-2" style="margin: 6px 0 2px;" id="stat-city-review-count">0</div>
-            <div class="typography-caption" style="font-size: 0.6875rem; color: var(--color-text-muted);">Transmitted to Sanggunian</div>
-          </div>
-        </section>
 
         <!-- Studio Tab Navigation -->
         <nav class="leg-tab-nav" aria-label="Legislation Navigation">
@@ -383,36 +367,62 @@
         <!-- ======================================================= -->
         <div id="view-docket">
           <div class="studio-card">
-            <!-- Filter Bar -->
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: 1;">
-                <input type="text" id="filter-search" class="text-input" placeholder="Search control no, title, sponsor, keywords..." style="max-width: 280px; height: 36px; font-size: 0.8125rem;" oninput="applyDocketFilters();">
-
-                <select id="filter-doc-type" class="text-input" style="width: auto; height: 36px; font-size: 0.8125rem;" onchange="applyDocketFilters();">
-                  <option value="">All Document Types</option>
-                  <option value="Ordinance">Barangay Ordinances</option>
-                  <option value="Resolution">Sangguniang Resolutions</option>
-                </select>
-
-                <select id="filter-stage" class="text-input" style="width: auto; height: 36px; font-size: 0.8125rem;" onchange="applyDocketFilters();">
-                  <option value="">All Reading Stages</option>
-                  <option value="1st Reading">1st Reading (Introduction)</option>
-                  <option value="Committee Hearing">Committee Hearing</option>
-                  <option value="2nd Reading">2nd Reading (Floor Debate)</option>
-                  <option value="Enacted">3rd Reading / Enacted</option>
-                </select>
-
-                <select id="filter-city-review" class="text-input" style="width: auto; height: 36px; font-size: 0.8125rem;" onchange="applyDocketFilters();">
-                  <option value="">All Review Statuses</option>
-                  <option value="Pending Transmission">Pending Transmission</option>
-                  <option value="Transmitted / Under Review">Transmitted / Under Review</option>
-                  <option value="Approved / Lapsed into Law">Approved / Lapsed into Law</option>
-                  <option value="Disapproved">Disapproved</option>
-                </select>
+            <!-- Level 2 Progressive Minimal Filter Bar -->
+            <div class="filter-bar-minimal" style="margin-bottom: var(--spacing-sm);">
+              <div class="search-input-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="search" id="filter-search" class="text-input" placeholder="Search control no, title, sponsor, keywords..." oninput="applyDocketFilters();" autocomplete="off">
               </div>
 
-              <div style="font-size: 0.75rem; color: var(--color-text-muted);">
+              <button type="button" class="filter-toggle-btn" id="leg-filter-toggle-btn" onclick="toggleLegFilterPanel()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+                <span>Filters</span>
+                <span class="filter-count-badge" id="leg-filter-badge" style="display: none;">0</span>
+              </button>
+
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-left: auto;">
                 Showing <strong id="docket-count">0</strong> documents
+              </div>
+            </div>
+
+            <!-- Expandable Filter Panel -->
+            <div class="filter-expanded-panel" id="leg-filter-panel" style="display: none;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%;">
+                <div>
+                  <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Document Type</label>
+                  <select id="filter-doc-type" class="filter-select" onchange="applyDocketFilters();" style="width: 100%;">
+                    <option value="">All Document Types</option>
+                    <option value="Ordinance">Barangay Ordinances</option>
+                    <option value="Resolution">Sangguniang Resolutions</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">Reading Stage</label>
+                  <select id="filter-stage" class="filter-select" onchange="applyDocketFilters();" style="width: 100%;">
+                    <option value="">All Reading Stages</option>
+                    <option value="1st Reading">1st Reading (Introduction)</option>
+                    <option value="Committee Hearing">Committee Hearing</option>
+                    <option value="2nd Reading">2nd Reading (Floor Debate)</option>
+                    <option value="Enacted">3rd Reading / Enacted</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="typography-caption" style="display: block; margin-bottom: 4px; font-weight: 600;">City Council Review</label>
+                  <select id="filter-city-review" class="filter-select" onchange="applyDocketFilters();" style="width: 100%;">
+                    <option value="">All Review Statuses</option>
+                    <option value="Pending Transmission">Pending Transmission</option>
+                    <option value="Transmitted / Under Review">Transmitted / Under Review</option>
+                    <option value="Approved / Lapsed into Law">Approved / Lapsed into Law</option>
+                    <option value="Disapproved">Disapproved</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -877,14 +887,110 @@
   </dialog>
 
   <!-- ======================================================= -->
+  <!-- SLIDE-OVER DRAWER: LEGISLATIVE MEASURE DOSSIER          -->
+  <!-- ======================================================= -->
+  <div class="app-drawer-backdrop" id="legislation-drawer-backdrop" onclick="closeLegislationDrawer()"></div>
+  <aside class="app-drawer" id="legislation-detail-drawer" aria-label="Legislative Measure Dossier">
+    <div class="drawer-header">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="badge-neutral" id="leg-drawer-control" style="font-weight: 700; font-family: monospace;">ORD-2026-001</span>
+          <span id="leg-drawer-stage-badge" class="badge-neutral" style="background: rgba(16, 185, 129, 0.12); color: #10b981; font-weight: 600;">Enacted</span>
+        </div>
+        <h3 class="drawer-title" id="leg-drawer-title" style="margin-top: 4px; font-size: 1rem;">Solid Waste Segregation Ordinance</h3>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeLegislationDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchLegDrawerTab('overview', this)">Overview &amp; Text</button>
+      <button type="button" class="drawer-tab" onclick="switchLegDrawerTab('lifecycle', this)">Lifecycle &amp; Review</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Overview & Text -->
+      <div id="leg-drawer-sec-overview" class="drawer-section">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Document Type &amp; Scope</span>
+            <span class="drawer-item-val" id="leg-drawer-type">Barangay Ordinance</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Principal Sponsor</span>
+            <span class="drawer-item-val" id="leg-drawer-sponsor" style="font-weight: 600;">Hon. Benjamin Alcantara</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Co-Sponsors</span>
+            <span class="drawer-item-val" id="leg-drawer-cosponsors">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Statutory Sanctions &amp; Penalties</span>
+            <span class="drawer-item-val" id="leg-drawer-penalties" style="color: #dc2626; font-weight: 600;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Full Measure Body &amp; Enacting Clauses</span>
+            <div id="leg-drawer-body" style="font-size: 0.8125rem; line-height: 1.6; white-space: pre-wrap; background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); max-height: 280px; overflow-y: auto;">&mdash;</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Lifecycle & Review -->
+      <div id="leg-drawer-sec-lifecycle" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">City Council Review Status (Sec. 57)</span>
+            <span class="drawer-item-val" id="leg-drawer-review">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Date Enacted (3rd Reading)</span>
+            <span class="drawer-item-val" id="leg-drawer-enacted">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Statutory 3-Conspicuous Posting Date (Sec. 59)</span>
+            <span class="drawer-item-val" id="leg-drawer-posted">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Posting Bulletins / Conspicuous Places</span>
+            <span class="drawer-item-val" id="leg-drawer-locations" style="line-height: 1.4;">Barangay Hall Bulletin, Public Market, Health Center</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Statutory Effectivity Date</span>
+            <span class="drawer-item-val" id="leg-drawer-effectivity" style="font-weight: 600; color: #059669;">&mdash;</span>
+          </div>
+          <div style="padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.75rem; color: var(--color-text-muted);">
+            Statutory ordinance review governed by RA 7160 Sections 54&ndash;59. Ordinances take effect 10 days post-conspicuous publication and transmittal to the Sangguniang Panlungsod.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-xs); width: 100%;">
+      <button type="button" class="button-outline" id="leg-drawer-btn-print" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        Print Form &nearr;
+      </button>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="button-outline" id="leg-drawer-btn-advance" style="height: 36px; padding: 0 10px; font-size: 0.75rem;">
+          Advance Stage
+        </button>
+        <button type="button" class="button-outline" id="leg-drawer-btn-edit" style="height: 36px; padding: 0 10px; font-size: 0.75rem;">
+          Edit
+        </button>
+        <button type="button" class="button-pill-soft" onclick="closeLegislationDrawer()" style="height: 36px; padding: 0 12px;">Close</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======================================================= -->
   <!-- STATUTORY PRINT CONTAINER (OFFICIAL RA 7160 FORMS)      -->
   <!-- ======================================================= -->
   <div id="print-statutory-container" style="display: none;">
     <!-- Injected dynamically via print engine -->
   </div>
 
-  <!-- Scripts -->
-  <script src="js/db.js"></script>
+  <!-- Scripts: REST API Client Bridge for PHP/MySQL Parity -->
+  <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/components/sidebar.js"></script>
 
@@ -912,13 +1018,10 @@
         await AppSidebar.render('legislation');
       }
 
-      // 2. Initialize Seed Data for IndexedDB
-      await initializeLegislationData();
-
-      // 3. Populate Roll Call Member Checkboxes in Modal
+      // 2. Populate Roll Call Member Checkboxes in Modal
       populateModalRollCall();
 
-      // 4. Load all data & render
+      // 3. Load all data via REST API bridge & render
       await refreshAllData();
     });
 
@@ -960,144 +1063,6 @@
       }
     };
 
-    // Seed Data Initialization for IndexedDB
-    async function initializeLegislationData() {
-      if (!window.barangayDB) return;
-
-      const docCount = await barangayDB.count('legislative_documents');
-      if (docCount === 0) {
-        const seedDocs = [
-          {
-            controlNumber: 'ORD-2026-001',
-            docType: 'Ordinance',
-            title: 'Comprehensive Ecological Solid Waste Management and Anti-Littering Ordinance of Barangay San Isidro',
-            sponsorName: 'Hon. Danilo Cruz (Committee on Environment)',
-            coSponsors: 'Hon. Benjamin Alcantara, Hon. Ramon Santos',
-            readingStage: 'Enacted',
-            dateEnacted: '2026-01-20',
-            datePosted: '2026-01-22',
-            effectivityDate: '2026-02-02',
-            postingLocations: 'Barangay Hall Bulletin, Public Market, Health Center',
-            cityCouncilReviewStatus: 'Approved / Lapsed into Law',
-            cityCouncilTransmittedDate: '2026-01-26',
-            cityCouncilActionDate: '2026-02-18',
-            sanctionsPenalties: '1st Offense: Php 300 fine; 2nd Offense: Php 500 fine; 3rd Offense: Php 1,000 fine and 8 hours mandatory community environmental service.',
-            documentBody: 'BE IT ORDAINED, by the Sangguniang Barangay of Barangay San Isidro, City of Cabuyao, in session assembled: SECTION 1. Title. This ordinance shall be known as the Barangay San Isidro Ecological Solid Waste Management Ordinance. SECTION 2. Waste Segregation at Source. All households, commercial establishments, and institutions must segregate waste into Biodegradable, Recyclable, and Residual. SECTION 3. Collection Schedule. Biodegradable waste shall be collected Tuesdays and Fridays; Recyclables every Saturday. SECTION 4. Penalties. Violators shall be subject to administrative fines per RA 7160 Sec. 516.'
-          },
-          {
-            controlNumber: 'ORD-2026-002',
-            docType: 'Ordinance',
-            title: 'Barangay Child Protection & Discipline Hours (Curfew) Ordinance for Minors Below 18 Years Old',
-            sponsorName: 'Hon. Sofia Mendoza (Committee on Women & Family)',
-            coSponsors: 'Hon. Ramon Santos, Hon. Joshua Ramos (SK Chair)',
-            readingStage: 'Enacted',
-            dateEnacted: '2026-02-10',
-            datePosted: '2026-02-12',
-            effectivityDate: '2026-02-23',
-            postingLocations: 'Barangay Hall Bulletin, Public Market, Barangay Sports Plaza',
-            cityCouncilReviewStatus: 'Approved / Lapsed into Law',
-            cityCouncilTransmittedDate: '2026-02-16',
-            cityCouncilActionDate: '2026-03-05',
-            sanctionsPenalties: '1st Offense: Minor brought to BCPC Desk for parental counseling; 2nd Offense: Parental fine of Php 500; 3rd Offense: Parental fine of Php 1,000 and DSWD mandatory parent guidance seminar.',
-            documentBody: 'BE IT ORDAINED by the Sangguniang Barangay of Barangay San Isidro: SECTION 1. Curfew Hours. Curfew hours shall be observed from 10:00 PM to 4:00 AM daily for all individuals below 18 years of age. SECTION 2. Exemptions. Minors accompanied by parents/guardians, coming from school/religious events with certification, or handling emergency medical situations. SECTION 3. Safe Harbor Tanod Protocol. Strict adherence to RA 9344 (Juvenile Justice Act) with zero corporal punishment.'
-          },
-          {
-            controlNumber: 'ORD-2026-003',
-            docType: 'Ordinance',
-            title: 'Responsible Pet Ownership and Anti-Rabies Vaccination Ordinance',
-            sponsorName: 'Hon. Elena Ramos (Committee on Health & Sanitation)',
-            coSponsors: 'Hon. Benjamin Alcantara',
-            readingStage: 'Enacted',
-            dateEnacted: '2026-03-05',
-            datePosted: '2026-03-07',
-            effectivityDate: '2026-03-18',
-            postingLocations: 'Barangay Hall Bulletin, Health Center, Purok 3 Covered Court',
-            cityCouncilReviewStatus: 'Transmitted / Under Review',
-            cityCouncilTransmittedDate: '2026-03-10',
-            cityCouncilActionDate: null,
-            sanctionsPenalties: 'Unvaccinated dog: Php 500 fine; Stray dog impounding fee: Php 300; Refusal to shoulder bite victim medical expenses: Php 1,000 fine and legal referral.',
-            documentBody: 'BE IT ORDAINED by the Sangguniang Barangay: SECTION 1. Mandatory Dog Registration. All pet owners must register dogs with the Barangay Health Station. SECTION 2. Leash Law. No dogs shall be allowed to roam outside private premises without a leash. SECTION 3. Bite Liabilities. The pet owner shall shoulder all post-exposure prophylaxis vaccinations of bite victims.'
-          },
-          {
-            controlNumber: 'RES-2026-014',
-            docType: 'Resolution',
-            title: 'A Resolution Approving and Adopting the Barangay Annual Investment Program (AIP) for Fiscal Year 2026',
-            sponsorName: 'Hon. Teresa Lim (Committee on Appropriations)',
-            coSponsors: 'All Sangguniang Barangay Members',
-            readingStage: 'Enacted',
-            dateEnacted: '2026-01-15',
-            datePosted: '2026-01-16',
-            effectivityDate: '2026-01-16',
-            postingLocations: 'Barangay Hall Bulletin Board',
-            cityCouncilReviewStatus: 'Approved / Lapsed into Law',
-            cityCouncilTransmittedDate: '2026-01-18',
-            cityCouncilActionDate: '2026-02-01',
-            sanctionsPenalties: 'N/A (Appropriations Resolution)',
-            documentBody: 'WHEREAS, the Barangay Development Council (BDC) formulated the Annual Investment Program (AIP) for FY 2026 in the amount of Php 14,500,000.00; WHEREAS, statutory allocations for 20% BDF, 5% BDRRM Calamity Fund, 10% SK Fund, and 5% GAD are strictly complied with; NOW, THEREFORE, on motion of Kagawad Teresa Lim, unanimously seconded: RESOLVED, that the Sangguniang Barangay approves and adopts the FY 2026 AIP.'
-          },
-          {
-            controlNumber: 'RES-2026-015',
-            docType: 'Resolution',
-            title: 'A Resolution Authorizing the Punong Barangay to Enter into a Memorandum of Agreement (MOA) with the Department of Health (DOH) for the Enhanced Maternal Care Program',
-            sponsorName: 'Hon. Elena Ramos (Committee on Health)',
-            coSponsors: 'Hon. Sofia Mendoza',
-            readingStage: 'Enacted',
-            dateEnacted: '2026-02-18',
-            datePosted: '2026-02-19',
-            effectivityDate: '2026-02-19',
-            postingLocations: 'Barangay Hall Bulletin Board',
-            cityCouncilReviewStatus: 'Approved / Lapsed into Law',
-            cityCouncilTransmittedDate: '2026-02-22',
-            cityCouncilActionDate: '2026-03-01',
-            sanctionsPenalties: 'N/A (Authorization Resolution)',
-            documentBody: 'WHEREAS, reducing infant and maternal mortality is an executive priority; WHEREAS, the DOH Regional Office offered a technical assistance grant and ultrasound diagnostic equipment; NOW, THEREFORE, BE IT RESOLVED, that Hon. Antonio S. Valdez is hereby authorized to execute the MOA.'
-          }
-        ];
-
-        for (const d of seedDocs) {
-          await barangayDB.add('legislative_documents', d);
-        }
-      }
-
-      const sessionCount = await barangayDB.count('legislative_sessions');
-      if (sessionCount === 0) {
-        const seedSessions = [
-          {
-            sessionNumber: 'RS-2026-015',
-            sessionType: 'Regular Session',
-            sessionDate: '2026-08-05',
-            sessionTime: '09:00:00',
-            presidingOfficer: 'Hon. Antonio S. Valdez (Punong Barangay)',
-            quorumStatus: 'Quorum Present',
-            presentCount: 9,
-            totalMembers: 9,
-            rollCall: councilMembers.map(m => m.name),
-            agendaTopics: 'I. Call to Order\nII. Roll Call & Declaration of Quorum\nIII. Public Hearing on Proposed Solar Streetlighting Project (PR-2026-0041)\nIV. Deliberation on Proposed Anti-Rabies Ordinance Amendments\nV. Committee Reports: Infrastructure, Health, Peace & Order\nVI. Adjournment',
-            minutesSummary: 'The session was called to order at 9:00 AM by PB Antonio Valdez. Roll call revealed all 9 council members present. Quorum officially declared. Kagawad Carlos Bautista presented the engineering estimates for 60W solar streetlights across Puroks 1 to 4. Resolution unanimously approved authorizing BAC to commence procurement. Session adjourned at 11:45 AM.',
-            sessionStatus: 'Approved'
-          },
-          {
-            sessionNumber: 'RS-2026-016',
-            sessionType: 'Regular Session',
-            sessionDate: '2026-08-20',
-            sessionTime: '09:30:00',
-            presidingOfficer: 'Hon. Antonio S. Valdez (Punong Barangay)',
-            quorumStatus: 'Quorum Present',
-            presentCount: 8,
-            totalMembers: 9,
-            rollCall: councilMembers.filter(m => m.id !== 'k7').map(m => m.name),
-            agendaTopics: 'I. Call to Order\nII. Roll Call & Quorum Certification\nIII. Review of BAC Resolution Awarding Streetlight Contract to Luzon Green Energy Solutions\nIV. Tanod Night Patrol Logistics & Incident Dispatch Report\nV. Other Matters & Schedule of Next Session',
-            minutesSummary: 'PB Antonio Valdez presided. 8 out of 9 members present (Kag. Danilo Cruz on official travel). Majority quorum present. Kag. Teresa Lim reviewed the BAC bid evaluation and affirmed compliance with RA 9184. The council acknowledged the contract award. Chief Tanod presented the monthly incident dispatch report noting an 85% drop in curfew infractions.',
-            sessionStatus: 'Approved'
-          }
-        ];
-
-        for (const s of seedSessions) {
-          await barangayDB.add('legislative_sessions', s);
-        }
-      }
-    }
-
     // Refresh All Data
     async function refreshAllData() {
       try {
@@ -1135,6 +1100,20 @@
       const typeFilter = document.getElementById('filter-doc-type')?.value || '';
       const stageFilter = document.getElementById('filter-stage')?.value || '';
       const reviewFilter = document.getElementById('filter-city-review')?.value || '';
+
+      let activeFilterCount = 0;
+      if (typeFilter) activeFilterCount++;
+      if (stageFilter) activeFilterCount++;
+      if (reviewFilter) activeFilterCount++;
+      const badge = document.getElementById('leg-filter-badge');
+      if (badge) {
+        if (activeFilterCount > 0) {
+          badge.textContent = activeFilterCount;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
 
       const filtered = allDocuments.filter(doc => {
         const type = doc.docType || doc.doc_type || '';
@@ -1188,18 +1167,21 @@
 
         return `
           <tr>
-            <td><strong>${control}</strong></td>
+            <td><a href="javascript:void(0)" onclick="openLegislationDrawer(${id})" style="font-weight: 700; color: var(--color-ink); text-decoration: underline;" title="View Dossier">${control}</a></td>
             <td><span class="badge-neutral">${type}</span></td>
             <td style="max-width: 260px;">
-              <div style="font-weight: 600; line-height: 1.3;">${title}</div>
+              <div style="font-weight: 600; line-height: 1.3;"><a href="javascript:void(0)" onclick="openLegislationDrawer(${id})" style="color: var(--color-ink); text-decoration: none;">${title}</a></div>
             </td>
             <td style="font-size: 0.75rem; color: var(--color-text-muted);">${sponsor}</td>
             <td>${stageBadge}</td>
             <td>${reviewBadge}</td>
             <td>${dateEnacted}</td>
             <td style="text-align: right; white-space: nowrap;">
+              <button type="button" class="button-outline" style="padding: 4px 8px; font-size: 0.6875rem;" onclick="openLegislationDrawer(${id});" title="View Full Measure Dossier">
+                Dossier
+              </button>
               <button type="button" class="button-outline" style="padding: 4px 8px; font-size: 0.6875rem;" onclick="printOfficialDocument(${id});" title="Print Official Statutory Document">
-                Print Form &nearr;
+                Print &nearr;
               </button>
               ${stage !== 'Enacted' ? `
                 <button type="button" class="button-primary" style="padding: 4px 8px; font-size: 0.6875rem;" onclick="openStageModal(${id});" title="Advance Reading Stage">
@@ -1218,6 +1200,130 @@
         `;
       }).join('');
     };
+
+    // Slide-over Drawer & Popover Helpers
+    window.openLegislationDrawer = function(id) {
+      const doc = allDocuments.find(d => d.id === id);
+      if (!doc) return;
+
+      const control = doc.controlNumber || doc.control_number || 'PENDING';
+      const type = doc.docType || doc.doc_type || 'Ordinance';
+      const title = doc.title || 'Untitled Measure';
+      const sponsor = doc.sponsorName || doc.sponsor_name || 'Sangguniang Barangay';
+      const cosponsors = doc.coSponsors || doc.co_sponsors || 'None';
+      const stage = doc.readingStage || doc.reading_stage || '1st Reading';
+      const review = doc.cityCouncilReviewStatus || doc.city_council_review_status || 'Pending Transmission';
+      const enacted = doc.dateEnacted || doc.date_enacted || 'Pending Enactment';
+      const posted = doc.datePosted || doc.date_posted || 'Pending Posting';
+      const effectivity = doc.effectivityDate || doc.effectivity_date || 'Pending Effectivity';
+      const locations = doc.postingLocations || doc.posting_locations || 'Barangay Hall Bulletin, Public Market, Health Center';
+      const penalties = doc.sanctionsPenalties || doc.sanctions_penalties || 'None / Not Applicable';
+      const body = doc.documentBody || doc.document_body || 'No document body registered.';
+
+      document.getElementById('leg-drawer-control').textContent = control;
+      document.getElementById('leg-drawer-title').textContent = title;
+      document.getElementById('leg-drawer-type').textContent = `${type} (Sangguniang Barangay)`;
+      document.getElementById('leg-drawer-sponsor').textContent = sponsor;
+      document.getElementById('leg-drawer-cosponsors').textContent = cosponsors;
+      document.getElementById('leg-drawer-penalties').textContent = penalties;
+      document.getElementById('leg-drawer-body').textContent = body;
+      document.getElementById('leg-drawer-review').textContent = review;
+      document.getElementById('leg-drawer-enacted').textContent = enacted;
+      document.getElementById('leg-drawer-posted').textContent = posted;
+      document.getElementById('leg-drawer-locations').textContent = locations;
+      document.getElementById('leg-drawer-effectivity').textContent = effectivity;
+
+      const stageBadge = document.getElementById('leg-drawer-stage-badge');
+      stageBadge.textContent = stage;
+      stageBadge.style.background = (stage === 'Enacted') ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)';
+      stageBadge.style.color = (stage === 'Enacted') ? '#10b981' : '#f59e0b';
+
+      // Footer buttons
+      document.getElementById('leg-drawer-btn-print').onclick = () => {
+        closeLegislationDrawer();
+        printOfficialDocument(id);
+      };
+
+      const advBtn = document.getElementById('leg-drawer-btn-advance');
+      if (stage === 'Enacted') {
+        advBtn.style.display = 'none';
+      } else {
+        advBtn.style.display = 'inline-block';
+        advBtn.onclick = () => {
+          closeLegislationDrawer();
+          openStageModal(id);
+        };
+      }
+
+      document.getElementById('leg-drawer-btn-edit').onclick = () => {
+        closeLegislationDrawer();
+        openEditDocModal(id);
+      };
+
+      switchLegDrawerTab('overview');
+      const drawer = document.getElementById('legislation-detail-drawer');
+      const backdrop = document.getElementById('legislation-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
+    };
+
+    window.closeLegislationDrawer = function() {
+      const drawer = document.getElementById('legislation-detail-drawer');
+      const backdrop = document.getElementById('legislation-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchLegDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#legislation-detail-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const firstTab = document.querySelector('#legislation-detail-drawer .drawer-tab');
+        if (firstTab) firstTab.classList.add('active');
+      }
+      document.querySelectorAll('#legislation-detail-drawer .drawer-section').forEach(s => s.style.display = 'none');
+      const sec = document.getElementById(`leg-drawer-sec-${tabName}`);
+      if (sec) sec.style.display = 'block';
+    };
+
+    window.toggleLegislationInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('legislation-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    };
+
+    window.toggleLegFilterPanel = function() {
+      const panel = document.getElementById('leg-filter-panel');
+      const btn = document.getElementById('leg-filter-toggle-btn');
+      if (panel) {
+        const isOpen = panel.style.display === 'none';
+        panel.style.display = isOpen ? 'block' : 'none';
+        panel.classList.toggle('open', isOpen);
+        if (btn) btn.classList.toggle('active', isOpen);
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLegislationDrawer();
+        const popover = document.getElementById('legislation-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('legislation-info-popover');
+      const trigger = document.querySelector('.info-trigger');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
+    });
 
     // Render Sessions Table
     function renderSessionsTable() {

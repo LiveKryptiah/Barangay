@@ -20,7 +20,7 @@ if (empty($_SESSION['user_id'])) {
     $_SESSION['full_name'] = 'Administrator';
     $_SESSION['role']      = 'admin';
     $_SESSION['position']  = 'Punong Barangay';
-    $_SESSION['email']     = 'admin@barangay.gov.ph';
+    $_SESSION['email']     = 'admin@barangayos.local';
 }
 
 /**
@@ -43,7 +43,7 @@ function current_user() {
         'full_name' => $_SESSION['full_name'] ?? 'Administrator',
         'role'      => $_SESSION['role'] ?? 'admin',
         'position'  => $_SESSION['position'] ?? 'Punong Barangay',
-        'email'     => $_SESSION['email'] ?? 'admin@barangay.gov.ph'
+        'email'     => $_SESSION['email'] ?? 'admin@barangayos.local'
     ];
 }
 
@@ -101,7 +101,7 @@ function logout_user() {
     $_SESSION['full_name'] = 'Administrator';
     $_SESSION['role']      = 'admin';
     $_SESSION['position']  = 'Punong Barangay';
-    $_SESSION['email']     = 'admin@barangay.gov.ph';
+    $_SESSION['email']     = 'admin@barangayos.local';
 }
 
 /**

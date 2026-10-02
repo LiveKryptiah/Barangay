@@ -267,21 +267,61 @@ require_auth('login.php');
 
       <main class="app-content">
         <!-- Page Hero Section -->
+        <!-- Page Hero Section (Level 1 Minimal Quiet Hero) -->
         <section class="page-hero">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Business Permits & Licensing Hub</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); position: relative;">
+                <h1 class="typography-heading-2">Business Permits &amp; Licensing.</h1>
                 <span class="badge-neutral" id="permit-count-badge">0 Registered</span>
-                <span class="badge-neutral" style="font-size: 0.6875rem;">RA 7160 / BPLO</span>
+                <button type="button" class="info-trigger" onclick="togglePermitInfoPopover(event)" title="Regulatory Framework &amp; Legal Mandate" aria-label="Regulatory Framework &amp; Legal Mandate">
+                  ⓘ
+                </button>
+
+                <!-- Contextual Popover Card (Level 1 Info Distribution) -->
+                <div class="info-popover-card" id="permit-info-popover">
+                  <div class="info-popover-title">Regulatory Framework &amp; Local Mandate</div>
+                  <div class="info-popover-desc">
+                    Mandated under Republic Act 7160 Section 152. Commercial establishments must secure barangay clearance prior to City / Municipal BPLO licensing. Regulatory assessments are graduated by gross sales and capital investment tiers.
+                  </div>
+                  <div class="info-popover-grid">
+                    <div>
+                      <div class="info-popover-metric-val">Sec 152</div>
+                      <div class="info-popover-metric-lbl">RA 7160 Mandate</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">4 Tiers</div>
+                      <div class="info-popover-metric-lbl">Sales Scale</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">4-Point</div>
+                      <div class="info-popover-metric-lbl">Safety Inspection</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">Annual</div>
+                      <div class="info-popover-metric-lbl">Clearance Renewal</div>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-xs); flex-wrap: wrap;">
+                    <button type="button" class="button-pill-soft" onclick="quickFilterNature('Retail / Sari-Sari Store'); togglePermitInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Sari-Sari Stores
+                    </button>
+                    <button type="button" class="button-pill-soft" onclick="quickFilterNature('Eatery / Carenderia / Food Stall'); togglePermitInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Food &amp; Eatery
+                    </button>
+                    <button type="button" class="button-pill-soft" onclick="quickFilterStatus('Pending Review'); togglePermitInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Pending Review
+                    </button>
+                  </div>
+                </div>
               </div>
               <p class="typography-body-lg" style="max-width: 780px;">
-                Mandatory barangay assessment, regulatory fee tiers, sanitation/safety inspections, and official issuance of Barangay Business Clearances for micro-enterprises and local establishments.
+                Mandatory barangay assessment, regulatory fee tiers, sanitation/safety inspections, and official clearance issuance.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
               <button class="button-primary" id="btn-open-permit-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
@@ -291,94 +331,120 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Stats Ladder -->
-        <section class="stats-ladder" aria-label="Key Business Telemetry">
-          <div class="card" style="padding: 16px;">
-            <div class="typography-caption" style="margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Commercial Establishments</div>
-            <div class="typography-heading-2" id="stat-total-businesses" style="font-weight: 800;">0</div>
-            <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 4px;">Registered micro &amp; SMEs</div>
-          </div>
-
-          <div class="card" style="padding: 16px;">
-            <div class="typography-caption" style="margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Regulatory Clearance Issued</div>
-            <div class="typography-heading-2" id="stat-issued-count" style="font-weight: 800; color: #10b981;">0</div>
-            <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 4px;">Active compliant permits</div>
-          </div>
-
-          <div class="card" style="padding: 16px;">
-            <div class="typography-caption" style="margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Pending Action / Inspection</div>
-            <div class="typography-heading-2" id="stat-pending-inspection" style="font-weight: 800; color: #f59e0b;">0</div>
-            <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 4px;">Awaiting review or inspection</div>
-          </div>
-
-          <div class="card" style="padding: 16px;">
-            <div class="typography-caption" style="margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Total Fees Collected</div>
-            <div class="typography-heading-2" id="stat-total-revenue" style="font-weight: 800;">₱0.00</div>
-            <div class="typography-caption" style="color: var(--color-text-muted); margin-top: 4px;">Synced to General Fund</div>
+        <!-- Minimal Borderless Metrics Strip -->
+        <section style="margin-bottom: var(--spacing-sm);">
+          <div class="metrics-strip">
+            <div class="metric-strip-item">
+              <span class="metric-strip-val" id="stat-total-businesses">0</span>
+              <span class="metric-strip-lbl">Establishments</span>
+            </div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterStatus('Approved & Issued')" style="cursor: pointer;" title="Filter Approved & Issued">
+              <span class="metric-strip-val" id="stat-issued-count" style="color: #10b981;">0</span>
+              <span class="metric-strip-lbl">Clearance Issued</span>
+            </div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterStatus('Under Inspection')" style="cursor: pointer;" title="Filter Pending Inspection">
+              <span class="metric-strip-val" id="stat-pending-inspection" style="color: #f59e0b;">0</span>
+              <span class="metric-strip-lbl">Pending Inspection</span>
+            </div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item">
+              <span class="metric-strip-val" id="stat-total-revenue">&#8369;0.00</span>
+              <span class="metric-strip-lbl">Fees Collected</span>
+            </div>
           </div>
         </section>
 
-        <!-- Filter Toolbar -->
-        <section class="filter-toolbar" aria-label="Filters and Search">
-          <div class="filter-group">
-            <div class="search-input-wrap">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- Progressive Minimal Filter Bar (Level 2 Secondary) -->
+        <section style="margin-bottom: var(--spacing-md);">
+          <div class="filter-bar-minimal">
+            <div class="filter-search-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <input type="text" id="search-permits" class="text-input" placeholder="Search business, owner, clearance or plate #...">
+              <input type="text" id="search-permits" placeholder="Search business, owner, clearance or plate #..." autocomplete="off">
             </div>
 
-            <select id="filter-nature" class="filter-select">
-              <option value="">All Business Natures</option>
-              <option value="Retail / Sari-Sari Store">Retail / Sari-Sari Store</option>
-              <option value="Eatery / Carenderia / Food Stall">Eatery / Carenderia / Food Stall</option>
-              <option value="Service / Repair Shop">Service / Repair Shop</option>
-              <option value="Personal Care (Salon / Barber)">Personal Care (Salon / Barber)</option>
-              <option value="Wholesale / Grocery / Trading">Wholesale / Grocery / Trading</option>
-              <option value="Transport / Tricycle / Pedicab">Transport / Tricycle / Pedicab</option>
-              <option value="Real Estate / Rental / Boarding">Real Estate / Rental / Boarding</option>
-              <option value="Bakery / Light Manufacturing">Bakery / Light Manufacturing</option>
-              <option value="Professional Services / Clinic">Professional Services / Clinic</option>
-              <option value="Others">Others</option>
-            </select>
+            <button type="button" class="filter-toggle-btn" id="filter-toggle-btn" onclick="togglePermitFilterPanel()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              <span>Filters</span>
+              <span class="filter-count-badge" id="active-filter-badge" style="display:none;">0</span>
+            </button>
 
-            <select id="filter-purok" class="filter-select">
-              <option value="">All Puroks</option>
-              <option value="Purok 1">Purok 1</option>
-              <option value="Purok 2">Purok 2</option>
-              <option value="Purok 3">Purok 3</option>
-              <option value="Purok 4">Purok 4</option>
-              <option value="Purok 5">Purok 5</option>
-              <option value="Purok 6">Purok 6</option>
-              <option value="Purok 7">Purok 7</option>
-            </select>
+            <button type="button" class="button-pill-soft" id="btn-clear-permit-filters" onclick="resetPermitFilters()" style="display:none; height: 32px; font-size: 0.75rem; padding: 0 10px;">
+              Reset
+            </button>
 
-            <select id="filter-status" class="filter-select">
-              <option value="">All Clearance Status</option>
-              <option value="Pending Review">Pending Review</option>
-              <option value="Under Inspection">Under Inspection</option>
-              <option value="Approved & Issued">Approved &amp; Issued</option>
-              <option value="Expired">Expired</option>
-              <option value="Revoked">Revoked</option>
-            </select>
-
-            <select id="filter-payment" class="filter-select">
-              <option value="">All Payment Status</option>
-              <option value="Paid">Paid</option>
-              <option value="Unpaid">Unpaid</option>
-              <option value="Exempt">Exempt</option>
-            </select>
+            <!-- Cards vs Table density switch -->
+            <div style="display: flex; border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-md); overflow: hidden; margin-left: auto;">
+              <button id="btn-view-cards" class="button-outline" style="border: none; border-radius: 0; height: 32px; padding: 0 10px; background: var(--color-field);" title="Cards Grid">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </button>
+              <button id="btn-view-table" class="button-outline" style="border: none; border-radius: 0; height: 32px; padding: 0 10px;" title="Table View">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </button>
+            </div>
           </div>
 
-          <div class="filter-group">
-            <div style="display: flex; border: 1px solid var(--color-hairline-soft); border-radius: var(--rounded-md); overflow: hidden;">
-              <button id="btn-view-cards" class="button-outline" style="border: none; border-radius: 0; height: 34px; padding: 0 10px; background: var(--color-field);" title="Cards Grid">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              </button>
-              <button id="btn-view-table" class="button-outline" style="border: none; border-radius: 0; height: 34px; padding: 0 10px;" title="Table View">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-              </button>
+          <!-- Expandable Filter Panel -->
+          <div class="filter-expanded-panel" id="permit-filter-panel">
+            <div class="filter-panel-row">
+              <div style="flex: 1; min-width: 170px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Business Nature</label>
+                <select id="filter-nature" class="filter-select" style="width: 100%;">
+                  <option value="">All Business Natures</option>
+                  <option value="Retail / Sari-Sari Store">Retail / Sari-Sari Store</option>
+                  <option value="Eatery / Carenderia / Food Stall">Eatery / Carenderia / Food Stall</option>
+                  <option value="Service / Repair Shop">Service / Repair Shop</option>
+                  <option value="Personal Care (Salon / Barber)">Personal Care (Salon / Barber)</option>
+                  <option value="Wholesale / Grocery / Trading">Wholesale / Grocery / Trading</option>
+                  <option value="Transport / Tricycle / Pedicab">Transport / Tricycle / Pedicab</option>
+                  <option value="Real Estate / Rental / Boarding">Real Estate / Rental / Boarding</option>
+                  <option value="Bakery / Light Manufacturing">Bakery / Light Manufacturing</option>
+                  <option value="Professional Services / Clinic">Professional Services / Clinic</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 120px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Barangay Purok</label>
+                <select id="filter-purok" class="filter-select" style="width: 100%;">
+                  <option value="">All Puroks</option>
+                  <option value="Purok 1">Purok 1</option>
+                  <option value="Purok 2">Purok 2</option>
+                  <option value="Purok 3">Purok 3</option>
+                  <option value="Purok 4">Purok 4</option>
+                  <option value="Purok 5">Purok 5</option>
+                  <option value="Purok 6">Purok 6</option>
+                  <option value="Purok 7">Purok 7</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 150px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Clearance Status</label>
+                <select id="filter-status" class="filter-select" style="width: 100%;">
+                  <option value="">All Clearance Status</option>
+                  <option value="Pending Review">Pending Review</option>
+                  <option value="Under Inspection">Under Inspection</option>
+                  <option value="Approved & Issued">Approved &amp; Issued</option>
+                  <option value="Expired">Expired</option>
+                  <option value="Revoked">Revoked</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 120px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Payment</label>
+                <select id="filter-payment" class="filter-select" style="width: 100%;">
+                  <option value="">All Payment Status</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Unpaid">Unpaid</option>
+                  <option value="Exempt">Exempt</option>
+                </select>
+              </div>
             </div>
           </div>
         </section>
@@ -651,32 +717,49 @@ require_auth('login.php');
     </form>
   </dialog>
 
-  <!-- ===================================================== -->
-  <!-- MODAL 2: COMPLETE BUSINESS DOSSIER & COMPLIANCE METER -->
-  <!-- ===================================================== -->
-  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 640px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--color-hairline); padding-bottom: 12px;">
-      <div>
-        <h3 class="typography-heading-4" id="dossier-business-title">Establishment Dossier</h3>
-        <span class="typography-caption" id="dossier-clearance-no" style="font-family: monospace; color: var(--color-text-muted);">BBC-2026-00000</span>
+  <!-- Backdrop for Right-Side Slide-Over Drawers -->
+  <div class="app-drawer-backdrop" id="drawer-backdrop" onclick="closePermitDrawer()"></div>
+
+  <!-- Business Establishment Slide-Over Drawer (Level 3 Deep Detail) -->
+  <aside class="app-drawer" id="dossier-drawer" aria-label="Establishment Dossier" style="max-width: 600px;">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm); min-width: 0;">
+        <span class="badge-neutral" id="dossier-clearance-no" style="font-family: monospace;">BBC-2026-00000</span>
+        <div class="drawer-header-info">
+          <h3 class="drawer-title" id="dossier-business-title">Establishment Dossier</h3>
+          <p class="drawer-subtitle" id="dossier-business-sub">Commercial Unit Audit &amp; Compliance</p>
+        </div>
       </div>
-      <button type="button" class="button-outline" onclick="document.getElementById('dossier-modal').close();" style="height: 32px; padding: 0 10px;">
-        &times;
+      <button type="button" class="drawer-close-btn" onclick="closePermitDrawer()" title="Close details (Esc)" aria-label="Close details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
       </button>
     </div>
 
-    <div id="dossier-content" style="font-size: 0.875rem;">
-      <!-- Populated dynamically via JS -->
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-hairline); padding-top: 12px; margin-top: 16px;">
-      <div id="dossier-action-left"></div>
-      <div style="display: flex; gap: 8px;">
-        <button type="button" class="button-outline" onclick="document.getElementById('dossier-modal').close();">Close</button>
-        <button type="button" class="button-primary" id="dossier-print-btn">Print Clearance</button>
+    <div class="drawer-body">
+      <div id="dossier-content" style="font-size: 0.875rem;">
+        <!-- Populated dynamically via JS -->
       </div>
     </div>
-  </dialog>
+
+    <!-- Quick Action Footer -->
+    <div class="drawer-footer" style="justify-content: space-between;">
+      <div id="dossier-action-left"></div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="button-outline" onclick="closePermitDrawer()" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">Close</button>
+        <button type="button" class="button-primary" id="dossier-print-btn" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect width="12" height="8" x="6" y="14"/>
+          </svg>
+          <span>Print Clearance</span>
+        </button>
+      </div>
+    </div>
+  </aside>
 
   <!-- ===================================================== -->
   <!-- MODAL 3: RECORD OFFICIAL RECEIPT (O.R.) PAYMENT      -->
@@ -1034,6 +1117,47 @@ require_auth('login.php');
       document.getElementById('stat-total-revenue').textContent = `₱${totalRev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
+    window.togglePermitInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('permit-info-popover');
+      if (popover) popover.classList.toggle('active');
+    };
+
+    window.togglePermitFilterPanel = function() {
+      const panel = document.getElementById('permit-filter-panel');
+      if (panel) panel.classList.toggle('active');
+    };
+
+    window.quickFilterNature = function(nat) {
+      document.getElementById('filter-nature').value = nat;
+      const panel = document.getElementById('permit-filter-panel');
+      if (panel && !panel.classList.contains('active')) panel.classList.add('active');
+      applyFiltersAndRender();
+    };
+
+    window.quickFilterStatus = function(stat) {
+      document.getElementById('filter-status').value = stat;
+      const panel = document.getElementById('permit-filter-panel');
+      if (panel && !panel.classList.contains('active')) panel.classList.add('active');
+      applyFiltersAndRender();
+    };
+
+    window.resetPermitFilters = function() {
+      document.getElementById('search-permits').value = '';
+      document.getElementById('filter-nature').value = '';
+      document.getElementById('filter-purok').value = '';
+      document.getElementById('filter-status').value = '';
+      document.getElementById('filter-payment').value = '';
+      applyFiltersAndRender();
+    };
+
+    window.closePermitDrawer = function() {
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
     // Filter & Render
     function applyFiltersAndRender() {
       const query = (document.getElementById('search-permits').value || '').trim().toLowerCase();
@@ -1041,6 +1165,23 @@ require_auth('login.php');
       const purok = document.getElementById('filter-purok').value;
       const status = document.getElementById('filter-status').value;
       const payment = document.getElementById('filter-payment').value;
+
+      let activeCount = 0;
+      if (nature) activeCount++;
+      if (purok) activeCount++;
+      if (status) activeCount++;
+      if (payment) activeCount++;
+
+      const filterBadge = document.getElementById('active-filter-badge');
+      if (filterBadge) {
+        filterBadge.style.display = activeCount > 0 ? 'inline-block' : 'none';
+        filterBadge.textContent = activeCount;
+      }
+
+      const clearBtn = document.getElementById('btn-clear-permit-filters');
+      if (clearBtn) {
+        clearBtn.style.display = (query || activeCount > 0) ? 'inline-flex' : 'none';
+      }
 
       const filtered = allClearances.filter(c => {
         if (nature && c.businessNature !== nature) return false;
@@ -1408,7 +1549,7 @@ require_auth('login.php');
       if (c.status !== 'Approved & Issued' && c.paymentStatus === 'Paid' && c.inspectionStatus === 'Compliant') {
         leftActionMount.innerHTML = `
           <button class="button-primary" onclick="approveAndIssueClearance(${c.id})" style="background: #10b981; border-color: #10b981;">
-            ✓ Approve &amp; Issue Plate
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>Approve &amp; Issue Plate
           </button>
         `;
       } else if (c.status !== 'Approved & Issued') {
@@ -1424,11 +1565,14 @@ require_auth('login.php');
       }
 
       document.getElementById('dossier-print-btn').onclick = () => {
-        document.getElementById('dossier-modal').close();
+        closePermitDrawer();
         openPrintPermitModal(c.id);
       };
 
-      document.getElementById('dossier-modal').showModal();
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
     };
 
     // Open Modal 3: Payment
@@ -1787,6 +1931,26 @@ require_auth('login.php');
         } catch (err) {
           console.error('Inspection error:', err);
           Toast.error('Failed to save inspection.');
+        }
+      });
+
+      // Close drawer on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closePermitDrawer();
+          const popover = document.getElementById('permit-info-popover');
+          if (popover) popover.classList.remove('active');
+        }
+      });
+
+      // Close popover on click outside
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('permit-info-popover');
+        const trigger = document.querySelector('.info-trigger');
+        if (popover && popover.classList.contains('active')) {
+          if (!popover.contains(e.target) && !trigger.contains(e.target)) {
+            popover.classList.remove('active');
+          }
         }
       });
     }

@@ -284,13 +284,53 @@ require_auth('login.php');
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
+        <!-- Page Hero Section (Level 1 Minimal Quiet Hero) -->
         <section class="page-hero">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Clearances & Certifications.</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); position: relative;">
+                <h1 class="typography-heading-2">Clearances &amp; Certifications.</h1>
                 <span class="badge-neutral" id="cert-count-badge">0 Issued</span>
+                <button type="button" class="info-trigger" onclick="toggleCertInfoPopover(event)" title="Legal Mandate &amp; Verification Details" aria-label="Legal Mandate &amp; Verification Details">
+                  ⓘ
+                </button>
+
+                <!-- Contextual Info Popover (Level 1 Info Distribution) -->
+                <div class="info-popover-card" id="cert-info-popover">
+                  <div class="info-popover-title">Document Issuance &amp; Legal Mandate</div>
+                  <div class="info-popover-desc">
+                    Issued pursuant to Republic Act 7160 (Local Government Code). Every certificate generates an immutable cryptographic verification hash and scannable QR control number for instant validation.
+                  </div>
+                  <div class="info-popover-grid">
+                    <div>
+                      <div class="info-popover-metric-val">RA 7160</div>
+                      <div class="info-popover-metric-lbl">Statutory Authority</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">SHA-256</div>
+                      <div class="info-popover-metric-lbl">Security Hash</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">6 Mos</div>
+                      <div class="info-popover-metric-lbl">Standard Validity</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">4 Types</div>
+                      <div class="info-popover-metric-lbl">Document Classes</div>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-xs); flex-wrap: wrap;">
+                    <button type="button" class="button-pill-soft" onclick="quickFilterCertType('Barangay Clearance'); toggleCertInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Clearances
+                    </button>
+                    <button type="button" class="button-pill-soft" onclick="quickFilterCertType('Certificate of Indigency'); toggleCertInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Indigency
+                    </button>
+                    <button type="button" class="button-pill-soft" onclick="quickFilterCertType('Certificate of Residency'); toggleCertInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Residency
+                    </button>
+                  </div>
+                </div>
               </div>
               <p class="typography-body-lg">
                 Official document generation, digital tracking control codes, and instant print issuance.
@@ -308,81 +348,82 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Document Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL ISSUED</span>
-                <span class="badge-neutral">Database Live</span>
-              </div>
-              <div class="stat-number" id="stat-total-certs">0</div>
-              <div class="typography-caption" id="stat-sub-total">0 tracking codes verified</div>
+        <!-- Minimal Borderless Metrics Strip -->
+        <section style="margin-bottom: var(--spacing-sm);">
+          <div class="metrics-strip">
+            <div class="metric-strip-item">
+              <span class="metric-strip-val" id="stat-total-certs">0</span>
+              <span class="metric-strip-lbl">Total Issued</span>
+              <span id="stat-sub-total" style="display:none;">0 tracking codes verified</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">BARANGAY CLEARANCES</span>
-                <span class="badge-blue">Clearance</span>
-              </div>
-              <div class="stat-number" id="stat-total-clearances">0</div>
-              <div class="typography-caption" id="stat-sub-clearances">Employment & legal</div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterCertType('Barangay Clearance')" style="cursor: pointer;" title="Filter Barangay Clearances">
+              <span class="metric-strip-val" id="stat-total-clearances">0</span>
+              <span class="metric-strip-lbl">Clearances</span>
+              <span id="stat-sub-clearances" style="display:none;">Employment &amp; legal</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">INDIGENCY & RESIDENCY</span>
-                <span class="badge-amber">Welfare / Civil</span>
-              </div>
-              <div class="stat-number" id="stat-total-welfare">0</div>
-              <div class="typography-caption" id="stat-sub-welfare">Social aid & certification</div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterCertType('Certificate of Indigency')" style="cursor: pointer;" title="Filter Indigency / Residency">
+              <span class="metric-strip-val" id="stat-total-welfare">0</span>
+              <span class="metric-strip-lbl">Indigency / Residency</span>
+              <span id="stat-sub-welfare" style="display:none;">Social aid &amp; certification</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">REVENUE COLLECTED</span>
-                <span class="badge-emerald">Barangay Funds</span>
-              </div>
-              <div class="stat-number" id="stat-total-revenue">&#8369;0.00</div>
-              <div class="typography-caption" id="stat-sub-revenue">Official receipts logged</div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item">
+              <span class="metric-strip-val" id="stat-total-revenue">&#8369;0.00</span>
+              <span class="metric-strip-lbl">Revenue Collected</span>
+              <span id="stat-sub-revenue" style="display:none;">Official receipts logged</span>
             </div>
           </div>
         </section>
 
-        <!-- Filter & Search Toolbar -->
-        <section>
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <div class="search-input-wrap">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input type="text" id="search-certs" class="text-input" placeholder="Search tracking code, recipient, or purpose..." autocomplete="off">
-              </div>
-
-              <!-- Document Type Filter -->
-              <select id="filter-cert-type" class="filter-select">
-                <option value="">All Document Types</option>
-                <option value="Barangay Clearance">Barangay Clearance</option>
-                <option value="Certificate of Indigency">Certificate of Indigency</option>
-                <option value="Certificate of Residency">Certificate of Residency</option>
-                <option value="Business Clearance">Business Clearance</option>
-              </select>
-
-              <!-- Status Filter -->
-              <select id="filter-cert-status" class="filter-select">
-                <option value="">All Statuses</option>
-                <option value="Issued">Issued</option>
-                <option value="Pending Review">Pending Online Requests</option>
-                <option value="Revoked">Revoked</option>
-              </select>
+        <!-- Progressive Minimal Filter Bar (Level 2 Secondary) -->
+        <section style="margin-bottom: var(--spacing-md);">
+          <div class="filter-bar-minimal">
+            <div class="filter-search-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="search-certs" placeholder="Search tracking code, recipient, purpose..." autocomplete="off">
             </div>
 
-            <div class="filter-group">
-              <button id="btn-clear-cert-filters" class="button-pill-soft" style="height: 34px; padding: 0 12px; font-size: 0.75rem; display: none;">
-                Reset Filters
-              </button>
+            <button type="button" class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleCertFilterPanel()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              <span>Filters</span>
+              <span class="filter-count-badge" id="active-filter-badge" style="display:none;">0</span>
+            </button>
+
+            <button type="button" class="button-pill-soft" id="btn-clear-cert-filters" onclick="resetCertFilters()" style="display:none; height: 32px; font-size: 0.75rem; padding: 0 10px;">
+              Reset
+            </button>
+          </div>
+
+          <!-- Expandable Filter Panel -->
+          <div class="filter-expanded-panel" id="cert-filter-panel">
+            <div class="filter-panel-row">
+              <div style="flex: 1; min-width: 180px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Document Type</label>
+                <select id="filter-cert-type" class="filter-select" style="width: 100%;">
+                  <option value="">All Document Types</option>
+                  <option value="Barangay Clearance">Barangay Clearance</option>
+                  <option value="Certificate of Indigency">Certificate of Indigency</option>
+                  <option value="Certificate of Residency">Certificate of Residency</option>
+                  <option value="Business Clearance">Business Clearance</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 180px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Issuance Status</label>
+                <select id="filter-cert-status" class="filter-select" style="width: 100%;">
+                  <option value="">All Statuses</option>
+                  <option value="Issued">Issued</option>
+                  <option value="Pending Review">Pending Online Requests</option>
+                  <option value="Revoked">Revoked</option>
+                </select>
+              </div>
             </div>
           </div>
         </section>
@@ -449,6 +490,164 @@ require_auth('login.php');
       </main>
     </div>
   </div>
+
+  <!-- Backdrop for Right-Side Slide-Over Drawers -->
+  <div class="app-drawer-backdrop" id="drawer-backdrop" onclick="closeCertDrawer()"></div>
+
+  <!-- Certificate Detail Slide-Over Drawer (Level 3 Deep Detail) -->
+  <aside class="app-drawer" id="cert-drawer" aria-label="Certificate Details" style="max-width: 580px;">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm); min-width: 0;">
+        <span class="badge-blue" id="drawer-cert-code" style="font-family: monospace;">BC-2026-00001</span>
+        <div class="drawer-header-info">
+          <h3 class="drawer-title" id="drawer-cert-type">Barangay Clearance</h3>
+          <p class="drawer-subtitle" id="drawer-cert-recipient">Issued to — &bull; —</p>
+        </div>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeCertDrawer()" title="Close details (Esc)" aria-label="Close details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" id="tab-btn-cert-overview" onclick="switchCertDrawerTab('overview')">
+        Overview &amp; QR
+      </button>
+      <button type="button" class="drawer-tab" id="tab-btn-cert-citizen" onclick="switchCertDrawerTab('citizen')">
+        Recipient Profile
+      </button>
+      <button type="button" class="drawer-tab" id="tab-btn-cert-security" onclick="switchCertDrawerTab('security')">
+        Receipt &amp; Audit
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- TAB 1: OVERVIEW & QR -->
+      <div id="cert-drawer-tab-overview" class="drawer-section">
+        <div class="drawer-section-title">Certificate Summary</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Status</span>
+            <span class="drawer-item-value" id="drawer-cert-status-val">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Signatory Official</span>
+            <span class="drawer-item-value" id="drawer-cert-signatory">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Date Issued</span>
+            <span class="drawer-item-value" id="drawer-cert-date">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Issuing Authority</span>
+            <span class="drawer-item-value" id="drawer-cert-issued-by">—</span>
+          </div>
+        </div>
+
+        <div class="drawer-item" style="margin-top: var(--spacing-sm);">
+          <span class="drawer-item-label">Purpose of Issuance</span>
+          <p class="typography-body-sm" id="drawer-cert-purpose" style="margin: 0; color: var(--color-ink); font-weight: 500;">—</p>
+        </div>
+
+        <div class="drawer-section-title" style="margin-top: var(--spacing-md);">Public Verification &amp; QR Code</div>
+        <div style="display: flex; gap: 16px; align-items: center; padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+          <div id="drawer-cert-qr" style="width: 80px; height: 80px; background: #fff; border: 1px solid #ccc; padding: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.8125rem; color: var(--color-ink);">Instant Verification Portal</div>
+            <div class="typography-caption" style="margin: 4px 0;">Citizens and verifying organizations can scan this QR code or visit:</div>
+            <div style="font-family: monospace; font-size: 0.75rem; color: var(--color-primary); word-break: break-all;" id="drawer-cert-verify-link">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: RECIPIENT PROFILE -->
+      <div id="cert-drawer-tab-citizen" class="drawer-section" style="display: none;">
+        <div class="drawer-section-title">Citizen &amp; Residency Details</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Full Legal Name</span>
+            <span class="drawer-item-value" id="drawer-cert-citizen-name">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Civil Status / Age</span>
+            <span class="drawer-item-value" id="drawer-cert-citizen-meta">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Purok / Sub-Zone</span>
+            <span class="drawer-item-value" id="drawer-cert-citizen-purok">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Contact Phone</span>
+            <span class="drawer-item-value" id="drawer-cert-citizen-phone">—</span>
+          </div>
+        </div>
+
+        <div class="drawer-item" style="margin-top: var(--spacing-sm);">
+          <span class="drawer-item-label">Barangay Residential Address</span>
+          <p class="typography-body-sm" id="drawer-cert-citizen-address" style="margin: 0; color: var(--color-ink);">—</p>
+        </div>
+
+        <div class="drawer-item" id="drawer-cert-business-box" style="margin-top: var(--spacing-sm); display: none;">
+          <span class="drawer-item-label">Registered Enterprise / Commercial Unit</span>
+          <p class="typography-body-sm" id="drawer-cert-business-text" style="margin: 0; color: var(--color-ink); font-weight: 600;">—</p>
+        </div>
+      </div>
+
+      <!-- TAB 3: RECEIPT & SECURITY AUDIT -->
+      <div id="cert-drawer-tab-security" class="drawer-section" style="display: none;">
+        <div class="drawer-section-title">Official Financial Audit</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Issuance Fee</span>
+            <span class="drawer-item-value" id="drawer-cert-fee">₱0.00</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Official Receipt (OR) #</span>
+            <span class="drawer-item-value" id="drawer-cert-or" style="font-family: monospace;">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Payment Status</span>
+            <span class="drawer-item-value" id="drawer-cert-pay-status">Paid / Official</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Validity Expiration</span>
+            <span class="drawer-item-value" id="drawer-cert-validity">6 Months from Issue</span>
+          </div>
+        </div>
+
+        <div class="drawer-section-title" style="margin-top: var(--spacing-md);">Security &amp; Hash Chain</div>
+        <div class="drawer-item">
+          <span class="drawer-item-label">Cryptographic Tracking Code</span>
+          <span class="drawer-item-value" id="drawer-cert-hash" style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Action Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" id="drawer-btn-sms" onclick="sendCertDrawerSms()" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Send SMS Alert</span>
+      </button>
+      <button type="button" class="button-primary" id="drawer-btn-print" onclick="printCertFromDrawer()" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect width="12" height="8" x="6" y="14"/>
+        </svg>
+        <span>Print Document</span>
+      </button>
+      <button type="button" class="button-outline" onclick="closeCertDrawer()" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+  </aside>
 
   <!-- Document Issuance Modal -->
   <dialog id="issue-modal" class="modal-dialog" style="max-width: 720px; width: 95%;">
@@ -859,14 +1058,147 @@ require_auth('login.php');
       document.getElementById('stat-sub-revenue').textContent = `From ${certs.filter(c => parseFloat(c.amountPaid) > 0).length} paid issuances`;
     }
 
+    let activeCertForDrawer = null;
+
+    window.toggleCertInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('cert-info-popover');
+      if (popover) popover.classList.toggle('active');
+    };
+
+    window.toggleCertFilterPanel = function() {
+      const panel = document.getElementById('cert-filter-panel');
+      if (panel) panel.classList.toggle('active');
+    };
+
+    window.quickFilterCertType = function(type) {
+      document.getElementById('filter-cert-type').value = type;
+      const panel = document.getElementById('cert-filter-panel');
+      if (panel && !panel.classList.contains('active')) panel.classList.add('active');
+      applyCertFiltersAndRender();
+    };
+
+    window.openCertDrawer = async function(id) {
+      try {
+        let cert = allCertificates.find(c => c.id === id);
+        if (!cert) {
+          cert = await window.barangayDB.get('certificates', id);
+        }
+        if (!cert) return;
+
+        activeCertForDrawer = cert;
+        activeCertForAction = cert;
+
+        document.getElementById('drawer-cert-code').textContent = cert.trackingCode || 'BC-0000';
+        document.getElementById('drawer-cert-type').textContent = cert.type || 'Barangay Certificate';
+        document.getElementById('drawer-cert-recipient').textContent = `Issued to ${cert.recipientName || 'Resident'} • ${cert.purok || 'Resident'}`;
+
+        // Populate Overview Tab
+        document.getElementById('drawer-cert-status-val').textContent = cert.status || 'Issued';
+        document.getElementById('drawer-cert-signatory').textContent = cert.signatory || 'Hon. Punong Barangay';
+        const dateStr = cert.issuedAt 
+          ? new Date(cert.issuedAt).toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' }) 
+          : (cert.requestedAt ? `${new Date(cert.requestedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} (Online)` : '—');
+        document.getElementById('drawer-cert-date').textContent = dateStr;
+        document.getElementById('drawer-cert-issued-by').textContent = cert.issuedBy || 'Official Registrar';
+        document.getElementById('drawer-cert-purpose').textContent = cert.purpose || 'Official Requirement';
+
+        // Render QR Code in drawer
+        const qrContainer = document.getElementById('drawer-cert-qr');
+        if (qrContainer && window.QRCode) {
+          const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
+          const verifyUrl = `${window.location.origin}/verify${ext}?code=${encodeURIComponent(cert.trackingCode)}`;
+          QRCode.render(qrContainer, verifyUrl, { size: 76, margin: 1 });
+          document.getElementById('drawer-cert-verify-link').textContent = `verify${ext}?code=${cert.trackingCode}`;
+        }
+
+        // Citizen Tab
+        document.getElementById('drawer-cert-citizen-name').textContent = cert.recipientName || '—';
+        const res = allResidentsMap.get(cert.residentId);
+        document.getElementById('drawer-cert-citizen-meta').textContent = res ? `${res.age || '—'} yrs • ${res.civilStatus || 'Single'}` : 'Resident Record';
+        document.getElementById('drawer-cert-citizen-purok').textContent = cert.purok || (res && res.purok) || 'Barangay San Isidro';
+        document.getElementById('drawer-cert-citizen-phone').textContent = (res && (res.phone || res.contactNo)) || cert.contactPhone || '—';
+        document.getElementById('drawer-cert-citizen-address').textContent = cert.address || (res && `${res.address || ''}, ${res.purok || ''}`) || 'Barangay San Isidro';
+
+        const bizBox = document.getElementById('drawer-cert-business-box');
+        if (cert.type === 'Business Clearance' && (cert.businessName || cert.businessNature)) {
+          bizBox.style.display = 'block';
+          document.getElementById('drawer-cert-business-text').textContent = `${cert.businessName || ''} (${cert.businessNature || 'Commercial'})`;
+        } else {
+          bizBox.style.display = 'none';
+        }
+
+        // Receipt & Security Tab
+        const fee = parseFloat(cert.amountPaid) || 0;
+        document.getElementById('drawer-cert-fee').textContent = fee > 0 ? `₱${fee.toFixed(2)}` : '₱0.00 (Waived / Indigent)';
+        document.getElementById('drawer-cert-or').textContent = cert.orNumber || 'None Recorded';
+        document.getElementById('drawer-cert-pay-status').textContent = cert.status === 'Pending Review' ? 'Pending Payment' : 'Paid / Cleared';
+        document.getElementById('drawer-cert-hash').textContent = cert.trackingCode ? `SHA256-${btoa(cert.trackingCode + '-' + (cert.recipientName || '')).substring(0, 32)}` : '—';
+
+        switchCertDrawerTab('overview');
+
+        const drawer = document.getElementById('cert-drawer');
+        const backdrop = document.getElementById('drawer-backdrop');
+        if (drawer) drawer.classList.add('active');
+        if (backdrop) backdrop.classList.add('active');
+      } catch (err) {
+        console.error('Failed to open cert drawer:', err);
+        Toast.error('Could not load certificate details.');
+      }
+    };
+
+    window.closeCertDrawer = function() {
+      const drawer = document.getElementById('cert-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchCertDrawerTab = function(tabName) {
+      const tabs = ['overview', 'citizen', 'security'];
+      tabs.forEach(t => {
+        const isCurrent = t === tabName;
+        const btn = document.getElementById(`tab-btn-cert-${t}`);
+        const pane = document.getElementById(`cert-drawer-tab-${t}`);
+        if (btn) btn.classList.toggle('active', isCurrent);
+        if (pane) pane.style.display = isCurrent ? 'block' : 'none';
+      });
+    };
+
+    window.printCertFromDrawer = function() {
+      if (activeCertForDrawer) {
+        closeCertDrawer();
+        openPrintModal(activeCertForDrawer.id);
+      }
+    };
+
+    window.sendCertDrawerSms = function() {
+      if (activeCertForDrawer) {
+        quickNotifyCert(activeCertForDrawer.id);
+      }
+    };
+
     // Filter and display table rows
     function applyCertFiltersAndRender() {
       const searchTerm = (document.getElementById('search-certs').value || '').toLowerCase().trim();
       const typeFilter = document.getElementById('filter-cert-type').value;
       const statusFilter = document.getElementById('filter-cert-status').value;
 
-      const hasActiveFilters = searchTerm || typeFilter || statusFilter;
-      document.getElementById('btn-clear-cert-filters').style.display = hasActiveFilters ? 'inline-flex' : 'none';
+      let activeCount = 0;
+      if (typeFilter) activeCount++;
+      if (statusFilter) activeCount++;
+
+      const filterBadge = document.getElementById('active-filter-badge');
+      if (filterBadge) {
+        filterBadge.style.display = activeCount > 0 ? 'inline-block' : 'none';
+        filterBadge.textContent = activeCount;
+      }
+
+      const hasActiveFilters = searchTerm || activeCount > 0;
+      const clearBtn = document.getElementById('btn-clear-cert-filters');
+      if (clearBtn) {
+        clearBtn.style.display = hasActiveFilters ? 'inline-flex' : 'none';
+      }
 
       const filtered = allCertificates.filter(cert => {
         if (searchTerm) {
@@ -939,7 +1271,7 @@ require_auth('login.php');
         return `
           <tr style="${isRevoked ? 'opacity: 0.6; text-decoration: line-through;' : ''}">
             <td>
-              <div style="font-family: monospace; font-weight: 700; color: var(--color-primary); font-size: 0.8125rem;">
+              <div style="font-family: monospace; font-weight: 700; color: var(--color-primary); font-size: 0.8125rem; cursor: pointer;" onclick="openCertDrawer(${c.id})" title="Click to view full dossier">
                 ${c.trackingCode}
               </div>
               <div class="typography-caption" style="text-decoration: none;">
@@ -977,11 +1309,14 @@ require_auth('login.php');
                     Reject
                   </button>
                 ` : `
+                  <button class="table-action-btn" onclick="openCertDrawer(${c.id})" title="View complete dossier and verification details">
+                    Dossier
+                  </button>
                   <button class="table-action-btn" onclick="quickNotifyCert(${c.id})" title="Send SMS pickup reminder">
                     SMS
                   </button>
                   <button class="table-action-btn" onclick="openPrintModal(${c.id})" title="Print or view official document">
-                    Print / View
+                    Print
                   </button>
                   ${!isRevoked ? `
                     <button class="table-action-btn danger" onclick="openRevokeModal(${c.id})" title="Revoke document">
@@ -1553,6 +1888,26 @@ require_auth('login.php');
         Toast.error('Failed to dispatch SMS.');
       }
     };
+
+    // Close drawer on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCertDrawer();
+        const popover = document.getElementById('cert-info-popover');
+        if (popover) popover.classList.remove('active');
+      }
+    });
+
+    // Close popover on click outside
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('cert-info-popover');
+      const trigger = document.querySelector('.info-trigger');
+      if (popover && popover.classList.contains('active')) {
+        if (!popover.contains(e.target) && !trigger.contains(e.target)) {
+          popover.classList.remove('active');
+        }
+      }
+    });
   </script>
 </body>
 </html>

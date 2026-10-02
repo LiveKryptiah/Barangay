@@ -75,109 +75,62 @@ exit;
       <span>Database Engine: Relational MySQL (PHP PDO) Active</span>
     </div>
 
-    <div class="auth-card">
+    <div class="auth-card" style="text-align: center; max-width: 500px;">
       <div class="mb-lg">
-        <h1 class="typography-heading-3 mb-xs">Welcome back.</h1>
-        <p class="typography-body-lg">Sign in to access your Barangay Management System records.</p>
-        <p class="typography-caption mt-xs" style="color: var(--color-text-muted);">
-          Open-Source LGU Administration Platform &bull; Demo &amp; Administrative System
+        <div class="nav-brand-icon" style="width: 48px; height: 48px; margin: 0 auto var(--spacing-sm); border-radius: var(--rounded-md);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h1 class="typography-heading-3 mb-xs">BarangayOS</h1>
+        <p class="typography-body-sm" style="color: var(--color-text-muted);">
+          Open-Source Local Government Administration System (PHP &amp; MySQL)
         </p>
       </div>
 
-      <!-- First-time Setup Alert -->
-      <div id="setup-alert" class="setup-alert-card" style="display: none;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <span class="typography-title" style="font-size: 0.9375rem;">First-Time Setup</span>
-          <span class="badge-popular">Required</span>
+      <div style="background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); text-align: left;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+          <span class="typography-label" style="color: var(--color-ink); font-weight: 700;">DIRECT ACCESS ACTIVE</span>
+          <span class="badge-emerald">Auto Authenticated</span>
         </div>
-        <p class="typography-body-sm" style="color: var(--color-ink);">
-          No administrator account detected in the database. Initialize your barangay system by creating the primary administrator credentials.
+        <p class="typography-body-sm" style="color: var(--color-text-muted);">
+          Authentication requirements are disabled. You have full administrative access to all modules, records, and telemetry.
         </p>
-        <a href="install.php" class="button-pill-soft mt-xs" style="align-self: flex-start;">
-          Run Database Setup &rarr;
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+        <a href="dashboard.php" class="button-primary w-full" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>Enter Operations Console</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+        <a href="portal.php" class="button-outline w-full" style="height: 40px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span>Citizen Public Portal</span>
         </a>
       </div>
 
-      <form id="login-form" autocomplete="on">
-        <div class="form-group">
-          <label class="form-label" for="identifier">Username or Email Address</label>
-          <div class="text-input-wrap">
-            <input 
-              type="text" 
-              id="identifier" 
-              name="identifier" 
-              class="text-input" 
-              placeholder="e.g. admin or secretary@barangay.local"
-              required 
-              autofocus
-            >
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label class="form-label" for="password">Password</label>
-          </div>
-          <div class="text-input-wrap">
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              class="text-input" 
-              placeholder="Enter your secure password"
-              required
-            >
-            <button type="button" id="toggle-password" class="text-input-icon-btn" title="Toggle password visibility" aria-label="Toggle password visibility">
-              <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between; margin-top: var(--spacing-sm); margin-bottom: var(--spacing-xl);">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.875rem; color: var(--color-ink);">
-            <input type="checkbox" id="remember-me" style="accent-color: var(--color-primary); width: 16px; height: 16px; border-radius: 4px;">
-            <span>Keep me signed in</span>
-          </label>
-        </div>
-
-        <button type="submit" id="submit-btn" class="button-primary w-full">
-          Sign In
-        </button>
-
-        <div class="mt-lg text-center">
-          <p class="typography-body-sm">
-            Need an official account? 
-            <a href="register.php" class="typography-link" style="font-size: 0.875rem; text-decoration: underline;">Register here</a>
-          </p>
-        </div>
-
-        <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); text-align: center;">
-          <p class="typography-caption" style="color: var(--color-text-muted); margin-bottom: 8px;">
-            Are you a resident requesting a document or tracking an application?
-          </p>
-          <a href="portal.php" class="button-outline" style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px; font-size: 0.8125rem; border-radius: var(--rounded-full);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-            </svg>
-            <span>Citizen Public Portal &rarr;</span>
-          </a>
-        </div>
-      </form>
+      <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-md); border-top: 1px solid var(--color-hairline-soft); text-align: center;">
+        <p class="typography-caption" style="color: var(--color-text-muted); font-size: 0.75rem; line-height: 1.4;">
+          <strong>Educational &amp; Open-Source Software Project.</strong> Developed strictly for administrative research, software architecture demonstration, and academic review. Not affiliated with any official government entity.
+        </p>
+      </div>
     </div>
-
   </main>
 
   <footer class="footer-inverse">
     <div class="footer-content">
       <div class="footer-brand">
-        <h3 class="typography-heading-4">Barangay Management System.</h3>
+        <h3 class="typography-heading-4">BarangayOS.</h3>
         <p class="typography-body-sm mt-xs" style="color: var(--color-canvas-soft); opacity: 0.8;">
-          Republic of the Philippines &bull; Local Government Unit Management Platform
+          Open-Source Local Government Administration Platform
         </p>
       </div>
       <div class="footer-bottom">
@@ -192,68 +145,10 @@ exit;
   <script src="js/components/nav.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Mount navbar
       if (window.AppNavbar) {
         AppNavbar.render();
       }
-
-      // 2. Check first run
-      try {
-        const firstRun = await window.barangayAuth.checkFirstRun();
-        if (firstRun && !firstRun.has_admin) {
-          document.getElementById('setup-alert').style.display = 'flex';
-        }
-      } catch (e) {
-        console.warn('First run check failed:', e);
-      }
-
-      // 3. Password visibility toggle
-      const togglePasswordBtn = document.getElementById('toggle-password');
-      const passwordInput = document.getElementById('password');
-      const eyeIcon = document.getElementById('eye-icon');
-
-      togglePasswordBtn.addEventListener('click', () => {
-        const isPassword = passwordInput.getAttribute('type') === 'password';
-        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-        
-        if (isPassword) {
-          eyeIcon.innerHTML = `
-            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
-            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
-            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
-            <line x1="2" y1="2" x2="22" y2="22"/>
-          `;
-        } else {
-          eyeIcon.innerHTML = `
-            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-            <circle cx="12" cy="12" r="3"/>
-          `;
-        }
-      });
-
-      // 4. Form Submission
-      const form = document.getElementById('login-form');
-      const submitBtn = document.getElementById('submit-btn');
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const username = document.getElementById('identifier').value.trim();
-        const password = document.getElementById('password').value;
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Verifying credentials...';
-
-        try {
-          const res = await window.barangayAuth.login(username, password);
-          submitBtn.textContent = 'Redirecting to workspace...';
-          window.location.href = 'dashboard.php';
-        } catch (err) {
-          alert(err.message || 'Authentication failed. Please verify credentials.');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign In';
-        }
-      });
+      window.location.replace('dashboard.php');
     });
   </script>
 </body>

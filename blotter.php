@@ -236,16 +236,56 @@ require_auth('login.php');
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
+        <!-- Page Hero Section (Level 1 Minimal Quiet Hero) -->
         <section class="page-hero">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Blotter & Incident Records.</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); position: relative;">
+                <h1 class="typography-heading-2">Blotter &amp; Incident Records.</h1>
                 <span class="badge-neutral" id="blotter-count-badge">0 Cases</span>
+                <button type="button" class="info-trigger" onclick="toggleBlotterInfoPopover(event)" title="Katarungang Pambarangay Legal Framework" aria-label="Katarungang Pambarangay Legal Framework">
+                  ⓘ
+                </button>
+
+                <!-- Contextual Popover Card (Level 1 Info Distribution) -->
+                <div class="info-popover-card" id="blotter-info-popover">
+                  <div class="info-popover-title">Katarungang Pambarangay Mandate</div>
+                  <div class="info-popover-desc">
+                    Administered under RA 7160 Katarungang Pambarangay provisions. Barangay residents undergo mandatory Lupon Tagapamayapa mediation and conciliation before court filing or police prosecution.
+                  </div>
+                  <div class="info-popover-grid">
+                    <div>
+                      <div class="info-popover-metric-val">RA 7160</div>
+                      <div class="info-popover-metric-lbl">KP Chapter 7</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">15 Days</div>
+                      <div class="info-popover-metric-lbl">Mediation Window</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">KP Form 16</div>
+                      <div class="info-popover-metric-lbl">Amicable Settlement</div>
+                    </div>
+                    <div>
+                      <div class="info-popover-metric-val">KP Form 20</div>
+                      <div class="info-popover-metric-lbl">Cert to File Action</div>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-xs); flex-wrap: wrap;">
+                    <button type="button" class="button-pill-soft" onclick="quickFilterBlotterStatus('Active Mediation'); toggleBlotterInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Active Mediation
+                    </button>
+                    <button type="button" class="button-pill-soft" onclick="quickFilterBlotterStatus('Hearing Scheduled'); toggleBlotterInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Hearings Scheduled
+                    </button>
+                    <button type="button" class="button-pill-soft" onclick="quickFilterBlotterStatus('Amicably Settled'); toggleBlotterInfoPopover();" style="font-size: 0.6875rem; padding: 4px 8px;">
+                      Amicably Settled
+                    </button>
+                  </div>
+                </div>
               </div>
               <p class="typography-body-lg">
-                Peace & Order incident reporting, Lupon Tagapamayapa dispute mediation, and legal notices.
+                Peace &amp; order incident reporting, Lupon Tagapamayapa dispute mediation, and legal notices.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -260,98 +300,101 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL CASES FILED</span>
-                <span class="badge-neutral">Registry</span>
-              </div>
-              <div class="stat-number" id="stat-total-cases">0</div>
-              <div class="typography-caption" id="stat-sub-cases">Peace & order entries</div>
+        <!-- Minimal Borderless Metrics Strip -->
+        <section style="margin-bottom: var(--spacing-sm);">
+          <div class="metrics-strip">
+            <div class="metric-strip-item">
+              <span class="metric-strip-val" id="stat-total-cases">0</span>
+              <span class="metric-strip-lbl">Total Cases Filed</span>
+              <span id="stat-sub-cases" style="display:none;">Peace &amp; order entries</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">ACTIVE MEDIATION</span>
-                <span class="badge-amber">In Progress</span>
-              </div>
-              <div class="stat-number" id="stat-active-cases">0</div>
-              <div class="typography-caption" id="stat-sub-active">Awaiting hearing / settlement</div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterBlotterStatus('Active Mediation')" style="cursor: pointer;" title="Filter Active Mediation">
+              <span class="metric-strip-val" id="stat-active-cases" style="color: #f59e0b;">0</span>
+              <span class="metric-strip-lbl">Active Mediation</span>
+              <span id="stat-sub-active" style="display:none;">Awaiting hearing / settlement</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">HEARINGS SCHEDULED</span>
-                <span class="badge-blue">Calendar</span>
-              </div>
-              <div class="stat-number" id="stat-scheduled-cases">0</div>
-              <div class="typography-caption" id="stat-sub-scheduled">Summons issued</div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterBlotterStatus('Hearing Scheduled')" style="cursor: pointer;" title="Filter Hearings Scheduled">
+              <span class="metric-strip-val" id="stat-scheduled-cases" style="color: #3b82f6;">0</span>
+              <span class="metric-strip-lbl">Hearings Scheduled</span>
+              <span id="stat-sub-scheduled" style="display:none;">Summons issued</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">AMICABLY SETTLED</span>
-                <span class="badge-emerald">Kasunduan</span>
-              </div>
-              <div class="stat-number" id="stat-settled-cases">0</div>
-              <div class="typography-caption" id="stat-sub-settled">Peacefully resolved</div>
+            <div class="metric-strip-divider"></div>
+            <div class="metric-strip-item" onclick="quickFilterBlotterStatus('Amicably Settled')" style="cursor: pointer;" title="Filter Amicably Settled">
+              <span class="metric-strip-val" id="stat-settled-cases" style="color: #10b981;">0</span>
+              <span class="metric-strip-lbl">Amicably Settled</span>
+              <span id="stat-sub-settled" style="display:none;">Peacefully resolved</span>
             </div>
           </div>
         </section>
 
-        <!-- Filter & Search Toolbar -->
-        <section>
-          <div class="filter-toolbar">
-            <div class="filter-group">
-              <div class="search-input-wrap">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input type="text" id="search-cases" class="text-input" placeholder="Search case #, complainant, respondent, or incident..." autocomplete="off">
-              </div>
-
-              <!-- Status Filter -->
-              <select id="filter-case-status" class="filter-select">
-                <option value="">All Case Statuses</option>
-                <option value="Active Mediation">Active Mediation</option>
-                <option value="Hearing Scheduled">Hearing Scheduled</option>
-                <option value="Amicably Settled">Amicably Settled</option>
-                <option value="Escalated (CFA Issued)">Escalated (CFA Issued)</option>
-              </select>
-
-              <!-- Incident Type Filter -->
-              <select id="filter-incident-type" class="filter-select">
-                <option value="">All Incident Types</option>
-                <option value="Physical Altercation">Physical Altercation</option>
-                <option value="Noise Disturbance">Noise Disturbance</option>
-                <option value="Property & Boundary Dispute">Property & Boundary Dispute</option>
-                <option value="Domestic / Family Conflict">Domestic / Family Conflict</option>
-                <option value="Theft / Property Damage">Theft / Property Damage</option>
-                <option value="Verbal Harassment / Threat">Verbal Harassment / Threat</option>
-                <option value="Debt / Financial Conflict">Debt / Financial Conflict</option>
-              </select>
-
-              <!-- Purok Filter -->
-              <select id="filter-case-purok" class="filter-select">
-                <option value="">All Puroks</option>
-                <option value="Purok 1">Purok 1</option>
-                <option value="Purok 2">Purok 2</option>
-                <option value="Purok 3">Purok 3</option>
-                <option value="Purok 4">Purok 4</option>
-                <option value="Purok 5">Purok 5</option>
-                <option value="Purok 6">Purok 6</option>
-                <option value="Purok 7">Purok 7</option>
-                <option value="Sitio Center">Sitio Center</option>
-              </select>
+        <!-- Progressive Minimal Filter Bar (Level 2 Secondary) -->
+        <section style="margin-bottom: var(--spacing-md);">
+          <div class="filter-bar-minimal">
+            <div class="filter-search-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="search-cases" placeholder="Search case #, complainant, respondent, or incident..." autocomplete="off">
             </div>
 
-            <div class="filter-group">
-              <button id="btn-clear-blotter-filters" class="button-pill-soft" style="height: 34px; padding: 0 12px; font-size: 0.75rem; display: none;">
-                Reset Filters
-              </button>
+            <button type="button" class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleBlotterFilterPanel()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              <span>Filters</span>
+              <span class="filter-count-badge" id="active-filter-badge" style="display:none;">0</span>
+            </button>
+
+            <button type="button" class="button-pill-soft" id="btn-clear-blotter-filters" onclick="resetBlotterFilters()" style="display:none; height: 32px; font-size: 0.75rem; padding: 0 10px;">
+              Reset
+            </button>
+          </div>
+
+          <!-- Expandable Filter Panel -->
+          <div class="filter-expanded-panel" id="blotter-filter-panel">
+            <div class="filter-panel-row">
+              <div style="flex: 1; min-width: 170px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Mediation Stage / Status</label>
+                <select id="filter-case-status" class="filter-select" style="width: 100%;">
+                  <option value="">All Case Statuses</option>
+                  <option value="Active Mediation">Active Mediation</option>
+                  <option value="Hearing Scheduled">Hearing Scheduled</option>
+                  <option value="Amicably Settled">Amicably Settled</option>
+                  <option value="Escalated (CFA Issued)">Escalated (CFA Issued)</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 180px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Incident Classification</label>
+                <select id="filter-incident-type" class="filter-select" style="width: 100%;">
+                  <option value="">All Incident Types</option>
+                  <option value="Physical Altercation">Physical Altercation</option>
+                  <option value="Noise Disturbance">Noise Disturbance</option>
+                  <option value="Property & Boundary Dispute">Property &amp; Boundary Dispute</option>
+                  <option value="Domestic / Family Conflict">Domestic / Family Conflict</option>
+                  <option value="Theft / Property Damage">Theft / Property Damage</option>
+                  <option value="Verbal Harassment / Threat">Verbal Harassment / Threat</option>
+                  <option value="Debt / Financial Conflict">Debt / Financial Conflict</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 140px;">
+                <label class="form-label" style="font-size: 0.6875rem;">Barangay Purok</label>
+                <select id="filter-case-purok" class="filter-select" style="width: 100%;">
+                  <option value="">All Puroks</option>
+                  <option value="Purok 1">Purok 1</option>
+                  <option value="Purok 2">Purok 2</option>
+                  <option value="Purok 3">Purok 3</option>
+                  <option value="Purok 4">Purok 4</option>
+                  <option value="Purok 5">Purok 5</option>
+                  <option value="Purok 6">Purok 6</option>
+                  <option value="Purok 7">Purok 7</option>
+                  <option value="Sitio Center">Sitio Center</option>
+                </select>
+              </div>
             </div>
           </div>
         </section>
@@ -618,67 +661,81 @@ require_auth('login.php');
     </form>
   </dialog>
 
-  <!-- Case Dossier Briefing Modal -->
-  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 680px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: var(--spacing-sm);">
-      <div>
-        <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
-          <span class="badge-blue" id="dossier-case-num">BLTR-2026-00001</span>
-          <span id="dossier-status-badge" class="badge-amber">Active Mediation</span>
+  <!-- Backdrop for Right-Side Slide-Over Drawers -->
+  <div class="app-drawer-backdrop" id="drawer-backdrop" onclick="closeBlotterDrawer()"></div>
+
+  <!-- Incident Case Dossier Slide-Over Drawer (Level 3 Deep Detail) -->
+  <aside class="app-drawer" id="dossier-drawer" aria-label="Incident Case Dossier" style="max-width: 620px;">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm); min-width: 0;">
+        <span class="badge-blue" id="dossier-case-num" style="font-family: monospace;">BLTR-2026-00001</span>
+        <div class="drawer-header-info">
+          <h3 class="drawer-title" id="dossier-incident-title">Physical Altercation</h3>
+          <p class="drawer-subtitle" id="dossier-status-subtitle">Status: <span id="dossier-status-badge" class="badge-amber">Active Mediation</span></p>
         </div>
-        <h3 class="typography-heading-4 mt-xs" id="dossier-incident-title">Physical Altercation</h3>
       </div>
-      <button type="button" class="button-pill-soft" onclick="document.getElementById('dossier-modal').close();" style="height: 30px; padding: 0 10px;">
+      <button type="button" class="drawer-close-btn" onclick="closeBlotterDrawer()" title="Close details (Esc)" aria-label="Close details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Parties Involved Cards -->
+      <div class="drawer-section-title">Parties Involved</div>
+      <div class="form-grid-2 mb-sm">
+        <div class="parties-card">
+          <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem;">COMPLAINANT</span>
+          <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-comp-name">Maria Santos</div>
+          <div class="typography-caption" id="dossier-comp-meta">Purok 3 &bull; 0917-000-0000</div>
+        </div>
+
+        <div class="parties-card">
+          <span class="typography-label" style="color: #ef4444; font-size: 0.6875rem;">RESPONDENT</span>
+          <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-resp-name">Pedro Reyes</div>
+          <div class="typography-caption" id="dossier-resp-meta">Purok 5 &bull; 0918-000-0000</div>
+        </div>
+      </div>
+
+      <!-- Incident Facts -->
+      <div class="drawer-section-title" style="margin-top: var(--spacing-sm);">Incident Facts &amp; Narrative</div>
+      <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-sm); border: 1px solid var(--color-hairline-soft);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.75rem; color: var(--color-text-muted);">
+          <span>Date &amp; Time: <strong style="color: var(--color-ink);" id="dossier-time-meta">-</strong></span>
+          <span>Location: <strong style="color: var(--color-ink);" id="dossier-location">-</strong></span>
+        </div>
+        <div class="typography-label" style="color: var(--color-text-muted); font-size: 0.6875rem; margin-top: 8px;">INCIDENT NARRATIVE REPORT:</div>
+        <p style="font-size: 0.84rem; color: var(--color-ink); line-height: 1.5; margin-top: 4px; white-space: pre-wrap;" id="dossier-narrative">-</p>
+      </div>
+
+      <!-- Settlement / Schedule details if any -->
+      <div id="dossier-settlement-box" style="display: none; padding: 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-sm);">
+        <span class="typography-label" style="color: #059669;">AMICABLE SETTLEMENT TERMS (KASUNDUAN)</span>
+        <p style="font-size: 0.84rem; color: var(--color-ink); margin-top: 4px;" id="dossier-settlement-text">-</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Footer -->
+    <div class="drawer-footer" style="flex-wrap: wrap; gap: 6px;">
+      <button type="button" class="button-outline" id="dossier-btn-escalate-kp" style="height: 36px; padding: 0 12px; font-size: 0.75rem; color: #4f46e5; border-color: #c7d2fe; display: inline-flex; align-items: center; gap: 6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3v18"/><path d="m3 7 9-4 9 4"/><path d="M6 7v6a6 6 0 0 0 12 0V7"/>
+        </svg>
+        <span>Escalate to KP</span>
+      </button>
+      <button type="button" class="button-outline" id="dossier-btn-print" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        Print Legal Form
+      </button>
+      <button type="button" class="button-primary" id="dossier-btn-update-status" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        Update Status
+      </button>
+      <button type="button" class="button-outline" onclick="closeBlotterDrawer()" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
         Close
       </button>
     </div>
-
-    <!-- Parties Involved Cards -->
-    <div class="form-grid-2 mb-sm">
-      <div class="parties-card">
-        <span class="typography-label" style="color: var(--color-primary); font-size: 0.6875rem;">COMPLAINANT</span>
-        <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-comp-name">Maria Santos</div>
-        <div class="typography-caption" id="dossier-comp-meta">Purok 3 &bull; 0917-000-0000</div>
-      </div>
-
-      <div class="parties-card">
-        <span class="typography-label" style="color: #ef4444; font-size: 0.6875rem;">RESPONDENT</span>
-        <div style="font-weight: 700; font-size: 0.9375rem;" id="dossier-resp-name">Pedro Reyes</div>
-        <div class="typography-caption" id="dossier-resp-meta">Purok 5 &bull; 0918-000-0000</div>
-      </div>
-    </div>
-
-    <!-- Incident Facts -->
-    <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-sm);">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.75rem; color: var(--color-text-muted);">
-        <span>Date & Time: <strong style="color: var(--color-ink);" id="dossier-time-meta">-</strong></span>
-        <span>Location: <strong style="color: var(--color-ink);" id="dossier-location">-</strong></span>
-      </div>
-      <div class="typography-label" style="color: var(--color-text-muted); font-size: 0.6875rem; margin-top: 8px;">INCIDENT NARRATIVE REPORT:</div>
-      <p style="font-size: 0.84rem; color: var(--color-ink); line-height: 1.5; margin-top: 4px; white-space: pre-wrap;" id="dossier-narrative">-</p>
-    </div>
-
-    <!-- Settlement / Schedule details if any -->
-    <div id="dossier-settlement-box" style="display: none; padding: 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--rounded-sm); margin-bottom: var(--spacing-sm);">
-      <span class="typography-label" style="color: #059669;">AMICABLE SETTLEMENT TERMS (KASUNDUAN)</span>
-      <p style="font-size: 0.84rem; color: var(--color-ink); margin-top: 4px;" id="dossier-settlement-text">-</p>
-    </div>
-
-    <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs); border-top: 1px solid var(--color-hairline-soft); padding-top: var(--spacing-sm); flex-wrap: wrap;">
-      <button type="button" class="button-outline" id="dossier-btn-escalate-kp" style="height: 38px; padding: 0 16px; font-size: 0.8125rem; color: #4f46e5; border-color: #c7d2fe; display: inline-flex; align-items: center; gap: 6px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 3v18"/><path d="m3 7 9-4 9 4"/><path d="M6 7v6a6 6 0 0 0 12 0V7"/>
-        </svg>
-        Escalate to KP Conciliation &rarr;
-      </button>
-      <button type="button" class="button-outline" id="dossier-btn-print" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
-        Print Legal Form &rarr;
-      </button>
-      <button type="button" class="button-primary" id="dossier-btn-update-status" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
-        Update Status
-      </button>
-    </div>
-  </dialog>
+  </aside>
 
   <!-- Official Legal Form Print Modal (Summons / Kasunduan) -->
   <dialog id="lupon-print-modal" class="modal-dialog" style="max-width: 840px; width: 95%; max-height: 90vh; overflow-y: auto;">
@@ -893,6 +950,31 @@ require_auth('login.php');
       document.getElementById('stat-sub-settled').textContent = `${settled} amicably resolved`;
     }
 
+    window.toggleBlotterInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('blotter-info-popover');
+      if (popover) popover.classList.toggle('active');
+    };
+
+    window.toggleBlotterFilterPanel = function() {
+      const panel = document.getElementById('blotter-filter-panel');
+      if (panel) panel.classList.toggle('active');
+    };
+
+    window.quickFilterBlotterStatus = function(stat) {
+      document.getElementById('filter-case-status').value = stat;
+      const panel = document.getElementById('blotter-filter-panel');
+      if (panel && !panel.classList.contains('active')) panel.classList.add('active');
+      applyBlotterFiltersAndRender();
+    };
+
+    window.closeBlotterDrawer = function() {
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
     // Filter and render table
     function applyBlotterFiltersAndRender() {
       const searchTerm = (document.getElementById('search-cases').value || '').toLowerCase().trim();
@@ -900,8 +982,22 @@ require_auth('login.php');
       const typeFilter = document.getElementById('filter-incident-type').value;
       const purokFilter = document.getElementById('filter-case-purok').value;
 
-      const hasActiveFilters = searchTerm || statusFilter || typeFilter || purokFilter;
-      document.getElementById('btn-clear-blotter-filters').style.display = hasActiveFilters ? 'inline-flex' : 'none';
+      let activeCount = 0;
+      if (statusFilter) activeCount++;
+      if (typeFilter) activeCount++;
+      if (purokFilter) activeCount++;
+
+      const filterBadge = document.getElementById('active-filter-badge');
+      if (filterBadge) {
+        filterBadge.style.display = activeCount > 0 ? 'inline-block' : 'none';
+        filterBadge.textContent = activeCount;
+      }
+
+      const hasActiveFilters = searchTerm || activeCount > 0;
+      const clearBtn = document.getElementById('btn-clear-blotter-filters');
+      if (clearBtn) {
+        clearBtn.style.display = hasActiveFilters ? 'inline-flex' : 'none';
+      }
 
       const filtered = allCases.filter(c => {
         if (searchTerm) {
@@ -1077,19 +1173,19 @@ require_auth('login.php');
       }
 
       document.getElementById('dossier-btn-update-status').onclick = () => {
-        document.getElementById('dossier-modal').close();
+        closeBlotterDrawer();
         openStatusModal(c.id);
       };
 
       document.getElementById('dossier-btn-print').onclick = () => {
-        document.getElementById('dossier-modal').close();
+        closeBlotterDrawer();
         openPrintModal(c.id);
       };
 
       const escalateBtn = document.getElementById('dossier-btn-escalate-kp');
       if (escalateBtn) {
         escalateBtn.onclick = () => {
-          document.getElementById('dossier-modal').close();
+          closeBlotterDrawer();
           const ext = window.location.pathname.endsWith('.html') ? '.html' : '.php';
           sessionStorage.setItem('kp_escalate_case', JSON.stringify({
             blotterCaseId: c.id,
@@ -1108,7 +1204,10 @@ require_auth('login.php');
         };
       }
 
-      document.getElementById('dossier-modal').showModal();
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
     };
 
     // Open Legal Form Print Modal
@@ -1353,6 +1452,26 @@ require_auth('login.php');
         } catch (err) {
           console.error(err);
           Toast.error('Could not update case status.');
+        }
+      });
+
+      // Close drawer on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeBlotterDrawer();
+          const popover = document.getElementById('blotter-info-popover');
+          if (popover) popover.classList.remove('active');
+        }
+      });
+
+      // Close popover on click outside
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('blotter-info-popover');
+        const trigger = document.querySelector('.info-trigger');
+        if (popover && popover.classList.contains('active')) {
+          if (!popover.contains(e.target) && !trigger.contains(e.target)) {
+            popover.classList.remove('active');
+          }
         }
       });
     }

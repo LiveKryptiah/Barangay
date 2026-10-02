@@ -294,13 +294,14 @@
             <div>
               <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
                 <h1 class="typography-heading-2">Barangay Health Station &amp; Nutrition Hub.</h1>
+                <button type="button" class="info-trigger" id="btn-health-info" onclick="toggleHealthInfoPopover(event)" aria-label="Health Station Information" title="About Primary Healthcare &amp; DOH Protocols">i</button>
                 <span class="badge-neutral" style="display: inline-flex; align-items: center; gap: 6px;">
                   <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
                   DOH Primary Care Station
                 </span>
               </div>
               <p class="typography-body-lg">
-                Comprehensive primary healthcare intake, Expanded Program on Immunization (EPI), Operation Timbang Plus child nutrition monitoring, and senior maintenance medicine dispensary.
+                Primary healthcare intake, EPI child immunization, Operation Timbang Plus nutrition, and senior medicine dispensary.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -321,46 +322,65 @@
           </div>
         </section>
 
-        <!-- Executive Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">CLINICAL INTAKES</span>
-                <span class="badge-neutral" id="badge-intake-period">Live 24h</span>
-              </div>
-              <div class="stat-number" id="stat-total-consultations">0</div>
-              <div class="typography-caption" id="stat-sub-consultations">0 recorded today</div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="health-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Barangay Health Station &amp; Clinical Operations</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleHealthInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Operated under DOH Universal Health Care guidelines in coordination with the Rural Health Unit (RHU), providing primary healthcare consultations, national immunization programs, and child growth monitoring.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Primary Consultations:</strong>
+              <div>General medical triage, vital signs monitoring (BP, Temp, BMI), and urgent RHU referral routing.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">PROFILED PATIENTS</span>
-                <span class="badge-neutral" style="color: #10b981;">BHW Registry</span>
-              </div>
-              <div class="stat-number" id="stat-total-patients">0</div>
-              <div class="typography-caption" id="stat-sub-patients">Unique resident dossiers</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">EPI Immunization Matrix:</strong>
+              <div>Scheduled routine vaccines from birth through 12 months (BCG, HepB, Pentavalent, OPV, IPV, PCV, MMR).</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">OPT+ MALNUTRITION CASES</span>
-                <span class="badge-neutral" style="color: #f59e0b;">WHO Standards</span>
-              </div>
-              <div class="stat-number" id="stat-opt-malnourished">0</div>
-              <div class="typography-caption" id="stat-sub-opt">Children on feeding plan</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-amber-600, #d97706);">Operation Timbang Plus (OPT+):</strong>
+              <div>Annual anthropometric measurement of 0-59 month olds to detect wasting, stunting, and underweight.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">PHARMACY STOCK</span>
-                <span class="badge-neutral" id="stat-low-stock-badge">Normal</span>
-              </div>
-              <div class="stat-number" id="stat-total-medicines">0</div>
-              <div class="typography-caption" id="stat-sub-medicines">Units available &bull; 0 low stock</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #6366f1;">Pharmacy Dispensary:</strong>
+              <div>Free maintenance medication inventory tracking for hypertension, diabetes, and essential vitamins.</div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-consultations">0</span>
+            <span class="metric-strip-lbl">Consultations</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-patients">0</span>
+            <span class="metric-strip-lbl">Profiled Patients</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-opt-malnourished">0</span>
+            <span class="metric-strip-lbl">Malnutrition Cases</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-medicines">0</span>
+            <span class="metric-strip-lbl">Pharmacy Inventory</span>
+          </div>
+        </div>
+
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <span id="badge-intake-period" style="display: none;"></span>
+        <span id="stat-sub-consultations" style="display: none;"></span>
+        <span id="stat-sub-patients" style="display: none;"></span>
+        <span id="stat-sub-opt" style="display: none;"></span>
+        <span id="stat-low-stock-badge" style="display: none;"></span>
+        <span id="stat-sub-medicines" style="display: none;"></span>
 
         <!-- Main Tab Navigation -->
         <nav class="health-tab-nav" aria-label="Health Station Views">
@@ -454,7 +474,7 @@
               <tbody id="consultations-table-body">
                 <tr>
                   <td colspan="8" style="text-align: center; padding: 32px; color: var(--color-text-muted);">
-                    Loading clinical health records...
+                    Loading clinical health records from MySQL...
                   </td>
                 </tr>
               </tbody>
@@ -763,7 +783,7 @@
               <tbody id="medicines-table-body">
                 <tr>
                   <td colspan="8" style="text-align: center; padding: 32px; color: var(--color-text-muted);">
-                    Loading pharmacy inventory...
+                    Loading pharmacy inventory from MySQL...
                   </td>
                 </tr>
               </tbody>
@@ -953,15 +973,21 @@
       <div class="referral-slip" id="print-referral-slip">
         <!-- Official Header -->
         <div class="doh-header">
-          <div class="doh-seal-row">
-            <div style="font-size: 1.5rem;">🇵🇭</div>
+            <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
             <div>
               <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: #444;">Republic of the Philippines &bull; Department of Health</div>
               <div style="font-size: 1.125rem; font-weight: 800; text-transform: uppercase; color: #000; letter-spacing: 0.05em; margin: 2px 0;">Barangay Health Station</div>
               <div style="font-size: 0.75rem; color: #333;">Barangay San Isidro, Rodriguez (Montalban), Rizal</div>
             </div>
-            <div style="font-size: 1.5rem;">🏥</div>
-          </div>
+            <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
           <div style="font-size: 0.875rem; font-weight: 700; text-transform: uppercase; margin-top: 10px; text-decoration: underline; letter-spacing: 0.05em;">
             PATIENT CLINICAL REFERRAL FORM
           </div>
@@ -1177,8 +1203,121 @@
     </form>
   </dialog>
 
-  <!-- Script dependencies -->
-  <script src="js/db.js"></script>
+  <!-- LEVEL 3: CLINICAL CONSULTATION & PATIENT DOSSIER DRAWER -->
+  <div class="app-drawer-backdrop" id="health-drawer-backdrop" onclick="closeHealthDrawer()"></div>
+  <aside class="app-drawer" id="consultation-detail-drawer" aria-label="Clinical Consultation Dossier">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge-neutral" id="drawer-health-rec" style="font-family: monospace; font-weight: 700;">REC-0000</span>
+        <h3 class="drawer-title" id="drawer-health-patient" style="margin: 0; font-size: 1rem;">Patient Full Name</h3>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeHealthDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchHealthDrawerTab('assessment', this)">Assessment &amp; Vitals</button>
+      <button type="button" class="drawer-tab" onclick="switchHealthDrawerTab('treatment', this)">Treatment &amp; Referral</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Assessment & Vitals -->
+      <div id="health-drawer-sec-assessment" class="drawer-section active">
+        <!-- Vitals Grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">BLOOD PRESSURE</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;" id="drawer-health-bp">120/80</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">TEMPERATURE</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;" id="drawer-health-temp">36.5°C</div>
+          </div>
+          <div style="padding: 10px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">PULSE / HR</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 2px; color: var(--color-primary);" id="drawer-health-pulse">75 bpm</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+          <div style="padding: 8px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">WEIGHT</div>
+            <div style="font-weight: 600; font-size: 0.875rem;" id="drawer-health-weight">-- kg</div>
+          </div>
+          <div style="padding: 8px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">HEIGHT</div>
+            <div style="font-weight: 600; font-size: 0.875rem;" id="drawer-health-height">-- cm</div>
+          </div>
+          <div style="padding: 8px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); text-align: center;">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-size: 0.6875rem;">BMI CLASSIFICATION</div>
+            <div style="font-weight: 600; font-size: 0.875rem;" id="drawer-health-bmi">Normal</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-weight: 600; margin-bottom: 4px;">CHIEF COMPLAINT:</div>
+            <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-complaint">--</p>
+          </div>
+
+          <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+            <div class="typography-caption" style="color: var(--color-text-muted); font-weight: 600; margin-bottom: 4px;">CLINICAL DIAGNOSIS &amp; ASSESSMENT:</div>
+            <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-diagnosis">--</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Treatment & Referral -->
+      <div id="health-drawer-sec-treatment" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Service Type</span>
+            <span class="drawer-item-val" id="drawer-health-service" style="font-weight: 600;">General Consultation</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Attending Healthcare Staff</span>
+            <span class="drawer-item-val" id="drawer-health-staff">BHW</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Consultation Status</span>
+            <span class="drawer-item-val" id="drawer-health-status">Completed</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Follow-up Schedule</span>
+            <span class="drawer-item-val" id="drawer-health-followup">None scheduled</span>
+          </div>
+        </div>
+
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); margin-bottom: 12px;">
+          <div class="typography-caption" style="color: var(--color-primary); font-weight: 600; margin-bottom: 4px;">TREATMENT &amp; PRESCRIBED MEDICATIONS:</div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-treatment">No medications prescribed.</p>
+        </div>
+
+        <div style="padding: 12px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);" id="drawer-health-referral-box">
+          <div class="typography-caption" style="color: var(--color-amber-600, #d97706); font-weight: 600; margin-bottom: 4px;">EXTERNAL REFERRAL FACILITY:</div>
+          <p style="font-size: 0.8125rem; line-height: 1.5; margin: 0;" id="drawer-health-referral">Not referred.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="closeHealthDrawer()" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        Close
+      </button>
+      <button type="button" class="button-primary" id="btn-drawer-referral" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect width="12" height="8" x="6" y="14"/>
+        </svg>
+        <span>Print Referral Slip</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Script dependencies: REST API Bridge first for PHP/MySQL parity -->
+  <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/components/sidebar.js"></script>
 
@@ -1194,8 +1333,7 @@
         await AppSidebar.render('health');
       }
 
-      // 2. Initialize Seed Data & Load
-      await initializeHealthData();
+      // 2. Load Residents and Data via REST API
       await loadResidents();
       await refreshAllData();
     });
@@ -1211,191 +1349,106 @@
       });
     };
 
-    // Initialize Default Seed Records for Offline / IndexedDB Parity
-    async function initializeHealthData() {
-      if (!window.barangayDB) return;
-
-      const medCount = await barangayDB.count('health_medicines');
-      if (medCount === 0) {
-        const defaultMeds = [
-          { medicineName: 'Amlodipine Besylate', genericName: 'Amlodipine', category: 'Maintenance - Hypertension', dosage: '5mg', stockQuantity: 350, unit: 'tablets', reorderLevel: 50, expiryDate: '2027-12-31', batchNo: 'AML-2026-01' },
-          { medicineName: 'Losartan Potassium', genericName: 'Losartan', category: 'Maintenance - Hypertension', dosage: '50mg', stockQuantity: 280, unit: 'tablets', reorderLevel: 50, expiryDate: '2027-11-30', batchNo: 'LOS-2026-02' },
-          { medicineName: 'Metformin HCl', genericName: 'Metformin', category: 'Maintenance - Diabetes', dosage: '500mg', stockQuantity: 320, unit: 'tablets', reorderLevel: 60, expiryDate: '2027-10-31', batchNo: 'MET-2026-03' },
-          { medicineName: 'Paracetamol', genericName: 'Paracetamol', category: 'Analgesic / Fever', dosage: '500mg', stockQuantity: 500, unit: 'tablets', reorderLevel: 100, expiryDate: '2028-06-30', batchNo: 'PAR-2026-04' },
-          { medicineName: 'Amoxicillin Trihydrate', genericName: 'Amoxicillin', category: 'Antibiotics', dosage: '500mg', stockQuantity: 180, unit: 'capsules', reorderLevel: 40, expiryDate: '2027-08-31', batchNo: 'AMX-2026-05' },
-          { medicineName: 'Oral Rehydration Salts', genericName: 'ORS / Hydrite', category: 'Oral Rehydration', dosage: '20.5g sachet', stockQuantity: 140, unit: 'sachets', reorderLevel: 30, expiryDate: '2028-03-31', batchNo: 'ORS-2026-06' },
-          { medicineName: 'Ferrous Sulfate + Folic Acid', genericName: 'Iron + Folic', category: 'Pediatric / Vitamins', dosage: '60mg / 400mcg', stockQuantity: 260, unit: 'tablets', reorderLevel: 50, expiryDate: '2027-09-30', batchNo: 'FE-2026-07' },
-          { medicineName: 'Ascorbic Acid (Vitamin C)', genericName: 'Vitamin C Syrup', category: 'Pediatric / Vitamins', dosage: '100mg/5mL 60mL', stockQuantity: 90, unit: 'bottles', reorderLevel: 20, expiryDate: '2027-12-31', batchNo: 'VIT-2026-08' }
-        ];
-        for (const m of defaultMeds) {
-          await barangayDB.add('health_medicines', m);
-        }
-      }
-    }
-
     // Load registered residents for selectors
     async function loadResidents() {
-      if (!window.barangayDB) return;
-      allResidents = await barangayDB.getAll('residents');
-
-      // Populate Intake Resident select
-      const intakeSelect = document.getElementById('intake-resident-id');
-      const optSelect = document.getElementById('opt-resident-id');
-      const refillSelect = document.getElementById('refill-patient-select');
-
-      if (intakeSelect) {
-        intakeSelect.innerHTML = '<option value="">-- Select Resident --</option>' +
-          allResidents.map(r => `<option value="${r.id}">${r.firstName || r.first_name} ${r.lastName || r.last_name} (${r.purok || 'Purok 1'})</option>`).join('');
-      }
-
-      if (optSelect) {
-        optSelect.innerHTML = '<option value="">-- Choose child from registry --</option>' +
-          allResidents.map(r => `<option value="${r.id}">${r.firstName || r.first_name} ${r.lastName || r.last_name}</option>`).join('');
-      }
-
-      if (refillSelect) {
-        refillSelect.innerHTML = '<option value="">-- Choose recipient --</option>' +
-          allResidents.map(r => `<option value="${r.id}">${r.firstName || r.first_name} ${r.lastName || r.last_name} (${r.phone || r.contact_no || 'No Contact'})</option>`).join('');
-      }
-    }
-
-    // Refresh all tables and telemetry
-    async function refreshAllData() {
-      if (!window.barangayDB) return;
-
-      allConsultations = await barangayDB.getAll('health_records');
-      allMedicines = await barangayDB.getAll('health_medicines');
-
-      // If consultations is empty, seed realistic samples
-      if (allConsultations.length === 0 && allResidents.length > 0) {
-        const seedConsultations = [
-          {
-            recordNo: 'HLTH-2026-88102',
-            residentId: allResidents[0].id,
-            serviceType: 'Senior Maintenance',
-            bp: '140/90',
-            temperature: 36.6,
-            weightKg: 68.0,
-            heightCm: 162.0,
-            pulseRate: 78,
-            chiefComplaint: 'Monthly hypertension checkup and medicine refill request.',
-            clinicalNotes: 'Blood pressure slightly elevated; instructed to adhere strictly to low-sodium diet and daily medication.',
-            medicinesDispensed: 'Amlodipine 5mg (30 tablets)',
-            attendingStaff: 'BHW Maria Santos',
-            status: 'Completed',
-            followUpDate: '2026-10-06',
-            createdAt: new Date(Date.now() - 3600000 * 4).toISOString()
-          },
-          {
-            recordNo: 'HLTH-2026-88103',
-            residentId: allResidents[1] ? allResidents[1].id : allResidents[0].id,
-            serviceType: 'Child Immunization',
-            bp: 'N/A',
-            temperature: 36.8,
-            weightKg: 8.4,
-            heightCm: 71.0,
-            pulseRate: 110,
-            chiefComplaint: 'Scheduled 6-week infant immunization series.',
-            clinicalNotes: 'Administered Pentavalent 1, OPV 1, and PCV 1. Advised mother regarding post-vaccination fever management with Paracetamol drops.',
-            medicinesDispensed: 'Paracetamol Drops 100mg/mL (1 bottle)',
-            attendingStaff: 'Nurse Elena Ramos',
-            status: 'Completed',
-            followUpDate: '2026-10-15',
-            createdAt: new Date(Date.now() - 3600000 * 8).toISOString()
-          },
-          {
-            recordNo: 'HLTH-2026-88104',
-            residentId: allResidents[2] ? allResidents[2].id : allResidents[0].id,
-            serviceType: 'Nutrition OPT Plus',
-            bp: 'N/A',
-            temperature: 36.5,
-            weightKg: 9.1,
-            heightCm: 79.5,
-            pulseRate: 98,
-            chiefComplaint: 'Operation Timbang Plus annual child growth profiling.',
-            clinicalNotes: 'Weight-for-Age: Moderately Underweight; Height-for-Age: Stunted. Enrolled into 90-day Barangay Supplementary Feeding Program.',
-            medicinesDispensed: 'Micronutrient Powder & Iron Folic Drops',
-            attendingStaff: 'BHW Remedios Cruz',
-            status: 'Follow-Up Needed',
-            followUpDate: '2026-09-20',
-            createdAt: new Date(Date.now() - 3600000 * 24).toISOString()
-          },
-          {
-            recordNo: 'HLTH-2026-88105',
-            residentId: allResidents[0].id,
-            serviceType: 'General Consultation',
-            bp: '160/100',
-            temperature: 37.4,
-            weightKg: 72.0,
-            heightCm: 160.0,
-            pulseRate: 94,
-            chiefComplaint: 'Severe occipital headache, dizziness, and chest tightness.',
-            clinicalNotes: 'Hypertensive Urgency. First aid sublingual administered; referred immediately to Rodriguez RHU emergency bay.',
-            medicinesDispensed: 'Emergency stabilization dose',
-            attendingStaff: 'Nurse Elena Ramos',
-            status: 'Referred to RHU / Hospital',
-            referralTarget: 'Rodriguez Rural Health Unit (RHU 1)',
-            createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
-          }
-        ];
-
-        for (const c of seedConsultations) {
-          await barangayDB.add('health_records', c);
+      try {
+        if (window.barangayDB) {
+          allResidents = await barangayDB.getAll('residents') || [];
         }
-        allConsultations = await barangayDB.getAll('health_records');
-      }
+        const intakeSelect = document.getElementById('intake-resident-id');
+        const optSelect = document.getElementById('opt-resident-id');
+        const refillSelect = document.getElementById('refill-patient-select');
 
-      // Populate Refill Medicine Select
-      const refillMedSelect = document.getElementById('refill-med-select');
-      if (refillMedSelect) {
-        refillMedSelect.innerHTML = '<option value="">-- Select medicine --</option>' +
-          allMedicines.map(m => `<option value="${m.medicineName || m.medicine_name}">${m.medicineName || m.medicine_name} (${m.dosage}) - Stock: ${m.stockQuantity || m.stock_quantity}</option>`).join('');
-      }
+        if (intakeSelect) {
+          intakeSelect.innerHTML = '<option value="">-- Select Resident --</option>' +
+            allResidents.map(r => `<option value="${r.id}">${r.firstName || r.first_name} ${r.lastName || r.last_name} (${r.purok || 'Purok 1'})</option>`).join('');
+        }
 
-      updateTelemetry();
-      renderConsultationsTable();
-      renderOptRosterTable();
-      renderMedicinesTable();
+        if (optSelect) {
+          optSelect.innerHTML = '<option value="">-- Choose child from registry --</option>' +
+            allResidents.map(r => `<option value="${r.id}">${r.firstName || r.first_name} ${r.lastName || r.last_name}</option>`).join('');
+        }
+
+        if (refillSelect) {
+          refillSelect.innerHTML = '<option value="">-- Choose recipient --</option>' +
+            allResidents.map(r => `<option value="${r.id}">${r.firstName || r.first_name} ${r.lastName || r.last_name} (${r.phone || r.contact_no || 'No Contact'})</option>`).join('');
+        }
+      } catch (err) {
+        console.error('Failed to load residents:', err);
+      }
     }
 
-    // Telemetry display computation
-    function updateTelemetry() {
+    // Refresh all tables and telemetry via REST API
+    async function refreshAllData() {
+      try {
+        if (window.barangayDB) {
+          allConsultations = await barangayDB.getAll('health_records') || [];
+          allMedicines = await barangayDB.getAll('health_medicines') || [];
+        }
+
+        // Fetch telemetry stats directly from API if available
+        try {
+          const statsRes = await fetch('api/health.php?action=stats');
+          if (statsRes.ok) {
+            const json = await statsRes.json();
+            if (json.data) {
+              const s = json.data;
+              document.getElementById('stat-total-consultations').textContent = (s.total || 0).toLocaleString();
+              document.getElementById('stat-total-patients').textContent = (s.total_patients || 0).toLocaleString();
+              document.getElementById('stat-opt-malnourished').textContent = (s.opt_malnourished || 0).toLocaleString();
+              document.getElementById('stat-total-medicines').textContent = (s.total_meds_stock || 0).toLocaleString();
+              document.getElementById('stat-sub-medicines').textContent = `Units available \u2022 ${s.low_stock_medicines || 0} low stock`;
+
+              const lowBadge = document.getElementById('stat-low-stock-badge');
+              if (lowBadge) {
+                if ((s.low_stock_medicines || 0) > 0) {
+                  lowBadge.textContent = `${s.low_stock_medicines} Need Restock`;
+                  lowBadge.style.color = '#ef4444';
+                } else {
+                  lowBadge.textContent = 'Normal';
+                  lowBadge.style.color = '#10b981';
+                }
+              }
+            }
+          }
+        } catch (e) {
+          updateTelemetryLocal();
+        }
+
+        // Populate Refill Medicine Select
+        const refillMedSelect = document.getElementById('refill-med-select');
+        if (refillMedSelect) {
+          refillMedSelect.innerHTML = '<option value="">-- Select medicine --</option>' +
+            allMedicines.map(m => `<option value="${m.medicineName || m.medicine_name}">${m.medicineName || m.medicine_name} (${m.dosage}) - Stock: ${m.stockQuantity || m.stock_quantity}</option>`).join('');
+        }
+
+        renderConsultationsTable();
+        renderOptRosterTable();
+        renderMedicinesTable();
+      } catch (err) {
+        console.error('Failed to refresh data:', err);
+      }
+    }
+
+    // Local telemetry fallback
+    function updateTelemetryLocal() {
       const totalConsultations = allConsultations.length;
       document.getElementById('stat-total-consultations').textContent = totalConsultations.toLocaleString();
 
-      // Today's count
-      const todayStr = new Date().toISOString().split('T')[0];
-      const todayCount = allConsultations.filter(c => (c.createdAt || '').startsWith(todayStr)).length;
-      document.getElementById('stat-sub-consultations').textContent = `${todayCount} recorded today`;
-
-      // Unique patients
       const patientIds = new Set(allConsultations.map(c => c.residentId || c.resident_id));
       document.getElementById('stat-total-patients').textContent = patientIds.size.toLocaleString();
 
-      // Malnourished OPT+ count
       const malnourished = allConsultations.filter(c => 
         (c.serviceType || c.service_type) === 'Nutrition OPT Plus' && 
         ((c.clinicalNotes || '').toLowerCase().includes('underweight') || (c.clinicalNotes || '').toLowerCase().includes('stunted') || (c.clinicalNotes || '').toLowerCase().includes('wasted'))
       );
       document.getElementById('stat-opt-malnourished').textContent = malnourished.length.toLocaleString();
 
-      // Medicine stock
       const totalUnits = allMedicines.reduce((sum, m) => sum + (parseInt(m.stockQuantity || m.stock_quantity) || 0), 0);
       const lowStockCount = allMedicines.filter(m => (parseInt(m.stockQuantity || m.stock_quantity) || 0) <= (parseInt(m.reorderLevel || m.reorder_level) || 30)).length;
 
       document.getElementById('stat-total-medicines').textContent = totalUnits.toLocaleString();
       document.getElementById('stat-sub-medicines').textContent = `Units available \u2022 ${lowStockCount} low stock`;
-
-      const lowBadge = document.getElementById('stat-low-stock-badge');
-      if (lowBadge) {
-        if (lowStockCount > 0) {
-          lowBadge.textContent = `${lowStockCount} Need Restock`;
-          lowBadge.style.color = '#ef4444';
-        } else {
-          lowBadge.textContent = 'Normal';
-          lowBadge.style.color = '#10b981';
-        }
-      }
     }
 
     // Render Consultations Table
@@ -1419,14 +1472,16 @@
 
       tbody.innerHTML = records.map(rec => {
         const res = allResidents.find(r => r.id === (rec.residentId || rec.resident_id)) || {};
-        const patientName = `${res.firstName || res.first_name || 'Resident'} ${res.lastName || res.last_name || '#' + (rec.residentId || rec.resident_id)}`;
-        const purok = res.purok || 'Purok 1';
+        const patientName = `${res.firstName || res.first_name || rec.first_name || 'Resident'} ${res.lastName || res.last_name || rec.last_name || '#' + (rec.residentId || rec.resident_id)}`;
+        const purok = res.purok || rec.purok || 'Purok 1';
 
         // BMI Calculation if weight and height exist
         let bmiDisplay = '--';
-        if (rec.weightKg && rec.heightCm) {
-          const hM = rec.heightCm / 100;
-          const bmi = (rec.weightKg / (hM * hM)).toFixed(1);
+        const w = parseFloat(rec.weightKg || rec.weight_kg);
+        const h = parseFloat(rec.heightCm || rec.height_cm);
+        if (w && h) {
+          const hM = h / 100;
+          const bmi = (w / (hM * hM)).toFixed(1);
           bmiDisplay = `BMI ${bmi}`;
         }
 
@@ -1443,7 +1498,7 @@
             <td>
               <strong style="font-family: monospace; font-size: 0.8125rem;">${rec.recordNo || rec.record_no || 'HLTH-' + rec.id}</strong>
               <div class="typography-caption" style="font-size: 0.6875rem; color: var(--color-text-muted);">
-                ${new Date(rec.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                ${new Date(rec.createdAt || rec.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </div>
             </td>
             <td>
@@ -1473,6 +1528,9 @@
               </span>
             </td>
             <td style="text-align: right; white-space: nowrap;">
+              <button class="button-outline" onclick="openConsultationDrawer(${rec.id});" style="height: 28px; padding: 0 8px; font-size: 0.6875rem; margin-right: 4px;" title="View Clinical Dossier">
+                View
+              </button>
               <button class="button-outline" onclick="openReferralSlipModal(${rec.id});" style="height: 28px; padding: 0 8px; font-size: 0.6875rem; margin-right: 4px;" title="View &amp; Print Official Referral Slip">
                 Referral Slip
               </button>
@@ -1493,7 +1551,7 @@
 
       const filtered = allConsultations.filter(rec => {
         const res = allResidents.find(r => r.id === (rec.residentId || rec.resident_id)) || {};
-        const patientName = `${res.firstName || res.first_name || ''} ${res.lastName || res.last_name || ''}`.toLowerCase();
+        const patientName = `${res.firstName || res.first_name || rec.first_name || ''} ${res.lastName || res.last_name || rec.last_name || ''}`.toLowerCase();
         const recNo = (rec.recordNo || rec.record_no || '').toLowerCase();
         const complaint = (rec.chiefComplaint || rec.chief_complaint || '').toLowerCase();
 
@@ -1611,17 +1669,17 @@
 
       tbody.innerHTML = optRecords.map(rec => {
         const res = allResidents.find(r => r.id === (rec.residentId || rec.resident_id)) || {};
-        const name = `${res.firstName || res.first_name || 'Child'} ${res.lastName || res.last_name || '#' + rec.residentId}`;
-        const purok = res.purok || 'Purok 1';
+        const name = `${res.firstName || res.first_name || rec.first_name || 'Child'} ${res.lastName || res.last_name || rec.last_name || '#' + (rec.residentId || rec.resident_id)}`;
+        const purok = res.purok || rec.purok || 'Purok 1';
 
         return `
           <tr>
             <td><strong>${name}</strong></td>
-            <td>${rec.weightKg ? rec.weightKg + ' kg' : '--'}</td>
-            <td><span class="badge-neutral" style="font-size: 0.6875rem; color: #f59e0b;">${rec.chiefComplaint || 'Monitored'}</span></td>
+            <td>${(rec.weightKg || rec.weight_kg) ? (rec.weightKg || rec.weight_kg) + ' kg' : '--'}</td>
+            <td><span class="badge-neutral" style="font-size: 0.6875rem; color: #f59e0b;">${rec.chiefComplaint || rec.chief_complaint || 'Monitored'}</span></td>
             <td>${purok}</td>
             <td class="typography-caption" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              ${rec.clinicalNotes || 'Feeding program'}
+              ${rec.clinicalNotes || rec.clinical_notes || 'Feeding program'}
             </td>
           </tr>
         `;
@@ -1759,33 +1817,36 @@
       btn.textContent = 'Saving Consultation...';
 
       const rec = {
-        recordNo: `HLTH-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
-        residentId: residentId,
-        serviceType: serviceType,
+        resident_id: residentId,
+        service_type: serviceType,
         bp: bp || 'N/A',
         temperature: temp,
-        weightKg: weight,
-        heightCm: height,
-        chiefComplaint: complaint,
-        clinicalNotes: notes,
-        medicinesDispensed: dispensed,
-        attendingStaff: staff,
+        weight_kg: weight,
+        height_cm: height,
+        chief_complaint: complaint,
+        clinical_notes: notes,
+        medicines_dispensed: dispensed,
+        attending_staff: staff,
         status: status,
-        referralTarget: referral || null,
-        followUpDate: followup,
-        createdAt: new Date().toISOString()
+        referral_target: referral || null,
+        follow_up_date: followup
       };
 
-      if (window.barangayDB) {
-        await barangayDB.add('health_records', rec);
+      try {
+        if (window.barangayDB) {
+          await barangayDB.add('health_records', rec);
+        }
+        btn.disabled = false;
+        btn.textContent = 'Save Clinical Record';
+        document.getElementById('intake-modal').close();
+
+        await refreshAllData();
+        alert('Consultation logged successfully into MySQL registry!');
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Save Clinical Record';
+        alert('Error saving record: ' + err.message);
       }
-
-      btn.disabled = false;
-      btn.textContent = 'Save Clinical Record';
-      document.getElementById('intake-modal').close();
-
-      await refreshAllData();
-      alert(`Consultation ${rec.recordNo} logged successfully!`);
     };
 
     // Open DOH Clinical Referral Slip Modal
@@ -1794,32 +1855,35 @@
       if (!rec) return;
 
       const res = allResidents.find(r => r.id === (rec.residentId || rec.resident_id)) || {};
-      const fullName = `${res.firstName || res.first_name || 'Resident'} ${res.middleName || res.middle_name || ''} ${res.lastName || res.last_name || ''}`;
+      const fullName = `${res.firstName || res.first_name || rec.first_name || 'Resident'} ${res.middleName || res.middle_name || rec.middle_name || ''} ${res.lastName || res.last_name || rec.last_name || ''}`;
 
       document.getElementById('ref-print-code').textContent = rec.recordNo || rec.record_no || 'HLTH-' + rec.id;
-      document.getElementById('ref-print-date').textContent = new Date(rec.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('ref-print-date').textContent = new Date(rec.createdAt || rec.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
       document.getElementById('ref-print-facility').textContent = rec.referralTarget || rec.referral_target || 'Rodriguez Rural Health Unit (RHU) / District Hospital';
       document.getElementById('ref-print-name').textContent = fullName;
 
       // Demographics
-      const age = res.birthdate ? (new Date().getFullYear() - new Date(res.birthdate).getFullYear()) + ' yrs old' : 'Adult';
-      const sex = res.gender || 'Not specified';
-      const civ = res.civilStatus || res.civil_status || 'Single';
+      const bdate = res.birthdate || rec.birthdate;
+      const age = bdate ? (new Date().getFullYear() - new Date(bdate).getFullYear()) + ' yrs old' : 'Adult';
+      const sex = res.gender || rec.gender || 'Not specified';
+      const civ = res.civilStatus || res.civil_status || rec.civil_status || 'Single';
       document.getElementById('ref-print-demog').textContent = `${age} / ${sex} / ${civ}`;
 
-      document.getElementById('ref-print-address').textContent = `${res.street || res.address || ''}, ${res.purok || 'Purok 1'}, San Isidro`;
-      document.getElementById('ref-print-contact').textContent = res.phone || res.contact_no || 'N/A';
+      document.getElementById('ref-print-address').textContent = `${res.street || res.address || rec.street || ''}, ${res.purok || rec.purok || 'Purok 1'}, San Isidro`;
+      document.getElementById('ref-print-contact').textContent = res.phone || res.contact_no || rec.contact_no || 'N/A';
 
       // Vitals
       document.getElementById('ref-print-bp').textContent = rec.bp || '120/80';
       document.getElementById('ref-print-temp').textContent = rec.temperature ? rec.temperature + ' °C' : '36.6 °C';
-      document.getElementById('ref-print-weight').textContent = rec.weightKg ? rec.weightKg + ' kg' : '--';
-      document.getElementById('ref-print-height').textContent = rec.heightCm ? rec.heightCm + ' cm' : '--';
+      document.getElementById('ref-print-weight').textContent = (rec.weightKg || rec.weight_kg) ? (rec.weightKg || rec.weight_kg) + ' kg' : '--';
+      document.getElementById('ref-print-height').textContent = (rec.heightCm || rec.height_cm) ? (rec.heightCm || rec.height_cm) + ' cm' : '--';
 
       let bmiText = '--';
-      if (rec.weightKg && rec.heightCm) {
-        const hm = rec.heightCm / 100;
-        bmiText = (rec.weightKg / (hm * hm)).toFixed(1);
+      const w = parseFloat(rec.weightKg || rec.weight_kg);
+      const h = parseFloat(rec.heightCm || rec.height_cm);
+      if (w && h) {
+        const hm = h / 100;
+        bmiText = (w / (hm * hm)).toFixed(1);
       }
       document.getElementById('ref-print-bmi').textContent = bmiText;
 
@@ -1832,11 +1896,15 @@
 
     // Delete Consultation Record
     window.deleteConsultationRecord = async function(id) {
-      if (!confirm('Are you sure you want to remove this health consultation record?')) return;
-      if (window.barangayDB) {
-        await barangayDB.delete('health_records', id);
+      if (!confirm('Are you sure you want to remove this health consultation record from MySQL?')) return;
+      try {
+        if (window.barangayDB) {
+          await barangayDB.delete('health_records', id);
+        }
+        await refreshAllData();
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
       }
-      await refreshAllData();
     };
 
     // Live OPT+ Calculator Status Output
@@ -1860,8 +1928,7 @@
         return;
       }
 
-      // Simple WHO median approximate logic for prototype evaluation:
-      // Weight standard at 24 mos ~ 12kg; Height ~ 87cm
+      // Simple WHO median approximate logic
       const expectedWeight = 3.3 + (ageMonths * 0.38);
       const expectedHeight = 50 + (ageMonths * 1.5);
 
@@ -1923,27 +1990,28 @@
       const assessmentNotes = `OPT+ Nutritional Profile: Age ${ageMonths} mos, Weight-for-Age: ${wfa}, Height-for-Age: ${hfa}, Weight-for-Height: ${wfh}. Action plan initiated.`;
 
       const rec = {
-        recordNo: `HLTH-OPT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-        residentId: residentId,
-        serviceType: 'Nutrition OPT Plus',
+        resident_id: residentId,
+        service_type: 'Nutrition OPT Plus',
         bp: 'N/A',
-        weightKg: weight,
-        heightCm: height,
-        chiefComplaint: `OPT+ Growth Screening (${wfa} / ${hfa})`,
-        clinicalNotes: assessmentNotes,
-        attendingStaff: 'BHW Nutrition Scholar',
-        status: (wfa !== 'Normal' || hfa !== 'Normal') ? 'Follow-Up Needed' : 'Completed',
-        createdAt: new Date().toISOString()
+        weight_kg: weight,
+        height_cm: height,
+        chief_complaint: `OPT+ Growth Screening (${wfa} / ${hfa})`,
+        clinical_notes: assessmentNotes,
+        attending_staff: 'BHW Nutrition Scholar',
+        status: (wfa !== 'Normal' || hfa !== 'Normal') ? 'Follow-Up Needed' : 'Completed'
       };
 
-      if (window.barangayDB) {
-        await barangayDB.add('health_records', rec);
+      try {
+        if (window.barangayDB) {
+          await barangayDB.add('health_records', rec);
+        }
+        document.getElementById('opt-calc-form').reset();
+        calculateOptStatus();
+        await refreshAllData();
+        alert('Child Operation Timbang Plus (OPT+) record logged successfully into MySQL!');
+      } catch (err) {
+        alert('Error saving assessment: ' + err.message);
       }
-
-      document.getElementById('opt-calc-form').reset();
-      calculateOptStatus();
-      await refreshAllData();
-      alert('Child Operation Timbang Plus (OPT+) record logged successfully!');
     };
 
     // Open Medicine Modal
@@ -1966,24 +2034,27 @@
       const expiry = document.getElementById('med-expiry').value;
 
       const med = {
-        medicineName: name,
-        genericName: generic,
+        medicine_name: name,
+        generic_name: generic,
         category: category,
         dosage: dosage,
-        stockQuantity: stock,
+        stock_quantity: stock,
         unit: unit,
-        reorderLevel: reorder,
-        expiryDate: expiry,
-        batchNo: `BATCH-${new Date().getFullYear()}-${Math.floor(10 + Math.random() * 90)}`
+        reorder_level: reorder,
+        expiry_date: expiry,
+        batch_no: `BATCH-${new Date().getFullYear()}-${Math.floor(10 + Math.random() * 90)}`
       };
 
-      if (window.barangayDB) {
-        await barangayDB.add('health_medicines', med);
+      try {
+        if (window.barangayDB) {
+          await barangayDB.add('health_medicines', med);
+        }
+        document.getElementById('medicine-modal').close();
+        await refreshAllData();
+        alert(`Added ${name} (${stock} ${unit}) to MySQL pharmacy inventory!`);
+      } catch (err) {
+        alert('Error adding medicine: ' + err.message);
       }
-
-      document.getElementById('medicine-modal').close();
-      await refreshAllData();
-      alert(`Added ${name} (${stock} ${unit}) to pharmacy inventory!`);
     };
 
     // Quick Restock Medicine
@@ -1996,16 +2067,22 @@
       const added = parseInt(addedStr);
       if (isNaN(added) || added <= 0) return;
 
-      const current = parseInt(med.stockQuantity || med.stock_quantity) || 0;
-      med.stockQuantity = current + added;
-      med.stock_quantity = current + added;
-
-      if (window.barangayDB) {
-        await barangayDB.put('health_medicines', med);
+      try {
+        const res = await fetch('api/health.php?action=restock_medicine', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id, add_quantity: added })
+        });
+        const json = await res.json();
+        if (json.success) {
+          await refreshAllData();
+          alert(`Restocked ${added} units of ${med.medicineName || med.medicine_name}!`);
+        } else {
+          alert('Restock failed: ' + (json.message || 'Error'));
+        }
+      } catch (err) {
+        alert('Restock error: ' + err.message);
       }
-
-      await refreshAllData();
-      alert(`Restocked ${added} units of ${med.medicineName || med.medicine_name}. New stock: ${med.stockQuantity}`);
     };
 
     // Quick trigger refill SMS modal with medicine pre-selected
@@ -2021,7 +2098,7 @@
       document.getElementById('refill-sms-modal').showModal();
     };
 
-    // Handle Send Refill SMS Submit
+    // Handle Send Refill SMS Submit via REST API
     window.handleSendRefillSmsSubmit = async function(e) {
       e.preventDefault();
       const patientId = parseInt(document.getElementById('refill-patient-select').value);
@@ -2030,49 +2107,136 @@
       const patient = allResidents.find(r => r.id === patientId);
       if (!patient) return;
 
-      const contact = patient.phone || patient.contact_no || '';
-      if (!contact || contact === 'N/A') {
-        alert('Selected patient does not have a registered contact number!');
-        return;
-      }
-
       const btn = document.getElementById('btn-dispatch-refill');
       btn.disabled = true;
       btn.textContent = 'Dispatching Cellular SMS...';
 
-      const fullName = `${patient.firstName || patient.first_name} ${patient.lastName || patient.last_name}`;
-      const dispatchCode = `NOTIF-${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}-${Math.floor(1000 + Math.random() * 9000)}`;
-      const smsBody = `PABATID mula sa Barangay Health Station: Magandang araw ${fullName}, nakatakda na po ang inyong regular maintenance medicine refill (${medName}). Maaari po kayong magtungo sa Barangay Clinic Lunes hanggang Biyernes, 8:00 AM - 5:00 PM.`;
+      try {
+        const res = await fetch('api/health.php?action=refill_sms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            resident_id: patientId,
+            medicine_name: medName
+          })
+        });
 
-      // Log notification in notifications store if available
-      if (window.barangayDB) {
-        const notif = {
-          dispatchCode: dispatchCode,
-          recipientId: patientId,
-          recipientName: fullName,
-          recipientContact: contact,
-          channel: 'SMS',
-          category: 'General',
-          subject: 'Maintenance Medicine Refill Reminder',
-          message: smsBody,
-          status: 'Delivered',
-          costCredits: 1,
-          createdAt: new Date().toISOString()
-        };
-        try {
-          await barangayDB.add('notifications', notif);
-        } catch (err) {
-          console.warn('Could not write to notifications store:', err);
+        const json = await res.json();
+        if (json.success) {
+          document.getElementById('refill-sms-modal').close();
+          alert(`Maintenance refill reminder dispatched via SMS to ${json.data.recipient} (${json.data.contact})!\nTracking Code: ${json.data.dispatch_code}`);
+          await refreshAllData();
+        } else {
+          alert('Refill SMS dispatch failed: ' + (json.message || 'Error'));
         }
-      }
-
-      setTimeout(() => {
+      } catch (err) {
+        alert('Network error during dispatch: ' + err.message);
+      } finally {
         btn.disabled = false;
         btn.textContent = 'Send SMS Alert';
-        document.getElementById('refill-sms-modal').close();
-        alert(`Maintenance refill reminder dispatched via SMS to ${fullName} (${contact})!\nTracking Code: ${dispatchCode}`);
-      }, 600);
+      }
     };
+
+    // Contextual Info Popover Toggle
+    window.toggleHealthInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('health-info-popover');
+      if (!popover) return;
+      const isOpen = popover.style.display === 'block';
+      popover.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // Close Health Drawer
+    window.closeHealthDrawer = function() {
+      const drawer = document.getElementById('consultation-detail-drawer');
+      const backdrop = document.getElementById('health-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    // Switch Health Drawer Tabs
+    window.switchHealthDrawerTab = function(tabName, btn) {
+      document.querySelectorAll('#consultation-detail-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const secAssess = document.getElementById('health-drawer-sec-assessment');
+      const secTreat = document.getElementById('health-drawer-sec-treatment');
+      if (secAssess) secAssess.style.display = tabName === 'assessment' ? 'block' : 'none';
+      if (secTreat) secTreat.style.display = tabName === 'treatment' ? 'block' : 'none';
+    };
+
+    // Open Consultation Detail Drawer
+    window.openConsultationDrawer = function(id) {
+      const rec = allConsultations.find(c => c.id == id);
+      if (!rec) return;
+
+      const res = allResidents.find(r => r.id === (rec.residentId || rec.resident_id)) || {};
+      const patientName = `${res.firstName || res.first_name || rec.first_name || ''} ${res.lastName || res.last_name || rec.last_name || ''}`.trim() || 'Resident Patient';
+      const purok = res.purok || rec.purok || 'Barangay San Isidro';
+
+      document.getElementById('drawer-health-rec').textContent = rec.recordNo || rec.record_no || 'HLTH-' + rec.id;
+      document.getElementById('drawer-health-patient').textContent = `${patientName} (${purok})`;
+
+      document.getElementById('drawer-health-bp').textContent = rec.bloodPressure || rec.blood_pressure || '--/--';
+      document.getElementById('drawer-health-temp').textContent = rec.temperature ? `${rec.temperature}°C` : '--°C';
+      document.getElementById('drawer-health-pulse').textContent = rec.heartRate || rec.pulse_rate ? `${rec.heartRate || rec.pulse_rate} bpm` : '-- bpm';
+
+      document.getElementById('drawer-health-weight').textContent = rec.weightKg || rec.weight_kg ? `${rec.weightKg || rec.weight_kg} kg` : '-- kg';
+      document.getElementById('drawer-health-height').textContent = rec.heightCm || rec.height_cm ? `${rec.heightCm || rec.height_cm} cm` : '-- cm';
+      document.getElementById('drawer-health-bmi').textContent = rec.bmiCategory || rec.bmi_category || 'Normal';
+
+      document.getElementById('drawer-health-complaint').textContent = rec.chiefComplaint || rec.chief_complaint || 'No complaint details recorded.';
+      document.getElementById('drawer-health-diagnosis').textContent = rec.clinicalNotes || rec.clinical_notes || rec.diagnosis || 'Standard clinical observations.';
+
+      document.getElementById('drawer-health-service').textContent = rec.serviceType || rec.service_type || 'General Consultation';
+      document.getElementById('drawer-health-staff').textContent = rec.attendingStaff || rec.attending_staff || 'Duty Health Worker';
+      document.getElementById('drawer-health-status').textContent = rec.status || 'Completed';
+      document.getElementById('drawer-health-followup').textContent = rec.followUpDate || rec.follow_up_date || 'No scheduled follow-up';
+
+      document.getElementById('drawer-health-treatment').textContent = rec.treatmentPlan || rec.treatment_plan || rec.prescribedMedicines || rec.prescribed_medicines || 'No medications prescribed.';
+
+      const referralBox = document.getElementById('drawer-health-referral-box');
+      const referralDest = rec.referralFacility || rec.referral_facility || rec.referredTo || rec.referred_to;
+      if (referralDest || (rec.status || '').includes('Referred')) {
+        referralBox.style.display = 'block';
+        document.getElementById('drawer-health-referral').textContent = referralDest || 'Referred to RHU / District Hospital';
+      } else {
+        referralBox.style.display = 'none';
+      }
+
+      const referralBtn = document.getElementById('btn-drawer-referral');
+      if (referralBtn) {
+        referralBtn.onclick = function() {
+          closeHealthDrawer();
+          openReferralSlipModal(rec.id);
+        };
+      }
+
+      const drawer = document.getElementById('consultation-detail-drawer');
+      const backdrop = document.getElementById('health-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
+    };
+
+    // Global keyboard and click listeners
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeHealthDrawer();
+        const popover = document.getElementById('health-info-popover');
+        if (popover && popover.style.display === 'block') popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('health-info-popover');
+      const trigger = document.getElementById('btn-health-info');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
+    });
   </script>
 </body>
 </html>

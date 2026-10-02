@@ -1,0 +1,9 @@
+# BarangayOS Open-Source Administrative Showcase
+# Educational and Demonstration Software Project
+User-agent: *
+Allow: /
+Allow: /portal.html
+Allow: /portal.php
+Disallow: /api/
+Disallow: /config/
+Disallow: /database/

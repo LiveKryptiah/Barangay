@@ -562,7 +562,7 @@ require_once __DIR__ . '/config/database.php';
             </div>
           </div>
           <div style="text-align: right;">
-            <span class="egov-status-badge approved">🟢 Approved</span>
+            <span class="egov-status-badge approved">Approved</span>
             <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 4px;">Ready for pickup</div>
           </div>
         </div>
@@ -578,7 +578,7 @@ require_once __DIR__ . '/config/database.php';
             </div>
           </div>
           <div style="text-align: right;">
-            <span class="egov-status-badge processing">🔵 Processing</span>
+            <span class="egov-status-badge processing">Processing</span>
             <div style="font-size: 0.6875rem; color: var(--color-text-muted); margin-top: 4px;">Under Review</div>
           </div>
         </div>
@@ -603,7 +603,7 @@ require_once __DIR__ . '/config/database.php';
             <p class="egov-announce-snippet">Free health consultations, dental checkups, pediatric screenings, and free maintenance medicines for senior citizens this Saturday.</p>
           </div>
           <div class="egov-announce-footer">
-            <span>📅 Saturday &bull; 8:00 AM</span>
+            <span> Saturday &bull; 8:00 AM</span>
             <span style="color: var(--egov-blue); font-weight: 700;">View Details &rarr;</span>
           </div>
         </article>
@@ -615,7 +615,7 @@ require_once __DIR__ . '/config/database.php';
             <p class="egov-announce-snippet">Community-wide fogging and clean-up operation across Purok 1 to Purok 7. Please inspect flower pots and open drums.</p>
           </div>
           <div class="egov-announce-footer">
-            <span>📅 Every Weekend &bull; Puroks 1-7</span>
+            <span> Every Weekend &bull; Puroks 1-7</span>
             <span style="color: var(--egov-blue); font-weight: 700;">View Details &rarr;</span>
           </div>
         </article>
@@ -627,7 +627,7 @@ require_once __DIR__ . '/config/database.php';
             <p class="egov-announce-snippet">Weekly Lupon Tagapamayapa dispute conciliation hearings are conducted Tuesdays &amp; Thursdays under the supervision of the Punong Barangay.</p>
           </div>
           <div class="egov-announce-footer">
-            <span>📅 Tue &amp; Thu &bull; Session Hall</span>
+            <span> Tue &amp; Thu &bull; Session Hall</span>
             <span style="color: var(--egov-blue); font-weight: 700;">View Details &rarr;</span>
           </div>
         </article>

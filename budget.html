@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -103,48 +103,70 @@
       <div id="app-topbar-mount"></div>
       <main class="app-content">
         
-        <header class="page-hero">
-          <div class="page-hero-left">
-            <h1 class="typography-heading-2">Budget &amp; Financial Management</h1>
-            <p class="typography-body-lg text-muted">COA-compliant tracking, AIP allocations, and voucher management.</p>
-          </div>
-          <div class="page-hero-right">
-            <span class="badge badge-emerald">COA Compliant</span>
-          </div>
-        </header>
+        <!-- Level 1 Primary: Ultra-Quiet Hero Section -->
+        <section class="page-hero">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
+            <div style="position: relative;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h1 class="typography-heading-2">Budget &amp; Finance.</h1>
+                <button type="button" class="info-trigger" onclick="toggleBudgetInfoPopover(event)" title="View Financial Guidelines" aria-label="View Financial Guidelines">i</button>
+                <span class="badge-neutral" style="font-size: 0.6875rem;">COA Compliant</span>
+              </div>
+              <p class="typography-body-lg" style="margin-top: 4px;">
+                COA-compliant tracking, AIP appropriations, disbursement vouchers, and revenue collection ledger.
+              </p>
 
-        <div class="stats-ladder">
-          <div class="studio-card">
-            <div class="card-header">
-              <h3 class="typography-heading-4">Total Approved Budget (AIP)</h3>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <!-- Contextual Info Popover Card -->
+              <div class="info-popover-card" id="budget-info-popover" style="display: none;">
+                <div style="font-weight: 700; margin-bottom: 6px; font-size: 0.875rem;">Barangay Fiscal Rules (RA 7160 / COA)</div>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+                  Financial management requirements under Section 305–334 of the Local Government Code:
+                </p>
+                <ul style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; padding-left: 16px; margin: 0;">
+                  <li><strong>Annual Investment Program (AIP):</strong> Legislative basis for all disbursement authorizations.</li>
+                  <li><strong>Statutory Set-Asides:</strong> 20% BDF, 5% BDRRMF, 10% SK, 5% GAD, 1% Senior/PWD, 1% LCPC.</li>
+                  <li><strong>Disbursement Controls:</strong> Certified by Barangay Treasurer as to availability of funds; approved by Punong Barangay.</li>
+                </ul>
+              </div>
             </div>
-            <div class="card-value" id="stat-aip">â‚±0.00</div>
-            <div class="utilization-bar-wrap"><div class="utilization-bar" id="stat-aip-bar" style="width: 0%"></div></div>
+            <div style="display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;">
+              <button type="button" class="button-outline" onclick="openModal('collection-modal')">
+                + Record Collection
+              </button>
+              <button type="button" class="button-outline" onclick="openModal('budget-alloc-modal')">
+                + New Allocation
+              </button>
+              <button type="button" class="button-primary" onclick="openModal('voucher-modal')">
+                + New Voucher
+              </button>
+            </div>
           </div>
-          <div class="studio-card">
-            <div class="card-header">
-              <h3 class="typography-heading-4">Total Disbursements</h3>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
-            </div>
-            <div class="card-value" id="stat-disbursements">â‚±0.00</div>
-            <p class="typography-caption text-muted" id="stat-disbursements-sub">0 Released / 0 Pending</p>
+        </section>
+
+        <!-- Level 1 Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-aip">&#8369;0.00</div>
+            <div class="metric-strip-lbl">Approved AIP Budget</div>
+            <div id="stat-aip-bar" style="display: none;"></div>
           </div>
-          <div class="studio-card">
-            <div class="card-header">
-              <h3 class="typography-heading-4">Revenue Collected</h3>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/></svg>
-            </div>
-            <div class="card-value" id="stat-revenue">â‚±0.00</div>
-            <p class="typography-caption text-muted" id="stat-revenue-sub">â‚±0.00 Deposited</p>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-disbursements">&#8369;0.00</div>
+            <div class="metric-strip-lbl">Total Disbursements</div>
+            <span id="stat-disbursements-sub" style="display: none;"></span>
           </div>
-          <div class="studio-card">
-            <div class="card-header">
-              <h3 class="typography-heading-4">Available Balance</h3>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2V6z"/></svg>
-            </div>
-            <div class="card-value" id="stat-balance">â‚±0.00</div>
-            <p class="typography-caption text-muted" id="stat-balance-sub">Remaining budget</p>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-revenue">&#8369;0.00</div>
+            <div class="metric-strip-lbl">Revenue Collected</div>
+            <span id="stat-revenue-sub" style="display: none;"></span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-balance">&#8369;0.00</div>
+            <div class="metric-strip-lbl">Available Balance</div>
+            <span id="stat-balance-sub" style="display: none;"></span>
           </div>
         </div>
 
@@ -194,20 +216,26 @@
         <!-- Tab Panel 2 -->
         <div id="tab-vouchers" class="tab-panel">
           <div class="studio-card">
-            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-              <h2 class="typography-heading-4">Disbursement Vouchers</h2>
-              <div style="display:flex; gap:var(--spacing-sm);">
-                <select id="filter-voucher-status" class="text-input" onchange="refreshVouchers()">
-                  <option value="">All Statuses</option>
-                  <option value="Draft">Draft</option>
-                  <option value="Certified">Certified</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Released">Released</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
-                <input type="text" id="search-vouchers" class="text-input" placeholder="Search Payee/DV #..." oninput="refreshVouchers()">
-                <button class="button-primary" onclick="openModal('voucher-modal')">+ New Voucher</button>
+            <!-- Level 2 Progressive Filter Bar -->
+            <div class="filter-bar-minimal" style="margin-bottom: var(--spacing-sm);">
+              <div class="search-input-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="search-vouchers" class="text-input" placeholder="Search Payee/DV #..." oninput="refreshVouchers()" autocomplete="off">
               </div>
+
+              <select id="filter-voucher-status" class="filter-select" onchange="refreshVouchers()" style="width: auto;">
+                <option value="">All Statuses</option>
+                <option value="Draft">Draft</option>
+                <option value="Certified">Certified</option>
+                <option value="Approved">Approved</option>
+                <option value="Released">Released</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+
+              <button class="button-primary" onclick="openModal('voucher-modal')" style="margin-left: auto;">+ New Voucher</button>
             </div>
             <div class="data-table-wrap">
               <table class="data-table">
@@ -234,19 +262,25 @@
         <!-- Tab Panel 3 -->
         <div id="tab-collections" class="tab-panel">
           <div class="studio-card">
-            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-              <h2 class="typography-heading-4">Revenue &amp; Collections</h2>
-              <div style="display:flex; gap:var(--spacing-sm);">
-                <select id="filter-collection-source" class="text-input" onchange="refreshCollections()">
-                  <option value="">All Sources</option>
-                  <option value="General Fund">General Fund</option>
-                  <option value="Sangguniang Kabataan (SK)">Sangguniang Kabataan (SK)</option>
-                  <option value="20% Development Fund">20% Development Fund</option>
-                  <option value="Calamity Fund (BDRRMF)">Calamity Fund (BDRRMF)</option>
-                </select>
-                <input type="text" id="search-collections" class="text-input" placeholder="Search Payer/OR #..." oninput="refreshCollections()">
-                <button class="button-primary" onclick="openModal('collection-modal')">+ Record Collection</button>
+            <!-- Level 2 Progressive Filter Bar -->
+            <div class="filter-bar-minimal" style="margin-bottom: var(--spacing-sm);">
+              <div class="search-input-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="search-collections" class="text-input" placeholder="Search Payer/OR #..." oninput="refreshCollections()" autocomplete="off">
               </div>
+
+              <select id="filter-collection-source" class="filter-select" onchange="refreshCollections()" style="width: auto;">
+                <option value="">All Sources</option>
+                <option value="General Fund">General Fund</option>
+                <option value="Sangguniang Kabataan (SK)">Sangguniang Kabataan (SK)</option>
+                <option value="20% Development Fund">20% Development Fund</option>
+                <option value="Calamity Fund (BDRRMF)">Calamity Fund (BDRRMF)</option>
+              </select>
+
+              <button class="button-primary" onclick="openModal('collection-modal')" style="margin-left: auto;">+ Record Collection</button>
             </div>
             <div class="data-table-wrap">
               <table class="data-table">
@@ -531,15 +565,91 @@
     </div>
   </dialog>
 
-  <dialog id="view-voucher-modal" class="modal-dialog">
-    <div class="studio-card" style="width:500px; max-width:90vw;">
-      <div class="card-header"><h3 class="typography-heading-4">Voucher Details</h3></div>
-      <div id="view-voucher-content" style="margin-bottom:var(--spacing-md); line-height:1.6; font-size:14px;"></div>
-      <div style="display:flex; justify-content:flex-end;">
-        <button type="button" class="button-outline" onclick="closeModal('view-voucher-modal')">Close</button>
+  <!-- Slide-Over Drawer: Budget & Voucher Details -->
+  <div class="app-drawer-backdrop" id="budget-drawer-backdrop" onclick="closeBudgetDrawer()"></div>
+  <aside class="app-drawer" id="budget-detail-drawer" aria-label="Financial Voucher Dossier">
+    <div class="drawer-header">
+      <div>
+        <h3 class="drawer-title" id="drawer-dv-num">Disbursement Voucher</h3>
+        <p class="typography-caption" id="drawer-dv-subtitle">COA Financial Voucher Record</p>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeBudgetDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchBudgetDrawerTab('overview', this)">Overview</button>
+      <button type="button" class="drawer-tab" onclick="switchBudgetDrawerTab('signatories', this)">Signatories &amp; Approval</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Overview -->
+      <div id="budget-drawer-sec-overview" class="drawer-section">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">DV Number</span>
+            <span class="drawer-item-val" id="drawer-dv-number" style="font-family: monospace; font-weight: 700;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Payee Full Name</span>
+            <span class="drawer-item-val" id="drawer-dv-payee" style="font-weight: 600;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Amount Payable</span>
+            <span class="drawer-item-val" id="drawer-dv-amount" style="font-weight: 700; color: #059669; font-size: 1.125rem;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Status</span>
+            <span class="drawer-item-val" id="drawer-dv-status">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Fund Source</span>
+            <span class="drawer-item-val" id="drawer-dv-fund">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Expense Class</span>
+            <span class="drawer-item-val" id="drawer-dv-expense">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Check Details</span>
+            <span class="drawer-item-val" id="drawer-dv-check">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Particulars / Statutory Purpose</span>
+            <span class="drawer-item-val" id="drawer-dv-particulars" style="line-height: 1.5;">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Signatories -->
+      <div id="budget-drawer-sec-signatories" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Certified by (Barangay Treasurer)</span>
+            <span class="drawer-item-val" id="drawer-dv-certifier">Maria Santos - Barangay Treasurer</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Approved by (Punong Barangay)</span>
+            <span class="drawer-item-val" id="drawer-dv-approver">Hon. Antonio S. Valdez - Punong Barangay</span>
+          </div>
+          <div style="margin-top: 12px; padding: 12px; background: var(--color-canvas-soft); border-radius: var(--rounded-sm); font-size: 0.75rem; color: var(--color-text-muted);">
+            Certification adheres to Section 338 of the Local Government Code of 1991 and COA Circular No. 2012-001.
+          </div>
+        </div>
       </div>
     </div>
-  </dialog>
+
+    <div class="drawer-footer" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <button type="button" class="button-outline" id="btn-drawer-print-dv" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        Print DV Form
+      </button>
+      <div style="display: flex; gap: var(--spacing-xs);">
+        <button type="button" class="button-pill-soft" onclick="closeBudgetDrawer()" style="height: 36px; padding: 0 14px;">Close</button>
+        <button type="button" class="button-primary" id="btn-drawer-status-dv" style="height: 36px; padding: 0 16px; font-size: 0.75rem;">Advance Status</button>
+      </div>
+    </div>
+  </aside>
+  <dialog id="view-voucher-modal" style="display: none;"><div id="view-voucher-content"></div></dialog>
 
   <div id="print-statutory-container" style="display: none;"></div>
 
@@ -702,8 +812,8 @@
               <small class="typography-caption">${pct.toFixed(1)}%</small>
             </td>
             <td>
-              <button class="icon-button" onclick="editAlloc(${a.id})" title="Edit">âœï¸</button>
-              <button class="icon-button text-rose" onclick="deleteAlloc(${a.id})" title="Delete">ðŸ—‘ï¸</button>
+              <button class="icon-button" onclick="editAlloc(${a.id})" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+              <button class="icon-button text-rose" onclick="deleteAlloc(${a.id})" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
             </td>
           </tr>
         `;
@@ -748,9 +858,9 @@
           <td><strong>${formatCurrency(v.amount)}</strong></td>
           <td>${getStatusBadge(v.status, 'voucher')}</td>
           <td>
-            <button class="icon-button" onclick="viewVoucher(${v.id})" title="View">ðŸ‘ï¸</button>
-            <button class="icon-button" onclick="promptApproveVoucher(${v.id})" title="Update Status">âœ…</button>
-            <button class="icon-button" onclick="printDV(${v.id})" title="Print DV">ðŸ–¨ï¸</button>
+            <button class="icon-button" onclick="viewVoucher(${v.id})" title="View"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="icon-button" onclick="promptApproveVoucher(${v.id})" title="Update Status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+            <button class="icon-button" onclick="printDV(${v.id})" title="Print DV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
           </td>
         </tr>
       `).join('');
@@ -784,7 +894,7 @@
           <td>${formatDate(c.receipt_date)}</td>
           <td>${getStatusBadge(c.status, 'collection')}</td>
           <td>
-            <button class="icon-button text-rose" onclick="deleteCollection(${c.id})" title="Delete">ðŸ—‘ï¸</button>
+            <button class="icon-button text-rose" onclick="deleteCollection(${c.id})" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
           </td>
         </tr>
       `).join('');
@@ -808,8 +918,8 @@
           <td><strong>${formatCurrency(r.ending_balance)}</strong></td>
           <td>${getStatusBadge(r.status, 'report')}</td>
           <td>
-             <button class="icon-button" onclick="alert('Print not implemented for summary')" title="Print">ðŸ–¨ï¸</button>
-             <button class="icon-button text-rose" onclick="deleteReport(${r.id})" title="Delete">ðŸ—‘ï¸</button>
+             <button class="icon-button" onclick="alert('Print not implemented for summary')" title="Print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+             <button class="icon-button text-rose" onclick="deleteReport(${r.id})" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
           </td>
         </tr>
       `).join('');
@@ -926,20 +1036,71 @@
     function viewVoucher(id) {
       const v = currentVoucherList.find(x => x.id == id);
       if(!v) return;
-      document.getElementById('view-voucher-content').innerHTML = `
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <div><strong>DV Number:</strong> ${v.dv_number || '-'}</div>
-          <div><strong>Status:</strong> ${v.status}</div>
-          <div style="grid-column:1/-1;"><strong>Payee:</strong> ${v.payee_name}</div>
-          <div style="grid-column:1/-1;"><strong>Particulars:</strong> ${v.particulars}</div>
-          <div><strong>Fund Source:</strong> ${v.fund_source}</div>
-          <div><strong>Expense Class:</strong> ${v.expense_class}</div>
-          <div><strong>Amount:</strong> ${formatCurrency(v.amount)}</div>
-          <div><strong>Check No:</strong> ${v.check_no || '-'}</div>
-        </div>
-      `;
-      openModal('view-voucher-modal');
+
+      document.getElementById('drawer-dv-num').textContent = v.dv_number || 'Disbursement Voucher';
+      document.getElementById('drawer-dv-subtitle').textContent = `${v.fund_source} • ${v.expense_class}`;
+      document.getElementById('drawer-dv-number').textContent = v.dv_number || 'DV-DRAFT';
+      document.getElementById('drawer-dv-payee').textContent = v.payee_name;
+      document.getElementById('drawer-dv-amount').textContent = formatCurrency(v.amount);
+      document.getElementById('drawer-dv-status').innerHTML = getStatusBadge(v.status, 'voucher');
+      document.getElementById('drawer-dv-fund').textContent = v.fund_source;
+      document.getElementById('drawer-dv-expense').textContent = v.expense_class;
+      document.getElementById('drawer-dv-check').textContent = v.check_no ? `Check #${v.check_no} (${v.bank_name || 'Bank'})` : 'No check issued (Cash/Draft)';
+      document.getElementById('drawer-dv-particulars').textContent = v.particulars;
+      document.getElementById('drawer-dv-certifier').textContent = v.certified_by || 'Maria Santos - Barangay Treasurer';
+      document.getElementById('drawer-dv-approver').textContent = v.approved_by || 'Hon. Antonio S. Valdez - Punong Barangay';
+
+      document.getElementById('btn-drawer-print-dv').onclick = () => printDV(v.id);
+      document.getElementById('btn-drawer-status-dv').onclick = () => {
+        closeBudgetDrawer();
+        promptApproveVoucher(v.id);
+      };
+
+      const drawer = document.getElementById('budget-detail-drawer');
+      const backdrop = document.getElementById('budget-drawer-backdrop');
+      if (drawer && backdrop) {
+        drawer.classList.add('active');
+        backdrop.classList.add('active');
+      }
     }
+
+    function closeBudgetDrawer() {
+      const drawer = document.getElementById('budget-detail-drawer');
+      const backdrop = document.getElementById('budget-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    }
+
+    function switchBudgetDrawerTab(tabName, btn) {
+      document.querySelectorAll('#budget-detail-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('#budget-detail-drawer .drawer-section').forEach(s => s.style.display = 'none');
+      const sec = document.getElementById(`budget-drawer-sec-${tabName}`);
+      if (sec) sec.style.display = 'block';
+    }
+
+    function toggleBudgetInfoPopover(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('budget-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close drawer and popover on click outside or Escape
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('budget-info-popover');
+      if (popover && popover.style.display === 'block' && !e.target.closest('#budget-info-popover') && !e.target.closest('.info-trigger')) {
+        popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeBudgetDrawer();
+        const popover = document.getElementById('budget-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
     
     function promptApproveVoucher(id) {
       const v = currentVoucherList.find(x => x.id == id);

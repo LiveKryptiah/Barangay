@@ -218,6 +218,7 @@ require_auth('login.php');
             <div>
               <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
                 <h1 class="typography-heading-2">System Settings &amp; Backup.</h1>
+                <button type="button" class="info-trigger" id="btn-settings-info" onclick="toggleSettingsInfoPopover(event)" aria-label="System Settings Information" title="About System Architecture &amp; Data Security">i</button>
                 <span class="badge-neutral" id="db-engine-badge">IndexedDB v1</span>
               </div>
               <p class="typography-body-lg">
@@ -237,50 +238,63 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- System Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">ACTIVE JURISDICTION</span>
-                <span class="badge-neutral">Local Gov</span>
-              </div>
-              <div class="stat-number" id="stat-barangay-display" style="font-size: 1.125rem; font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-top: 6px;">
-                Barangay San Isidro
-              </div>
-              <div class="typography-caption" id="stat-city-display">City of San Isidro</div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="settings-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Barangay Management Architecture &amp; System Configuration</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleSettingsInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            This module manages institutional branding, statutory clearance pricing ordinances, database snapshots, and security audit log integrity.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Official Letterhead &amp; Seals:</strong>
+              <div>Customizes legal barangay seal, municipal insignia, and header formatting across all certificates.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">DATABASE RECORDS</span>
-                <span class="badge-blue">Total Footprint</span>
-              </div>
-              <div class="stat-number" id="stat-total-records">0</div>
-              <div class="typography-caption" id="stat-sub-records">Across 7 data stores</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">Fee Schedule Ordinance:</strong>
+              <div>Configures statutory clearance and permit fees in accordance with the Local Revenue Code.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">SECURITY AUDIT TRAIL</span>
-                <span class="badge-popular">PBKDF2 Hashed</span>
-              </div>
-              <div class="stat-number" id="stat-audit-count">0</div>
-              <div class="typography-caption" id="stat-sub-audit">Recorded security events</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-amber-600, #d97706);">Database Backup &amp; Recovery:</strong>
+              <div>JSON snapshots download immediately to physical offline media for disaster recovery and audits.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">BACKUP STATUS</span>
-                <span class="badge-emerald" id="stat-backup-badge">Ready</span>
-              </div>
-              <div class="stat-number" id="stat-backup-date" style="font-size: 1.0625rem; font-weight: 600; margin-top: 6px;">
-                Not Exported Yet
-              </div>
-              <div class="typography-caption">Client-side physical file</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #6366f1;">Cryptographic Audit Trail:</strong>
+              <div>Tamper-evident logs of administrative actions, user logins, and data modifications.</div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-barangay-display" style="font-size: 1.0625rem;">Barangay San Isidro</span>
+            <span class="metric-strip-lbl">Active Jurisdiction</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-total-records">0</span>
+            <span class="metric-strip-lbl">Total Records</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-audit-count">0</span>
+            <span class="metric-strip-lbl">Security Events</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-backup-badge" class="badge-emerald" style="font-size: 0.8125rem;">Ready</span>
+            <span class="metric-strip-lbl">Backup Health</span>
+          </div>
+        </div>
+
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <span id="stat-city-display" style="display: none;"></span>
+        <span id="stat-sub-records" style="display: none;"></span>
+        <span id="stat-sub-audit" style="display: none;"></span>
+        <span id="stat-backup-date" style="display: none;"></span>
 
         <!-- Settings Segmented Navigation Tabs -->
         <nav class="settings-nav-bar" aria-label="Settings Sections">
@@ -1336,6 +1350,33 @@ require_auth('login.php');
 
       // 15. Initial Load
       await loadAllSettings();
+    });
+
+    // Contextual Info Popover Toggle
+    window.toggleSettingsInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('settings-info-popover');
+      if (!popover) return;
+      const isOpen = popover.style.display === 'block';
+      popover.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // Global keyboard and click listeners
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const popover = document.getElementById('settings-info-popover');
+        if (popover && popover.style.display === 'block') popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('settings-info-popover');
+      const trigger = document.getElementById('btn-settings-info');
+      if (popover && popover.style.display === 'block') {
+        if (!popover.contains(e.target) && e.target !== trigger) {
+          popover.style.display = 'none';
+        }
+      }
     });
   </script>
 </body>

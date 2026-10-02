@@ -189,17 +189,31 @@
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
+        <!-- Level 1 Primary: Ultra-Quiet Hero Section -->
         <section class="page-hero">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
-            <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Executive Reports &amp; Analytics.</h1>
-                <span class="badge-neutral" id="report-period-badge">All-Time Cumulative</span>
+            <div style="position: relative;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h1 class="typography-heading-2">Executive Reports.</h1>
+                <button type="button" class="info-trigger" onclick="toggleReportsInfoPopover(event)" title="View Reporting Guidelines" aria-label="View Reporting Guidelines">i</button>
+                <span class="badge-neutral" id="report-period-badge" style="display: none;">All-Time Cumulative</span>
               </div>
-              <p class="typography-body-lg">
+              <p class="typography-body-lg" style="margin-top: 4px;">
                 Consolidated revenue collections, demographic population census, and katarungang pambarangay accomplishment metrics.
               </p>
+
+              <!-- Contextual Info Popover Card -->
+              <div class="info-popover-card" id="reports-info-popover" style="display: none;">
+                <div style="font-weight: 700; margin-bottom: 6px; font-size: 0.875rem;">Executive Reporting &amp; Statutory Guidelines</div>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+                  This hub aggregates transactions across official registries under DILG and COA standards:
+                </p>
+                <ul style="font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.5; padding-left: 16px; margin: 0;">
+                  <li><strong>Revenue Reconciliation:</strong> Derived from official receipts issued in Clearance and Permit modules.</li>
+                  <li><strong>Demographics:</strong> Real-time cross-tabulation of active resident registrations and electoral status.</li>
+                  <li><strong>Katarungang Pambarangay:</strong> Dispute settlement rate under Section 399-422 of Republic Act No. 7160.</li>
+                </ul>
+              </div>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;">
               <!-- Date Range Filter -->
@@ -231,46 +245,31 @@
           </div>
         </section>
 
-        <!-- Executive Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL REVENUE</span>
-                <span class="badge-emerald">Treasury</span>
-              </div>
-              <div class="stat-number" id="stat-kpi-revenue" style="color: #059669;">₱0.00</div>
-              <div class="typography-caption" id="stat-kpi-revenue-sub">From 0 official receipts</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">POPULATION CENSUS</span>
-                <span class="badge-blue">Demographics</span>
-              </div>
-              <div class="stat-number" id="stat-kpi-population">0</div>
-              <div class="typography-caption" id="stat-kpi-population-sub">0 registered households</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">LUPON RESOLUTION</span>
-                <span class="badge-purple">Peace &amp; Order</span>
-              </div>
-              <div class="stat-number" id="stat-kpi-resolution-rate">0%</div>
-              <div class="typography-caption" id="stat-kpi-resolution-sub">0 of 0 cases settled</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">GOVERNANCE OUTPUT</span>
-                <span class="badge-popular">Accomplishment</span>
-              </div>
-              <div class="stat-number" id="stat-kpi-output">0</div>
-              <div class="typography-caption">Certificates &amp; actions rendered</div>
-            </div>
+        <!-- Level 1 Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-kpi-revenue" style="color: var(--color-ink);">PHP 0.00</div>
+            <div class="metric-strip-lbl">Total Revenue</div>
+            <span id="stat-kpi-revenue-sub" style="display: none;"></span>
           </div>
-        </section>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-kpi-population">0</div>
+            <div class="metric-strip-lbl">Census Population</div>
+            <span id="stat-kpi-population-sub" style="display: none;"></span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-kpi-resolution-rate">0%</div>
+            <div class="metric-strip-lbl">Dispute Settlement</div>
+            <span id="stat-kpi-resolution-sub" style="display: none;"></span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <div class="metric-strip-val" id="stat-kpi-output">0</div>
+            <div class="metric-strip-lbl">Service Output</div>
+          </div>
+        </div>
 
         <!-- Reports Segmented Navigation Tabs -->
         <nav class="reports-nav-bar" aria-label="Report Views">
@@ -385,7 +384,7 @@
                   <h3 class="typography-heading-4">Purok Population Density.</h3>
                   <p class="typography-caption">Geographic distribution of community residents across zones.</p>
                 </div>
-                <a href="geo-profiling.html" class="button-outline" style="height: 32px; padding: 0 12px; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                <a href="geo-profiling.php" class="button-outline" style="height: 32px; padding: 0 12px; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
                   <span>Interactive Heatmap &rarr;</span>
                 </a>
@@ -536,6 +535,79 @@
     </div>
   </div>
 
+  <!-- Slide-Over Drawer: Official Receipt Detail Drawer -->
+  <div class="app-drawer-backdrop" id="receipt-drawer-backdrop" onclick="closeReceiptDrawer()"></div>
+  <aside class="app-drawer" id="receipt-drawer" aria-label="Official Receipt Details">
+    <div class="drawer-header">
+      <div>
+        <h3 class="drawer-title" id="drawer-receipt-or">Official Receipt</h3>
+        <p class="typography-caption" id="drawer-receipt-subtitle">Itemized collection transaction record</p>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeReceiptDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" onclick="switchReceiptDrawerTab('overview', this)">Overview</button>
+      <button type="button" class="drawer-tab" onclick="switchReceiptDrawerTab('recipient', this)">Recipient &amp; Purpose</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab 1: Overview -->
+      <div id="receipt-drawer-sec-overview" class="drawer-section">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">OR Number</span>
+            <span class="drawer-item-val" id="drawer-rec-or" style="font-family: monospace; font-weight: 700;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Date Issued</span>
+            <span class="drawer-item-val" id="drawer-rec-date">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Amount Paid</span>
+            <span class="drawer-item-val" id="drawer-rec-amount" style="font-weight: 700; color: #059669;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Payment Status</span>
+            <span class="drawer-item-val" id="drawer-rec-status">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Document Type</span>
+            <span class="drawer-item-val" id="drawer-rec-type">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Tracking Code</span>
+            <span class="drawer-item-val" id="drawer-rec-tracking" style="font-family: monospace;">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Recipient & Purpose -->
+      <div id="receipt-drawer-sec-recipient" class="drawer-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Recipient Full Name</span>
+            <span class="drawer-item-val" id="drawer-rec-recipient" style="font-weight: 600;">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Declared Purpose</span>
+            <span class="drawer-item-val" id="drawer-rec-purpose">&mdash;</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Audited By</span>
+            <span class="drawer-item-val" id="drawer-rec-issuer">Barangay Treasury</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer" style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+      <button class="button-pill-soft" onclick="closeReceiptDrawer()" style="height: 34px; padding: 0 14px;">Close</button>
+      <button class="button-primary" id="btn-drawer-print-receipt" style="height: 34px; padding: 0 16px; font-size: 0.75rem;">Print Receipt</button>
+    </div>
+  </aside>
+
   <!-- Printable Official Accomplishment Sheet (@media print) -->
   <div id="printable-accomplishment-report">
     <div style="text-align: center; border-bottom: 2px solid #111; padding-bottom: 14px; margin-bottom: 20px;">
@@ -606,15 +678,15 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/db.js"></script>
-  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  
   <script src="js/components/toast.js"></script>
   <script src="js/components/sidebar.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Guard route: require authentication
-      const authData = await authService.requireAuth('login.html');
+      const authData = await authService.requireAuth('login.php');
       if (!authData) return;
       const { user: currentAuthUser } = authData;
 
@@ -808,7 +880,7 @@
           else if (c.type === 'Certificate of Residency') badge = '<span class="badge-emerald">Residency</span>';
 
           return `
-            <tr style="${isRevoked ? 'opacity: 0.5; text-decoration: line-through;' : ''}">
+            <tr style="cursor: pointer; ${isRevoked ? 'opacity: 0.5; text-decoration: line-through;' : ''}" onclick="openReceiptDrawer('${c.id || c.trackingCode}')">
               <td style="font-family: monospace; font-weight: 700;">${c.orNumber || 'OR-N/A'}</td>
               <td style="font-size: 0.75rem; color: var(--color-text-faint);">${dateStr}</td>
               <td style="font-weight: 600;">${c.recipientName}</td>
@@ -1139,7 +1211,76 @@
         showToast('Treasury Ledger CSV downloaded');
       });
 
-      // 13. Initial Load
+      // 13. Slide-Over Detail Drawer & Contextual Popover Handlers
+      window.openReceiptDrawer = (idOrCode) => {
+        const c = allCertificates.find(x => String(x.id) === String(idOrCode) || String(x.trackingCode) === String(idOrCode));
+        if (!c) return;
+
+        const amt = parseFloat(c.amountPaid) || 0;
+        const dateStr = c.issuedAt ? new Date(c.issuedAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+
+        document.getElementById('drawer-receipt-or').textContent = c.orNumber || 'OR-N/A';
+        document.getElementById('drawer-receipt-subtitle').textContent = `${c.type || 'Document'} • ${dateStr}`;
+        document.getElementById('drawer-rec-or').textContent = c.orNumber || 'OR-N/A';
+        document.getElementById('drawer-rec-date').textContent = dateStr;
+        document.getElementById('drawer-rec-amount').textContent = amt > 0 ? `₱${amt.toFixed(2)}` : '₱0.00 (Exempt/Waived)';
+        document.getElementById('drawer-rec-status').innerHTML = `<span class="${c.status === 'Revoked' ? 'badge-rose' : 'badge-emerald'}">${(c.status || 'Paid').toUpperCase()}</span>`;
+        document.getElementById('drawer-rec-type').textContent = c.type || 'Barangay Document';
+        document.getElementById('drawer-rec-tracking').textContent = c.trackingCode || '—';
+        document.getElementById('drawer-rec-recipient').textContent = c.recipientName || '—';
+        document.getElementById('drawer-rec-purpose').textContent = c.purpose || 'Official Requirement';
+
+        document.getElementById('btn-drawer-print-receipt').onclick = () => {
+          window.print();
+        };
+
+        const drawer = document.getElementById('receipt-drawer');
+        const backdrop = document.getElementById('receipt-drawer-backdrop');
+        if (drawer && backdrop) {
+          drawer.classList.add('active');
+          backdrop.classList.add('active');
+        }
+      };
+
+      window.closeReceiptDrawer = () => {
+        const drawer = document.getElementById('receipt-drawer');
+        const backdrop = document.getElementById('receipt-drawer-backdrop');
+        if (drawer) drawer.classList.remove('active');
+        if (backdrop) backdrop.classList.remove('active');
+      };
+
+      window.switchReceiptDrawerTab = (tabName, btn) => {
+        document.querySelectorAll('#receipt-drawer .drawer-tab').forEach(t => t.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.querySelectorAll('#receipt-drawer .drawer-section').forEach(s => s.style.display = 'none');
+        const sec = document.getElementById(`receipt-drawer-sec-${tabName}`);
+        if (sec) sec.style.display = 'block';
+      };
+
+      window.toggleReportsInfoPopover = (e) => {
+        if (e) e.stopPropagation();
+        const card = document.getElementById('reports-info-popover');
+        if (!card) return;
+        card.style.display = card.style.display === 'block' ? 'none' : 'block';
+      };
+
+      // Close popover and drawer on click outside or Escape
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('reports-info-popover');
+        if (popover && popover.style.display === 'block' && !e.target.closest('#reports-info-popover') && !e.target.closest('.info-trigger')) {
+          popover.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeReceiptDrawer();
+          const popover = document.getElementById('reports-info-popover');
+          if (popover) popover.style.display = 'none';
+        }
+      });
+
+      // 14. Initial Load
       await loadAllReportData();
     });
   </script>

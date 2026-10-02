@@ -119,7 +119,10 @@ $currentUser = current_user();
                 <span class="badge-neutral" id="current-user-role"><?= htmlspecialchars(strtoupper($currentUser['role'])) ?></span>
                 <span class="typography-caption" style="color: var(--color-text-muted);">EXECUTIVE CONSOLE</span>
               </div>
-              <h1 class="typography-heading-2">Operations Overview.</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                <h1 class="typography-heading-2">Operations Overview.</h1>
+                <button type="button" class="info-trigger" id="btn-dashboard-info" onclick="toggleDashboardInfoPopover(event)" aria-label="Console Overview Information" title="About Barangay Management Architecture">i</button>
+              </div>
               <p class="typography-body-lg">
                 Real-time community records, population telemetry, and administrative actions backed by MySQL.
               </p>
@@ -135,46 +138,62 @@ $currentUser = current_user();
           </div>
         </section>
 
-        <!-- Real-time Stats Ladder -->
-        <section>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL RESIDENTS</span>
-                <span class="badge-neutral">MySQL Live</span>
-              </div>
-              <div class="stat-number" id="stat-residents">0</div>
-              <div class="typography-caption" id="stat-residents-sub">0 registered in Purok rosters</div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="dashboard-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">Barangay Management System Architecture</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleDashboardInfoPopover()" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Unified municipal local governance software complying with RA 7160 (Local Government Code). Features centralized MySQL transactions, role-based access control, cryptographic verification for statutory issuances, and immutable security audit logs.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem;">
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: var(--color-primary);">Registry &amp; Demographics:</strong>
+              <div>Continuous Purok-level profiling of residents, families, and households.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">CLEARANCES ISSUED</span>
-                <span class="badge-neutral">Certificates</span>
-              </div>
-              <div class="stat-number" id="stat-clearances">0</div>
-              <div class="typography-caption">0 verified digital tracking codes</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #10b981;">Statutory Issuances:</strong>
+              <div>Digital verification codes for clearances, permits, and indigency proofs.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">ACTIVE BLOTTERS</span>
-                <span class="badge-neutral">Peace &amp; Order</span>
-              </div>
-              <div class="stat-number" id="stat-blotter">0</div>
-              <div class="typography-caption" id="stat-blotter-sub">0 cases • 0 incidents</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #ef4444;">Public Safety &amp; DRRM:</strong>
+              <div>Blotter mediation, emergency dispatch telemetry, and typhoon camp coordination.</div>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">STAFF &amp; OFFICIALS</span>
-                <span class="badge-popular">Bcrypt Secured</span>
-              </div>
-              <div class="stat-number" id="stat-users">1</div>
-              <div class="typography-caption" id="stat-users-sub">Active in BarangayOS Directory</div>
+            <div style="background: var(--color-canvas-soft); padding: 8px; border-radius: 4px;">
+              <strong style="color: #6366f1;">Fiscal Transparency:</strong>
+              <div>Real-time budget allocations, disbursements, and revenue monitoring.</div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <!-- Level 1: Minimal Borderless Metrics Strip -->
+        <div class="metrics-strip">
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-residents">0</span>
+            <span class="metric-strip-lbl">Total Residents</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-clearances">0</span>
+            <span class="metric-strip-lbl">Clearances Issued</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-blotter">0</span>
+            <span class="metric-strip-lbl">Active Blotters</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item">
+            <span class="metric-strip-val" id="stat-users">1</span>
+            <span class="metric-strip-lbl">Staff &amp; Officials</span>
+          </div>
+        </div>
+
+        <!-- Hidden telemetry preservation to avoid JS null reference errors -->
+        <span id="stat-residents-sub" style="display: none;"></span>
+        <span id="stat-blotter-sub" style="display: none;"></span>
+        <span id="stat-users-sub" style="display: none;"></span>
 
         <!-- Quick Action Stadium Pills -->
         <section>
@@ -257,16 +276,30 @@ $currentUser = current_user();
     </div>
   </div>
 
-  <!-- Audit Logs Modal -->
-  <dialog id="audit-modal" style="border: 1px solid var(--color-hairline); border-radius: var(--rounded-md); padding: var(--spacing-xl); width: 90%; max-width: 680px; margin: auto; background: var(--color-canvas);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
-      <h3 class="typography-heading-4">Security Audit Log.</h3>
-      <button onclick="document.getElementById('audit-modal').close()" class="button-pill-soft" style="height: 32px; padding: 0 12px;">Close</button>
+  <!-- LEVEL 3: AUDIT LOG DETAIL DRAWER -->
+  <div class="app-drawer-backdrop" id="audit-drawer-backdrop" onclick="closeAuditDrawer()"></div>
+  <aside class="app-drawer" id="audit-drawer" aria-label="Security Audit Log">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge-neutral" style="font-family: monospace; font-weight: 700;">AUDIT</span>
+        <h3 class="drawer-title" style="margin: 0; font-size: 1rem;">Security &amp; Operations Audit Log</h3>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeAuditDrawer()" aria-label="Close drawer">&times;</button>
     </div>
-    <div id="audit-logs-list" style="max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: var(--spacing-xs);">
-      <p class="typography-body-sm">Loading security logs...</p>
+
+    <div class="drawer-body">
+      <div id="audit-logs-list" style="display: flex; flex-direction: column; gap: var(--spacing-xs);">
+        <p class="typography-body-sm">Loading security logs...</p>
+      </div>
     </div>
-  </dialog>
+
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="closeAuditDrawer()" style="height: 36px; padding: 0 16px; font-size: 0.8125rem;">
+        Close
+      </button>
+    </div>
+  </aside>
+  <dialog id="audit-modal" style="display: none;"></dialog>
 
   <!-- Scripts -->
   <script src="js/api.js"></script>
@@ -308,12 +341,54 @@ $currentUser = current_user();
 
       await refreshStats();
 
-      // 3. Audit Log Modal Function
-      window.showAuditModal = async () => {
+      // Contextual Info Popover Toggle
+      window.toggleDashboardInfoPopover = function(e) {
+        if (e) e.stopPropagation();
+        const popover = document.getElementById('dashboard-info-popover');
+        if (!popover) return;
+        const isOpen = popover.style.display === 'block';
+        popover.style.display = isOpen ? 'none' : 'block';
+      };
+
+      // Close Audit Drawer
+      window.closeAuditDrawer = function() {
+        const drawer = document.getElementById('audit-drawer');
+        const backdrop = document.getElementById('audit-drawer-backdrop');
+        if (drawer) drawer.classList.remove('active');
+        if (backdrop) backdrop.classList.remove('active');
         const modal = document.getElementById('audit-modal');
+        if (modal && modal.open) modal.close();
+      };
+
+      // Global keyboard & click listeners
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeAuditDrawer();
+          const popover = document.getElementById('dashboard-info-popover');
+          if (popover && popover.style.display === 'block') popover.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('dashboard-info-popover');
+        const trigger = document.getElementById('btn-dashboard-info');
+        if (popover && popover.style.display === 'block') {
+          if (!popover.contains(e.target) && e.target !== trigger) {
+            popover.style.display = 'none';
+          }
+        }
+      });
+
+      // 3. Audit Log Drawer Function
+      window.showAuditModal = async () => {
+        const drawer = document.getElementById('audit-drawer');
+        const backdrop = document.getElementById('audit-drawer-backdrop');
         const list = document.getElementById('audit-logs-list');
         list.innerHTML = '<p class="typography-body-sm">Fetching audit entries from MySQL...</p>';
-        modal.showModal();
+        if (drawer && backdrop) {
+          drawer.classList.add('active');
+          backdrop.classList.add('active');
+        }
 
         try {
           const logs = await window.barangayDB.getAll('audit_logs');
@@ -323,7 +398,7 @@ $currentUser = current_user();
           }
 
           list.innerHTML = logs.map(log => `
-            <div style="padding: 10px 14px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+            <div style="padding: 10px 14px; background-color: var(--color-canvas-soft); border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
               <div>
                 <span style="font-weight: 600; font-size: 0.8125rem;">${log.action}</span>
                 <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 2px;">${log.details || ''}</p>

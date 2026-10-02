@@ -442,20 +442,34 @@ require_auth('login.php');
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
-        <section class="page-hero">
+        <!-- Level 1: Page Hero Section (Quiet, Focused) -->
+        <section class="page-hero" style="padding-bottom: var(--spacing-sm);">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
-                <h1 class="typography-heading-2">Families &amp; Social Welfare.</h1>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: 4px; position: relative;">
+                <h1 class="typography-heading-2">Families</h1>
                 <span class="badge-neutral" id="family-count-badge">0 Families</span>
+                <button type="button" class="info-trigger" onclick="toggleFamilyInfoPopover(event)" title="View Family Welfare Guidelines" aria-label="View Family Welfare Guidelines">i</button>
+                <div class="info-popover-card" id="family-info-popover">
+                  <div style="font-weight: 700; margin-bottom: 4px; font-size: 0.8125rem;">Family Registry &amp; Social Welfare</div>
+                  <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0; line-height: 1.4;">
+                    Tracks family units within dwellings, kinship trees, 4Ps welfare classification, indigent priority status, and relief assistance ledgers.
+                  </p>
+                </div>
               </div>
-              <p class="typography-body-lg">
-                Kinship and socio-economic profiling, 4Ps beneficiary management, disaster relief tracking, and Certificate of Family Composition.
+              <p class="typography-body-sm" style="color: var(--color-text-muted); margin: 0;">
+                Kinship and socio-economic profiling, 4Ps beneficiary management, and relief assistance tracking.
               </p>
             </div>
-            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-              <button class="button-outline" id="btn-export-csv" title="Export families list to CSV" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
+            <div style="display: flex; align-items: center; gap: var(--spacing-xs); flex-wrap: wrap;">
+              <a href="households.php" class="button-outline" title="Manage Household Dwellings" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Households &rarr;</span>
+              </a>
+              <button class="button-outline" id="btn-export-csv" title="Export families list to CSV" style="height: 38px; padding: 0 14px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
@@ -463,69 +477,102 @@ require_auth('login.php');
                 </svg>
                 <span>Export CSV</span>
               </button>
-              <button class="button-primary" id="btn-open-family-modal" style="height: 38px; padding: 0 18px; font-size: 0.8125rem;">
+              <button class="button-primary" id="btn-open-family-modal" style="height: 38px; padding: 0 16px; font-size: 0.8125rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                <span>+ Register Family Profile</span>
+                <span>Register Family</span>
               </button>
             </div>
           </div>
         </section>
 
-        <!-- Demographic Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">TOTAL FAMILIES</span>
-                <span class="badge-blue">Pamilya</span>
-              </div>
-              <div class="stat-number" id="stat-total-families">0</div>
-              <div class="typography-caption" id="stat-sub-families">Avg family size: 0.0</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">INDIGENT / SUBSISTENCE</span>
-                <span class="badge-amber">Priority</span>
-              </div>
-              <div class="stat-number" id="stat-indigent-families">0</div>
-              <div class="typography-caption" id="stat-sub-indigent">Below poverty threshold</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">4PS BENEFICIARIES</span>
-                <span class="badge-emerald">DSWD</span>
-              </div>
-              <div class="stat-number" id="stat-4ps-families">0</div>
-              <div class="typography-caption" id="stat-sub-4ps">Enlisted DSWD households</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">RELIEF &amp; AYUDA DISBURSED</span>
-                <span class="badge-purple">Welfare</span>
-              </div>
-              <div class="stat-number" id="stat-total-grants">0</div>
-              <div class="typography-caption" id="stat-sub-grants">₱0.00 total assistance value</div>
-            </div>
+        <!-- Level 1/2: Minimal Metrics Strip (Quiet, Borderless) -->
+        <section class="metrics-strip">
+          <div class="metric-strip-item" title="Click to view all families" onclick="resetFamilyFilters()">
+            <span class="metric-strip-val" id="stat-total-families">0</span>
+            <span class="metric-strip-lbl">Total Families</span>
           </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter indigent families" onclick="filterByPovertyQuick('Indigent / Below Poverty Threshold')">
+            <span class="metric-strip-val" id="stat-indigent-families">0</span>
+            <span class="metric-strip-lbl">Indigent / Priority</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Click to filter 4Ps beneficiaries" onclick="filterBy4psQuick('1')">
+            <span class="metric-strip-val" id="stat-4ps-families">0</span>
+            <span class="metric-strip-lbl">4Ps Beneficiaries</span>
+          </div>
+          <div class="metric-strip-divider"></div>
+          <div class="metric-strip-item" title="Total assistance and grants released">
+            <span class="metric-strip-val" id="stat-total-grants">0</span>
+            <span class="metric-strip-lbl">Relief Grants</span>
+          </div>
+          <!-- Hidden telemetry helper text targets to preserve all existing JS code bindings -->
+          <span id="stat-sub-families" style="display:none;"></span>
+          <span id="stat-sub-indigent" style="display:none;"></span>
+          <span id="stat-sub-4ps" style="display:none;"></span>
+          <span id="stat-sub-grants" style="display:none;"></span>
         </section>
 
-        <!-- Filter & Search Toolbar -->
-        <div class="filter-toolbar">
-          <div class="filter-group">
-            <div class="search-input-wrap">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input type="text" id="search-filter" class="form-input" placeholder="Search by family name, head, or code..." autocomplete="off">
+        <!-- Level 2: Progressive Minimal Filter Bar -->
+        <section>
+          <div class="filter-bar-minimal">
+            <div class="filter-bar-left">
+              <div class="search-input-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="search-filter" class="text-input" placeholder="Search by family name, head, or code..." autocomplete="off">
+              </div>
+              <button type="button" class="filter-toggle-btn" id="btn-toggle-filters" onclick="toggleFamilyFilterPanel()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+                <span>Filters</span>
+                <span id="active-filter-badge" class="badge-neutral" style="display: none; font-size: 0.6875rem; padding: 2px 6px;">0</span>
+              </button>
+              <button id="btn-clear-filters" class="button-pill-soft" onclick="resetFamilyFilters()" style="height: 34px; padding: 0 12px; font-size: 0.75rem; display: none;">
+                Reset
+              </button>
             </div>
 
+            <div class="view-toggle-wrap">
+              <button type="button" class="view-toggle-btn active" id="btn-view-cards" onclick="switchView('cards')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="7" height="7" x="3" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="3" rx="1"/>
+                  <rect width="7" height="7" x="14" y="14" rx="1"/>
+                  <rect width="7" height="7" x="3" y="14" rx="1"/>
+                </svg>
+                <span>Cards</span>
+              </button>
+              <button type="button" class="view-toggle-btn" id="btn-view-table" onclick="switchView('table')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"/>
+                  <line x1="8" y1="12" x2="21" y2="12"/>
+                  <line x1="8" y1="18" x2="21" y2="18"/>
+                  <line x1="3" y1="6" x2="3.01" y2="6"/>
+                  <line x1="3" y1="12" x2="3.01" y2="12"/>
+                  <line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+                <span>Table</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Progressive Expandable Filter Drawer Panel -->
+          <div class="filter-expanded-panel" id="family-filter-panel">
             <select id="purok-filter" class="filter-select">
               <option value="">All Puroks</option>
               <option value="Purok 1">Purok 1</option>
@@ -562,30 +609,7 @@ require_auth('login.php');
               <option value="Single Person">Single Person</option>
             </select>
           </div>
-
-          <div class="view-toggle-wrap">
-            <button type="button" class="view-toggle-btn active" id="btn-view-cards" onclick="switchView('cards')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="7" height="7" x="3" y="3" rx="1"/>
-                <rect width="7" height="7" x="14" y="3" rx="1"/>
-                <rect width="7" height="7" x="14" y="14" rx="1"/>
-                <rect width="7" height="7" x="3" y="14" rx="1"/>
-              </svg>
-              <span>Cards</span>
-            </button>
-            <button type="button" class="view-toggle-btn" id="btn-view-table" onclick="switchView('table')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="8" y1="6" x2="21" y2="6"/>
-                <line x1="8" y1="12" x2="21" y2="12"/>
-                <line x1="8" y1="18" x2="21" y2="18"/>
-                <line x1="3" y1="6" x2="3.01" y2="6"/>
-                <line x1="3" y1="12" x2="3.01" y2="12"/>
-                <line x1="3" y1="18" x2="3.01" y2="18"/>
-              </svg>
-              <span>Table</span>
-            </button>
-          </div>
-        </div>
+        </section>
 
         <!-- MAIN VIEW 1: FAMILY CARDS GRID -->
         <div id="view-cards-container">
@@ -923,143 +947,168 @@ require_auth('login.php');
     </form>
   </dialog>
 
-  <!-- ===================================================== -->
-  <!-- MODAL 2: FAMILY DOSSIER, TREE & AYUDA LEDGER          -->
-  <!-- ===================================================== -->
-  <dialog id="dossier-modal" class="modal-dialog" style="max-width: 860px; width: 95%;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px solid var(--color-hairline); padding-bottom: 10px;">
-      <div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="family-code-badge" id="dossier-fam-code">FAM-2026-00001</span>
-          <h3 class="typography-heading-3" id="dossier-fam-name" style="margin: 0;">Family Dossier</h3>
+  <!-- Backdrop for Right-Side Slide-Over Drawers -->
+  <div class="app-drawer-backdrop" id="drawer-backdrop" onclick="closeFamilyDrawer()"></div>
+
+  <!-- Family Detail Slide-Over Drawer (Level 3 Deep Detail) -->
+  <aside class="app-drawer" id="dossier-drawer" aria-label="Family Profile Dossier" style="max-width: 620px;">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: var(--spacing-sm); min-width: 0;">
+        <span class="family-code-badge" id="dossier-fam-code" style="font-family: monospace;">FAM-2026-00001</span>
+        <div class="drawer-header-info">
+          <h3 class="drawer-title" id="dossier-fam-name">Family Dossier</h3>
+          <p class="drawer-subtitle" id="dossier-fam-meta">Head: — &bull; Purok 1 &bull; 0 Members</p>
         </div>
-        <p class="typography-caption" id="dossier-fam-meta" style="color: var(--color-text-muted); margin-top: 4px;">
-          Head: — &bull; Purok 1 &bull; 0 Members
-        </p>
       </div>
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <button type="button" class="button-outline" onclick="openPrintModal(activeFamilyForAction.id)" style="height: 32px; padding: 0 12px; font-size: 0.75rem;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-          <span>Print Composition</span>
-        </button>
-        <button type="button" class="button-icon-soft" onclick="document.getElementById('dossier-modal').close();" aria-label="Close modal">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeFamilyDrawer()" title="Close details (Esc)" aria-label="Close details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="tab-nav">
-      <button type="button" class="tab-btn active" id="tab-btn-tree" onclick="switchDossierTab('tree')">
-        Visual Family Tree
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab active" id="tab-btn-tree" onclick="switchDossierTab('tree')">
+        Visual Tree
       </button>
-      <button type="button" class="tab-btn" id="tab-btn-members" onclick="switchDossierTab('members')">
-        Members Roster (<span id="dossier-tab-member-count">0</span>)
+      <button type="button" class="drawer-tab" id="tab-btn-members" onclick="switchDossierTab('members')">
+        Members (<span id="dossier-tab-member-count">0</span>)
       </button>
-      <button type="button" class="tab-btn" id="tab-btn-ayuda" onclick="switchDossierTab('ayuda')">
-        Social Welfare &amp; Ayuda (<span id="dossier-tab-ayuda-count">0</span>)
+      <button type="button" class="drawer-tab" id="tab-btn-ayuda" onclick="switchDossierTab('ayuda')">
+        Ayuda (<span id="dossier-tab-ayuda-count">0</span>)
       </button>
-      <button type="button" class="tab-btn" id="tab-btn-socio" onclick="switchDossierTab('socio')">
-        Socio-Economic Profile
+      <button type="button" class="drawer-tab" id="tab-btn-socio" onclick="switchDossierTab('socio')">
+        Socio-Economic
       </button>
     </div>
 
-    <!-- TAB 1: VISUAL FAMILY TREE -->
-    <div id="dossier-tab-content-tree">
-      <div class="tree-diagram-container" id="tree-diagram-mount">
-        <!-- Rendered via JS -->
-      </div>
-    </div>
-
-    <!-- TAB 2: MEMBERS ROSTER -->
-    <div id="dossier-tab-content-members" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span class="typography-label" style="color: var(--color-text-muted);">ENLISTED FAMILY MEMBERS</span>
-        <button type="button" class="button-primary" onclick="promptAddDossierMember()" style="height: 30px; padding: 0 12px; font-size: 0.75rem;">
-          + Add Resident to Family
-        </button>
+    <div class="drawer-body">
+      <!-- TAB 1: VISUAL FAMILY TREE -->
+      <div id="dossier-tab-content-tree" class="drawer-section">
+        <div class="drawer-section-title">Visual Kinship Hierarchy</div>
+        <div class="tree-diagram-container" id="tree-diagram-mount"></div>
       </div>
 
-      <div style="border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem;">
-          <thead>
-            <tr style="background: var(--color-canvas-soft); border-bottom: 1px solid var(--color-hairline); text-align: left;">
-              <th style="padding: 8px 12px;">Resident Name</th>
-              <th style="padding: 8px 12px;">Relationship</th>
-              <th style="padding: 8px 12px;">Age &amp; Status</th>
-              <th style="padding: 8px 12px;">Occupation / Income</th>
-              <th style="padding: 8px 12px;">Vulnerability</th>
-              <th style="padding: 8px 12px; text-align: right;">Action</th>
-            </tr>
-          </thead>
-          <tbody id="dossier-members-table-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TAB 3: SOCIAL WELFARE & AYUDA LEDGER -->
-    <div id="dossier-tab-content-ayuda" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <div>
-          <span class="typography-label" style="color: var(--color-text-muted);">DISASTER RELIEF, SAP, &amp; AYUDA DISBURSEMENT HISTORY</span>
-          <div class="typography-caption" id="dossier-ayuda-summary-caption">Total Received: ₱0.00</div>
+      <!-- TAB 2: MEMBERS ROSTER -->
+      <div id="dossier-tab-content-members" class="drawer-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div class="drawer-section-title" style="margin: 0;">Enlisted Family Members</div>
+          <button type="button" class="button-primary" onclick="promptAddDossierMember()" style="height: 28px; padding: 0 10px; font-size: 0.6875rem;">
+            + Add Resident
+          </button>
         </div>
-        <button type="button" class="button-primary" onclick="openRecordAyudaModal()" style="height: 30px; padding: 0 12px; font-size: 0.75rem;">
-          + Record Ayuda Grant
-        </button>
+
+        <div class="member-table-wrap">
+          <table class="data-table" style="font-size: 0.75rem;">
+            <thead>
+              <tr>
+                <th>Resident</th>
+                <th>Relationship</th>
+                <th>Age / Status</th>
+                <th>Income</th>
+                <th>Vulnerability</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="dossier-members-table-tbody"></tbody>
+          </table>
+        </div>
       </div>
 
-      <div style="border: 1px solid var(--color-hairline); border-radius: var(--rounded-sm); overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem;">
-          <thead>
-            <tr style="background: var(--color-canvas-soft); border-bottom: 1px solid var(--color-hairline); text-align: left;">
-              <th style="padding: 8px 12px;">Date</th>
-              <th style="padding: 8px 12px;">Program / Source</th>
-              <th style="padding: 8px 12px;">Assistance Type</th>
-              <th style="padding: 8px 12px;">Amount / Items</th>
-              <th style="padding: 8px 12px;">DAFAC / Ref No.</th>
-              <th style="padding: 8px 12px;">Disbursed By</th>
-              <th style="padding: 8px 12px; text-align: right;">Action</th>
-            </tr>
-          </thead>
-          <tbody id="dossier-ayuda-table-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+      <!-- TAB 3: SOCIAL WELFARE & AYUDA LEDGER -->
+      <div id="dossier-tab-content-ayuda" class="drawer-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div>
+            <div class="drawer-section-title" style="margin: 0;">Disaster Relief &amp; Ayuda History</div>
+            <div class="typography-caption" id="dossier-ayuda-summary-caption">Total Received: ₱0.00</div>
+          </div>
+          <button type="button" class="button-primary" onclick="openRecordAyudaModal()" style="height: 28px; padding: 0 10px; font-size: 0.6875rem;">
+            + Record Ayuda
+          </button>
+        </div>
 
-    <!-- TAB 4: SOCIO-ECONOMIC PROFILE -->
-    <div id="dossier-tab-content-socio" style="display: none;">
-      <div class="form-grid-2" style="gap: 12px;">
-        <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm);">
-          <div class="typography-label" style="color: var(--color-primary); margin-bottom: 6px;">DWELLING STRUCTURE &amp; LOCATION</div>
-          <div style="font-size: 0.8125rem; line-height: 1.6;">
-            <div><strong>Household Dwelling:</strong> <span id="socio-hh-no">None / Unlinked</span></div>
-            <div><strong>Dwelling Structure:</strong> <span id="socio-hh-structure">—</span></div>
-            <div><strong>Housing Tenure:</strong> <span id="socio-tenure">—</span></div>
-            <div><strong>Purok / Zone:</strong> <span id="socio-purok">—</span></div>
-            <div><strong>Hazard Exposure:</strong> <span id="socio-hazard">—</span></div>
+        <div class="member-table-wrap">
+          <table class="data-table" style="font-size: 0.75rem;">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Program / Source</th>
+                <th>Type</th>
+                <th>Amount / Items</th>
+                <th>DAFAC / Ref</th>
+                <th>Disbursed By</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="dossier-ayuda-table-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: SOCIO-ECONOMIC PROFILE -->
+      <div id="dossier-tab-content-socio" class="drawer-section" style="display: none;">
+        <div class="drawer-section-title">Dwelling Structure &amp; Location</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Household Dwelling</span>
+            <span class="drawer-item-value" id="socio-hh-no">None / Unlinked</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Dwelling Structure</span>
+            <span class="drawer-item-value" id="socio-hh-structure">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Housing Tenure</span>
+            <span class="drawer-item-value" id="socio-tenure">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Purok / Hazard</span>
+            <span class="drawer-item-value"><span id="socio-purok">—</span> &bull; <span id="socio-hazard">—</span></span>
           </div>
         </div>
 
-        <div style="background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm);">
-          <div class="typography-label" style="color: var(--color-primary); margin-bottom: 6px;">INCOME &amp; POVERTY ASSESSMENT</div>
-          <div style="font-size: 0.8125rem; line-height: 1.6;">
-            <div><strong>Monthly Family Income:</strong> <span id="socio-income">₱0.00</span></div>
-            <div><strong>Income Bracket:</strong> <span id="socio-bracket">—</span></div>
-            <div><strong>Poverty Status:</strong> <span id="socio-poverty">—</span></div>
-            <div><strong>Main Livelihood:</strong> <span id="socio-livelihood">—</span></div>
-            <div><strong>4Ps Status:</strong> <span id="socio-4ps">—</span></div>
-            <div><strong>Ayuda Priority:</strong> <span id="socio-priority">—</span></div>
+        <div class="drawer-section-title" style="margin-top: var(--spacing-sm);">Income &amp; Poverty Assessment</div>
+        <div class="drawer-grid-2">
+          <div class="drawer-item">
+            <span class="drawer-item-label">Monthly Family Income</span>
+            <span class="drawer-item-value" id="socio-income">₱0.00</span>
+            <span style="font-size: 0.6875rem; color: var(--color-text-muted);" id="socio-bracket">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Poverty Status</span>
+            <span class="drawer-item-value" id="socio-poverty">—</span>
+            <span style="font-size: 0.6875rem; color: var(--color-text-muted);" id="socio-livelihood">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">4Ps Status</span>
+            <span class="drawer-item-value" id="socio-4ps">—</span>
+          </div>
+          <div class="drawer-item">
+            <span class="drawer-item-label">Ayuda Priority</span>
+            <span class="drawer-item-value" id="socio-priority">—</span>
           </div>
         </div>
-      </div>
 
-      <div style="margin-top: 12px; background: var(--color-canvas-soft); padding: 12px; border-radius: var(--rounded-sm);">
-        <div class="typography-label" style="color: var(--color-primary); margin-bottom: 4px;">CASEWORKER REMARKS &amp; NOTES</div>
-        <p class="typography-body-sm" id="socio-remarks" style="margin: 0; color: var(--color-ink);">No notes recorded.</p>
+        <div class="drawer-item" style="margin-top: var(--spacing-sm);">
+          <span class="drawer-item-label">Caseworker Remarks &amp; Notes</span>
+          <p class="typography-body-sm" id="socio-remarks" style="margin: 0; color: var(--color-ink);">No notes recorded.</p>
+        </div>
       </div>
     </div>
-  </dialog>
+
+    <!-- Quick Action Footer -->
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="openPrintModal(activeFamilyForAction.id)" style="height: 36px; padding: 0 12px; font-size: 0.75rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+        <span>Print Composition</span>
+      </button>
+      <button type="button" class="button-primary" onclick="closeFamilyDrawer()" style="height: 36px; padding: 0 14px; font-size: 0.75rem;">
+        Close
+      </button>
+    </div>
+  </aside>
 
   <!-- ===================================================== -->
   <!-- MODAL 3: RECORD AYUDA / RELIEF DISBURSEMENT           -->
@@ -1440,6 +1489,21 @@ require_auth('login.php');
         return matchQ && matchPurok && matchPoverty && match4Ps && matchType;
       });
 
+      let activeCount = 0;
+      if (purok) activeCount++;
+      if (poverty) activeCount++;
+      if (fourPs !== '') activeCount++;
+      if (type) activeCount++;
+      const filterBadge = document.getElementById('active-filter-badge');
+      if (filterBadge) {
+        filterBadge.style.display = activeCount > 0 ? 'inline-block' : 'none';
+        filterBadge.textContent = activeCount;
+      }
+      const clearBtn = document.getElementById('btn-clear-filters');
+      if (clearBtn) {
+        clearBtn.style.display = (q || activeCount > 0) ? 'inline-flex' : 'none';
+      }
+
       renderCardsView(filtered);
       renderTableView(filtered);
 
@@ -1474,7 +1538,7 @@ require_auth('login.php');
                   <span class="family-code-badge">${code}</span>
                   <div class="family-title" style="margin-top: 4px;">
                     ${name}
-                    ${isAyuda ? '<span title="Ayuda Priority Household" style="color: #f59e0b;">★</span>' : ''}
+                    ${isAyuda ? '<span title="Ayuda Priority Household" style="color: #f59e0b; display: inline-flex; vertical-align: middle;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>' : ''}
                   </div>
                 </div>
                 <div style="display: flex; gap: 4px; flex-direction: column; align-items: flex-end;">
@@ -2042,11 +2106,59 @@ require_auth('login.php');
         document.getElementById('socio-remarks').textContent = fam.remarks || 'No casework notes recorded.';
 
         switchDossierTab('tree');
-        document.getElementById('dossier-modal').showModal();
+        const drawer = document.getElementById('dossier-drawer');
+        const backdrop = document.getElementById('drawer-backdrop');
+        if (drawer) drawer.classList.add('active');
+        if (backdrop) backdrop.classList.add('active');
       } catch (err) {
         console.error('Error opening dossier modal:', err);
         Toast.error('Could not load family dossier.');
       }
+    };
+
+    window.closeFamilyDrawer = function() {
+      const drawer = document.getElementById('dossier-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.toggleFamilyInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('family-info-popover');
+      if (popover) {
+        popover.classList.toggle('active');
+      }
+    };
+
+    window.toggleFamilyFilterPanel = function() {
+      const panel = document.getElementById('filter-panel');
+      if (panel) {
+        panel.classList.toggle('active');
+      }
+    };
+
+    window.resetFamilyFilters = function() {
+      document.getElementById('search-filter').value = '';
+      document.getElementById('purok-filter').value = '';
+      document.getElementById('poverty-filter').value = '';
+      document.getElementById('fourps-filter').value = '';
+      document.getElementById('type-filter').value = '';
+      applyFilters();
+    };
+
+    window.filterByPovertyQuick = function(status) {
+      document.getElementById('poverty-filter').value = status;
+      const panel = document.getElementById('filter-panel');
+      if (panel && !panel.classList.contains('active')) panel.classList.add('active');
+      applyFilters();
+    };
+
+    window.filterBy4psQuick = function() {
+      document.getElementById('fourps-filter').value = '1';
+      const panel = document.getElementById('filter-panel');
+      if (panel && !panel.classList.contains('active')) panel.classList.add('active');
+      applyFilters();
     };
 
     // Render Visual Tree Diagram
@@ -2474,6 +2586,26 @@ require_auth('login.php');
         } catch (err) {
           console.error('Failed to delete family:', err);
           Toast.error('Could not delete family record.');
+        }
+      });
+
+      // Close drawer on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeFamilyDrawer();
+          const popover = document.getElementById('family-info-popover');
+          if (popover) popover.classList.remove('active');
+        }
+      });
+
+      // Close popover on click outside
+      document.addEventListener('click', (e) => {
+        const popover = document.getElementById('family-info-popover');
+        const trigger = document.querySelector('.info-trigger');
+        if (popover && popover.classList.contains('active')) {
+          if (!popover.contains(e.target) && !trigger.contains(e.target)) {
+            popover.classList.remove('active');
+          }
         }
       });
     }
