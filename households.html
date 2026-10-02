@@ -823,6 +823,21 @@
         </table>
       </div>
     </div>
+
+    <!-- Residing Families in this Physical Dwelling -->
+    <div style="margin-top: var(--spacing-sm); margin-bottom: var(--spacing-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="typography-label" style="color: var(--color-primary); font-weight: 700;">
+          RESIDING FAMILIES (MGA PAMILYA SA SAMBAHAYAN)
+        </span>
+        <a href="families.html" class="button-outline" style="height: 26px; padding: 0 10px; font-size: 0.6875rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+          <span>Go to Families Module &rarr;</span>
+        </a>
+      </div>
+      <div id="dossier-families-list" style="display: flex; flex-direction: column; gap: 8px;">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </div>
   </dialog>
 
   <!-- MODAL 3: PRINTABLE CERTIFICATE OF FAMILY COMPOSITION -->
@@ -1450,7 +1465,7 @@
     }
 
     // Open Family Tree & Dossier Modal
-    window.openDossierModal = function(id) {
+    window.openDossierModal = async function(id) {
       const h = allHouseholds.find(item => item.id === id);
       if (!h) return;
 
@@ -1557,6 +1572,36 @@
           </tr>
         `;
       }).join('');
+
+      // Populate Residing Families in this Household
+      const famListMount = document.getElementById('dossier-families-list');
+      try {
+        const allFams = await window.barangayDB.getAll('families');
+        const linkedFams = (allFams || []).filter(f => (f.householdId === h.id || f.household_id === h.id));
+        if (linkedFams.length === 0) {
+          famListMount.innerHTML = `
+            <div style="font-size: 0.8125rem; color: var(--color-text-muted); font-style: italic; padding: 10px 14px; background: var(--color-canvas-soft); border-radius: 6px;">
+              No distinct family units linked yet. You can register family kinship units living in this dwelling via the <a href="families.html" style="color: var(--color-primary); font-weight: 600;">Families module</a>.
+            </div>
+          `;
+        } else {
+          famListMount.innerHTML = linkedFams.map(f => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: 6px;">
+              <div>
+                <span class="family-code-badge" style="font-family: monospace; font-size: 0.6875rem; font-weight: 700; padding: 2px 6px; background: var(--color-canvas); border-radius: 4px; border: 1px solid var(--color-hairline);">${f.familyCode || f.family_code}</span>
+                <strong style="margin-left: 6px; color: var(--color-ink); font-size: 0.8125rem;">${f.familyName || f.family_name}</strong>
+                <span style="font-size: 0.75rem; color: var(--color-text-muted); margin-left: 6px;">(${f.familyType || f.family_type || 'Nuclear'}, ${f.memberCount || f.member_count || 1} members)</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge-neutral" style="font-size: 0.625rem;">${f.povertyStatus || f.poverty_status || 'Standard'}</span>
+                <a href="families.html" class="button-outline" style="height: 24px; padding: 0 8px; font-size: 0.6875rem; text-decoration: none;">View Family &rarr;</a>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.warn('Could not load linked families:', err);
+      }
 
       document.getElementById('dossier-modal').showModal();
     };

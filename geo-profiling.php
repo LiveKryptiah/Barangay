@@ -10,6 +10,7 @@ require_auth('login.php');
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Purok Geo-Profiling &amp; Heatmap &bull; Barangay Management System</title>
   <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="js/components/theme.js"></script>
   <style>
     .page-hero {
@@ -50,7 +51,7 @@ require_auth('login.php');
       }
     }
 
-    /* GIS Vector Map Canvas Container */
+    /* GIS Map Card Container */
     .gis-map-card {
       background-color: var(--color-canvas);
       border: 1px solid var(--color-hairline-soft);
@@ -105,137 +106,49 @@ require_auth('login.php');
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
 
-    /* Map Viewport Area */
-    .gis-viewport-wrap {
+    /* Leaflet Map Container */
+    #leaflet-map {
       width: 100%;
       height: 520px;
-      background-color: var(--color-canvas-soft);
-      border: 1px solid var(--color-hairline-soft);
       border-radius: var(--rounded-sm);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--color-hairline-soft);
+      z-index: 0;
+    }
+
+    /* Custom Leaflet Label Styling */
+    .purok-label-icon {
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-size: 13px;
+      font-weight: 800;
+      color: #141414;
+      text-align: center;
+      white-space: nowrap;
+      text-shadow: -1px -1px 0 rgba(255,255,255,0.85), 1px -1px 0 rgba(255,255,255,0.85), -1px 1px 0 rgba(255,255,255,0.85), 1px 1px 0 rgba(255,255,255,0.85), 0 0 6px rgba(255,255,255,0.7);
+      pointer-events: none !important;
+    }
+
+    [data-theme="dark"] .purok-label-icon {
+      color: #f4f4f5;
+      text-shadow: -1px -1px 0 rgba(20,20,20,0.85), 1px -1px 0 rgba(20,20,20,0.85), -1px 1px 0 rgba(20,20,20,0.85), 1px 1px 0 rgba(20,20,20,0.85), 0 0 6px rgba(20,20,20,0.7);
+    }
+
+    /* Custom Landmark Marker */
+    .landmark-marker-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      user-select: none;
-    }
-
-    .gis-svg-map {
-      width: 100%;
-      height: 100%;
-      transition: transform 0.25s ease-out;
-      transform-origin: center center;
-    }
-
-    /* Purok Polygons & Interactions */
-    .purok-polygon {
-      stroke: #ffffff;
-      stroke-width: 2px;
-      cursor: pointer;
-      transition: fill 0.3s ease, stroke-width 0.2s ease, filter 0.2s ease;
-    }
-
-    [data-theme="dark"] .purok-polygon {
-      stroke: #18181b;
-    }
-
-    .purok-polygon:hover {
-      stroke-width: 3.5px;
-      stroke: var(--color-primary);
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-    }
-
-    .purok-polygon.selected {
-      stroke-width: 4px;
-      stroke: var(--color-ink);
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
-    }
-
-    .purok-label-text {
-      font-size: 13px;
-      font-weight: 800;
-      fill: #141414;
-      text-anchor: middle;
-      pointer-events: none;
-      paint-order: stroke;
-      stroke: rgba(255, 255, 255, 0.85);
-      stroke-width: 3px;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    [data-theme="dark"] .purok-label-text {
-      fill: #f4f4f5;
-      stroke: rgba(20, 20, 20, 0.85);
-    }
-
-    .purok-sub-text {
-      font-size: 10px;
-      font-weight: 600;
-      fill: #52525b;
-      text-anchor: middle;
-      pointer-events: none;
-    }
-
-    [data-theme="dark"] .purok-sub-text {
-      fill: #a1a1aa;
-    }
-
-    /* River & Natural Hazard Path */
-    .hazard-waterway {
-      fill: none;
-      stroke: #38bdf8;
-      stroke-width: 14px;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      opacity: 0.75;
-      stroke-dasharray: 6 3;
-    }
-
-    /* Landmarks */
-    .gis-landmark-group {
+      border-radius: 8px;
+      font-size: 14px;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       cursor: pointer;
       transition: transform 0.2s ease;
     }
 
-    .gis-landmark-group:hover {
+    .landmark-marker-icon:hover {
       transform: scale(1.15);
-    }
-
-    /* Zoom / Pan Controls Overlay */
-    .gis-controls-overlay {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      background: var(--color-canvas);
-      padding: 4px;
-      border-radius: var(--rounded-md);
-      border: 1px solid var(--color-hairline);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      z-index: 10;
-    }
-
-    .gis-ctrl-btn {
-      width: 32px;
-      height: 32px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--color-ink);
-      border-radius: var(--rounded-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .gis-ctrl-btn:hover {
-      background-color: var(--color-canvas-soft);
-      border-color: var(--color-hairline-soft);
     }
 
     /* Map Legend Box */
@@ -320,19 +233,23 @@ require_auth('login.php');
       padding-top: var(--spacing-sm);
     }
 
-    /* Floating Tooltip */
-    #gis-tooltip {
+    /* Tile toggle button */
+    .tile-toggle-btn {
       position: absolute;
-      background: #141414;
-      color: #ffffff;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      pointer-events: none;
-      display: none;
-      z-index: 50;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-      line-height: 1.3;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: var(--color-canvas);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--rounded-sm);
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     /* Printable Official DILG / CDRRMO Geo-Report */
@@ -379,7 +296,7 @@ require_auth('login.php');
                 <span class="badge-neutral" id="gis-zone-count-badge">7 Official Puroks</span>
               </div>
               <p class="typography-body-lg">
-                Interactive GIS vector spatial command center for population density, disaster hazard risks, and household vulnerability profiling.
+                Interactive GIS spatial command center with real-world map for population density, disaster hazard risks, and household vulnerability profiling.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;">
@@ -459,7 +376,7 @@ require_auth('login.php');
 
         <!-- Interactive GIS Stage & Inspection Drawer Grid -->
         <div class="gis-stage-layout">
-          <!-- Left: Interactive Vector Map Card -->
+          <!-- Left: Interactive Leaflet Map Card -->
           <div class="gis-map-card">
             <div class="gis-toolbar">
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -493,137 +410,12 @@ require_auth('login.php');
               </label>
             </div>
 
-            <!-- Viewport Stage -->
-            <div class="gis-viewport-wrap" id="gis-viewport">
-              <svg id="gis-map-svg" class="gis-svg-map" viewBox="0 0 920 540" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <!-- Soft Grid Pattern for Background Canvas -->
-                  <pattern id="gis-grid" width="30" height="30" patternUnits="userSpaceOnUse">
-                    <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="1"/>
-                  </pattern>
-                </defs>
-
-                <!-- Canvas Background -->
-                <rect width="920" height="540" fill="url(#gis-grid)" />
-
-                <!-- River Hazard Corridor (Natural Waterway) -->
-                <path class="hazard-waterway" d="M -10,130 C 180,110 320,190 480,160 C 640,130 780,240 940,220" />
-                <text x="820" y="240" font-size="10" font-weight="700" fill="#0284c7" letter-spacing="0.08em">RIVER HAZARD CORRIDOR &rarr;</text>
-
-                <!-- PUROK 1: Riverside North (Top Left / Riverfront) -->
-                <polygon id="poly-Purok 1" class="purok-polygon" data-purok="Purok 1"
-                  points="20,20 330,20 350,140 220,180 20,160" />
-
-                <!-- PUROK 2: Poblacion Central (Top Right / Commercial) -->
-                <polygon id="poly-Purok 2" class="purok-polygon" data-purok="Purok 2"
-                  points="330,20 680,20 670,140 480,150 350,140" />
-
-                <!-- PUROK 4: Residential Heights (Far Top-Right / East) -->
-                <polygon id="poly-Purok 4" class="purok-polygon" data-purok="Purok 4"
-                  points="680,20 900,20 900,200 670,140" />
-
-                <!-- PUROK 3: Barangay Centro / Civic Core (Center Island) -->
-                <polygon id="poly-Purok 3" class="purok-polygon" data-purok="Purok 3"
-                  points="280,170 540,160 560,330 260,340" />
-
-                <!-- PUROK 5: Western Hillside (Mid Left / Slope) -->
-                <polygon id="poly-Purok 5" class="purok-polygon" data-purok="Purok 5"
-                  points="20,160 220,180 260,340 240,510 20,510" />
-
-                <!-- PUROK 7: Industrial Highway (Mid Right / Perimeter) -->
-                <polygon id="poly-Purok 7" class="purok-polygon" data-purok="Purok 7"
-                  points="540,160 900,200 900,420 580,360 560,330" />
-
-                <!-- PUROK 6: Greenfields Agro Plains (Bottom Center / South) -->
-                <polygon id="poly-Purok 6" class="purok-polygon" data-purok="Purok 6"
-                  points="240,340 580,360 900,420 900,510 240,510" />
-
-                <!-- Centroid Labels -->
-                <!-- Purok 1 -->
-                <g id="lbl-Purok 1">
-                  <text x="175" y="90" class="purok-label-text">PUROK 1</text>
-                  <text x="175" y="110" class="purok-sub-text" id="badge-Purok 1">Riverside North</text>
-                </g>
-
-                <!-- Purok 2 -->
-                <g id="lbl-Purok 2">
-                  <text x="500" y="75" class="purok-label-text">PUROK 2</text>
-                  <text x="500" y="95" class="purok-sub-text" id="badge-Purok 2">Poblacion Central</text>
-                </g>
-
-                <!-- Purok 3 -->
-                <g id="lbl-Purok 3">
-                  <text x="410" y="240" class="purok-label-text">PUROK 3</text>
-                  <text x="410" y="260" class="purok-sub-text" id="badge-Purok 3">Barangay Centro</text>
-                </g>
-
-                <!-- Purok 4 -->
-                <g id="lbl-Purok 4">
-                  <text x="790" y="85" class="purok-label-text">PUROK 4</text>
-                  <text x="790" y="105" class="purok-sub-text" id="badge-Purok 4">Residential Heights</text>
-                </g>
-
-                <!-- Purok 5 -->
-                <g id="lbl-Purok 5">
-                  <text x="135" y="325" class="purok-label-text">PUROK 5</text>
-                  <text x="135" y="345" class="purok-sub-text" id="badge-Purok 5">Western Hillside</text>
-                </g>
-
-                <!-- Purok 6 -->
-                <g id="lbl-Purok 6">
-                  <text x="540" y="445" class="purok-label-text">PUROK 6</text>
-                  <text x="540" y="465" class="purok-sub-text" id="badge-Purok 6">Greenfields Agro</text>
-                </g>
-
-                <!-- Purok 7 -->
-                <g id="lbl-Purok 7">
-                  <text x="735" y="275" class="purok-label-text">PUROK 7</text>
-                  <text x="735" y="295" class="purok-sub-text" id="badge-Purok 7">Industrial Highway</text>
-                </g>
-
-                <!-- Landmark Pins Overlay Layer -->
-                <g id="gis-landmarks-layer">
-                  <!-- 1. Barangay Hall Complex (Purok 3) -->
-                  <g class="gis-landmark-group" transform="translate(395, 275)" data-name="Barangay Hall Complex &amp; Command Center">
-                    <rect x="-14" y="-14" width="28" height="28" rx="8" fill="#141414" stroke="#ffffff" stroke-width="2"/>
-                    <text x="0" y="5" font-size="14" text-anchor="middle" fill="#ffffff">&#127963;</text>
-                  </g>
-
-                  <!-- 2. Barangay Health Center (Purok 3) -->
-                  <g class="gis-landmark-group" transform="translate(445, 275)" data-name="Barangay Health Center &amp; Birthing Clinic (Click to open Health Hub)" onclick="window.location.href='health.php';" title="Open Barangay Health Station">
-                    <rect x="-12" y="-12" width="24" height="24" rx="6" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
-                    <text x="0" y="4" font-size="12" text-anchor="middle" fill="#ffffff">&#127973;</text>
-                  </g>
-
-                  <!-- 3. Primary Evacuation School (Purok 4) -->
-                  <g class="gis-landmark-group" transform="translate(790, 130)" data-name="Central Elementary School (Primary Evacuation Hub)">
-                    <rect x="-12" y="-12" width="24" height="24" rx="6" fill="#6366f1" stroke="#ffffff" stroke-width="2"/>
-                    <text x="0" y="4" font-size="12" text-anchor="middle" fill="#ffffff">&#127979;</text>
-                  </g>
-
-                  <!-- 4. Tanod Outpost / River Watch (Purok 1) -->
-                  <g class="gis-landmark-group" transform="translate(175, 135)" data-name="Riverside Tanod Outpost &amp; Early Flood Gauge">
-                    <rect x="-12" y="-12" width="24" height="24" rx="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
-                    <text x="0" y="4" font-size="12" text-anchor="middle" fill="#ffffff">&#128658;</text>
-                  </g>
-
-                  <!-- 5. Greenfields Agritech Post (Purok 6) -->
-                  <g class="gis-landmark-group" transform="translate(540, 485)" data-name="Greenfields Livelihood Center &amp; Food Hub">
-                    <rect x="-12" y="-12" width="24" height="24" rx="6" fill="#d97706" stroke="#ffffff" stroke-width="2"/>
-                    <text x="0" y="4" font-size="12" text-anchor="middle" fill="#ffffff">&#127806;</text>
-                  </g>
-                </g>
-              </svg>
-
-              <!-- Zoom / Reset Controls -->
-              <div class="gis-controls-overlay">
-                <button type="button" class="gis-ctrl-btn" id="btn-zoom-in" title="Zoom In">+</button>
-                <button type="button" class="gis-ctrl-btn" id="btn-zoom-out" title="Zoom Out">&minus;</button>
-                <button type="button" class="gis-ctrl-btn" id="btn-zoom-reset" title="Reset Zoom" style="font-size: 0.6875rem;">1:1</button>
-              </div>
-
-              <!-- Floating Tooltip -->
-              <div id="gis-tooltip"></div>
+            <!-- Leaflet Map Viewport -->
+            <div style="position: relative;">
+              <div id="leaflet-map"></div>
+              <button type="button" class="tile-toggle-btn" id="btn-toggle-tiles" title="Switch between Street and Satellite view">
+                &#127760; Satellite
+              </button>
             </div>
 
             <!-- Dynamic Legend Bar -->
@@ -771,76 +563,300 @@ require_auth('login.php');
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Scripts (PHP version uses api.js instead of db.js + auth.js) -->
   <script src="js/api.js"></script>
   <script src="js/components/toast.js"></script>
   <script src="js/components/sidebar.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <script>
+    // =========================================================================
+    // Purok Geo-Profiling with Real Leaflet.js Map
+    // =========================================================================
     let purokData = [];
     let activeLayer = 'population';
     let selectedPurok = 'Purok 3';
-    let zoomLevel = 1.0;
+    let map, geoLayer, landmarkLayerGroup;
+    let streetTiles, satelliteTiles, darkTiles;
+    let currentTileMode = 'street';
+    let purokLabelMarkers = [];
 
+    // ---- Purok GeoJSON Boundaries (Real GPS: Barangay San Isidro, Rodriguez, Rizal) ----
+    const purokGeoJSON = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 1' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.12528, 14.74463], [121.12966, 14.74463], [121.12995, 14.74241],
+              [121.12811, 14.74167], [121.12528, 14.74204], [121.12528, 14.74463]
+            ]]
+          }
+        },
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 2' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.12966, 14.74463], [121.13461, 14.74463], [121.13447, 14.74241],
+              [121.13178, 14.74222], [121.12995, 14.74241], [121.12966, 14.74463]
+            ]]
+          }
+        },
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 3' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.12896, 14.74185], [121.13263, 14.74204], [121.13291, 14.73889],
+              [121.12868, 14.73870], [121.12896, 14.74185]
+            ]]
+          }
+        },
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 4' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.13461, 14.74463], [121.13772, 14.74463], [121.13772, 14.74130],
+              [121.13447, 14.74241], [121.13461, 14.74463]
+            ]]
+          }
+        },
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 5' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.12528, 14.74204], [121.12811, 14.74167], [121.12868, 14.73870],
+              [121.12839, 14.73556], [121.12528, 14.73556], [121.12528, 14.74204]
+            ]]
+          }
+        },
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 6' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.12839, 14.73870], [121.13319, 14.73833], [121.13772, 14.73722],
+              [121.13772, 14.73556], [121.12839, 14.73556], [121.12839, 14.73870]
+            ]]
+          }
+        },
+        {
+          type: 'Feature',
+          properties: { purok: 'Purok 7' },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [121.13263, 14.74204], [121.13772, 14.74130], [121.13772, 14.73722],
+              [121.13319, 14.73833], [121.13291, 14.73889], [121.13263, 14.74204]
+            ]]
+          }
+        }
+      ]
+    };
+
+    // ---- Purok Label Centroids ----
+    const purokCentroids = {
+      'Purok 1': [14.74308, 121.12766],
+      'Purok 2': [14.74334, 121.13209],
+      'Purok 3': [14.74037, 121.13080],
+      'Purok 4': [14.74309, 121.13613],
+      'Purok 5': [14.73880, 121.12695],
+      'Purok 6': [14.73718, 121.13252],
+      'Purok 7': [14.73976, 121.13529]
+    };
+
+    // ---- Landmark Definitions (PHP version links to .php) ----
+    const landmarkDefs = [
+      { name: 'Barangay Hall Complex & Command Center', lat: 14.73991, lng: 121.13108, emoji: '&#127963;', color: '#141414', size: 28 },
+      { name: 'Barangay Health Center & Birthing Clinic', lat: 14.73991, lng: 121.13179, emoji: '&#127973;', color: '#10b981', size: 24, link: 'health.php' },
+      { name: 'Central Elementary School (Primary Evacuation Hub)', lat: 14.74259, lng: 121.13617, emoji: '&#127979;', color: '#6366f1', size: 24 },
+      { name: 'Riverside Tanod Outpost & Early Flood Gauge', lat: 14.74250, lng: 121.12747, emoji: '&#128658;', color: '#ef4444', size: 24 },
+      { name: 'Greenfields Livelihood Center & Food Hub', lat: 14.73602, lng: 121.13263, emoji: '&#127806;', color: '#d97706', size: 24 }
+    ];
+
+    // =========================================================================
+    // INIT
+    // =========================================================================
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Render App Shell Sidebar immediately
-      try {
-        await AppSidebar.render('geo-profiling');
-      } catch (err) {
-        console.error('Sidebar mount error:', err);
-      }
+      try { await AppSidebar.render('geo-profiling'); } catch (err) { console.error('Sidebar mount error:', err); }
+      if (window.authService) { await authService.requireAuth('login.php'); }
 
-      // 2. Route Guard
-      if (window.authService) {
-        await authService.requireAuth('login.php');
-      }
-
-      // 3. Load Settings for Letterhead & Officials
       await loadBarangayIdentitySettings();
-
-      // 4. Load & Calculate Purok Demographic Data
+      initLeafletMap();
       await loadGeoProfilingData();
 
-      // 5. Check URL parameter (e.g. ?purok=Purok+1)
       const params = new URLSearchParams(window.location.search);
       const urlPurok = params.get('purok');
-      if (urlPurok) {
-        selectPurok(urlPurok);
-      } else {
-        selectPurok('Purok 3');
-      }
+      selectPurok(urlPurok || 'Purok 3');
 
-      // 6. Bind All Event Listeners
       bindGisEventListeners();
     });
 
-    // Load Settings
+    // =========================================================================
+    // LEAFLET MAP INITIALIZATION
+    // =========================================================================
+    function initLeafletMap() {
+      map = L.map('leaflet-map', {
+        center: [14.7400, 121.1315],
+        zoom: 16,
+        zoomControl: true,
+        scrollWheelZoom: true
+      });
+
+      // Street tiles (default)
+      streetTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Satellite tiles
+      satelliteTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19
+      });
+
+      // Dark tiles (for dark mode)
+      darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        maxZoom: 19
+      });
+
+      // Apply dark tiles if dark mode is active
+      if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        map.removeLayer(streetTiles);
+        darkTiles.addTo(map);
+        currentTileMode = 'dark';
+      }
+
+      // Watch for theme changes
+      const observer = new MutationObserver(() => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark && currentTileMode === 'street') {
+          map.removeLayer(streetTiles);
+          darkTiles.addTo(map);
+          currentTileMode = 'dark';
+        } else if (!isDark && currentTileMode === 'dark') {
+          map.removeLayer(darkTiles);
+          streetTiles.addTo(map);
+          currentTileMode = 'street';
+        }
+      });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+      // Initialize GeoJSON layer
+      geoLayer = L.geoJSON(purokGeoJSON, {
+        style: () => ({ fillColor: '#e4e4e7', fillOpacity: 0.6, color: '#ffffff', weight: 2 }),
+        onEachFeature: (feature, layer) => {
+          const pName = feature.properties.purok;
+
+          layer.on('click', () => selectPurok(pName));
+
+          layer.on('mouseover', (e) => {
+            const p = purokData.find(item => item.purok === pName);
+            if (p) {
+              layer.bindTooltip(
+                `<strong>${p.name}</strong><br>Residents: <strong>${p.residents}</strong> &bull; Households: <strong>${p.households}</strong><br>Hazard: <strong>${p.hazard_rating} Risk</strong>`,
+                { sticky: true, className: 'purok-map-tooltip' }
+              ).openTooltip();
+            }
+            layer.setStyle({ weight: 4, color: '#2563eb' });
+            layer.bringToFront();
+          });
+
+          layer.on('mouseout', () => {
+            layer.unbindTooltip();
+            renderMapChoropleth();
+            highlightSelectedPurok();
+          });
+        }
+      }).addTo(map);
+
+      // Add purok labels
+      addPurokLabels();
+
+      // Add landmark markers
+      landmarkLayerGroup = L.layerGroup().addTo(map);
+      addLandmarkMarkers();
+    }
+
+    function addPurokLabels() {
+      Object.entries(purokCentroids).forEach(([pName, coords]) => {
+        const label = L.marker(coords, {
+          icon: L.divIcon({
+            className: 'purok-label-icon',
+            html: `<div style="line-height:1.3;"><strong>${pName.toUpperCase()}</strong><br><span id="map-badge-${pName}" style="font-size:10px; font-weight:600; opacity:0.75;"></span></div>`,
+            iconSize: [120, 40],
+            iconAnchor: [60, 20]
+          }),
+          interactive: false
+        });
+        label.addTo(map);
+        purokLabelMarkers.push({ purok: pName, marker: label });
+      });
+    }
+
+    function addLandmarkMarkers() {
+      landmarkDefs.forEach(lm => {
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="landmark-marker-icon" style="width:${lm.size}px; height:${lm.size}px; background:${lm.color};" title="${lm.name}">${lm.emoji}</div>`,
+          iconSize: [lm.size, lm.size],
+          iconAnchor: [lm.size / 2, lm.size / 2]
+        });
+
+        const marker = L.marker([lm.lat, lm.lng], { icon });
+        marker.bindTooltip(`<strong>Official Landmark:</strong><br>${lm.name}`, { direction: 'top', offset: [0, -lm.size / 2] });
+
+        if (lm.link) {
+          marker.on('click', () => { window.location.href = lm.link; });
+        }
+
+        marker.addTo(landmarkLayerGroup);
+      });
+    }
+
+    function highlightSelectedPurok() {
+      geoLayer.eachLayer(layer => {
+        if (layer.feature.properties.purok === selectedPurok) {
+          layer.setStyle({ weight: 4, color: '#141414' });
+          layer.bringToFront();
+        }
+      });
+    }
+
+    // =========================================================================
+    // SETTINGS
+    // =========================================================================
     async function loadBarangayIdentitySettings() {
       try {
         const idSetting = await window.barangayDB.get('settings', 'identity');
         if (idSetting && idSetting.value) {
           const v = idSetting.value;
-          if (v.barangayName) {
-            document.getElementById('print-brgy-name').textContent = v.barangayName.toUpperCase();
-          }
-          if (v.province && v.municipalityCity) {
-            document.getElementById('print-jurisdiction').textContent = `${v.province.toUpperCase()} • ${v.municipalityCity.toUpperCase()}`;
-          }
+          if (v.barangayName) document.getElementById('print-brgy-name').textContent = v.barangayName.toUpperCase();
+          if (v.province && v.municipalityCity) document.getElementById('print-jurisdiction').textContent = `${v.province.toUpperCase()} \u2022 ${v.municipalityCity.toUpperCase()}`;
         }
-
         const officials = await window.barangayDB.getAll('officials');
         if (officials && officials.length > 0) {
           const cap = officials.find(o => o.position === 'Punong Barangay' && o.status === 'active');
-          if (cap) {
-            document.getElementById('print-punong-brgy').textContent = cap.fullName.toUpperCase();
-          }
+          if (cap) document.getElementById('print-punong-brgy').textContent = cap.fullName.toUpperCase();
         }
-      } catch (err) {
-        console.warn('Settings load error:', err);
-      }
+      } catch (err) { console.warn('Settings load error:', err); }
     }
 
-    // Load Geo-Profiling Data from IndexedDB
+    // =========================================================================
+    // DATA LOADING
+    // =========================================================================
     async function loadGeoProfilingData() {
       try {
         const residents = (await window.barangayDB.getAll('residents')) || [];
@@ -849,123 +865,49 @@ require_auth('login.php');
         const standardPuroks = ['Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 'Purok 5', 'Purok 6', 'Purok 7'];
 
         const purokMeta = {
-          'Purok 1': {
-            name: 'Purok 1 - Riverside North',
-            subzone: 'Waterfront & Lowland',
-            leader: 'Kgd. Roberto Santos (Disaster Committee)',
-            evacuation_center: 'Barangay Multi-Purpose Hall',
-            hazard_profile: 'High Flood Risk (River Corridor)',
-            default_hazard: 'High'
-          },
-          'Purok 2': {
-            name: 'Purok 2 - Poblacion Central',
-            subzone: 'Commercial & Market Center',
-            leader: 'Kgd. Elena Bautista (Trade & Livelihood)',
-            evacuation_center: 'Central Elementary Gymnasium',
-            hazard_profile: 'Low Flood / Commercial Density',
-            default_hazard: 'Low'
-          },
-          'Purok 3': {
-            name: 'Purok 3 - Barangay Centro',
-            subzone: 'Civic & Government Core',
-            leader: 'Hon. Punong Barangay / Kgd. Manuel Cruz',
-            evacuation_center: 'Barangay Hall Complex',
-            hazard_profile: 'Safe Zone / Incident Command Post',
-            default_hazard: 'Low'
-          },
-          'Purok 4': {
-            name: 'Purok 4 - Residential Heights',
-            subzone: 'Subdivision & Family Dwellings',
-            leader: 'Kgd. Maria Flores (Health & Sanitation)',
-            evacuation_center: 'Purok 4 Covered Court',
-            hazard_profile: 'Minimal Hazard Exposure',
-            default_hazard: 'Low'
-          },
-          'Purok 5': {
-            name: 'Purok 5 - Western Hillside',
-            subzone: 'Elevated Slope & Watershed',
-            leader: 'Kgd. Antonio Reyes (Peace & Order)',
-            evacuation_center: 'Hillside Chapel Annex',
-            hazard_profile: 'Moderate Slope / Landslide Watch',
-            default_hazard: 'Medium'
-          },
-          'Purok 6': {
-            name: 'Purok 6 - Greenfields Agro',
-            subzone: 'Agricultural & Open Plains',
-            leader: 'Kgd. Josefa Dimaculangan (Agriculture)',
-            evacuation_center: 'Greenfields Elementary School',
-            hazard_profile: 'Open Wind Exposure / Low Flood',
-            default_hazard: 'Low'
-          },
-          'Purok 7': {
-            name: 'Purok 7 - Industrial Highway Rim',
-            subzone: 'Perimeter & Highway Access',
-            leader: 'Kgd. Danilo Mercado (Transportation)',
-            evacuation_center: 'Highway Terminal Pavilion',
-            hazard_profile: 'Vehicular Traffic / Drainage Focus',
-            default_hazard: 'Medium'
-          }
+          'Purok 1': { name: 'Purok 1 - Riverside North', subzone: 'Waterfront & Lowland', leader: 'Kgd. Roberto Santos (Disaster Committee)', evacuation_center: 'Barangay Multi-Purpose Hall', hazard_profile: 'High Flood Risk (River Corridor)', default_hazard: 'High' },
+          'Purok 2': { name: 'Purok 2 - Poblacion Central', subzone: 'Commercial & Market Center', leader: 'Kgd. Elena Bautista (Trade & Livelihood)', evacuation_center: 'Central Elementary Gymnasium', hazard_profile: 'Low Flood / Commercial Density', default_hazard: 'Low' },
+          'Purok 3': { name: 'Purok 3 - Barangay Centro', subzone: 'Civic & Government Core', leader: 'Hon. Punong Barangay / Kgd. Manuel Cruz', evacuation_center: 'Barangay Hall Complex', hazard_profile: 'Safe Zone / Incident Command Post', default_hazard: 'Low' },
+          'Purok 4': { name: 'Purok 4 - Residential Heights', subzone: 'Subdivision & Family Dwellings', leader: 'Kgd. Maria Flores (Health & Sanitation)', evacuation_center: 'Purok 4 Covered Court', hazard_profile: 'Minimal Hazard Exposure', default_hazard: 'Low' },
+          'Purok 5': { name: 'Purok 5 - Western Hillside', subzone: 'Elevated Slope & Watershed', leader: 'Kgd. Antonio Reyes (Peace & Order)', evacuation_center: 'Hillside Chapel Annex', hazard_profile: 'Moderate Slope / Landslide Watch', default_hazard: 'Medium' },
+          'Purok 6': { name: 'Purok 6 - Greenfields Agro', subzone: 'Agricultural & Open Plains', leader: 'Kgd. Josefa Dimaculangan (Agriculture)', evacuation_center: 'Greenfields Elementary School', hazard_profile: 'Open Wind Exposure / Low Flood', default_hazard: 'Low' },
+          'Purok 7': { name: 'Purok 7 - Industrial Highway Rim', subzone: 'Perimeter & Highway Access', leader: 'Kgd. Danilo Mercado (Transportation)', evacuation_center: 'Highway Terminal Pavilion', hazard_profile: 'Vehicular Traffic / Drainage Focus', default_hazard: 'Medium' }
         };
 
         purokData = standardPuroks.map(pName => {
           const resInPurok = residents.filter(r => (r.purok || '').toLowerCase() === pName.toLowerCase() && r.status !== 'Deceased');
           const hhInPurok = households.filter(h => (h.purok || '').toLowerCase() === pName.toLowerCase());
-
           const meta = purokMeta[pName];
           const totalRes = resInPurok.length;
           const totalHH = hhInPurok.length;
           const avgSize = totalHH > 0 ? (totalRes / totalHH).toFixed(1) : 0;
-
           const males = resInPurok.filter(r => (r.gender || '').toLowerCase() === 'male').length;
           const females = resInPurok.filter(r => (r.gender || '').toLowerCase() === 'female').length;
           const voters = resInPurok.filter(r => r.isVoter || r.voterStatus === 'Registered').length;
-
           const seniors = resInPurok.filter(r => r.isSenior || (r.age >= 60)).length;
           const pwd = resInPurok.filter(r => r.isPwd).length;
           const soloParents = resInPurok.filter(r => r.isSoloParent).length;
           const fourPs = resInPurok.filter(r => r.isFourPs || r.is_4ps).length;
           const indigents = resInPurok.filter(r => r.isIndigent).length;
-
           const highRiskHH = hhInPurok.filter(h => (h.hazardRisk || '').toLowerCase() === 'high' || (h.hazard_risk || '').toLowerCase() === 'high').length;
           const medRiskHH = hhInPurok.filter(h => (h.hazardRisk || '').toLowerCase() === 'medium' || (h.hazard_risk || '').toLowerCase() === 'medium').length;
-
           let hazardRating = meta.default_hazard;
           if (highRiskHH > 0) hazardRating = 'High';
           else if (medRiskHH > 0) hazardRating = 'Medium';
-
           const vulnScore = seniors + pwd + soloParents + fourPs + indigents;
 
           return {
-            purok: pName,
-            name: meta.name,
-            subzone: meta.subzone,
-            leader: meta.leader,
-            evacuation_center: meta.evacuation_center,
-            hazard_profile: meta.hazard_profile,
-            hazard_rating: hazardRating,
-            residents: totalRes,
-            households: totalHH,
-            avg_family_size: avgSize,
-            males,
-            females,
-            voters,
-            seniors,
-            pwd,
-            solo_parents: soloParents,
-            four_ps: fourPs,
-            indigents,
-            vulnerability_score: vulnScore,
-            high_risk_hh: highRiskHH
+            purok: pName, name: meta.name, subzone: meta.subzone, leader: meta.leader,
+            evacuation_center: meta.evacuation_center, hazard_profile: meta.hazard_profile,
+            hazard_rating: hazardRating, residents: totalRes, households: totalHH,
+            avg_family_size: avgSize, males, females, voters, seniors, pwd,
+            solo_parents: soloParents, four_ps: fourPs, indigents,
+            vulnerability_score: vulnScore, high_risk_hh: highRiskHH
           };
         });
 
-        // Update KPI telemetry
         updateTelemetryLadder(residents.length);
-
-        // Render Map Choropleth & Legend
         renderMapChoropleth();
-
-        // Render Print Table
         renderPrintTable();
       } catch (err) {
         console.error('Failed to load geo profiling data:', err);
@@ -973,89 +915,90 @@ require_auth('login.php');
       }
     }
 
-    // Update Telemetry Ladder
+    // =========================================================================
+    // TELEMETRY KPIs
+    // =========================================================================
     function updateTelemetryLadder(totalPop) {
       if (purokData.length === 0) return;
-
-      // 1. Most Populated
       const sortedByPop = [...purokData].sort((a, b) => b.residents - a.residents);
       const topPop = sortedByPop[0];
       const popPct = totalPop > 0 ? Math.round((topPop.residents / totalPop) * 100) : 0;
       document.getElementById('kpi-most-populated').textContent = topPop.purok;
       document.getElementById('kpi-most-populated-sub').textContent = `${topPop.residents} residents (${popPct}% of total)`;
 
-      // 2. Highest Vulnerability
       const sortedByVuln = [...purokData].sort((a, b) => b.vulnerability_score - a.vulnerability_score);
       const topVuln = sortedByVuln[0];
       document.getElementById('kpi-highest-vuln').textContent = topVuln.purok;
       document.getElementById('kpi-highest-vuln-sub').textContent = `${topVuln.vulnerability_score} priority assisted sectors`;
 
-      // 3. Critical Hazard Dwellings
       const totalHighHazard = purokData.reduce((acc, p) => acc + (p.high_risk_hh || 0), 0);
       document.getElementById('kpi-hazard-count').textContent = totalHighHazard;
     }
 
-    // Render Map Choropleth Colors based on activeLayer
+    // =========================================================================
+    // CHOROPLETH RENDERING
+    // =========================================================================
     function renderMapChoropleth() {
+      if (!geoLayer || purokData.length === 0) return;
+
       const maxPop = Math.max(...purokData.map(p => p.residents), 1);
       const maxVuln = Math.max(...purokData.map(p => p.vulnerability_score), 1);
       const maxHH = Math.max(...purokData.map(p => p.households), 1);
 
-      purokData.forEach(p => {
-        const poly = document.getElementById(`poly-${p.purok}`);
-        const badge = document.getElementById(`badge-${p.purok}`);
-        if (!poly) return;
+      geoLayer.eachLayer(layer => {
+        const pName = layer.feature.properties.purok;
+        const p = purokData.find(item => item.purok === pName);
+        if (!p) return;
 
         let fillColor = '#e4e4e7';
-        let subText = p.subzone;
+        let badgeText = p.subzone;
 
         if (activeLayer === 'population') {
           const ratio = p.residents / maxPop;
           fillColor = getBlueDensityColor(ratio);
-          subText = `${p.residents} Residents`;
+          badgeText = `${p.residents} Residents`;
         } else if (activeLayer === 'hazard') {
-          if (p.hazard_rating === 'High') {
-            fillColor = 'rgba(239, 68, 68, 0.65)';
-            subText = 'HIGH FLOOD RISK';
-          } else if (p.hazard_rating === 'Medium') {
-            fillColor = 'rgba(245, 158, 11, 0.65)';
-            subText = 'MODERATE WATCH';
-          } else {
-            fillColor = 'rgba(16, 185, 129, 0.6)';
-            subText = 'SAFE LOW RISK';
-          }
+          if (p.hazard_rating === 'High') { fillColor = 'rgba(239, 68, 68, 0.65)'; badgeText = 'HIGH FLOOD RISK'; }
+          else if (p.hazard_rating === 'Medium') { fillColor = 'rgba(245, 158, 11, 0.65)'; badgeText = 'MODERATE WATCH'; }
+          else { fillColor = 'rgba(16, 185, 129, 0.6)'; badgeText = 'SAFE LOW RISK'; }
         } else if (activeLayer === 'vulnerability') {
           const ratio = p.vulnerability_score / maxVuln;
           fillColor = getAmberDensityColor(ratio);
-          subText = `Vuln Index: ${p.vulnerability_score}`;
+          badgeText = `Vuln Index: ${p.vulnerability_score}`;
         } else if (activeLayer === 'households') {
           const ratio = p.households / maxHH;
           fillColor = getPurpleDensityColor(ratio);
-          subText = `${p.households} Households`;
+          badgeText = `${p.households} Households`;
         }
 
-        poly.style.fill = fillColor;
-        if (badge) badge.textContent = subText;
+        layer.setStyle({
+          fillColor: fillColor,
+          fillOpacity: 0.65,
+          color: pName === selectedPurok ? '#141414' : '#ffffff',
+          weight: pName === selectedPurok ? 4 : 2
+        });
+
+        // Update label badge text
+        const badgeEl = document.getElementById(`map-badge-${pName}`);
+        if (badgeEl) badgeEl.textContent = badgeText;
       });
 
       renderLegend();
     }
 
-    // Color Scales
+    // ---- Color Scales ----
     function getBlueDensityColor(r) {
       if (r > 0.75) return 'rgba(30, 58, 138, 0.85)';
       if (r > 0.50) return 'rgba(37, 99, 235, 0.75)';
       if (r > 0.25) return 'rgba(96, 165, 250, 0.65)';
       return 'rgba(219, 234, 254, 0.75)';
     }
-
     function getAmberDensityColor(r) {
       if (r > 0.75) return 'rgba(180, 83, 9, 0.85)';
       if (r > 0.50) return 'rgba(217, 119, 6, 0.75)';
       if (r > 0.25) return 'rgba(251, 191, 36, 0.65)';
       return 'rgba(254, 243, 199, 0.75)';
     }
-
     function getPurpleDensityColor(r) {
       if (r > 0.75) return 'rgba(109, 40, 217, 0.85)';
       if (r > 0.50) return 'rgba(139, 92, 246, 0.75)';
@@ -1063,87 +1006,54 @@ require_auth('login.php');
       return 'rgba(237, 233, 254, 0.75)';
     }
 
-    // Render Dynamic Legend
+    // =========================================================================
+    // LEGEND
+    // =========================================================================
     function renderLegend() {
       const legendTitle = document.getElementById('gis-legend-title');
       const ramp = document.getElementById('gis-legend-ramp');
 
       if (activeLayer === 'population') {
         legendTitle.textContent = 'Population Density Concentration:';
-        ramp.innerHTML = `
-          <span>Low</span>
-          <div class="legend-swatch" style="background: rgba(219, 234, 254, 0.75);"></div>
-          <div class="legend-swatch" style="background: rgba(96, 165, 250, 0.65);"></div>
-          <div class="legend-swatch" style="background: rgba(37, 99, 235, 0.75);"></div>
-          <div class="legend-swatch" style="background: rgba(30, 58, 138, 0.85);"></div>
-          <span>High Density</span>
-        `;
+        ramp.innerHTML = `<span>Low</span><div class="legend-swatch" style="background: rgba(219, 234, 254, 0.75);"></div><div class="legend-swatch" style="background: rgba(96, 165, 250, 0.65);"></div><div class="legend-swatch" style="background: rgba(37, 99, 235, 0.75);"></div><div class="legend-swatch" style="background: rgba(30, 58, 138, 0.85);"></div><span>High Density</span>`;
       } else if (activeLayer === 'hazard') {
         legendTitle.textContent = 'Disaster Hazard Safety Zones:';
-        ramp.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 4px;"><div class="legend-swatch" style="background: #10b981;"></div> Safe (Low)</div>
-          <div style="display: flex; align-items: center; gap: 4px; margin-left: 8px;"><div class="legend-swatch" style="background: #f59e0b;"></div> Watch (Moderate)</div>
-          <div style="display: flex; align-items: center; gap: 4px; margin-left: 8px;"><div class="legend-swatch" style="background: #ef4444;"></div> Floodway / Critical</div>
-        `;
+        ramp.innerHTML = `<div style="display:flex;align-items:center;gap:4px;"><div class="legend-swatch" style="background:#10b981;"></div> Safe (Low)</div><div style="display:flex;align-items:center;gap:4px;margin-left:8px;"><div class="legend-swatch" style="background:#f59e0b;"></div> Watch (Moderate)</div><div style="display:flex;align-items:center;gap:4px;margin-left:8px;"><div class="legend-swatch" style="background:#ef4444;"></div> Floodway / Critical</div>`;
       } else if (activeLayer === 'vulnerability') {
         legendTitle.textContent = 'Social Vulnerability (Seniors, PWD, 4Ps):';
-        ramp.innerHTML = `
-          <span>Low</span>
-          <div class="legend-swatch" style="background: rgba(254, 243, 199, 0.75);"></div>
-          <div class="legend-swatch" style="background: rgba(251, 191, 36, 0.65);"></div>
-          <div class="legend-swatch" style="background: rgba(217, 119, 6, 0.75);"></div>
-          <div class="legend-swatch" style="background: rgba(180, 83, 9, 0.85);"></div>
-          <span>High Priority</span>
-        `;
+        ramp.innerHTML = `<span>Low</span><div class="legend-swatch" style="background: rgba(254, 243, 199, 0.75);"></div><div class="legend-swatch" style="background: rgba(251, 191, 36, 0.65);"></div><div class="legend-swatch" style="background: rgba(217, 119, 6, 0.75);"></div><div class="legend-swatch" style="background: rgba(180, 83, 9, 0.85);"></div><span>High Priority</span>`;
       } else if (activeLayer === 'households') {
         legendTitle.textContent = 'Household Density & Congestion:';
-        ramp.innerHTML = `
-          <span>Sparse</span>
-          <div class="legend-swatch" style="background: rgba(237, 233, 254, 0.75);"></div>
-          <div class="legend-swatch" style="background: rgba(196, 181, 253, 0.65);"></div>
-          <div class="legend-swatch" style="background: rgba(139, 92, 246, 0.75);"></div>
-          <div class="legend-swatch" style="background: rgba(109, 40, 217, 0.85);"></div>
-          <span>Congested</span>
-        `;
+        ramp.innerHTML = `<span>Sparse</span><div class="legend-swatch" style="background: rgba(237, 233, 254, 0.75);"></div><div class="legend-swatch" style="background: rgba(196, 181, 253, 0.65);"></div><div class="legend-swatch" style="background: rgba(139, 92, 246, 0.75);"></div><div class="legend-swatch" style="background: rgba(109, 40, 217, 0.85);"></div><span>Congested</span>`;
       }
     }
 
-    // Select Purok on Map & Deep-Dive Panel
+    // =========================================================================
+    // SELECT PUROK
+    // =========================================================================
     function selectPurok(pName) {
       const p = purokData.find(item => item.purok.toLowerCase() === pName.toLowerCase());
       if (!p) return;
-
       selectedPurok = p.purok;
 
-      // Update Polygon Selected State
-      document.querySelectorAll('.purok-polygon').forEach(poly => {
-        poly.classList.remove('selected');
-      });
-      const selectedPoly = document.getElementById(`poly-${p.purok}`);
-      if (selectedPoly) selectedPoly.classList.add('selected');
+      renderMapChoropleth();
 
-      // Update Jump Select
+      const centroid = purokCentroids[p.purok];
+      if (centroid) map.panTo(centroid);
+
       document.getElementById('select-purok-jump').value = p.purok;
 
-      // Update Detail Panel
       document.getElementById('detail-subzone').textContent = p.subzone.toUpperCase();
       document.getElementById('detail-purok-name').textContent = p.name;
 
       const hazardBadge = document.getElementById('detail-hazard-badge');
-      if (p.hazard_rating === 'High') {
-        hazardBadge.className = 'badge-rose';
-        hazardBadge.textContent = 'High Flood / Hazard';
-      } else if (p.hazard_rating === 'Medium') {
-        hazardBadge.className = 'badge-amber';
-        hazardBadge.textContent = 'Moderate Watch';
-      } else {
-        hazardBadge.className = 'badge-emerald';
-        hazardBadge.textContent = 'Safe Zone';
-      }
+      if (p.hazard_rating === 'High') { hazardBadge.className = 'badge-rose'; hazardBadge.textContent = 'High Flood / Hazard'; }
+      else if (p.hazard_rating === 'Medium') { hazardBadge.className = 'badge-amber'; hazardBadge.textContent = 'Moderate Watch'; }
+      else { hazardBadge.className = 'badge-emerald'; hazardBadge.textContent = 'Safe Zone'; }
 
       document.getElementById('detail-leader-name').textContent = p.leader;
       document.getElementById('detail-resident-count').textContent = p.residents;
-      document.getElementById('detail-gender-split').textContent = `${p.males} Males • ${p.females} Females`;
+      document.getElementById('detail-gender-split').textContent = `${p.males} Males \u2022 ${p.females} Females`;
       document.getElementById('detail-household-count').textContent = p.households;
       document.getElementById('detail-family-size').textContent = `${p.avg_family_size} avg family size`;
 
@@ -1161,20 +1071,20 @@ require_auth('login.php');
       document.getElementById('detail-evac-hub').textContent = p.evacuation_center;
       document.getElementById('detail-hazard-desc').textContent = `${p.hazard_profile}. Assigned route leading to ${p.evacuation_center}.`;
 
-      // Update Drilldown Links
       const ext = window.location.pathname.endsWith('.php') ? '.php' : '.html';
       const resBtn = document.getElementById('btn-drilldown-residents');
       resBtn.href = `residents${ext}?purok=${encodeURIComponent(p.purok)}`;
-      resBtn.textContent = `View Residents in ${p.purok} &rarr;`;
+      resBtn.innerHTML = `View Residents in ${p.purok} &rarr;`;
 
       const hhBtn = document.getElementById('btn-drilldown-households');
       hhBtn.href = `households${ext}?purok=${encodeURIComponent(p.purok)}`;
-      hhBtn.textContent = `View Households in ${p.purok} &rarr;`;
+      hhBtn.innerHTML = `View Households in ${p.purok} &rarr;`;
     }
 
-    // Bind Event Listeners
+    // =========================================================================
+    // EVENT LISTENERS
+    // =========================================================================
     function bindGisEventListeners() {
-      // Layer Switcher
       document.querySelectorAll('.gis-layer-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.gis-layer-btn').forEach(b => b.classList.remove('active'));
@@ -1184,122 +1094,47 @@ require_auth('login.php');
         });
       });
 
-      // Jump Select
       document.getElementById('select-purok-jump').addEventListener('change', (e) => {
-        if (e.target.value) {
-          selectPurok(e.target.value);
+        if (e.target.value) selectPurok(e.target.value);
+      });
+
+      document.getElementById('toggle-landmarks').addEventListener('change', (e) => {
+        if (e.target.checked) { map.addLayer(landmarkLayerGroup); }
+        else { map.removeLayer(landmarkLayerGroup); }
+      });
+
+      const tileBtn = document.getElementById('btn-toggle-tiles');
+      tileBtn.addEventListener('click', () => {
+        if (currentTileMode === 'satellite') {
+          map.removeLayer(satelliteTiles);
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          if (isDark) { darkTiles.addTo(map); currentTileMode = 'dark'; }
+          else { streetTiles.addTo(map); currentTileMode = 'street'; }
+          tileBtn.innerHTML = '&#127760; Satellite';
+        } else {
+          if (currentTileMode === 'street') map.removeLayer(streetTiles);
+          else if (currentTileMode === 'dark') map.removeLayer(darkTiles);
+          satelliteTiles.addTo(map);
+          currentTileMode = 'satellite';
+          tileBtn.innerHTML = '&#128506; Street';
         }
       });
 
-      // Landmark Overlay Toggle
-      document.getElementById('toggle-landmarks').addEventListener('change', (e) => {
-        const layer = document.getElementById('gis-landmarks-layer');
-        if (layer) layer.style.display = e.target.checked ? 'block' : 'none';
-      });
-
-      // Polygon Click & Hover Tooltip
-      const tooltip = document.getElementById('gis-tooltip');
-      const stage = document.getElementById('gis-viewport');
-
-      document.querySelectorAll('.purok-polygon').forEach(poly => {
-        const pName = poly.getAttribute('data-purok');
-
-        poly.addEventListener('click', () => {
-          selectPurok(pName);
-        });
-
-        poly.addEventListener('mousemove', (e) => {
-          const p = purokData.find(item => item.purok === pName);
-          if (!p) return;
-
-          const rect = stage.getBoundingClientRect();
-          const x = e.clientX - rect.left + 12;
-          const y = e.clientY - rect.top + 12;
-
-          tooltip.style.left = `${x}px`;
-          tooltip.style.top = `${y}px`;
-          tooltip.style.display = 'block';
-          tooltip.innerHTML = `
-            <strong>${p.name}</strong><br>
-            Residents: <strong>${p.residents}</strong> &bull; Households: <strong>${p.households}</strong><br>
-            Hazard Status: <strong>${p.hazard_rating} Risk</strong>
-          `;
-        });
-
-        poly.addEventListener('mouseleave', () => {
-          tooltip.style.display = 'none';
-        });
-      });
-
-      // Landmark Pin Hover
-      document.querySelectorAll('.gis-landmark-group').forEach(group => {
-        const landmarkName = group.getAttribute('data-name');
-        group.addEventListener('mousemove', (e) => {
-          const rect = stage.getBoundingClientRect();
-          const x = e.clientX - rect.left + 14;
-          const y = e.clientY - rect.top + 14;
-
-          tooltip.style.left = `${x}px`;
-          tooltip.style.top = `${y}px`;
-          tooltip.style.display = 'block';
-          tooltip.innerHTML = `<strong>Official Landmark:</strong><br>${landmarkName}`;
-        });
-
-        group.addEventListener('mouseleave', () => {
-          tooltip.style.display = 'none';
-        });
-      });
-
-      // Zoom Controls
-      const mapSvg = document.getElementById('gis-map-svg');
-      document.getElementById('btn-zoom-in').addEventListener('click', () => {
-        zoomLevel = Math.min(zoomLevel + 0.25, 2.5);
-        mapSvg.style.transform = `scale(${zoomLevel})`;
-      });
-
-      document.getElementById('btn-zoom-out').addEventListener('click', () => {
-        zoomLevel = Math.max(zoomLevel - 0.25, 0.75);
-        mapSvg.style.transform = `scale(${zoomLevel})`;
-      });
-
-      document.getElementById('btn-zoom-reset').addEventListener('click', () => {
-        zoomLevel = 1.0;
-        mapSvg.style.transform = 'scale(1.0)';
-      });
-
-      // Print Report
-      document.getElementById('btn-print-geo-report').addEventListener('click', () => {
-        window.print();
-      });
-
-      // Export CSV
+      document.getElementById('btn-print-geo-report').addEventListener('click', () => window.print());
       document.getElementById('btn-export-gis-csv').addEventListener('click', exportPurokCsv);
     }
 
-    // Export Purok Demographics CSV
+    // =========================================================================
+    // CSV EXPORT
+    // =========================================================================
     function exportPurokCsv() {
       if (purokData.length === 0) return;
-
       const headers = ['Purok', 'Subzone', 'Zone Leader', 'Residents', 'Households', 'Avg Family Size', 'Males', 'Females', 'Voters', 'Seniors', 'PWD', 'Solo Parents', '4Ps Beneficiaries', 'Indigents', 'Hazard Rating', 'Evacuation Center'];
       const rows = purokData.map(p => [
-        `"${p.purok}"`,
-        `"${p.subzone}"`,
-        `"${p.leader}"`,
-        p.residents,
-        p.households,
-        p.avg_family_size,
-        p.males,
-        p.females,
-        p.voters,
-        p.seniors,
-        p.pwd,
-        p.solo_parents,
-        p.four_ps,
-        p.indigents,
-        `"${p.hazard_rating}"`,
-        `"${p.evacuation_center}"`
+        `"${p.purok}"`, `"${p.subzone}"`, `"${p.leader}"`, p.residents, p.households, p.avg_family_size,
+        p.males, p.females, p.voters, p.seniors, p.pwd, p.solo_parents, p.four_ps, p.indigents,
+        `"${p.hazard_rating}"`, `"${p.evacuation_center}"`
       ]);
-
       const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -1313,11 +1148,12 @@ require_auth('login.php');
       Toast.success('Purok Geo-Profiling CSV downloaded.');
     }
 
-    // Render Print Table
+    // =========================================================================
+    // PRINT TABLE
+    // =========================================================================
     function renderPrintTable() {
       const tbody = document.getElementById('print-purok-table-body');
       if (!tbody) return;
-
       tbody.innerHTML = purokData.map(p => `
         <tr>
           <td style="padding: 6px 8px; border: 1px solid #d4d4d8; font-weight: 700;">${p.name}</td>

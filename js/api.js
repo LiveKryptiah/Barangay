@@ -313,6 +313,38 @@
     if (rec.distributed_by !== undefined && rec.distributedBy === undefined) rec.distributedBy = rec.distributed_by;
     if (rec.distributed_at !== undefined && rec.distributedAt === undefined) rec.distributedAt = rec.distributed_at;
 
+    // Families Master Roster
+    if (rec.family_code !== undefined && rec.familyCode === undefined) rec.familyCode = rec.family_code;
+    if (rec.family_name !== undefined && rec.familyName === undefined) rec.familyName = rec.family_name;
+    if (rec.household_id !== undefined && rec.householdId === undefined) rec.householdId = rec.household_id;
+    if (rec.head_resident_id !== undefined && rec.headResidentId === undefined) rec.headResidentId = rec.head_resident_id;
+    if (rec.family_type !== undefined && rec.familyType === undefined) rec.familyType = rec.family_type;
+    if (rec.monthly_income !== undefined && rec.monthlyIncome === undefined) rec.monthlyIncome = rec.monthly_income;
+    if (rec.income_bracket !== undefined && rec.incomeBracket === undefined) rec.incomeBracket = rec.income_bracket;
+    if (rec.poverty_status !== undefined && rec.povertyStatus === undefined) rec.povertyStatus = rec.poverty_status;
+    if (rec.is_4ps_beneficiary !== undefined && rec.is4psBeneficiary === undefined) rec.is4psBeneficiary = Boolean(rec.is_4ps_beneficiary);
+    if (rec.four_ps_number !== undefined && rec.fourPsNumber === undefined) rec.fourPsNumber = rec.four_ps_number;
+    if (rec.is_ayuda_priority !== undefined && rec.isAyudaPriority === undefined) rec.isAyudaPriority = Boolean(rec.is_ayuda_priority);
+    if (rec.housing_tenure !== undefined && rec.housingTenure === undefined) rec.housingTenure = rec.housing_tenure;
+    if (rec.main_source_of_income !== undefined && rec.mainSourceOfIncome === undefined) rec.mainSourceOfIncome = rec.main_source_of_income;
+    if (rec.member_count !== undefined && rec.memberCount === undefined) rec.memberCount = rec.member_count;
+
+    // Family Members
+    if (rec.family_id !== undefined && rec.familyId === undefined) rec.familyId = rec.family_id;
+    if (rec.relationship_to_head !== undefined && rec.relationshipToHead === undefined) rec.relationshipToHead = rec.relationship_to_head;
+    if (rec.is_income_earner !== undefined && rec.isIncomeEarner === undefined) rec.isIncomeEarner = Boolean(rec.is_income_earner);
+    if (rec.education_level !== undefined && rec.educationLevel === undefined) rec.educationLevel = rec.education_level;
+    if (rec.is_dependent !== undefined && rec.isDependent === undefined) rec.isDependent = Boolean(rec.is_dependent);
+
+    // Family Assistance Records
+    if (rec.program_name !== undefined && rec.programName === undefined) rec.programName = rec.program_name;
+    if (rec.assistance_type !== undefined && rec.assistanceType === undefined) rec.assistanceType = rec.assistance_type;
+    if (rec.amount_value !== undefined && rec.amountValue === undefined) rec.amountValue = rec.amount_value;
+    if (rec.items_description !== undefined && rec.itemsDescription === undefined) rec.itemsDescription = rec.items_description;
+    if (rec.date_provided !== undefined && rec.dateProvided === undefined) rec.dateProvided = rec.date_provided;
+    if (rec.disbursed_by !== undefined && rec.disbursedBy === undefined) rec.disbursedBy = rec.disbursed_by;
+    if (rec.dafac_no !== undefined && rec.dafacNo === undefined) rec.dafacNo = rec.dafac_no;
+
     return rec;
   }
 
@@ -651,7 +683,10 @@
     drrm_evacuation_centers:'api/drrm.php?action=centers',
     drrm_evacuees:          'api/drrm.php?action=evacuees',
     drrm_relief_items:      'api/drrm.php?action=relief_inventory',
-    drrm_relief_distributions:'api/drrm.php?action=distributions'
+    drrm_relief_distributions:'api/drrm.php?action=distributions',
+    families:               'api/families.php',
+    family_members:         'api/families.php?action=members',
+    family_assistance:      'api/families.php?action=assistance'
   };
 
   // Barangay DB Client
@@ -701,6 +736,9 @@
       if (storeName === 'drrm_evacuees') action = 'register_evacuee';
       if (storeName === 'drrm_relief_items') action = 'create_relief_item';
       if (storeName === 'drrm_relief_distributions') action = 'record_distribution';
+      if (storeName === 'families') action = 'create';
+      if (storeName === 'family_members') action = 'add_member';
+      if (storeName === 'family_assistance') action = 'record_assistance';
       if (storeName === 'incidents' && (record.type === 'Curfew Violation' || record.minor_age)) {
         action = 'create_curfew';
       }
@@ -729,6 +767,7 @@
       if (storeName === 'drrm_evacuation_centers') action = 'update_center';
       if (storeName === 'drrm_evacuees') action = 'update_evacuee';
       if (storeName === 'drrm_relief_items') action = 'update_relief_item';
+      if (storeName === 'families') action = 'update';
 
       const url = `${endpoint.split('?')[0]}?action=${action}`;
       return await apiRequest(url, 'POST', record);
@@ -746,6 +785,8 @@
       let body = { id: id };
 
       if (storeName === 'procurement_bids') action = 'delete_bid';
+      else if (storeName === 'family_assistance') action = 'delete_assistance';
+      else if (storeName === 'family_members') action = 'remove_member';
       else if (storeName === 'disbursement_vouchers') body.type = 'voucher';
       else if (storeName === 'revenue_collections') body.type = 'collection';
       else if (storeName === 'budget_obligations') body.type = 'obligation';

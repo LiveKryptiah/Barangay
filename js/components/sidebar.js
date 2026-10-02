@@ -120,12 +120,25 @@ class AppSidebar {
             </li>
 
             <li>
-              <a href="households${ext}" class="ex-app-shell-row ${activePage === 'households' ? 'active' : ''}" title="Households & Families">
+              <a href="households${ext}" class="ex-app-shell-row ${activePage === 'households' ? 'active' : ''}" title="Physical Dwellings & Households">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
                 <span>Households</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="families${ext}" class="ex-app-shell-row ${activePage === 'families' ? 'active' : ''}" title="Families & Social Welfare">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                  <circle cx="9" cy="7" r="3"/>
+                  <path d="M14 17a5 5 0 0 0-10 0v2h10v-2z"/>
+                  <circle cx="17" cy="10" r="2.5"/>
+                  <path d="M17 14c1.8 0 3.5 1 4 2.5v1.5h-5"/>
+                </svg>
+                <span>Families</span>
+                <span class="badge-neutral" style="font-size: 0.5625rem; padding: 1px 6px; margin-left: auto;">4Ps</span>
               </a>
             </li>
 
@@ -509,7 +522,7 @@ class AppSidebar {
             ${activePage === 'incidents' ? '<div class="egov-nav-pill-active"></div>' : ''}
           </a>
 
-          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','budget','drrm','geo-profiling','resident-id','households','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
+          <button type="button" id="admin-mobile-more-btn" class="egov-nav-item ${['lupon','legislation','notifications','health','procurement','budget','drrm','geo-profiling','resident-id','households','families','blotter','officials','reports','settings'].includes(activePage) ? 'active' : ''}" aria-label="Open Full Menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             <span>More</span>
           </button>

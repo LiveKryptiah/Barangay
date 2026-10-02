@@ -877,6 +877,104 @@ INSERT INTO `drrm_relief_distributions` (`distribution_code`, `calamity_name`, `
 ('DAFAC-2026-0003', 'Habagat Heavy Monsoon & Flash Flood', 2, 'Elena Vda. de Castro', 'Purok 1', 1, 2, 'Kag. Benjamin Alcantara', '2026-09-09 08:30:00', 'Initial food assistance ration'),
 ('DAFAC-2026-0004', 'Habagat Heavy Monsoon & Flash Flood', 3, 'Rodel C. Bautista', 'Purok 6', 1, 2, 'Kag. Benjamin Alcantara', '2026-09-09 09:15:00', 'Food pack issued with supplementary infant pack');
 
+-- ------------------------------------------------------------
+-- 31. FAMILIES MASTER ROSTER TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `families` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `family_code` VARCHAR(40) NOT NULL UNIQUE,
+  `family_name` VARCHAR(150) NOT NULL,
+  `household_id` INT DEFAULT NULL,
+  `head_resident_id` INT NOT NULL,
+  `family_type` ENUM('Nuclear', 'Extended', 'Solo Parent', 'Childless Couple', 'One-Person', 'Blended') NOT NULL DEFAULT 'Nuclear',
+  `purok` VARCHAR(50) NOT NULL,
+  `monthly_income` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+  `income_bracket` ENUM('Under 10,000', '10,001 - 20,000', '20,001 - 40,000', '40,001 - 70,000', 'Above 70,000') NOT NULL DEFAULT 'Under 10,000',
+  `poverty_status` ENUM('Indigent / Below Poverty Threshold', 'Low Income / Subsistence', 'Lower Middle Class', 'Middle Class', 'Above Average') NOT NULL DEFAULT 'Low Income / Subsistence',
+  `is_4ps_beneficiary` TINYINT(1) NOT NULL DEFAULT 0,
+  `four_ps_number` VARCHAR(50) DEFAULT NULL,
+  `is_ayuda_priority` TINYINT(1) NOT NULL DEFAULT 0,
+  `housing_tenure` ENUM('Owner', 'Sharer / Living with Relatives', 'Renter', 'Informal Settler', 'Caretaker') NOT NULL DEFAULT 'Owner',
+  `main_source_of_income` VARCHAR(100) DEFAULT 'Employment / Wages',
+  `remarks` TEXT DEFAULT NULL,
+  `status` ENUM('Active', 'Relocated', 'Merged', 'Archived') NOT NULL DEFAULT 'Active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_fam_code` (`family_code`),
+  INDEX `idx_fam_household` (`household_id`),
+  INDEX `idx_fam_head` (`head_resident_id`),
+  INDEX `idx_fam_purok` (`purok`),
+  INDEX `idx_fam_poverty` (`poverty_status`),
+  INDEX `idx_fam_4ps` (`is_4ps_beneficiary`),
+  INDEX `idx_fam_status` (`status`),
+  CONSTRAINT `fk_fam_household` FOREIGN KEY (`household_id`) REFERENCES `households` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_fam_head` FOREIGN KEY (`head_resident_id`) REFERENCES `residents` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 32. FAMILY MEMBERS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `family_members` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `family_id` INT NOT NULL,
+  `resident_id` INT NOT NULL,
+  `relationship_to_head` ENUM('Head', 'Spouse', 'Son', 'Daughter', 'Stepson', 'Stepdaughter', 'Father', 'Mother', 'Brother', 'Sister', 'Grandchild', 'Grandparent', 'Son-in-law', 'Daughter-in-law', 'Other Relative', 'Ward / Dependent') NOT NULL DEFAULT 'Son',
+  `is_income_earner` TINYINT(1) NOT NULL DEFAULT 0,
+  `monthly_income` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+  `occupation` VARCHAR(100) DEFAULT NULL,
+  `education_level` VARCHAR(80) DEFAULT 'High School',
+  `is_dependent` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `uk_fam_resident` (`family_id`, `resident_id`),
+  INDEX `idx_fm_family` (`family_id`),
+  INDEX `idx_fm_resident` (`resident_id`),
+  INDEX `idx_fm_relationship` (`relationship_to_head`),
+  CONSTRAINT `fk_fm_family` FOREIGN KEY (`family_id`) REFERENCES `families` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_fm_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- 33. FAMILY ASSISTANCE & AYUDA RECORDS TABLE
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `family_assistance_records` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `family_id` INT NOT NULL,
+  `program_name` VARCHAR(150) NOT NULL,
+  `assistance_type` ENUM('Cash / Financial', 'Food Pack / In-Kind', 'Medical Assistance', 'Livelihood Assistance', 'Educational Assistance', 'Burial Assistance') NOT NULL DEFAULT 'Food Pack / In-Kind',
+  `amount_value` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+  `items_description` TEXT DEFAULT NULL,
+  `date_provided` DATE NOT NULL,
+  `disbursed_by` VARCHAR(100) NOT NULL DEFAULT 'Barangay Social Welfare Committee',
+  `dafac_no` VARCHAR(50) DEFAULT NULL,
+  `status` ENUM('Received', 'Scheduled', 'Cancelled') NOT NULL DEFAULT 'Received',
+  `remarks` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_far_family` (`family_id`),
+  INDEX `idx_far_date` (`date_provided`),
+  INDEX `idx_far_type` (`assistance_type`),
+  CONSTRAINT `fk_far_family` FOREIGN KEY (`family_id`) REFERENCES `families` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- DEFAULT FAMILIES & SOCIAL WELFARE SEED DATA
+-- ------------------------------------------------------------
+INSERT INTO `families` (`family_code`, `family_name`, `household_id`, `head_resident_id`, `family_type`, `purok`, `monthly_income`, `income_bracket`, `poverty_status`, `is_4ps_beneficiary`, `four_ps_number`, `is_ayuda_priority`, `housing_tenure`, `main_source_of_income`, `remarks`) VALUES
+('FAM-2026-00001', 'Mendoza Family', 1, 1, 'Extended', 'Purok 1', 14500.00, '10,001 - 20,000', 'Low Income / Subsistence', 1, '4PS-NCR-04-12345', 1, 'Owner', 'Carpentry & Daily Labor', 'Priority for BDRRMC relief goods & DSWD AICS'),
+('FAM-2026-00002', 'De Castro Family', 2, 2, 'Solo Parent', 'Purok 1', 8200.00, 'Under 10,000', 'Indigent / Below Poverty Threshold', 1, '4PS-NCR-04-67890', 1, 'Sharer / Living with Relatives', 'Sari-sari Store & Social Pension', 'Senior-headed solo parent household with PWD dependent'),
+('FAM-2026-00003', 'Bautista Family', NULL, 3, 'Nuclear', 'Purok 6', 22000.00, '20,001 - 40,000', 'Lower Middle Class', 0, NULL, 0, 'Renter', 'Factory Machine Operator', 'Sub-family renting room in Purok 6 settlement');
+
+INSERT INTO `family_members` (`family_id`, `resident_id`, `relationship_to_head`, `is_income_earner`, `monthly_income`, `occupation`, `education_level`, `is_dependent`) VALUES
+(1, 1, 'Head', 1, 14500.00, 'Master Carpenter', 'Vocational / Tech', 0),
+(2, 2, 'Head', 1, 8200.00, 'Micro-Retail Store Owner', 'Elementary Graduate', 0),
+(3, 3, 'Head', 1, 22000.00, 'Machine Operator', 'College Level', 0);
+
+INSERT INTO `family_assistance_records` (`family_id`, `program_name`, `assistance_type`, `amount_value`, `items_description`, `date_provided`, `disbursed_by`, `dafac_no`, `status`, `remarks`) VALUES
+(1, 'DSWD Pantawid Pamilyang Pilipino Program (4Ps) Bi-Monthly Cash Grant', 'Cash / Financial', 3000.00, 'Educational & Health Cash Grant Q3 2026', '2026-08-15', 'DSWD Field Office / LandBank', '4PS-2026-0815', 'Received', 'Compliance validated by BHW'),
+(1, 'BDRRMC Emergency Calamity Family Food Pack', 'Food Pack / In-Kind', 1120.00, '2x 6kg Rice, 12 canned goods, instant coffee, mineral water', '2026-09-09', 'BDRRMC Relief Operations Team', 'DAFAC-2026-0001', 'Received', 'Habagat 2026 Emergency Assistance'),
+(2, 'Barangay Indigent Senior Social Assistance & Medical Voucher', 'Medical Assistance', 2500.00, 'Hypertension & Diabetic Maintenance Medication Voucher', '2026-07-20', 'Barangay Health & Social Welfare Committee', 'AICS-2026-0412', 'Received', 'Endorsed to Barangay Health Station'),
+(2, 'BDRRMC Family Food Pack & Hygiene Set', 'Food Pack / In-Kind', 910.00, '1x Family Food Pack, 1x Emergency Family Hygiene Kit', '2026-09-09', 'BDRRMC Relief Operations Team', 'DAFAC-2026-0003', 'Received', 'Evacuation Shelter Distribution');
+
 SET FOREIGN_KEY_CHECKS = 1;
 
 

@@ -5,7 +5,7 @@
  */
 
 const DB_NAME = 'BarangayManagementDB';
-const DB_VERSION = 11;
+const DB_VERSION = 12;
 
 class BarangayDB {
   constructor() {
@@ -303,6 +303,34 @@ class BarangayDB {
           const distStore = db.createObjectStore('drrm_relief_distributions', { keyPath: 'id', autoIncrement: true });
           distStore.createIndex('distributionCode', 'distributionCode', { unique: true });
           distStore.createIndex('distributedAt', 'distributedAt', { unique: false });
+        }
+
+        // 32. Families Master Store
+        if (!db.objectStoreNames.contains('families')) {
+          const famStore = db.createObjectStore('families', { keyPath: 'id', autoIncrement: true });
+          famStore.createIndex('familyCode', 'familyCode', { unique: true });
+          famStore.createIndex('householdId', 'householdId', { unique: false });
+          famStore.createIndex('headResidentId', 'headResidentId', { unique: false });
+          famStore.createIndex('purok', 'purok', { unique: false });
+          famStore.createIndex('povertyStatus', 'povertyStatus', { unique: false });
+          famStore.createIndex('is4psBeneficiary', 'is4psBeneficiary', { unique: false });
+          famStore.createIndex('status', 'status', { unique: false });
+        }
+
+        // 33. Family Members Store
+        if (!db.objectStoreNames.contains('family_members')) {
+          const fmStore = db.createObjectStore('family_members', { keyPath: 'id', autoIncrement: true });
+          fmStore.createIndex('familyId', 'familyId', { unique: false });
+          fmStore.createIndex('residentId', 'residentId', { unique: false });
+          fmStore.createIndex('relationshipToHead', 'relationshipToHead', { unique: false });
+        }
+
+        // 34. Family Assistance & Ayuda Store
+        if (!db.objectStoreNames.contains('family_assistance')) {
+          const faStore = db.createObjectStore('family_assistance', { keyPath: 'id', autoIncrement: true });
+          faStore.createIndex('familyId', 'familyId', { unique: false });
+          faStore.createIndex('dateProvided', 'dateProvided', { unique: false });
+          faStore.createIndex('assistanceType', 'assistanceType', { unique: false });
         }
       };
 
