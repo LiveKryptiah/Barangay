@@ -210,7 +210,7 @@ $currentUser = current_user();
             <a href="blotter.php" class="button-pill-soft" id="btn-quick-blotter">
               + File Blotter Report
             </a>
-            <a href="incidents.php" class="button-pill-soft" id="btn-quick-incident" style="color: #ef4444;">
+            <a href="incidents.php" class="button-pill-soft" id="btn-quick-incident">
               + Emergency Dispatch
             </a>
             <a href="officials.php" class="button-pill-soft" id="btn-quick-officials">
