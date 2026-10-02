@@ -287,16 +287,17 @@ require_auth('login.php');
       <div id="app-topbar-mount"></div>
 
       <main class="app-content">
-        <!-- Page Hero Section -->
+        <!-- Ultra-Minimal Level 1 Hero -->
         <section class="page-hero">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--spacing-md);">
             <div>
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: 2px;">
                 <h1 class="typography-heading-2">Purok Demographic Density &amp; Geo-Profiling.</h1>
+                <button type="button" class="info-trigger" onclick="toggleGeoInfoPopover(event)" aria-label="Geo-Profiling Guidelines">i</button>
                 <span class="badge-neutral" id="gis-zone-count-badge">7 Official Puroks</span>
               </div>
-              <p class="typography-body-lg">
-                Interactive GIS spatial command center with real-world map for population density, disaster hazard risks, and household vulnerability profiling.
+              <p class="typography-body-lg" style="margin-bottom: 0;">
+                Interactive GIS spatial command center for population density, disaster hazard risks, and household vulnerability profiling.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;">
@@ -333,43 +334,42 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Executive Operations Telemetry Ladder -->
-        <section>
-          <div class="stats-ladder">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">MOST POPULATED ZONE</span>
-                <span class="badge-blue">Demographics</span>
-              </div>
-              <div class="stat-number" id="kpi-most-populated">Purok 1</div>
-              <div class="typography-caption" id="kpi-most-populated-sub">0 residents (0% of total)</div>
-            </div>
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="geo-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">GIS &amp; Demographic Mapping Guide</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleGeoInfoPopover(event)" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Integrates DILG CBMS census telemetry with spatial Leaflet layers to visualize population concentration, hazard corridors, and welfare vulnerability indices across all Puroks.
+          </p>
+          <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
+            <span>Spatial Projection: WGS 84</span> &bull; <span>Compliance: RA 10121 / DILG CBMS</span>
+          </div>
+        </div>
 
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">HIGHEST VULNERABILITY</span>
-                <span class="badge-amber">Social Welfare</span>
-              </div>
-              <div class="stat-number" id="kpi-highest-vuln">Purok 1</div>
-              <div class="typography-caption" id="kpi-highest-vuln-sub">0 priority assisted sectors</div>
+        <!-- Level 1 Minimal Borderless Metrics Strip -->
+        <section style="margin-bottom: var(--spacing-lg);">
+          <div class="metrics-strip">
+            <div class="metric-item">
+              <span class="metric-label">Most Populated Zone</span>
+              <div class="metric-val" id="kpi-most-populated">Purok 1</div>
+              <span class="metric-sub" id="kpi-most-populated-sub">0 residents (0% of total)</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">CRITICAL DISASTER EXPOSURE</span>
-                <span class="badge-rose">Disaster Risk</span>
-              </div>
-              <div class="stat-number" id="kpi-hazard-count" style="color: #ef4444;">0</div>
-              <div class="typography-caption">Dwellings in high flood/hazard zones</div>
+            <div class="metric-item">
+              <span class="metric-label">Highest Vulnerability</span>
+              <div class="metric-val" id="kpi-highest-vuln">Purok 1</div>
+              <span class="metric-sub" id="kpi-highest-vuln-sub">0 priority assisted sectors</span>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="typography-label" style="color: var(--color-text-muted);">CENSUS COVERAGE</span>
-                <span class="badge-emerald">GIS Registry</span>
-              </div>
-              <div class="stat-number" id="kpi-coverage">100%</div>
-              <div class="typography-caption" id="kpi-coverage-sub">All 7 Puroks active &amp; mapped</div>
+            <div class="metric-item">
+              <span class="metric-label">Disaster Hazard Risk</span>
+              <div class="metric-val" id="kpi-hazard-count" style="color: #ef4444;">0</div>
+              <span class="metric-sub">Dwellings in critical hazard zone</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">GIS Census Coverage</span>
+              <div class="metric-val" id="kpi-coverage">100%</div>
+              <span class="metric-sub" id="kpi-coverage-sub">All 7 Puroks active &amp; mapped</span>
             </div>
           </div>
         </section>
@@ -414,7 +414,8 @@ require_auth('login.php');
             <div style="position: relative;">
               <div id="leaflet-map"></div>
               <button type="button" class="tile-toggle-btn" id="btn-toggle-tiles" title="Switch between Street and Satellite view">
-                &#127760; Satellite
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <span>Satellite</span>
               </button>
             </div>
 
@@ -512,6 +513,120 @@ require_auth('login.php');
       </main>
     </div>
   </div>
+
+  <!-- LEVEL 3: SLIDE-OVER PUROK DOSSIER DRAWER -->
+  <div class="app-drawer-backdrop" id="geo-drawer-backdrop" onclick="closeGeoDrawer()"></div>
+  <aside class="app-drawer" id="geo-detail-drawer" aria-label="Purok Demographic Dossier">
+    <div class="drawer-header">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="badge-neutral" id="gdrawer-subzone">CIVIC &amp; GOVERNMENT CORE</span>
+          <span class="badge-emerald" id="gdrawer-hazard-badge">Safe Zone</span>
+        </div>
+        <h3 class="typography-heading-4" id="gdrawer-purok-name" style="margin-top: 4px;">Purok 3</h3>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeGeoDrawer()" aria-label="Close drawer">&times;</button>
+    </div>
+
+    <!-- Drawer Navigation Tabs -->
+    <div class="drawer-tabs">
+      <button type="button" class="drawer-tab-btn active" id="gdtab-btn-demo" onclick="switchGeoDrawerTab('demo')">Demographics</button>
+      <button type="button" class="drawer-tab-btn" id="gdtab-btn-welfare" onclick="switchGeoDrawerTab('welfare')">Welfare Sectors</button>
+      <button type="button" class="drawer-tab-btn" id="gdtab-btn-hazard" onclick="switchGeoDrawerTab('hazard')">Evacuation &amp; Hazard</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Tab A: Demographics -->
+      <div id="gdtab-pane-demo">
+        <div class="drawer-section">
+          <div class="drawer-section-title">Leadership &amp; Council Jurisdiction</div>
+          <div style="font-weight: 700; font-size: 0.875rem; color: var(--color-ink);" id="gdrawer-leader-name">
+            Hon. Punong Barangay / Kgd. Manuel Cruz
+          </div>
+          <div class="typography-caption" style="margin-top: 2px;">Assigned Purok Focal Official</div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title">Key Census Figures</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="background: var(--color-canvas-soft); padding: 10px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+              <div style="font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase;">Residents</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--color-ink);" id="gdrawer-resident-count">0</div>
+              <div class="typography-caption" id="gdrawer-gender-split">0 M &bull; 0 F</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 10px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+              <div style="font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase;">Households</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--color-ink);" id="gdrawer-household-count">0</div>
+              <div class="typography-caption" id="gdrawer-family-size">0 avg family</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 10px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+              <div style="font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase;">Voters</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--color-ink);" id="gdrawer-voter-count">0</div>
+              <div class="typography-caption" id="gdrawer-voter-pct">0% participation</div>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 10px; border-radius: var(--rounded-sm); border: 1px solid var(--color-hairline-soft);">
+              <div style="font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase;">Vulnerability Score</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #d97706;" id="gdrawer-vuln-count">0</div>
+              <div class="typography-caption">Priority Assisted</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab B: Welfare Sectors -->
+      <div id="gdtab-pane-welfare" style="display: none;">
+        <div class="drawer-section">
+          <div class="drawer-section-title">Assisted Vulnerable Sectors Breakdown</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8125rem;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 6px;">
+              <span>Senior Citizens (60+ yrs):</span>
+              <strong id="gdrawer-count-senior">0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 6px;">
+              <span>Persons with Disability (PWD):</span>
+              <strong id="gdrawer-count-pwd">0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 6px;">
+              <span>Solo Parents:</span>
+              <strong id="gdrawer-count-solo">0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 6px;">
+              <span>Pantawid Pamilya (4Ps):</span>
+              <strong id="gdrawer-count-4ps">0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 6px;">
+              <span>Indigent Households:</span>
+              <strong id="gdrawer-count-indigent">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab C: Evacuation & Hazard -->
+      <div id="gdtab-pane-hazard" style="display: none;">
+        <div class="drawer-section">
+          <div class="drawer-section-title">Disaster Risk &amp; Evacuation Protocol</div>
+          <div style="background: var(--color-canvas-soft); border-radius: var(--rounded-sm); padding: 12px; border: 1px solid var(--color-hairline-soft); margin-bottom: 10px;">
+            <div style="font-size: 0.8125rem; font-weight: 700; color: var(--color-ink);" id="gdrawer-evac-hub">
+              Barangay Hall Complex
+            </div>
+            <p class="typography-caption mt-xs" id="gdrawer-hazard-desc">
+              Designated incident command center and emergency stockpile depot. Minimal flooding risk.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="button-outline" onclick="closeGeoDrawer()" style="height: 36px; padding: 0 16px;">
+        Close
+      </button>
+      <a href="residents.php" class="button-primary" id="gdrawer-drilldown-residents" style="height: 36px; padding: 0 18px; text-decoration: none; display: inline-flex; align-items: center;">
+        View Residents &rarr;
+      </a>
+    </div>
+  </aside>
 
   <!-- Printable Official DILG / CDRRMO Geo-Report Letterhead -->
   <div id="printable-geo-report">
@@ -678,11 +793,11 @@ require_auth('login.php');
 
     // ---- Landmark Definitions (PHP version links to .php) ----
     const landmarkDefs = [
-      { name: 'Barangay Hall Complex & Command Center', lat: 14.73991, lng: 121.13108, emoji: '&#127963;', color: '#141414', size: 28 },
-      { name: 'Barangay Health Center & Birthing Clinic', lat: 14.73991, lng: 121.13179, emoji: '&#127973;', color: '#10b981', size: 24, link: 'health.php' },
-      { name: 'Central Elementary School (Primary Evacuation Hub)', lat: 14.74259, lng: 121.13617, emoji: '&#127979;', color: '#6366f1', size: 24 },
-      { name: 'Riverside Tanod Outpost & Early Flood Gauge', lat: 14.74250, lng: 121.12747, emoji: '&#128658;', color: '#ef4444', size: 24 },
-      { name: 'Greenfields Livelihood Center & Food Hub', lat: 14.73602, lng: 121.13263, emoji: '&#127806;', color: '#d97706', size: 24 }
+      { name: 'Barangay Hall Complex & Command Center', lat: 14.73991, lng: 121.13108, iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>', color: '#141414', size: 28 },
+      { name: 'Barangay Health Center & Birthing Clinic', lat: 14.73991, lng: 121.13179, iconSvg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20"/><path d="M2 12h20"/></svg>', color: '#10b981', size: 24, link: 'health.php' },
+      { name: 'Central Elementary School (Primary Evacuation Hub)', lat: 14.74259, lng: 121.13617, iconSvg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>', color: '#6366f1', size: 24 },
+      { name: 'Riverside Tanod Outpost & Early Flood Gauge', lat: 14.74250, lng: 121.12747, iconSvg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', color: '#ef4444', size: 24 },
+      { name: 'Greenfields Livelihood Center & Food Hub', lat: 14.73602, lng: 121.13263, iconSvg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>', color: '#d97706', size: 24 }
     ];
 
     // =========================================================================
@@ -810,7 +925,7 @@ require_auth('login.php');
       landmarkDefs.forEach(lm => {
         const icon = L.divIcon({
           className: '',
-          html: `<div class="landmark-marker-icon" style="width:${lm.size}px; height:${lm.size}px; background:${lm.color};" title="${lm.name}">${lm.emoji}</div>`,
+          html: `<div class="landmark-marker-icon" style="width:${lm.size}px; height:${lm.size}px; background:${lm.color}; display:flex; align-items:center; justify-content:center; color:#ffffff;" title="${lm.name}">${lm.iconSvg}</div>`,
           iconSize: [lm.size, lm.size],
           iconAnchor: [lm.size / 2, lm.size / 2]
         });
@@ -1079,7 +1194,102 @@ require_auth('login.php');
       const hhBtn = document.getElementById('btn-drilldown-households');
       hhBtn.href = `households${ext}?purok=${encodeURIComponent(p.purok)}`;
       hhBtn.innerHTML = `View Households in ${p.purok} &rarr;`;
+
+      // Populate Level 3 Slide-over Drawer
+      const gdSubzone = document.getElementById('gdrawer-subzone');
+      if (gdSubzone) gdSubzone.textContent = p.subzone.toUpperCase();
+      const gdName = document.getElementById('gdrawer-purok-name');
+      if (gdName) gdName.textContent = p.name;
+      const gdHazard = document.getElementById('gdrawer-hazard-badge');
+      if (gdHazard) {
+        if (p.hazard_rating === 'High') { gdHazard.className = 'badge-rose'; gdHazard.textContent = 'High Flood / Hazard'; }
+        else if (p.hazard_rating === 'Medium') { gdHazard.className = 'badge-amber'; gdHazard.textContent = 'Moderate Watch'; }
+        else { gdHazard.className = 'badge-emerald'; gdHazard.textContent = 'Safe Zone'; }
+      }
+      const gdLeader = document.getElementById('gdrawer-leader-name');
+      if (gdLeader) gdLeader.textContent = p.leader;
+      const gdRes = document.getElementById('gdrawer-resident-count');
+      if (gdRes) gdRes.textContent = p.residents;
+      const gdGender = document.getElementById('gdrawer-gender-split');
+      if (gdGender) gdGender.textContent = `${p.males} Males \u2022 ${p.females} Females`;
+      const gdHH = document.getElementById('gdrawer-household-count');
+      if (gdHH) gdHH.textContent = p.households;
+      const gdFamily = document.getElementById('gdrawer-family-size');
+      if (gdFamily) gdFamily.textContent = `${p.avg_family_size} avg family size`;
+      const gdVoter = document.getElementById('gdrawer-voter-count');
+      if (gdVoter) gdVoter.textContent = p.voters;
+      const gdVoterPct = document.getElementById('gdrawer-voter-pct');
+      if (gdVoterPct) gdVoterPct.textContent = `${voterPct}% electoral share`;
+      const gdVuln = document.getElementById('gdrawer-vuln-count');
+      if (gdVuln) gdVuln.textContent = p.vulnerability_score;
+      const gdSenior = document.getElementById('gdrawer-count-senior');
+      if (gdSenior) gdSenior.textContent = `${p.seniors} Seniors (60+)`;
+      const gdPwd = document.getElementById('gdrawer-count-pwd');
+      if (gdPwd) gdPwd.textContent = `${p.pwd} PWD`;
+      const gdSolo = document.getElementById('gdrawer-count-solo');
+      if (gdSolo) gdSolo.textContent = `${p.solo_parents} Solo Parents`;
+      const gd4ps = document.getElementById('gdrawer-count-4ps');
+      if (gd4ps) gd4ps.textContent = `${p.four_ps} 4Ps`;
+      const gdInd = document.getElementById('gdrawer-count-indigent');
+      if (gdInd) gdInd.textContent = `${p.indigents} Indigents`;
+      const gdEvac = document.getElementById('gdrawer-evac-hub');
+      if (gdEvac) gdEvac.textContent = p.evacuation_center;
+      const gdDesc = document.getElementById('gdrawer-hazard-desc');
+      if (gdDesc) gdDesc.textContent = `${p.hazard_profile}. Assigned route leading to ${p.evacuation_center}.`;
+      const gdDrill = document.getElementById('gdrawer-drilldown-residents');
+      if (gdDrill) {
+        gdDrill.href = `residents${ext}?purok=${encodeURIComponent(p.purok)}`;
+        gdDrill.innerHTML = `View Residents in ${p.purok} &rarr;`;
+      }
     }
+
+    // Level 3 Slide-Over Detail Drawer
+    window.openGeoDrawer = function() {
+      const drawer = document.getElementById('geo-detail-drawer');
+      const backdrop = document.getElementById('geo-drawer-backdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
+    };
+
+    window.closeGeoDrawer = function() {
+      const drawer = document.getElementById('geo-detail-drawer');
+      const backdrop = document.getElementById('geo-drawer-backdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    };
+
+    window.switchGeoDrawerTab = function(tabName) {
+      ['demo', 'welfare', 'hazard'].forEach(t => {
+        const btn = document.getElementById(`gdtab-btn-${t}`);
+        const pane = document.getElementById(`gdtab-pane-${t}`);
+        if (btn) btn.classList.toggle('active', t === tabName);
+        if (pane) pane.style.display = t === tabName ? 'block' : 'none';
+      });
+    };
+
+    // Contextual Info Popover
+    window.toggleGeoInfoPopover = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('geo-info-popover');
+      if (popover) {
+        popover.style.display = popover.style.display === 'block' ? 'none' : 'block';
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('geo-info-popover');
+      if (popover && popover.style.display === 'block' && !e.target.closest('#geo-info-popover') && !e.target.closest('.info-trigger')) {
+        popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeGeoDrawer();
+        const popover = document.getElementById('geo-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
 
     // =========================================================================
     // EVENT LISTENERS
@@ -1110,13 +1320,13 @@ require_auth('login.php');
           const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
           if (isDark) { darkTiles.addTo(map); currentTileMode = 'dark'; }
           else { streetTiles.addTo(map); currentTileMode = 'street'; }
-          tileBtn.innerHTML = '&#127760; Satellite';
+          tileBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> <span>Satellite</span>';
         } else {
           if (currentTileMode === 'street') map.removeLayer(streetTiles);
           else if (currentTileMode === 'dark') map.removeLayer(darkTiles);
           satelliteTiles.addTo(map);
           currentTileMode = 'satellite';
-          tileBtn.innerHTML = '&#128506; Street';
+          tileBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg> <span>Street</span>';
         }
       });
 
@@ -1168,6 +1378,27 @@ require_auth('login.php');
         </tr>
       `).join('');
     }
+
+    function toggleGeoInfoPopover(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('geo-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('geo-info-popover');
+      if (popover && popover.style.display === 'block' && !e.target.closest('#geo-info-popover') && !e.target.closest('.info-trigger')) {
+        popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const popover = document.getElementById('geo-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>

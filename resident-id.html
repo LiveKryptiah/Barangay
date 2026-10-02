@@ -585,6 +585,7 @@
             <div>
               <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
                 <h1 class="typography-heading-2">PVC Resident ID Studio.</h1>
+                <button type="button" class="info-trigger" onclick="toggleIdInfoPopover(event)" aria-label="Resident ID Guidelines">i</button>
                 <span class="badge-neutral" id="studio-status-badge">CR80 Standard</span>
               </div>
               <p class="typography-body-lg">
@@ -608,6 +609,46 @@
                 </svg>
                 <span>Print ID Card</span>
               </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contextual Info Popover Card -->
+        <div class="info-popover-card" id="id-info-popover" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.875rem; color: var(--color-ink);">PVC Resident ID &amp; Credential Standard</strong>
+            <button type="button" class="drawer-close-btn" onclick="toggleIdInfoPopover(event)" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+            Issued pursuant to ISO/IEC 7810 ID-1 (CR80) standard (85.60 &times; 53.98 mm). Embedded with anti-counterfeit micro-pattern watermark, biometric photo standards, and cryptographic QR token verifiable via public verification engine.
+          </p>
+          <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
+            <span>Standard: CR80 PVC</span> &bull; <span>Compliance: Data Privacy Act of 2012</span>
+          </div>
+        </div>
+
+        <!-- Level 1 Minimal Borderless Metrics Strip -->
+        <section style="margin-bottom: var(--spacing-lg);">
+          <div class="metrics-strip">
+            <div class="metric-item">
+              <span class="metric-label">Active Credentials</span>
+              <div class="metric-val" id="stat-active-cards">0</div>
+              <span class="metric-sub" id="stat-total-registered">Across all registered residents</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Form Factor Spec</span>
+              <div class="metric-val">CR80 (ISO 7810)</div>
+              <span class="metric-sub">85.60 &times; 53.98 mm &bull; 30 mil PVC</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Security Authentication</span>
+              <div class="metric-val">SHA-256 / QR</div>
+              <span class="metric-sub">Tamper-evident verification token</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Validation SLA</span>
+              <div class="metric-val">&lt; 2s Lookup</div>
+              <span class="metric-sub">Instant scanner &amp; portal check</span>
             </div>
           </div>
         </section>
@@ -994,6 +1035,18 @@
           opt.textContent = `${full} (${r.purok || 'Unassigned'}) - ${r.residentCode || 'ID:' + r.id}`;
           select.appendChild(opt);
         });
+
+        // Compute metrics strip stats
+        try {
+          const allIds = (await window.barangayDB.getAll('resident_ids')) || [];
+          const cardCount = allIds.length > 0 ? allIds.length : allResidents.length;
+          const statCards = document.getElementById('stat-active-cards');
+          const statReg = document.getElementById('stat-total-registered');
+          if (statCards) statCards.textContent = cardCount.toLocaleString();
+          if (statReg) statReg.textContent = `Across ${allResidents.length.toLocaleString()} registered residents`;
+        } catch (idErr) {
+          console.warn('ID metrics load error:', idErr);
+        }
       } catch (e) {
         console.error('Failed to load residents:', e);
         Toast.error('Could not load residents database.');
@@ -1370,6 +1423,27 @@
       Toast.info('Preparing print preview for high-resolution card export...');
       window.print();
     }
+
+    function toggleIdInfoPopover(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('id-info-popover');
+      if (!card) return;
+      card.style.display = card.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('id-info-popover');
+      if (popover && popover.style.display === 'block' && !e.target.closest('#id-info-popover') && !e.target.closest('.info-trigger')) {
+        popover.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const popover = document.getElementById('id-info-popover');
+        if (popover) popover.style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
