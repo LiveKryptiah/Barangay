@@ -618,45 +618,44 @@ require_auth('login.php');
           </div>
         </section>
 
-        <!-- Contextual Info Popover Card -->
-        <div class="info-popover-card" id="id-info-popover" style="display: none;">
+        <!-- Contextual Info Popover Card (with Minimal Embedded Metrics) -->
+        <div class="info-popover-card" id="id-info-popover" style="display: none; width: 340px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <strong style="font-size: 0.875rem; color: var(--color-ink);">PVC Resident ID &amp; Credential Standard</strong>
             <button type="button" class="drawer-close-btn" onclick="toggleIdInfoPopover(event)" aria-label="Close popover" style="font-size: 1rem; width: 24px; height: 24px; border: none; background: transparent; cursor: pointer;">&times;</button>
           </div>
-          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 8px;">
+          <p style="font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.45; margin-bottom: 10px;">
             Issued pursuant to ISO/IEC 7810 ID-1 (CR80) standard (85.60 &times; 53.98 mm). Embedded with anti-counterfeit micro-pattern watermark, biometric photo standards, and cryptographic QR token verifiable via public verification engine.
           </p>
-          <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--color-text-muted);">
+
+          <!-- Embedded Metrics Grid inside Popover -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+            <div style="background: var(--color-canvas-soft); padding: 8px 10px; border-radius: var(--rounded-sm);">
+              <span style="display: block; font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Active Credentials</span>
+              <div style="font-size: 1.125rem; font-weight: 700; color: var(--color-ink); margin: 2px 0;" id="stat-active-cards">0</div>
+              <span style="font-size: 0.6875rem; color: var(--color-text-muted); line-height: 1.2; display: block;" id="stat-total-registered">Across all registered residents</span>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 8px 10px; border-radius: var(--rounded-sm);">
+              <span style="display: block; font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Form Factor Spec</span>
+              <div style="font-size: 0.9375rem; font-weight: 700; color: var(--color-ink); margin: 2px 0;">CR80 (ISO 7810)</div>
+              <span style="font-size: 0.6875rem; color: var(--color-text-muted); line-height: 1.2; display: block;">85.60 &times; 53.98 mm &bull; 30 mil PVC</span>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 8px 10px; border-radius: var(--rounded-sm);">
+              <span style="display: block; font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Security Authentication</span>
+              <div style="font-size: 0.9375rem; font-weight: 700; color: var(--color-ink); margin: 2px 0;">SHA-256 / QR</div>
+              <span style="font-size: 0.6875rem; color: var(--color-text-muted); line-height: 1.2; display: block;">Tamper-evident verification token</span>
+            </div>
+            <div style="background: var(--color-canvas-soft); padding: 8px 10px; border-radius: var(--rounded-sm);">
+              <span style="display: block; font-size: 0.6875rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Validation SLA</span>
+              <div style="font-size: 0.9375rem; font-weight: 700; color: var(--color-ink); margin: 2px 0;">&lt; 2s Lookup</div>
+              <span style="font-size: 0.6875rem; color: var(--color-text-muted); line-height: 1.2; display: block;">Instant scanner &amp; portal check</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--color-text-muted); border-top: 1px solid var(--color-hairline-soft); padding-top: 8px;">
             <span>Standard: CR80 PVC</span> &bull; <span>Compliance: Data Privacy Act of 2012</span>
           </div>
         </div>
-
-        <!-- Level 1 Minimal Borderless Metrics Strip -->
-        <section style="margin-bottom: var(--spacing-lg);">
-          <div class="metrics-strip">
-            <div class="metric-item">
-              <span class="metric-label">Active Credentials</span>
-              <div class="metric-val" id="stat-active-cards">0</div>
-              <span class="metric-sub" id="stat-total-registered">Across all registered residents</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Form Factor Spec</span>
-              <div class="metric-val">CR80 (ISO 7810)</div>
-              <span class="metric-sub">85.60 &times; 53.98 mm &bull; 30 mil PVC</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Security Authentication</span>
-              <div class="metric-val">SHA-256 / QR</div>
-              <span class="metric-sub">Tamper-evident verification token</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-label">Validation SLA</span>
-              <div class="metric-val">&lt; 2s Lookup</div>
-              <span class="metric-sub">Instant scanner &amp; portal check</span>
-            </div>
-          </div>
-        </section>
 
         <!-- Studio Workspace Grid -->
         <div class="studio-layout">
